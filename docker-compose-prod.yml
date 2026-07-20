@@ -1,20 +1,70 @@
 services:
-  game_server:
-    image: "${CI_REGISTRY_IMAGE}/server:${CI_COMMIT_SHORT_SHA}"
-    ports:
-      - "43594:43594"
-      - "10001:10001"
-      - "9292:9292"
-    volumes:
-      - data:/app/data/runtime/
-  db_mongo:
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
-  adminer:
-    image: adminer
-    ports:
-      - "8080:8080"
+    # Game Server Service Architecture
+    game_server:
+        image: "${IMAGE_REGISTRY}/server:${IMAGE_TAG}"
+        restart: unless-stopped
+        ports:
+            # ONLY expose the public game service port to the world
+            - "43594:43594"
+            # Ports 10001 (YourKit) and 9292 are deliberately removed from public routing.
+            # If you need to profile or debug in production, use an SSH tunnel:
+            # ssh -L 10001:10001 user@vps-ip
+        environment:
+            - KRONOS_BOOT_OPTS=-Xmx16g
+        volumes:
+            # Fix #1: Securely inject the host's server.properties as Read-Only
+            - ./server.properties:/app/server.properties:ro
+            # Persistent live runtime data (saves, logs, metrics)
+            - data_server:/app/data/runtime/
+        depends_on:
+            - db_sql
+            - db_mongo
 
+    # Relational Database Layer
+    db_sql:
+        image: "${IMAGE_REGISTRY}/db_sql:${IMAGE_TAG}"
+        restart: unless-stopped
+        environment:
+            MARIADB_ROOT_PASSWORD: ${DB_SQL_ROOT_PASSWORD}
+            MARIADB_USER: ${DB_SQL_USER}
+            MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
+            MARIADB_DATABASE: zelus_prod
+        volumes:
+            - data_db_sql:/var/lib/mysql
+
+    # Document Store Layer (Hardened Credentials)
+    db_mongo:
+        image: "mongo:7.0-noble"
+        restart: unless-stopped
+        environment:
+            # Sanitized: No more hardcoded root/password text
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+        volumes:
+            - data_db_mongo:/data/db
+
+    # Database Management Tool (Secured for Internal Network Only)
+    adminer:
+        image: adminer:latest
+        restart: unless-stopped
+        # Docker Swarm's routing mesh (the default "ingress" publish mode) does not
+        # reliably honor a host-IP-scoped short-syntax port mapping like
+        # "127.0.0.1:8080:8080" — it can silently bind on every node's public
+        # interface instead. `mode: host` + explicit `host_ip` is the Swarm-correct
+        # way to actually restrict this to loopback-only access via SSH tunnel.
+        ports:
+            - target: 8080
+              published: 8080
+              host_ip: 127.0.0.1
+              mode: host
+        depends_on:
+            - db_sql
+
+# Persistent Infrastructure Volumes Matrix
 volumes:
-  data:
+    data_server:
+        driver: local
+    data_db_sql:
+        driver: local
+    data_db_mongo:
+        driver: local
