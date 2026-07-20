@@ -133,7 +133,13 @@ jobs:
       - run: chmod +x gradlew
       # The Dockerfile COPYs this pre-built output rather than compiling inside
       # the image — has to exist in the build context before docker build runs.
-      - run: ./gradlew --console=plain :kronos-boot:installDist
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -208,7 +214,13 @@ jobs:
           java-version: "21"
           cache: gradle
       - run: chmod +x gradlew
-      - run: ./gradlew --console=plain :kronos-boot:installDist
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -243,7 +255,13 @@ jobs:
           java-version: "21"
           cache: gradle
       - run: chmod +x gradlew
-      - run: ./gradlew --console=plain :kronos-boot:installDist
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
