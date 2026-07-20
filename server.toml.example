@@ -1,0 +1,93 @@
+[paths]
+cache_path = "data/cache"
+data_path = "data"
+
+[world]
+id = 1
+name = "Zelus"
+stage = "DEV"
+type = "ECO"
+flag = "USA"
+settings = "MEMBERS"
+address = "127.0.0.1"
+port = 43594
+
+[api]
+enabled = false
+password = "CHANGE_ME"
+base_url = "https://127.0.0.1/api/"
+
+[login]
+connection_limit = 3000
+proof_of_work_enabled = false
+master_password = "CHANGE_ME"
+
+[db]
+threads = 16
+
+[features]
+donation_shop_enabled = true
+rsprot_dev = true
+
+[theme]
+halloween = false
+christmas = false
+
+[database]
+host = "CHANGE_ME"
+user = "CHANGE_ME"
+password = "CHANGE_ME"
+
+[game_db]
+enabled = true
+host = "localhost"
+name = "reason"
+username = "CHANGE_ME"
+password = "CHANGE_ME"
+
+[logging]
+sentry_enabled = false
+sentry_dsn = ""
+sentry_env = ""
+log_config = "dev.xml"
+
+[rsa]
+# Generate your own RSA keypair for login encryption — never reuse this example.
+exponent = "CHANGE_ME"
+modulus  = "CHANGE_ME"
+
+[trade]
+post_tax = 2
+
+[webhooks]
+trade_post_discord_hook = ""
+account_creation_discord_hook = ""
+item_perk_discord_hook = ""
+vote_discord_hook = ""
+discord_hook_sus_transaction = ""
+discord_hook_rare_drop = ""
+discord_hook_wilderness_log = ""
+discord_hook_pvp_death = ""
+discord_hook_rare_box = ""
+discord_hook_global_broadcast = ""
+discord_hook_item_perk = ""
+discord_hook_item_breakdown = ""
+discord_hook_private_message = ""
+discord_hook_trade_player = ""
+discord_hook_referral = ""
+discord_hook_bond_events = ""
+discord_hook_item_pickup = ""
+discord_hook_item_drop = ""
+discord_hook_donation_claim = ""
+discord_hook_command_owner = ""
+discord_hook_command_admin = ""
+discord_hook_command_head_mod = ""
+discord_hook_command_mod = ""
+discord_hook_command_support = ""
+discord_hook_command_regular = ""
+
+[mongo]
+host = "127.0.0.1"
+port = 27017
+username = "CHANGE_ME"
+password = "CHANGE_ME"

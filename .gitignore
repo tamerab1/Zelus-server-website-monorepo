@@ -1,0 +1,81 @@
+# ===================================================================
+# Secrets — never commit real values. Commit the .example templates
+# instead; real files are provided to hosts/CI via secret variables.
+# ===================================================================
+server.properties
+server.toml
+docker-compose.env
+.env
+.env.*
+!.env.example
+!*.example
+
+*.pem
+*.key
+*.crt
+*.jks
+*.p12
+id_rsa*
+**/key-private.pem
+**/key-public.pem
+**/launcher.crt
+
+# ===================================================================
+# Gradle / Kotlin / Java (server)
+# ===================================================================
+.gradle/
+.kotlin/
+**/build/
+out/
+bin/
+.factorypath
+.jrebel/
+hs_err_pid*.log
+replay_pid*.log
+
+# ===================================================================
+# Local runtime data & tooling (server zelus/data/)
+# The cache/tools/save data here is a local working copy — the real
+# source of truth is the sibling `data zelus/` folder, which is not
+# part of this repo at all.
+# ===================================================================
+data/runtime/
+data/cache/
+data/backups/
+data/tools/
+data/saves/
+
+# ===================================================================
+# Node / Vite (website/zelus-website-client)
+# ===================================================================
+website/zelus-website-client/node_modules/
+website/zelus-website-client/dist/
+website/zelus-website-client/.vite/
+website/zelus-website-client/coverage/
+**/node_modules/
+**/dist/
+
+# ===================================================================
+# Python (website/zelus-website-api)
+# ===================================================================
+website/zelus-website-api/venv/
+website/zelus-website-api/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ===================================================================
+# IDE / OS
+# ===================================================================
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ===================================================================
+# Misc
+# ===================================================================
+*.zip
+.dev/recent_paths.dat
+.dev/interface_editor.log

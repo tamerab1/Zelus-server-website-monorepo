@@ -1,0 +1,219 @@
+variables:
+  GIT_DEPTH: 1
+  GIT_CLEAN_FLAGS: "none"
+
+stages:
+  - test
+  - build
+  - release
+  - deploy
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+# ===================================================================
+# Reusable path filters — keep the monorepo pipeline fast by only
+# running jobs for the service that actually changed.
+# ===================================================================
+.server_paths: &server_paths
+  - "kronos-*/**/*"
+  - "core-*/**/*"
+  - "docker/server/**/*"
+  - "docker/db_sql/**/*"
+  - "*.gradle.kts"
+  - "gradle/**/*"
+  - "gradle.properties"
+  - "settings.gradle.kts"
+
+.website_client_paths: &website_client_paths
+  - "website/zelus-website-client/**/*"
+
+.website_api_paths: &website_api_paths
+  - "website/zelus-website-api/**/*"
+
+.docker_login: &docker_login
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+# ===================================================================
+# TEST — lint/build/test each service independently. A change to the
+# website never blocks or waits on the Gradle build, and vice versa.
+# ===================================================================
+
+test:server:
+  stage: test
+  image: eclipse-temurin:24
+  needs: []
+  rules:
+    - changes: *server_paths
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  script:
+    - ./gradlew --console=plain test
+
+test:website-client:
+  stage: test
+  image: node:22-alpine
+  needs: []
+  rules:
+    - changes: *website_client_paths
+  script:
+    - cd website/zelus-website-client
+    - npm ci
+    - npm run lint
+    - npm run build
+
+test:website-api:
+  stage: test
+  image: python:3.12-slim
+  needs: []
+  rules:
+    - changes: *website_api_paths
+  script:
+    - cd website/zelus-website-api
+    - pip install --no-cache-dir -r requirements.txt
+    - pip install --no-cache-dir ruff pytest
+    - ruff check .
+    - pytest --exitfirst
+
+# ===================================================================
+# BUILD — SHA-tagged images per service, only for what changed.
+# These are cheap, iterative builds for review/testing; they are NOT
+# what gets deployed. That happens in RELEASE, which always produces
+# a complete, consistent set of all three images.
+# ===================================================================
+
+build:server:
+  stage: build
+  image: docker
+  needs: ["test:server"]
+  rules:
+    - changes: *server_paths
+  before_script:
+    - cp ${SERVER_PROPERTIES} server.properties
+    - *docker_login
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}/server:latest-dev" || true
+    - docker build -f docker/server/Dockerfile --cache-from "${CI_REGISTRY_IMAGE}/server:latest-dev" -t "${CI_REGISTRY_IMAGE}/server:${CI_COMMIT_SHORT_SHA}" .
+    - docker push "${CI_REGISTRY_IMAGE}/server:${CI_COMMIT_SHORT_SHA}"
+
+build:website-client:
+  stage: build
+  image: docker
+  needs: ["test:website-client"]
+  rules:
+    - changes: *website_client_paths
+  before_script: *docker_login
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}/website-client:latest-dev" || true
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}/website-client:latest-dev" -t "${CI_REGISTRY_IMAGE}/website-client:${CI_COMMIT_SHORT_SHA}" website/zelus-website-client
+    - docker push "${CI_REGISTRY_IMAGE}/website-client:${CI_COMMIT_SHORT_SHA}"
+
+build:website-api:
+  stage: build
+  image: docker
+  needs: ["test:website-api"]
+  rules:
+    - changes: *website_api_paths
+  before_script: *docker_login
+  script:
+    - docker pull "${CI_REGISTRY_IMAGE}/website-api:latest-dev" || true
+    - docker build --cache-from "${CI_REGISTRY_IMAGE}/website-api:latest-dev" -t "${CI_REGISTRY_IMAGE}/website-api:${CI_COMMIT_SHORT_SHA}" website/zelus-website-api
+    - docker push "${CI_REGISTRY_IMAGE}/website-api:${CI_COMMIT_SHORT_SHA}"
+
+# ===================================================================
+# RELEASE — always rebuilds all three services, regardless of which
+# paths changed. This guarantees `develop`/tag pushes always produce
+# a complete, matched set of images — no missing tag for a service
+# that happened not to change in this particular commit.
+#
+# `:latest-dev`  = what the development environment deploys.
+# `:latest`      = what production is currently running. Only ever
+#                  set here, on a version tag — never on a dev build.
+# ===================================================================
+
+release:dev:
+  stage: release
+  image: docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  before_script:
+    - cp ${SERVER_PROPERTIES} server.properties
+    - *docker_login
+  script:
+    - docker build -f docker/server/Dockerfile -t "${CI_REGISTRY_IMAGE}/server:latest-dev" .
+    - docker build -t "${CI_REGISTRY_IMAGE}/website-client:latest-dev" website/zelus-website-client
+    - docker build -t "${CI_REGISTRY_IMAGE}/website-api:latest-dev" website/zelus-website-api
+    - docker push "${CI_REGISTRY_IMAGE}/server:latest-dev"
+    - docker push "${CI_REGISTRY_IMAGE}/website-client:latest-dev"
+    - docker push "${CI_REGISTRY_IMAGE}/website-api:latest-dev"
+
+release:production:
+  stage: release
+  image: docker
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+      when: manual
+  before_script:
+    - cp ${SERVER_PROPERTIES} server.properties
+    - *docker_login
+  script:
+    - docker build -f docker/server/Dockerfile -t "${CI_REGISTRY_IMAGE}/server:${CI_COMMIT_TAG}" .
+    - docker build -t "${CI_REGISTRY_IMAGE}/website-client:${CI_COMMIT_TAG}" website/zelus-website-client
+    - docker build -t "${CI_REGISTRY_IMAGE}/website-api:${CI_COMMIT_TAG}" website/zelus-website-api
+    - >
+      for svc in server website-client website-api; do
+        docker tag "${CI_REGISTRY_IMAGE}/${svc}:${CI_COMMIT_TAG}" "${CI_REGISTRY_IMAGE}/${svc}:latest";
+        docker push "${CI_REGISTRY_IMAGE}/${svc}:${CI_COMMIT_TAG}";
+        docker push "${CI_REGISTRY_IMAGE}/${svc}:latest";
+      done
+
+# ===================================================================
+# DEPLOY — development auto-deploys from `develop`. Production is
+# always a deliberate, manual button press against a version tag.
+# DEPLOY_HOST / DEPLOY_HOST_USER / DEPLOY_SSH* are GitLab CI/CD
+# variables scoped per-environment (Settings > CI/CD > Variables >
+# "Environment scope"), so the same variable name resolves to the
+# dev box under the `development` environment and the prod box
+# under `production` — no duplicated variable names needed.
+# ===================================================================
+
+.deploy: &deploy_before_script
+  - mkdir -p ~/.ssh/
+  - ssh-keyscan -H ${DEPLOY_HOST} >>~/.ssh/known_hosts
+  - cp ${DEPLOY_SSH_CONFIG} ~/.ssh/config
+  - cp ${DEPLOY_SSH} ~/.ssh/deploy_ssh
+  - cp ${DOCKER_COMPOSE_ENV} docker-compose.env
+  - chmod 0600 ~/.ssh/deploy_ssh
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - export DOCKER_HOST="ssh://${DEPLOY_HOST_USER}@${DEPLOY_HOST}"
+
+deploy:development:
+  stage: deploy
+  image: docker
+  needs: ["release:dev"]
+  environment:
+    name: development
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  before_script: *deploy_before_script
+  script:
+    - export $(cat docker-compose.env)
+    - docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_dev
+
+deploy:production:
+  stage: deploy
+  image: docker
+  needs: ["release:production"]
+  environment:
+    name: production
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+      when: manual
+  before_script: *deploy_before_script
+  script:
+    - export $(cat docker-compose.env)
+    - docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod

@@ -1,0 +1,12 @@
+* text eol=lf
+
+*.png binary
+*.jpg binary
+*.bin binary
+*.jar binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.exe binary
+
+tool-cache-packer binary

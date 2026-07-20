@@ -1,0 +1,34 @@
+# ── Web framework ─────────────────────────────────────────────────────────────
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+gunicorn==23.0.0
+
+# ── Database — MySQL / MariaDB (NR 288) ───────────────────────────────────────
+# pymysql: pure-Python MySQL driver used by both database.py (zelusrsps_db)
+#          and game_database.py (reason DB / hs_users).
+# psycopg2-binary has been removed — PostgreSQL is no longer used.
+sqlalchemy==2.0.36
+pymysql==1.1.1
+
+# ── Auth & security ───────────────────────────────────────────────────────────
+bcrypt==4.2.1
+
+# ── Request validation ────────────────────────────────────────────────────────
+# [email] extra is required for EmailStr used in register/login/forgot-password.
+pydantic[email]==2.10.3
+
+# ── Rate limiting ─────────────────────────────────────────────────────────────
+slowapi==0.1.9
+
+# ── HTTP clients ──────────────────────────────────────────────────────────────
+# requests: used in main.py for Cloudflare Turnstile verification.
+# httpx:    used in routers/checkout.py and routers/webhooks.py for async
+#           PayPal API calls (token exchange, order creation, sig verification).
+requests==2.32.3
+httpx==0.28.1
+
+# ── Environment / config ──────────────────────────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Payment providers ─────────────────────────────────────────────────────────
+stripe==15.0.1

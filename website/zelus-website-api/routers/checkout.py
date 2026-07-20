@@ -1,0 +1,359 @@
+"""
+Checkout endpoints — Stripe, PayPal, OSRS GP (manual ticket), Crypto (placeholder).
+
+Security contract:
+  - Package price is ALWAYS looked up from store_catalog, never taken from the request.
+  - A Transaction row is created BEFORE the player is redirected, so we can reconcile
+    webhook callbacks even if the browser never returns to our success URL.
+  - OSRS GP: a Discord webhook notifies staff; fulfillment is manual until confirmed.
+  - Crypto: placeholder endpoint — no automatic fulfillment wired yet.
+"""
+import os
+import logging
+import math
+
+import httpx
+import stripe
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+import models
+from database import get_db
+from store_catalog import get_item
+
+log = logging.getLogger("zelus.checkout")
+
+router = APIRouter(prefix="/api/checkout", tags=["checkout"])
+
+# ── Stripe ─────────────────────────────────────────────────────────────────────
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+
+# ── PayPal ─────────────────────────────────────────────────────────────────────
+PAYPAL_CLIENT_ID     = os.getenv("PAYPAL_CLIENT_ID", "")
+PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET", "")
+PAYPAL_BASE_URL      = os.getenv("PAYPAL_BASE_URL", "https://api-m.sandbox.paypal.com")
+
+# ── OSRS GP ────────────────────────────────────────────────────────────────────
+# Rate: $0.25 per 1 M OSRS GP  →  M_GP = price_usd / 0.25
+OSRS_RATE_USD_PER_M  = 0.25
+DISCORD_STORE_WEBHOOK_URL = os.getenv("DISCORD_STORE_WEBHOOK_URL", "")
+
+# ── Shared ─────────────────────────────────────────────────────────────────────
+SITE_URL = os.getenv("SITE_URL", "http://localhost:5173")
+
+
+# ── Request schema ─────────────────────────────────────────────────────────────
+class CheckoutRequest(BaseModel):
+    username:   str = Field(..., min_length=1, max_length=12)
+    package_id: str = Field(..., min_length=1, max_length=50)
+
+
+# ── PayPal helper ──────────────────────────────────────────────────────────────
+async def _paypal_access_token() -> str:
+    """Exchange client_id/secret for a short-lived access token."""
+    async with httpx.AsyncClient(timeout=10) as client:
+        resp = await client.post(
+            f"{PAYPAL_BASE_URL}/v1/oauth2/token",
+            auth=(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET),
+            data={"grant_type": "client_credentials"},
+        )
+        resp.raise_for_status()
+        return resp.json()["access_token"]
+
+
+# ── Stripe checkout ────────────────────────────────────────────────────────────
+@router.post("/stripe")
+async def create_stripe_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
+    log.info("[Stripe] Checkout — user='%s' pkg='%s'", req.username, req.package_id)
+
+    if not stripe.api_key:
+        raise HTTPException(503, "Stripe payments are not configured.")
+
+    # ── Price validation (never trust the frontend) ────────────────────────────
+    item = get_item(req.package_id)
+    if not item:
+        log.warning("[Stripe] Unknown package_id='%s' from user='%s'", req.package_id, req.username)
+        raise HTTPException(400, f"Unknown package: '{req.package_id}'")
+
+    # ── Create pending transaction row BEFORE contacting Stripe ───────────────
+    txn = models.Transaction(
+        username=req.username,
+        package_id=item.slug,
+        package_name=item.name,
+        amount_usd=item.price_usd,
+        provider=models.PaymentProvider.STRIPE,
+        status=models.TransactionStatus.PENDING,
+    )
+    db.add(txn)
+    db.flush()  # assign txn.id without committing
+
+    # ── Create Stripe Checkout Session ────────────────────────────────────────
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "unit_amount": int(item.price_usd * 100),  # Stripe uses cents
+                    "product_data": {
+                        "name": f"Zelus — {item.name}",
+                        "description": f"+{item.tokens:,} tokens · delivered to: {req.username}",
+                    },
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            # {CHECKOUT_SESSION_ID} is a Stripe template literal — not Python formatting
+            success_url=f"{SITE_URL}/?payment=success&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{SITE_URL}/?payment=cancelled",
+            metadata={
+                "username":       req.username,
+                "package_id":     item.slug,
+                "transaction_id": str(txn.id),
+            },
+            client_reference_id=str(txn.id),
+        )
+    except stripe.error.StripeError as exc:
+        db.rollback()
+        log.error("[Stripe] API error for user='%s': %s", req.username, exc)
+        raise HTTPException(502, exc.user_message or "Stripe payment could not be initiated.")
+
+    # ── Persist the Stripe session ID so the webhook can locate this txn ──────
+    txn.provider_session_id = session.id
+    db.commit()
+
+    log.info("[Stripe] Session created: %s  txn_id=%d  user='%s'",
+             session.id, txn.id, req.username)
+    return {"checkout_url": session.url, "session_id": session.id}
+
+
+# ── PayPal checkout ────────────────────────────────────────────────────────────
+@router.post("/paypal")
+async def create_paypal_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
+    log.info("[PayPal] Checkout — user='%s' pkg='%s'", req.username, req.package_id)
+
+    if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
+        raise HTTPException(503, "PayPal payments are not configured.")
+
+    # ── Price validation ───────────────────────────────────────────────────────
+    item = get_item(req.package_id)
+    if not item:
+        log.warning("[PayPal] Unknown package_id='%s' from user='%s'", req.package_id, req.username)
+        raise HTTPException(400, f"Unknown package: '{req.package_id}'")
+
+    # ── Create pending transaction row BEFORE contacting PayPal ───────────────
+    txn = models.Transaction(
+        username=req.username,
+        package_id=item.slug,
+        package_name=item.name,
+        amount_usd=item.price_usd,
+        provider=models.PaymentProvider.PAYPAL,
+        status=models.TransactionStatus.PENDING,
+    )
+    db.add(txn)
+    db.flush()
+
+    # ── Create PayPal Order ────────────────────────────────────────────────────
+    try:
+        access_token = await _paypal_access_token()
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(
+                f"{PAYPAL_BASE_URL}/v2/checkout/orders",
+                headers={
+                    "Authorization":  f"Bearer {access_token}",
+                    "Content-Type":   "application/json",
+                    # Idempotency key — prevents duplicate orders on retry
+                    "PayPal-Request-Id": f"zelus-txn-{txn.id}",
+                },
+                json={
+                    "intent": "CAPTURE",
+                    "purchase_units": [{
+                        # custom_id is echoed back in capture webhooks for lookup
+                        "custom_id":    str(txn.id),
+                        "reference_id": str(txn.id),
+                        "description":  (
+                            f"Zelus — {item.name} "
+                            f"(+{item.tokens:,} tokens for {req.username})"
+                        ),
+                        "amount": {
+                            "currency_code": "USD",
+                            "value": f"{item.price_usd:.2f}",
+                        },
+                    }],
+                    "application_context": {
+                        "brand_name":  "Zelus",
+                        "user_action": "PAY_NOW",
+                        "return_url":  f"{SITE_URL}/?payment=success",
+                        "cancel_url":  f"{SITE_URL}/?payment=cancelled",
+                    },
+                },
+            )
+            resp.raise_for_status()
+            order = resp.json()
+
+    except httpx.HTTPStatusError as exc:
+        db.rollback()
+        log.error("[PayPal] HTTP %d for user='%s': %s",
+                  exc.response.status_code, req.username, exc.response.text)
+        raise HTTPException(502, "PayPal payment could not be initiated. Please try again.")
+    except httpx.TimeoutException:
+        db.rollback()
+        log.error("[PayPal] Timeout creating order for user='%s'", req.username)
+        raise HTTPException(504, "PayPal is taking too long to respond. Please try again.")
+    except Exception as exc:
+        db.rollback()
+        log.error("[PayPal] Unexpected error for user='%s': %s", req.username, exc)
+        raise HTTPException(502, "PayPal payment could not be initiated.")
+
+    # ── Extract approval URL ───────────────────────────────────────────────────
+    approval_url = next(
+        (link["href"] for link in order.get("links", []) if link.get("rel") == "approve"),
+        None,
+    )
+    if not approval_url:
+        db.rollback()
+        log.error("[PayPal] No approval URL in response for user='%s': %s", req.username, order)
+        raise HTTPException(502, "PayPal did not return a payment URL.")
+
+    txn.provider_session_id = order["id"]
+    db.commit()
+
+    log.info("[PayPal] Order created: %s  txn_id=%d  user='%s'",
+             order["id"], txn.id, req.username)
+    return {"checkout_url": approval_url, "order_id": order["id"]}
+
+
+# ── OSRS GP checkout ───────────────────────────────────────────────────────────
+# Rate: $0.25 per 1 M GP.  Staff fulfil the trade manually; this endpoint
+# creates a PENDING transaction and fires a Discord ticket webhook.
+
+@router.post("/osrs-gp")
+async def create_osrs_gp_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
+    log.info("[OSRS-GP] Initiate — user='%s' pkg='%s'", req.username, req.package_id)
+
+    # ── Price validation ───────────────────────────────────────────────────────
+    item = get_item(req.package_id)
+    if not item:
+        raise HTTPException(400, f"Unknown package: '{req.package_id}'")
+
+    # ── GP amount calculation ──────────────────────────────────────────────────
+    # math.ceil so the player always pays at least the full USD equivalent.
+    gp_millions = math.ceil(item.price_usd / OSRS_RATE_USD_PER_M)
+
+    # ── Create pending transaction ─────────────────────────────────────────────
+    txn = models.Transaction(
+        username=req.username,
+        package_id=item.slug,
+        package_name=item.name,
+        amount_usd=item.price_usd,
+        provider=models.PaymentProvider.OSRS_GP,
+        status=models.TransactionStatus.PENDING,
+    )
+    db.add(txn)
+    db.flush()   # get txn.id before the Discord call
+
+    # ── Discord webhook — notify staff to open a ticket ────────────────────────
+    if DISCORD_STORE_WEBHOOK_URL:
+        await _send_osrs_gp_discord_alert(
+            username=req.username,
+            item_name=item.name,
+            price_usd=item.price_usd,
+            gp_millions=gp_millions,
+            transaction_id=txn.id,
+        )
+    else:
+        log.warning("[OSRS-GP] DISCORD_STORE_WEBHOOK_URL is not set — skipping Discord alert.")
+
+    db.commit()
+    log.info("[OSRS-GP] Transaction #%d created — user='%s' gp=%dM", txn.id, req.username, gp_millions)
+
+    return {
+        "transaction_id": txn.id,
+        "gp_millions":    gp_millions,
+        "message": (
+            f"Ticket opened! A staff member will contact you on Discord to "
+            f"arrange the {gp_millions:,}M OSRS GP trade for {item.name}. "
+            f"Reference: #{txn.id}"
+        ),
+    }
+
+
+async def _send_osrs_gp_discord_alert(
+    username: str,
+    item_name: str,
+    price_usd: float,
+    gp_millions: int,
+    transaction_id: int,
+) -> None:
+    """
+    Sends a rich embed to the staff Discord channel.
+    Fails silently — a Discord outage must not block the checkout.
+    """
+    embed = {
+        "title": "🪙  New OSRS GP Payment Request",
+        "color": 0xD4AF37,   # gold
+        "fields": [
+            {"name": "Player",       "value": f"`{username}`",               "inline": True},
+            {"name": "Package",      "value": item_name,                      "inline": True},
+            {"name": "USD Value",    "value": f"${price_usd:.2f}",           "inline": True},
+            {"name": "GP to Receive","value": f"**{gp_millions:,}M OSRS GP**","inline": True},
+            {"name": "Rate",         "value": "$0.25 per 1M GP",             "inline": True},
+            {"name": "Txn ID",       "value": f"#{transaction_id}",          "inline": True},
+        ],
+        "description": (
+            f"User **{username}** wants to purchase **{item_name}** "
+            f"for **{gp_millions:,}M OSRS GP** (${price_usd:.2f} USD).\n\n"
+            f"Please open a ticket with this player and arrange the in-game trade.\n"
+            f"After confirming receipt, use the admin panel to fulfil transaction **#{transaction_id}**."
+        ),
+        "footer": {"text": "Zelus Store — OSRS GP Payment"},
+    }
+
+    payload = {
+        "content": "@here 🎫 New GP payment request — please open a ticket!",
+        "embeds": [embed],
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=8) as client:
+            resp = await client.post(DISCORD_STORE_WEBHOOK_URL, json=payload)
+            resp.raise_for_status()
+            log.info("[OSRS-GP] Discord alert sent for txn #%d.", transaction_id)
+    except Exception as exc:
+        # Non-fatal: the transaction is already committed — just log.
+        log.error("[OSRS-GP] Discord webhook failed for txn #%d: %s", transaction_id, exc)
+
+
+# ── Crypto checkout (placeholder) ─────────────────────────────────────────────
+# Creates a PENDING transaction so the order is tracked.
+# Actual crypto verification (Coinbase Commerce / NowPayments) is wired up
+# by adding a webhook handler in routers/webhooks.py once a provider is chosen.
+
+@router.post("/crypto")
+async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
+    log.info("[Crypto] Initiate — user='%s' pkg='%s'", req.username, req.package_id)
+
+    item = get_item(req.package_id)
+    if not item:
+        raise HTTPException(400, f"Unknown package: '{req.package_id}'")
+
+    txn = models.Transaction(
+        username=req.username,
+        package_id=item.slug,
+        package_name=item.name,
+        amount_usd=item.price_usd,
+        provider=models.PaymentProvider.CRYPTO,
+        status=models.TransactionStatus.PENDING,
+    )
+    db.add(txn)
+    db.commit()
+
+    log.info("[Crypto] Placeholder transaction #%d created — user='%s'", txn.id, req.username)
+
+    # Return a placeholder response — the frontend shows a "coming soon" screen.
+    return {
+        "transaction_id": txn.id,
+        "message": "Crypto payments are coming soon. Contact us on Discord to arrange a crypto payment manually.",
+    }

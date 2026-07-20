@@ -1,0 +1,87 @@
+#Initial loading data
+cache_path=../data zelus/data/cache
+data_path=../data zelus/data
+
+#World information
+world_id=1
+world_name=Zelus
+world_stage=DEV
+world_type=ECO
+world_flag=USA
+world_settings=MEMBERS
+world_address=127.0.0.1
+world_port=43594
+
+#The Api for donations and voting
+api_enabled=false
+api_password=CHANGE_ME
+api_base_url=https://127.0.0.1/api/
+
+login_con_limit=3000
+login_pow_enabled=false
+login_master_password=CHANGE_ME
+
+db_threads=16
+
+donation_shop_enabled=true
+
+#Server theme
+halloween=false
+christmas=false
+database_host=CHANGE_ME
+database_password=CHANGE_ME
+database_user=CHANGE_ME
+
+game_db_enabled=true
+game_db_host=localhost
+game_db_name=reason
+game_db_username=CHANGE_ME
+game_db_password=CHANGE_ME
+
+#logging
+sentry_enabled=false
+sentry_dsn=
+sentry_env=
+
+# Generate your own RSA keypair for login encryption — never reuse this example.
+RSA_EXPONENT=CHANGE_ME
+RSA_MODULUS=CHANGE_ME
+
+trade_post_tax=2
+
+# Webhooks
+trade_post_discord_hook=
+account_creation_discord_hook=
+item_perk_discord_hook=
+vote_discord_hook=
+discord_hook_sus_transaction=
+discord_hook_rare_drop=
+discord_hook_wilderness_log=
+discord_hook_pvp_death=
+discord_hook_rare_box=
+discord_hook_global_broadcast=
+discord_hook_item_perk=
+discord_hook_item_breakdown=
+discord_hook_private_message=
+discord_hook_trade_player=
+discord_hook_referral=
+discord_hook_bond_events=
+discord_hook_item_pickup=
+discord_hook_item_drop=
+discord_hook_donation_claim=
+# Admin webhooks
+discord_hook_command_owner=
+discord_hook_command_admin=
+discord_hook_command_head_mod=
+discord_hook_command_mod=
+discord_hook_command_support=
+discord_hook_command_regular=
+
+rsprot_dev=true
+
+log_config=dev.xml
+
+mongo_host=127.0.0.1
+mongo_port=27017
+mongo_username=CHANGE_ME
+mongo_password=CHANGE_ME
