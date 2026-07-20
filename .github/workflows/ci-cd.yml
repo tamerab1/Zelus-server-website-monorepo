@@ -75,7 +75,13 @@ jobs:
           java-version: "21"
           cache: gradle
       - run: chmod +x gradlew
-      - run: ./gradlew --console=plain test
+      # :player-mongo:test and :tradepost:test are integration tests, not unit
+      # tests — they call ServerTest.start(), which loads the real OSRS cache
+      # via FileStore and opens a live MariaDB + MongoDB connection. No CI
+      # runner has either, so they're excluded here rather than run against
+      # infrastructure that doesn't exist. Run them locally where the cache
+      # and DBs are already set up.
+      - run: ./gradlew --console=plain test -x :player-mongo:test -x :tradepost:test
 
   test-website-client:
     needs: setup
