@@ -1,0 +1,96 @@
+const WIKI = 'https://oldschool.runescape.wiki/images';
+
+const storePacks = [
+  {
+    id: 'starter',
+    name:  'Starter Pack',
+    price: 5,
+    color: 'from-teal-700 to-teal-950',
+    badge: '#2dd4bf',
+    desc:  'Everything a new player needs to get ahead fast.',
+    rewards: [
+      { label: '500 Tokens',         icon: `${WIKI}/Coins_10000.png`           },
+      { label: 'Starter Gear Set',   icon: `${WIKI}/Rune_full_helm.png`        },
+      { label: 'Medium XP Lamp x3',  icon: `${WIKI}/Lamp.png`                  },
+      { label: '3-Day Double XP',    icon: `${WIKI}/Experience_lamp.png`       },
+      { label: 'Mystery Box',        icon: `${WIKI}/Mystery_box_(Zelus).png`   },
+    ],
+  },
+  {
+    id: 'pvp',
+    name:  'PvP Pack',
+    price: 15,
+    color: 'from-red-700 to-red-950',
+    badge: '#f87171',
+    desc:  'Gear up for the wilderness and dominate in PvP.',
+    rewards: [
+      { label: '250 PK Points',      icon: `${WIKI}/Skull.png`                 },
+      { label: 'Full Void Set',      icon: `${WIKI}/Void_knight_top.png`       },
+      { label: 'PvP Mystery Box x3', icon: `${WIKI}/Mystery_box_(Zelus).png`   },
+      { label: 'Dragon Claws',       icon: `${WIKI}/Dragon_claws.png`          },
+      { label: '750 Tokens',         icon: `${WIKI}/Coins_10000.png`           },
+    ],
+  },
+  {
+    id: 'skilling',
+    name:  'Skilling Pack',
+    price: 20,
+    color: 'from-lime-700 to-lime-950',
+    badge: '#a3e635',
+    desc:  'Max your skills faster with boosted XP and outfits.',
+    rewards: [
+      { label: 'Large XP Lamp x5',   icon: `${WIKI}/Lamp.png`                  },
+      { label: 'Skilling Outfit Set', icon: `${WIKI}/Graceful_top.png`          },
+      { label: '7-Day Double XP',    icon: `${WIKI}/Experience_lamp.png`       },
+      { label: "Skill Cape of your choice", icon: `${WIKI}/Max_cape.png`       },
+      { label: '1,000 Tokens',       icon: `${WIKI}/Coins_10000.png`           },
+    ],
+  },
+  {
+    id: 'boss',
+    name:  'Boss Pack',
+    price: 30,
+    color: 'from-violet-700 to-violet-950',
+    badge: '#a78bfa',
+    desc:  'Take on the hardest bosses with the best supplies.',
+    rewards: [
+      { label: 'Bandos Armour Set',  icon: `${WIKI}/Bandos_chestplate.png`     },
+      { label: 'Boss Mystery Box x5',icon: `${WIKI}/Mystery_box_(Zelus).png`   },
+      { label: 'Raid Supplies x100', icon: `${WIKI}/Super_restore(4).png`      },
+      { label: 'Occult Necklace',    icon: `${WIKI}/Occult_necklace.png`       },
+      { label: '1,500 Tokens',       icon: `${WIKI}/Coins_10000.png`           },
+    ],
+  },
+  {
+    id: 'mystery',
+    name:  'Mystery Bundle',
+    price: 10,
+    color: 'from-pink-700 to-pink-950',
+    badge: '#f472b6',
+    desc:  'Feeling lucky? Each box has a chance at rare items.',
+    rewards: [
+      { label: 'Mystery Box x5',     icon: `${WIKI}/Mystery_box_(Zelus).png`   },
+      { label: 'Rare Item Chance',   icon: `${WIKI}/Question_mark.png`         },
+      { label: 'Bonus Loot Table',   icon: `${WIKI}/Clue_scroll_(elite).png`   },
+      { label: '200 Tokens',         icon: `${WIKI}/Coins_10000.png`           },
+    ],
+  },
+  {
+    id: 'ultimate',
+    name:  'Ultimate Pack',
+    price: 75,
+    color: 'from-yellow-500 to-orange-950',
+    badge: '#fbbf24',
+    desc:  'The complete package — the best deal in the store.',
+    best:  true,
+    rewards: [
+      { label: 'All Pack Rewards',    icon: `${WIKI}/Treasure_chest_(large).png` },
+      { label: 'Exclusive Pet',       icon: `${WIKI}/Pet_chaos_elemental.png`    },
+      { label: 'Extreme Donator Rank',icon: `${WIKI}/Coins_10000.png`            },
+      { label: 'Custom Yell Tag',     icon: `${WIKI}/Coins_10000.png`            },
+      { label: '5,000 Tokens',        icon: `${WIKI}/Coins_10000.png`            },
+    ],
+  },
+];
+
+export default storePacks;
