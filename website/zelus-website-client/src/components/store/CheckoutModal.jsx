@@ -15,7 +15,6 @@ import {
   createStripeCheckout,
   createPayPalCheckout,
   initiateOsrsGpCheckout,
-  initiateCryptoCheckout,
   calcGpMillions,
   OSRS_RATE_USD_PER_M,
 } from '../../services/paymentService.js';

@@ -143,7 +143,6 @@ export default function HiscoresView() {
   // ── Column renderers ────────────────────────────────────────────────────────
   const renderPvpCells = (cat) => (player) => {
     const vals = getPvpCols(cat, player);
-    const isFirst = true;
     return vals.map((v, i) => (
       <td key={i} className="px-4 py-2.5 text-right pr-6">
         <span className={`font-mono text-sm ${i === 0 ? 'font-bold' : ''}`}

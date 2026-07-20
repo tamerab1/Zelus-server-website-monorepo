@@ -47,7 +47,6 @@ export default function ServerStatusWidget({ hiscores, loading }) {
   /* Derived display values */
   const isOnline    = serverStatus === 'online';
   const isOffline   = serverStatus === 'offline';
-  const isUnknown   = serverStatus === 'unknown';
 
   const dotColor    = isOnline  ? '#22c55e' : isOffline ? '#ef4444' : '#f59e0b';
   const dotGlow     = isOnline  ? '0 0 8px rgba(34,197,94,0.8)'

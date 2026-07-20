@@ -78,6 +78,7 @@ function getInitialView() {
 // STANDARD replaces the old NORMAL value — NORMAL is kept as a legacy alias so
 // any account that hasn't been migrated yet still renders correctly.
 // Exported so AccountPanel and any other component can import it directly.
+// eslint-disable-next-line react-refresh/only-export-components -- constant map, not a component; idiomatic to keep beside the context it labels
 export const GAME_MODE_LABELS = {
   STANDARD:               { label: 'Standard',              icon: '⚔️'  },
   IRONMAN:                { label: 'Ironman',                icon: '🛡️'  },
@@ -93,6 +94,7 @@ export const GAME_MODE_LABELS = {
  * Defaults gracefully for unknown or null values.
  * Exported so any component can use it without importing the whole map.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- helper function, not a component
 export const getGameModeLabel = (mode) =>
   GAME_MODE_LABELS[mode] ?? { label: mode ?? 'Standard', icon: '⚔️' };
 
@@ -169,6 +171,7 @@ export function AppProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- standard context+hook pattern, hook belongs with its provider
 export const useApp = () => {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useApp must be used inside <AppProvider>');
