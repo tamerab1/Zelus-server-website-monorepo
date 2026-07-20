@@ -64,9 +64,16 @@ jobs:
     needs: setup
     if: needs.setup.outputs.server == 'true'
     runs-on: ubuntu-latest
-    container: eclipse-temurin:24
     steps:
       - uses: actions/checkout@v4
+      # JDK 21 matches the project's `jvmToolchain(21)` (buildSrc/reason-kotlin.gradle.kts).
+      # Running Gradle itself on 21 means the toolchain requirement is already
+      # satisfied by the host JVM — no toolchain download/resolution needed.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
       - run: chmod +x gradlew
       - run: ./gradlew --console=plain test
 
@@ -112,6 +119,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      # The Dockerfile COPYs this pre-built output rather than compiling inside
+      # the image — has to exist in the build context before docker build runs.
+      - run: ./gradlew --console=plain :kronos-boot:installDist
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -180,6 +196,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      - run: ./gradlew --console=plain :kronos-boot:installDist
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -208,6 +231,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      - run: ./gradlew --console=plain :kronos-boot:installDist
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
