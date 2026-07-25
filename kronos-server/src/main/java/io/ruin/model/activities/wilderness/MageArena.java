@@ -199,8 +199,8 @@ public class MageArena {
 		Tile.get(3094, 3926, 0).flagUnmovable();
 		Tile.get(3093, 3928, 0).flagUnmovable();
 
-		Tile.get(3091, 3497, 0).flagUnmovable();
-		Tile.get(3091, 3493, 0).flagUnmovable();
+		Tile.get(3091, 3497, 0, true).flagUnmovable();
+		Tile.get(3091, 3493, 0, true).flagUnmovable();
 
 		SpawnListener.register("battle mage", npc -> npc.deathEndListener = (DeathListener.SimpleKiller) killer -> {
 			if (killer.player.mageArena) {

@@ -34,7 +34,7 @@ services:
 
     # Document Store Layer (Hardened Credentials)
     db_mongo:
-        image: "mongo:7.0-noble"
+        image: "mongo:7.0"
         restart: unless-stopped
         environment:
             # Sanitized: No more hardcoded root/password text

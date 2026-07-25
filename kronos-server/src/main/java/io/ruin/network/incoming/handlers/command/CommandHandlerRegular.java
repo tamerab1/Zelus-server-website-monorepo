@@ -86,9 +86,10 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "gamble":
 			case "gamblezone":
 			case "gambling": {
-				player.getMovement().teleport(1371, 2532, 1);
+				player.getMovement().teleport(3123, 3480, 0);
 				player.sendMessage("Welcome to the Gambling Zone!");
 				return true;
 			}
@@ -567,7 +568,7 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "home": {
-				teleportHome(player, 1376, 3232, 0);
+				teleportHome(player, 3087, 3496, 0);
 				return true;
 			}
 

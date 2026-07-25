@@ -48,10 +48,10 @@ import static io.ruin.cache.ItemID.COINS_995;
 
 public class HomeHandler {
 
-	static Bounds homeArea = new Bounds(1344, 3200, 1407, 3263, -1);
+	static Bounds homeArea = new Bounds(3073, 3462, 3123, 3520, -1);
 
 	private static void openTeleportInterface(Player player) {
-		if (player.getPosition().regionId() == 5426) {
+		if (player.getPosition().regionId() == 12342) {
 			player.teleportInterface.open(player);
 		}
 	}
@@ -69,23 +69,30 @@ public class HomeHandler {
 	}
 
 	public static void init() {
-		var devouringForge = GameObject.spawn(60003, 1386, 3241, 0, 10, 0);
+		var devouringForge = GameObject.spawn(60003, 3081, 3516, 0, 10, 0);
 		ObjectAction.register(devouringForge, 1, (player, obj) -> io.ruin.model.content.pvppreset.PvpPresetInterface.open(player));
-		var bhChest = GameObject.spawn(60010, 1390, 3241, 0, 10, 0);
+		var bhChest = GameObject.spawn(60001, 3094, 3516, 0, 10, 0);
 		ObjectAction.register(bhChest, 1, (player, obj) -> io.ruin.model.activities.wilderness.WantedManager.openMenu(player));
-		var tradingPost = GameObject.spawn(46240, 1377, 3223, 0, 10, 2);
-		var elvenChest = GameObject.spawn(36582, 1389, 3244, 0, 10, 5);
-		var slayerChest = GameObject.spawn(46243, 1389, 3245, 0, 10, 1);
-		var singingBowl = GameObject.spawn(36552, 1380, 3246, 0, 10, 5);
-		var pohPortal = GameObject.spawn(15478, 1374, 3247, 0, 10, 2);
-		var altar = GameObject.spawn(411, 1384, 3242, 0, 10, 0);
-		var upgradeStation = GameObject.spawn(46241, 1377, 3225, 0, 10, 2);
-		var upgradeStation2 = GameObject.spawn(53226, 1377, 3227, 0, 10, 1);
-		var panda = GameObject.spawn(60011, 1373, 3241, 0, 10, 0);
+		//var tradingPost = GameObject.spawn(46240, 3094, 3495, 0, 10, 1);
+		//var tradingPost2 = GameObject.spawn(46240, 3098, 3499, 0, 10, 2);
+		var elvenChest = GameObject.spawn(36582, 3093, 3506, 0, 10, 0);
+		var slayerChest = GameObject.spawn(46243, 3109, 3486, 0, 10, 1);
+		//var singingBowl = GameObject.spawn(36552, 3091, 3510, 0, 10, 5);
+		//var pohPortal = GameObject.spawn(15478, 3085, 3511, 0, 10, 2);
+		var upgradeStation = GameObject.spawn(46241, 3115, 3482, 0, 10, 3);
+		var upgradeStation2 = GameObject.spawn(53226, 3112, 3485, 0, 10, 3);
+		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
 		ObjectAction.register(panda, 1, (player, obj) -> NewShopHandler.openShop(player, NewShopHandler.pvmPointStore));
+		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
+		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> player.dialogue(
+			new OptionsDialogue("Gambling carries the risk of losing whatever you stake. Continue?",
+				new Option("Yes, I understand the risk.", () -> player.getMovement().teleport(3123, 3476, 0)),
+				new Option("No, take me back.", player::closeDialogue)
+			)
+		));
 		var gauntletBankChest = GameObject.spawn(4483, 3037, 6129, 1, 10, 2);
 		if(!SummerEvent.disabled) {
-			var summerNPC = new NPC(1805).spawn(new Position(1391, 3229, 0), Direction.NORTH);
+			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();
 		}
 	}
@@ -250,7 +257,7 @@ public class HomeHandler {
 					player.graphics(1039);
 					player.privateSound(200, 0, 10);
 					e.delay(2);
-					player.getMovement().teleport(1376, 3232, 0);
+					player.getMovement().teleport(3087, 3496, 0);
 					player.sendMessage("A guard catches you stealing and sends you home!");
 				});
 			} else {

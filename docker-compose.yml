@@ -12,7 +12,7 @@ services:
 
     # Document Store Layer (Hardened Authentication)
     db_mongo:
-        image: "mongo:7.0-noble"
+        image: "mongo:7.0"
         restart: unless-stopped
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}

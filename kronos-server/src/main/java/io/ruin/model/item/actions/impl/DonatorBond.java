@@ -55,7 +55,7 @@ public class DonatorBond {
 
 			checkDonatorStatus(p);
 			if (p.inDynamicMap && p.currentDynamicMap == null) {
-				p.getMovement().teleport(1376, 3232, 0);
+				p.getMovement().teleport(3087, 3496, 0);
 				p.inDynamicMap = false;
 			}
 		});

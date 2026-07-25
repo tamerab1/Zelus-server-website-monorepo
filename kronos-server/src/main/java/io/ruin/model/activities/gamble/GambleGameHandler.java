@@ -417,22 +417,22 @@ public class GambleGameHandler extends ItemContainer {
 				e.delay(2);
 				Flowers playerOneFlower = roll();
 				Flowers playerTwoFlower = roll();
-				playerOneFlowers.add(0, GameObject.spawn(playerOneFlower.objId, playerOne.getAbsX(), playerOne.getAbsY(),
-					playerOne.getHeight(), 10, 0));
 				playerOne.getRouteFinder().routeAbsolute(
 					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
 					playerOne.getPosition().getY());
 				npc.getRouteFinder().routeAbsolute(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
 					npc.getPosition().getY());
 				e.waitForMovement(playerOne);
+				playerOneFlowers.add(0, GameObject.spawn(playerOneFlower.objId, playerOne.getAbsX(), playerOne.getAbsY(),
+					playerOne.getHeight(), 10, 0));
 				playerOne.face(playerOneFlowers.get(0));
 				e.delay(3);
-				playerTwoFlowers.add(0, GameObject.spawn(playerTwoFlower.objId, playerTwo.getAbsX(), playerTwo.getAbsY(),
-					playerTwo.getHeight(), 10, 0));
 				playerTwo.getRouteFinder().routeAbsolute(
 					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
 					playerTwo.getPosition().getY());
 				e.waitForMovement(playerTwo);
+				playerTwoFlowers.add(0, GameObject.spawn(playerTwoFlower.objId, playerTwo.getAbsX(), playerTwo.getAbsY(),
+					playerTwo.getHeight(), 10, 0));
 				playerTwo.face(playerTwoFlowers.get(0));
 				npc.face(playerOne);
 
@@ -471,12 +471,12 @@ public class GambleGameHandler extends ItemContainer {
 				playerTwoFlowers.clear();
 				playerTwo.getMovement().teleport(
 					plantLeft ? playerTwo.getPosition().getX() + 1 : playerTwo.getPosition().getX() - 1,
-					playerTwo.getPosition().getY(), 1);
+					playerTwo.getPosition().getY(), 0);
 				playerOne.getMovement().teleport(
 					plantLeft ? playerOne.getPosition().getX() + 1 : playerOne.getPosition().getX() - 1,
-					playerOne.getPosition().getY(), 1);
+					playerOne.getPosition().getY(), 0);
 				npc.getMovement().teleport(plantLeft ? npc.getPosition().getX() + 1 : npc.getPosition().getX() - 1,
-					npc.getPosition().getY(), 1);
+					npc.getPosition().getY(), 0);
 				npc.face(playerOne);
 				if (playerOneScore.get() != 3 && playerTwoScore.get() != 3) {
 					GamblerText(npc,
@@ -517,6 +517,16 @@ public class GambleGameHandler extends ItemContainer {
 			e.delay(1);
 			npc.forceText("GO!");
 			for (int i = 0; i < 5; i++) {
+				playerOne.getRouteFinder().routeAbsolute(
+					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
+					playerOne.getPosition().getY());
+				playerTwo.getRouteFinder().routeAbsolute(
+					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
+					playerTwo.getPosition().getY());
+				npc.getRouteFinder().routeAbsolute(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
+					npc.getPosition().getY());
+				e.waitForMovement(playerOne);
+
 				Flowers playerOneFlower = roll();
 				Flowers playerTwoFlower = roll();
 				playerOneFlowers.add(GameObject.spawn(playerOneFlower.objId, playerOne.getAbsX(), playerOne.getAbsY(),
@@ -527,15 +537,6 @@ public class GambleGameHandler extends ItemContainer {
 					playerOneHand.get(playerOneFlower.objId) == null ? 1 : playerOneHand.get(playerOneFlower.objId) + 1);
 				playerTwoHand.put(playerTwoFlower.objId,
 					playerTwoHand.get(playerTwoFlower.objId) == null ? 1 : playerTwoHand.get(playerTwoFlower.objId) + 1);
-				playerOne.getRouteFinder().routeAbsolute(
-					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
-					playerOne.getPosition().getY());
-				playerTwo.getRouteFinder().routeAbsolute(
-					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
-					playerTwo.getPosition().getY());
-				npc.getRouteFinder().routeAbsolute(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
-					npc.getPosition().getY());
-				e.waitForMovement(playerOne);
 				npc.face(playerOne);
 				playerOne.face(playerOneFlowers.get(i));
 				playerTwo.face(playerTwoFlowers.get(i));
@@ -664,13 +665,13 @@ public class GambleGameHandler extends ItemContainer {
 				playerOne.unlock();
 				e.delay(2);
 				npc.getMovement().teleport(plantLeft ? npc.getPosition().getX() + 5 : npc.getPosition().getX() - 5,
-					npc.getPosition().getY(), 1);
+					npc.getPosition().getY(), 0);
 				playerTwo.getMovement().teleport(
 					plantLeft ? playerTwo.getPosition().getX() + 5 : playerTwo.getPosition().getX() - 5,
-					playerTwo.getPosition().getY(), 1);
+					playerTwo.getPosition().getY(), 0);
 				playerOne.getMovement().teleport(
 					plantLeft ? playerOne.getPosition().getX() + 5 : playerOne.getPosition().getX() - 5,
-					playerOne.getPosition().getY(), 1);
+					playerOne.getPosition().getY(), 0);
 				HandleFlowerPokerGame(npc, plantLeft);
 			} else {
 				playerTwo.unlock();
@@ -681,15 +682,18 @@ public class GambleGameHandler extends ItemContainer {
 	}
 
 	public void startFlowerGame(int flowerGame) {
-		Bounds spawnBounds = Gamble.GAMBLEZONE_BOUNDS[Random.get(Gamble.GAMBLEZONE_BOUNDS.length - 1)];
-		Position spawnPos = spawnBounds.randomPosition();
-		;
+		int areaIndex = Random.get(Gamble.GAMBLEZONE_BOUNDS.length - 1);
+		Bounds spawnBounds = Gamble.GAMBLEZONE_BOUNDS[areaIndex];
+
+		// areas 0-2 (1-3) start at their east edge (neX) and shift west;
+		// areas 3-5 (4-6) start at their west edge (swX) and shift east.
+		boolean areas1to3 = areaIndex < 3;
+		int startX = areas1to3 ? spawnBounds.neX : spawnBounds.swX;
+		boolean plantLeft = areas1to3;
+		int startY = Random.get(spawnBounds.swY, spawnBounds.neY);
+		Position spawnPos = new Position(startX, startY, spawnBounds.z);
 
 		playerOne.getGamble().getGambleData().spawnPosition = spawnPos;
-
-		// spawnPos.set(Random.get(0, 1) == 0 ? spawnBounds.bottomLeftX :
-		// spawnBounds.topRightX, spawnPos.getY(), 1);
-		boolean plantLeft = false;
 
 		int y;
 		int npcY;
@@ -702,17 +706,10 @@ public class GambleGameHandler extends ItemContainer {
 			npcY = spawnPos.getY() - 1;
 		}
 
-		Position playerTwoSpawnPos = new Position(spawnPos.getX(), y, 1);
+		Position playerTwoSpawnPos = new Position(spawnPos.getX(), y, 0);
 
-		if (spawnPos.getX() - 5 < spawnBounds.swX)
-			plantLeft = false;
-		else if (spawnPos.getX() + 5 > spawnBounds.neX)
-			plantLeft = true;
-		else
-			System.out.println("AN UNEXPECTED ERROR OCCURRED!");
-
-		playerOne.getMovement().teleport(spawnPos.getX(), spawnPos.getY(), 1);
-		playerTwo.getMovement().teleport(playerTwoSpawnPos.getX(), playerTwoSpawnPos.getY(), 1);
+		playerOne.getMovement().teleport(spawnPos.getX(), spawnPos.getY(), 0);
+		playerTwo.getMovement().teleport(playerTwoSpawnPos.getX(), playerTwoSpawnPos.getY(), 0);
 		NPC npc = new NPC(3105).spawn(spawnPos.getX(), npcY, spawnPos.getZ());
 		npc.face(playerOne);
 		switch (flowerGame) {

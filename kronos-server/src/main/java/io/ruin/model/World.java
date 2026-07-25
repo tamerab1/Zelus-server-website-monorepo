@@ -151,9 +151,13 @@ public class World extends EventWorker {
 
 	public static final int spawnableOffset = 100000;
 
-	public static final Position HOME = new Position(1376, 3232, 0);
+	// Restored 2026-07-20: custom home region (48,54 / regionId 12342), reverted back
+	// to the standard region at some point and left that way by mistake. Values
+	// recovered from the pre-incident zsv1.rar backup (2026-05-13).
+	public static final Position HOME = new Position(3087, 3496, 0);
+	public static final Position STANDARDHOME = new Position(1376, 3232, 0);
 	public static final Position OLDCUSTOMHOME = new Position(2028, 3577, 0);
-	public static final Position EDGEHOME = new Position(1381, 3233, 0);
+	public static final Position EDGEHOME = new Position(3092, 3497, 0);
 
 	public static final Position DEATHS_DOMAIN = new Position(3174, 5727, 0);
 
