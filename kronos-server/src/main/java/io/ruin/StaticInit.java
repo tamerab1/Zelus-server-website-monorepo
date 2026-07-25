@@ -217,7 +217,6 @@ public final class StaticInit {
 		io.ruin.model.content.camelstatue.CamelStatueInterface.register();
 		io.ruin.model.inter.questtab.presets.Preset.register();
 		io.ruin.model.entity.player.presets.PresetManager.register();
-		io.ruin.model.content.pvppreset.PvpPresetInterface.register();
 		io.ruin.model.content.loadouts.ZelusLoadoutInterface.register();
 		io.ruin.model.activities.gamble.Gamble.register();
 		io.ruin.model.activities.pkbots.ZelusBotManager.register();
