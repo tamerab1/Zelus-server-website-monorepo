@@ -227,13 +227,13 @@ public class StarterGuide {
 					"Welcome to Zelus, where you'll embark on an unforgettable journey! Expect nothing less than an unparalleled experience. Best of luck on your adventure!"));
 			e.waitForDialogue(player);
 
-			player.getMovement().teleport(3092, 3491, 0);
+			player.getMovement().teleport(3089, 3511, 0);
 			e.delay(1);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Starting off with Zelus's main bank! Here, you can take care of all your banking needs."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3087, 3488, 0);
+			player.getMovement().teleport(3115, 3486, 0);
 			e.delay(2);
 			player.dialogue(new NPCDialogue(3531,
 					"Exhibit two, the Trading Post & Upgrade Station! This bustling marketplace is where players can buy and sell all kinds of items.<br>"
@@ -245,50 +245,51 @@ public class StarterGuide {
 			e.waitForDialogue(player);
 			e.delay(2);
 			// construction portal
-			player.getMovement().teleport(3087, 3507, 0);
+			player.getMovement().teleport(3089, 3475, 0);
 			player.dialogue(new NPCDialogue(3531,
 					"Now to make you feel at home... the POH portal! This is where you can begin building your dream estate. Visit the estate agent to purchase a house..."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
-			player.getMovement().teleport(3079, 3511, 0);
+			player.getMovement().teleport(3096, 3512, 0);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Zelus's central shops! Here you'll find all the basic shops to assist your journey. Ironman players also have access to some of the shops, so be sure to explore everything this marketplace has to offer."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
-			player.getMovement().teleport(3085, 3497, 0);
+			player.getMovement().teleport(3090, 3486, 0);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Here, we have the Zelus teleport nexus.<br>" +
 							"Interacting with the nexus will open the teleport menu. Once the menu is open, select one of the many options and you'll be transported there."));
 			e.waitForDialogue(player);
 			e.delay(2);
+			player.getMovement().teleport(3105, 3513, 0);
 			player.dialogue(new NPCDialogue(3531,
 					"Right behind you is the healing pool! This pool will rid you of any status conditions and heal you completely. You'll also be healed when you teleport home."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3096, 3510, 0);
+			player.getMovement().teleport(3105, 3488, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"Feeling belligerent already? Look no further than the Slayer Masters, who can assign you tasks. You can also loot the crystal, larran's, brimstone, and slayer chests here."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3094, 3502, 0);
+			player.getMovement().teleport(3116, 3487, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"This is where you will find the perk master. Talk to him for information about obtaining and equipping perks! Perks play a huge role in Zelus, so check them out."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3101, 3492, 0);
+			player.getMovement().teleport(3083, 3502, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"A little fairy magic here. Take full advantage of this resource!"));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3089, 3473, 0);
+			player.getMovement().teleport(3094, 3463, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"Here is the Camel Statue, where certain boosts can be activated by offering gold. Note: These are global boosts. There is also a thieving area to the left!"));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3078, 3501, 0);
+			player.getMovement().teleport(3078, 3484, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"And finally, here are the point store NPCs! Spend your various points here."));
@@ -309,9 +310,9 @@ public class StarterGuide {
 			player.getPacketSender().resetCamera();
 			player.tutorialStage = 1;
 
-			player.getMovement().teleport(3085, 3492, 0);
-			player.getPacketSender().moveCameraToLocation(3085, 3492, 450, 0, 12);
-			player.getPacketSender().turnCameraToLocation(3085, 3492, 400, 0, 30);
+			player.getMovement().teleport(3092, 3494, 0);
+			player.getPacketSender().moveCameraToLocation(3092, 3494, 450, 0, 12);
+			player.getPacketSender().turnCameraToLocation(3092, 3494, 400, 0, 30);
 			player.dialogue(new NPCDialogue(3531,
 					"Looks like you're ready to begin your adventure, good luck!"));
 			e.waitForDialogue(player);
