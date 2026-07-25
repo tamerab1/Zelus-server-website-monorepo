@@ -164,16 +164,21 @@ services:
     adminer:
         image: adminer:latest
         restart: unless-stopped
-        # Docker Swarm's routing mesh (the default "ingress" publish mode) does not
-        # reliably honor a host-IP-scoped short-syntax port mapping like
-        # "127.0.0.1:8080:8080" — it can silently bind on every node's public
-        # interface instead. `mode: host` + explicit `host_ip` is the Swarm-correct
-        # way to actually restrict this to loopback-only access via SSH tunnel.
+        # NOT actually loopback-restricted at the Swarm level: `docker stack
+        # deploy` validates against a stricter/older schema than plain
+        # `docker compose` and rejects the long-form ports' `host_ip` field
+        # outright ("Additional property host_ip is not allowed") — Swarm
+        # has no compose-level way to bind a published port to a specific
+        # host IP. The real security boundary here is the Hetzner Cloud
+        # Firewall attached to this VPS, which only allows inbound on
+        # 22/80/443/43594 — port 8080 is unreachable from the public
+        # internet regardless of what Swarm binds it to. SSH tunneling
+        # (ssh -L 8080:localhost:8080 root@<vps-ip>) still works fine for
+        # legitimate access since the tunnel talks to the VPS's own network
+        # stack directly, upstream of that firewall. If the VPS firewall
+        # rules ever change, revisit this — it is no longer defense in depth.
         ports:
-            - target: 8080
-              published: 8080
-              host_ip: 127.0.0.1
-              mode: host
+            - "8080:8080"
         depends_on:
             - db_sql
         deploy:
