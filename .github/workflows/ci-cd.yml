@@ -113,7 +113,11 @@ jobs:
           pip install --no-cache-dir -r requirements.txt
           pip install --no-cache-dir ruff pytest
           ruff check .
-          pytest --exitfirst
+          # Exit code 5 = "no tests collected", not a failure — this project
+          # has zero test files yet. Still fails on 1 (tests failed), 2
+          # (interrupted), etc. Once real tests exist, this gate starts
+          # enforcing them automatically with no further change needed.
+          pytest --exitfirst || test $? -eq 5
 
   # ===================================================================
   # BUILD — SHA-tagged images per service, only for what changed. Cheap
