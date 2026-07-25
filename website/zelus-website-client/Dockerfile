@@ -30,5 +30,14 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
+# 127.0.0.1, deliberately not "localhost": this container's /etc/hosts
+# resolves localhost to ::1 first, but nginx's bare `listen 80;` in
+# docker-nginx.conf only binds IPv4 (0.0.0.0:80) — BusyBox wget doesn't
+# fall back to IPv4 after an IPv6 connection refusal, so the healthcheck
+# always failed, and Swarm kills+reschedules a container 3 failed retries
+# after start (~90s) exactly like a crash loop even though nginx itself
+# was always healthy. Confirmed directly: `wget http://localhost/` fails
+# with "Connection refused" while `wget http://127.0.0.1/` succeeds, on
+# the identical running container.
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD wget -q -O /dev/null http://localhost/ || exit 1
+    CMD wget -q -O /dev/null http://127.0.0.1/ || exit 1
