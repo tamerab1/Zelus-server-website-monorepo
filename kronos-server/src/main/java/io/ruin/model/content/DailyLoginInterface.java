@@ -93,6 +93,11 @@ public class DailyLoginInterface {
 		player.viewingDailyLoginRewards = true;
 
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		// Component 14 is the title text baked into the widget (see
+		// data/cache/toml/1_patches/interface/1109.toml:372, "Daily Vote
+		// Streak" by default) -- overridden here since this screen is
+		// shared with DailyVoteInterface, whose open() resets it back.
+		player.getPacketSender().sendString(INTERFACE_ID, 14, "Daily Login Streak");
 		player.getPacketSender().sendString(INTERFACE_ID, 22, "Current Login Streak: " + player.loginStreak);
 		int startingLockComponent = 42;
 		int startingClaimedComponent = 40;

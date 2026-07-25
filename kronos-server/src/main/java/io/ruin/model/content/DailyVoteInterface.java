@@ -93,6 +93,9 @@ public class DailyVoteInterface {
 		player.viewingDailyLoginRewards = false;
 
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		// Component 14 is the shared widget's title text -- reset back
+		// explicitly since DailyLoginInterface.open() overrides it.
+		player.getPacketSender().sendString(INTERFACE_ID, 14, "Daily Vote Streak");
 		player.getPacketSender().sendString(INTERFACE_ID, 22, "Current Vote Streak: " + player.voteStreak);
 		int startingLockComponent = 42;
 		int startingClaimedComponent = 40;

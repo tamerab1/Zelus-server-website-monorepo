@@ -107,7 +107,7 @@ public class HomeHandler {
 			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();
 		}
-		new NPC(1810).spawn(new Position(3115, 3495, 0), Direction.NORTH);
+		new NPC(1810).spawn(new Position(3115, 3495, 0), Direction.SOUTH);
 	}
 
 	public static void switchBook(Player player, SpellBook book, boolean altar) {
