@@ -10,13 +10,18 @@ services:
             # If you need to profile or debug in production, use an SSH tunnel:
             # ssh -L 10001:10001 user@vps-ip
         environment:
-            # Sized for a 4GB VPS running MariaDB+Mongo+API alongside this —
-            # -Xmx16g on a 4GB box would fail to start outright. Heap + JVM
-            # overhead (metaspace, thread stacks, direct buffers) needs to
-            # fit inside the 2g hard limit below with margin. Watch
-            # `docker stats` under real beta load and raise both together
-            # (in step with the VPS's actual RAM) if you see heap pressure.
-            - KRONOS_BOOT_OPTS=-Xmx1536m
+            # History: -Xmx1536m and then -Xmx1800m both hit a real
+            # OutOfMemoryError loading the actual cache on the original 4GB
+            # box (59,599 objects + 30,006 NPCs + many large data files,
+            # including a JSON parse of item_info.json that alone triggered
+            # the second OOM well into startup — this is a full modern OSRS
+            # revision, genuinely memory-hungry). Squeezing the other
+            # services further wasn't the right call, since MariaDB/the API
+            # would then risk failing under real player load instead. The
+            # VPS was upsized to 8GB specifically to give this real headroom
+            # rather than keep tuning around a box that was too small for
+            # the workload.
+            - KRONOS_BOOT_OPTS=-Xmx3200m
         volumes:
             # ABSOLUTE path, deliberately not "./server.properties": `docker
             # stack deploy` resolves relative bind sources on whichever
@@ -51,7 +56,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 2g
+                    memory: 4g
 
     # Website API (FastAPI) — talks to db_sql over the internal Swarm overlay
     # network (service name resolves automatically), never publishes a host
@@ -98,7 +103,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 64m
+                    memory: 128m
 
     # Public HTTPS entrypoint — the ONLY service exposing 80/443. Terminates
     # TLS (automatic Let's Encrypt via Caddy) and reverse-proxies to
@@ -124,7 +129,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 128m
+                    memory: 256m
 
     # Relational Database Layer
     db_sql:
@@ -143,7 +148,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 768m
+                    memory: 1g
 
     # Document Store Layer (Hardened Credentials)
     db_mongo:
@@ -158,7 +163,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 512m
+                    memory: 768m
 
     # Database Management Tool (Secured for Internal Network Only)
     adminer:
