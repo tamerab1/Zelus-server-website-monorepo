@@ -1,31 +1,39 @@
-const RELEASES_BASE = 'https://github.com/tamerab1/zelus-server/releases/latest/download';
+// Points at the explicit "development-latest" tag, not GitHub's magic
+// "latest" alias -- that alias only ever resolves to the newest
+// non-prerelease release, and development-latest is published with
+// --prerelease (it's a rolling dev build, republished on every push).
+// "latest" would 404 forever against a repo that only ever has prereleases.
+const RELEASES_BASE = 'https://github.com/tamerab1/zelus-clientv1.0.1/releases/download/development-latest';
 
 const PLATFORMS = [
   {
-    id:    'windows',
-    label: 'Windows',
-    badge: 'Windows 10 / 11',
-    file:  'ZelusLauncher-windows.exe',
-    note:  'Run the installer. No Java required.',
+    id:        'windows',
+    label:     'Windows',
+    badge:     'Windows 10 / 11',
+    file:      'ZelusLauncher-windows.exe',
+    note:      'Run the installer. No Java required.',
+    available: true,
   },
   {
-    id:    'mac',
-    label: 'macOS',
-    badge: 'macOS 11+',
-    file:  'ZelusLauncher-mac.dmg',
-    note:  'Open the DMG and drag ZelusLauncher to Applications.',
+    id:        'mac',
+    label:     'macOS',
+    badge:     'macOS 11+',
+    file:      'ZelusLauncher-mac.dmg',
+    note:      'Coming soon.',
+    available: false,
   },
   {
-    id:    'linux',
-    label: 'Linux',
-    badge: 'Ubuntu / Debian',
-    file:  'ZelusLauncher-linux.deb',
-    note:  'Install with: sudo dpkg -i ZelusLauncher-linux.deb',
+    id:        'linux',
+    label:     'Linux',
+    badge:     'Ubuntu / Debian',
+    file:      'ZelusLauncher-linux.deb',
+    note:      'Coming soon.',
+    available: false,
   },
 ];
 
 function PlatformCard({ platform }) {
-  const { label, badge, file, note } = platform;
+  const { label, badge, file, note, available } = platform;
   const url = `${RELEASES_BASE}/${file}`;
 
   return (
@@ -70,29 +78,44 @@ function PlatformCard({ platform }) {
       </p>
 
       {/* Button */}
-      <a
-        href={url}
-        className="font-fantasy"
-        style={{
-          display:'inline-block', padding:'12px 36px',
-          background:'linear-gradient(180deg, #2e2410 0%, #1a1408 100%)',
-          border:'1px solid rgba(212,175,55,0.6)',
-          color:'#d4af37', fontSize:11, letterSpacing:'0.22em',
-          textDecoration:'none',
-          boxShadow:'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.08)',
-          transition:'all 0.15s',
-        }}
-        onMouseOver={e => {
-          e.currentTarget.style.borderColor = '#d4af37';
-          e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.6), 0 0 32px rgba(212,175,55,0.2)';
-        }}
-        onMouseOut={e => {
-          e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
-          e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.08)';
-        }}
-      >
-        DOWNLOAD
-      </a>
+      {available ? (
+        <a
+          href={url}
+          className="font-fantasy"
+          style={{
+            display:'inline-block', padding:'12px 36px',
+            background:'linear-gradient(180deg, #2e2410 0%, #1a1408 100%)',
+            border:'1px solid rgba(212,175,55,0.6)',
+            color:'#d4af37', fontSize:11, letterSpacing:'0.22em',
+            textDecoration:'none',
+            boxShadow:'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.08)',
+            transition:'all 0.15s',
+          }}
+          onMouseOver={e => {
+            e.currentTarget.style.borderColor = '#d4af37';
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.6), 0 0 32px rgba(212,175,55,0.2)';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.08)';
+          }}
+        >
+          DOWNLOAD
+        </a>
+      ) : (
+        <span
+          className="font-fantasy"
+          style={{
+            display:'inline-block', padding:'12px 36px',
+            background:'rgba(255,255,255,0.03)',
+            border:'1px solid rgba(212,175,55,0.15)',
+            color:'#5a5548', fontSize:11, letterSpacing:'0.22em',
+            cursor:'default',
+          }}
+        >
+          UNAVAILABLE
+        </span>
+      )}
     </div>
   );
 }
@@ -166,7 +189,7 @@ export default function DownloadView() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:24 }}>
           {[
             { n:'1', title:'Download',   body:'Get the launcher for your OS above.' },
-            { n:'2', title:'Install',    body:'Run the installer (Windows) or open the DMG/DEB.' },
+            { n:'2', title:'Install',    body:'Run the installer.' },
             { n:'3', title:'Play',       body:'The launcher downloads the client and connects automatically.' },
           ].map(({ n, title, body }) => (
             <div key={n} style={{ textAlign:'center', padding:'24px 16px',
