@@ -4,6 +4,7 @@ import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
+import io.ruin.cache.ObjectID;
 import io.ruin.content.maps.*;
 import io.ruin.model.activities.bosses.instancetoken.InstanceMaps;
 import io.ruin.model.activities.newshop.NewShopHandler;
@@ -91,6 +92,17 @@ public class HomeHandler {
 			)
 		));
 		var gauntletBankChest = GameObject.spawn(4483, 3037, 6129, 1, 10, 2);
+		// Fountain (879) baked into the RSPSi home map export, unwanted --
+		// spawning id -1 at the same tile/type/rotation overrides and
+		// removes a cache-placed object (same convention as
+		// EchoTreasureRoom.java). Covering both candidate tiles since the
+		// exact one wasn't certain, then replacing it with the Camel
+		// Statue. Rotation 3 is a guess at "east" (no prior spawn of this
+		// object elsewhere in the codebase to confirm against) -- check
+		// in-game and give the correct rotation number if it's off.
+		GameObject.spawn(-1, 3094, 3464, 0, 10, 0);
+		GameObject.spawn(-1, 3095, 3464, 0, 10, 0);
+		GameObject.spawn(ObjectID.CAMELS_STATUE, 3094, 3464, 0, 10, 3);
 		if(!SummerEvent.disabled) {
 			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();

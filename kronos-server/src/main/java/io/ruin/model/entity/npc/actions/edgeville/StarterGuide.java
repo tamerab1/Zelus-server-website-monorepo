@@ -296,6 +296,13 @@ public class StarterGuide {
 			e.waitForDialogue(player);
 			e.delay(1);
 
+			player.getMovement().teleport(3123, 3479, 0);
+			e.delay(1);
+			player.dialogue(new NPCDialogue(3531,
+					"And here's the gambling zone! Feeling lucky? Step inside and try your hand -- just remember, gambling carries the risk of losing whatever you stake."));
+			e.waitForDialogue(player);
+			e.delay(1);
+
 			// player.getPacketSender().moveCameraToLocation(2064, 3583, 1000, 0, 12);
 			// player.getPacketSender().turnCameraToLocation(2062, 3570, 0, 0, 30);
 			// e.delay(1);

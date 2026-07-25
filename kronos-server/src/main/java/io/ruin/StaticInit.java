@@ -220,7 +220,8 @@ public final class StaticInit {
 		io.ruin.model.content.loadouts.ZelusLoadoutInterface.register();
 		io.ruin.model.activities.gamble.Gamble.register();
 		io.ruin.model.activities.pkbots.ZelusBotManager.register();
-		io.ruin.model.activities.pkbots.WildPkBotManager.register();
+		// WildPkBotManager.register() removed -- was spawning the 3
+		// always-on wilderness PK bots (Zerker/Pure/Main); no longer wanted.
 		io.ruin.model.content.itembreaking.ItemBreakInterface.register();
 		io.ruin.model.content.itembreaking.ItemBreakPerkAttaching.register();
 		io.ruin.model.content.itembreaking.ItemUpgradeInterface.register();
