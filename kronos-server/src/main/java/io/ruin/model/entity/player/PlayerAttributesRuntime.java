@@ -33,6 +33,7 @@ import io.ruin.model.activities.raids.tob.dungeon.room.TheatreRoom;
 import io.ruin.model.activities.raids.tob.party.TheatreParty;
 import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.tempoross.Tempoross;
+import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
 import io.ruin.model.content.camelstatue.CamelStatueInterface;
 import io.ruin.model.content.combatachievements.CombatAchievementInterface;
@@ -455,6 +456,7 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient TeleportListener teleportListener;
 	public transient JournalTab.Section currentSection;
 	public transient DailyVoteInterface dailyVote;
+	public transient DailyLoginInterface dailyLogin;
 	public transient NewcomerTasksInterface newcomerTaskInterface;
 	public transient DailyTasksInterface dailyTasksInterface;
 	public transient NewShopInterface newShopInterface = new NewShopInterface();

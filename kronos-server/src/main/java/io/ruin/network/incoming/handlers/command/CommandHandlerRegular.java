@@ -464,6 +464,11 @@ public class CommandHandlerRegular {
 				player.getDailyVote().open();
 				return true;
 			}
+			case "loginstreak":
+			case "dailylogin": {
+				player.getDailyLogin().open();
+				return true;
+			}
 			case "globalboss":
 			case "gb": {
 				teleport(player, new Position(2900, 3616, 0));

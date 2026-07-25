@@ -14,6 +14,7 @@ import io.ruin.model.activities.tasks.DailyTask;
 import io.ruin.model.activities.wilderness.BountyHunter;
 import io.ruin.model.activities.wilderness.WildernessObelisk;
 import io.ruin.model.combat.WildernessRating;
+import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
 import io.ruin.model.content.ItemExchange;
 import io.ruin.model.content.UpgradeManager;
@@ -100,6 +101,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int damageForHireHighCount = 0;
 	public int damageForHireLowCount = 0;
 	public int voteStreak = 0;
+	public int loginStreak = 0;
 	public int votesClaimed = 0;
 	public int lastTotem = 0;
 	public int roofSave = 0;
@@ -871,6 +873,14 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public boolean canClaimVoteReward = false;
 	public boolean claimedVoteToday = false;
 	public boolean votedToday = false;
+	public boolean canClaimLoginReward = false;
+	public boolean claimedLoginToday = false;
+	// Interface 1109 is shared between DailyVoteInterface and
+	// DailyLoginInterface (same widget, different backing data) -- tracks
+	// which one is currently populating it so the single shared claim
+	// button (see DailyVoteInterface.register()) knows which claimReward()
+	// to call.
+	public boolean viewingDailyLoginRewards = false;
 	public boolean newcomerRewardClaimed = false;
 	public boolean loggedInGauntlet = false;
 	public boolean[] currentDailyRewardsClaimed = new boolean[5];
@@ -1280,6 +1290,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public long lastVoteClaimInEpoch = 0;
 	public long lastDonationClaimInEpoch = 0;
 	public long lastVoteRewardInEpoch = 0;
+	public long lastLoginRewardInEpoch = 0;
 	public long currentVoteRewardDay;
 	public long lastTimeEnteredPlunder = 0;
 	public long PyramidtimeRemaining;
@@ -1559,6 +1570,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	/** Zelus Loadout system — up to 10 custom PK gear snapshots (persisted). */
 	public List<ZelusLoadout> loadouts = new ArrayList<>();
 	public DailyVoteInterface.DailyReward todaysVoteReward;
+	public DailyLoginInterface.DailyReward todaysLoginReward;
 	public HashMap<NewcomerTasks, Boolean> newcomerTasks = new HashMap<>();
 	protected GameModeInterface gameModeInterface;
 	public PerkTasks currentPerkTask;

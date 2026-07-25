@@ -48,6 +48,7 @@ import io.ruin.model.activities.raids.tob.party.TheatrePartyManager;
 import io.ruin.model.activities.wilderness.BountyHunter;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
+import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
 import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.content.camelstatue.CamelStatueInterface;
@@ -460,6 +461,12 @@ public class Player extends PlayerAttributes {
 		if (dailyVote == null)
 			dailyVote = new DailyVoteInterface(this);
 		return dailyVote;
+	}
+
+	public DailyLoginInterface getDailyLogin() {
+		if (dailyLogin == null)
+			dailyLogin = new DailyLoginInterface(this);
+		return dailyLogin;
 	}
 
 	public void teleportToSlayerTask(Player player) {
@@ -1813,6 +1820,7 @@ public class Player extends PlayerAttributes {
 		this.ownedPerksList = new ArrayList<>();
 		this.activePerksList = new ArrayList<>();
 		this.dailyVote = null;
+		this.dailyLogin = null;
 		this.currentSection = null;
 		this.newcomerTaskInterface = null;
 		this.dailyTasksInterface = null;

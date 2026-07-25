@@ -63,7 +63,17 @@ public class DailyVoteInterface {
 
 	public static void register() {
 		InterfaceHandler.register(1109, h -> {
-			h.actions[468] = (SimpleAction) (p) -> p.getDailyVote().claimReward(p);
+			// Interface 1109 is shared with DailyLoginInterface (same
+			// widget, different backing data depending on which one the
+			// player last opened) -- dispatch to whichever one is active
+			// rather than always claiming the vote reward.
+			h.actions[468] = (SimpleAction) (p) -> {
+				if (p.viewingDailyLoginRewards) {
+					p.getDailyLogin().claimReward(p);
+				} else {
+					p.getDailyVote().claimReward(p);
+				}
+			};
 		});
 
 	}
@@ -80,6 +90,7 @@ public class DailyVoteInterface {
 	}
 
 	public void open() {
+		player.viewingDailyLoginRewards = false;
 
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
 		player.getPacketSender().sendString(INTERFACE_ID, 22, "Current Vote Streak: " + player.voteStreak);
