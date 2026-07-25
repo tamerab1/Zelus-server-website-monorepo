@@ -159,6 +159,33 @@ jobs:
           cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/server:latest-dev
           cache-to: type=inline
 
+  # docker-compose.yml/docker-compose-prod.yml have always referenced
+  # ${IMAGE_REGISTRY}/db_sql:${IMAGE_TAG}, but no job ever actually built or
+  # pushed it -- deploy-development only surfaced this once it got far
+  # enough to actually try scheduling the container ("No such image").
+  # Shares the `server` path-filter category (docker/db_sql/** is grouped
+  # with docker/server/** in setup's filter) since it's part of the same
+  # logical "server-side" build, even though it needs no Gradle/JDK step.
+  build-db_sql:
+    needs: [setup, test-server]
+    if: needs.setup.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/db_sql:${{ github.sha }}
+          cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/db_sql:latest-dev
+          cache-to: type=inline
+
   build-website-client:
     needs: [setup, test-website-client]
     if: needs.setup.outputs.website_client == 'true'
@@ -247,6 +274,12 @@ jobs:
           tags: ${{ needs.setup.outputs.image_base }}/server:latest-dev
       - uses: docker/build-push-action@v6
         with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/db_sql:latest-dev
+      - uses: docker/build-push-action@v6
+        with:
           context: website/zelus-website-client
           push: true
           tags: ${{ needs.setup.outputs.image_base }}/website-client:latest-dev
@@ -293,6 +326,14 @@ jobs:
           tags: |
             ${{ needs.setup.outputs.image_base }}/server:${{ github.ref_name }}
             ${{ needs.setup.outputs.image_base }}/server:latest
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: |
+            ${{ needs.setup.outputs.image_base }}/db_sql:${{ github.ref_name }}
+            ${{ needs.setup.outputs.image_base }}/db_sql:latest
       - uses: docker/build-push-action@v6
         with:
           context: website/zelus-website-client
