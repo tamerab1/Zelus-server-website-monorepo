@@ -171,6 +171,14 @@ jobs:
           context: website/zelus-website-client
           push: true
           tags: ${{ needs.setup.outputs.image_base }}/website-client:${{ github.sha }}
+          # Vite bakes these into the static bundle at build time (see the
+          # client's Dockerfile ARG/ENV before `npm run build`) — there is
+          # no way to change them at container-run time afterward. Both are
+          # public-safe values (a URL and a Turnstile *site* key, not the
+          # secret key), so plain repo Variables are fine here, not Secrets.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY }}
           cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/website-client:latest-dev
           cache-to: type=inline
 
@@ -238,6 +246,11 @@ jobs:
           context: website/zelus-website-client
           push: true
           tags: ${{ needs.setup.outputs.image_base }}/website-client:latest-dev
+          # See the identical build-args note in build-website-client above —
+          # this is the tag deploy-development (i.e. beta) actually runs.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY }}
       - uses: docker/build-push-action@v6
         with:
           context: website/zelus-website-api
@@ -283,6 +296,12 @@ jobs:
           tags: |
             ${{ needs.setup.outputs.image_base }}/website-client:${{ github.ref_name }}
             ${{ needs.setup.outputs.image_base }}/website-client:latest
+          # Deliberately separate *_PROD variable names from the dev/beta
+          # build-args above — production must point at its own domain, not
+          # get silently built with the beta API URL.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL_PROD }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY_PROD }}
       - uses: docker/build-push-action@v6
         with:
           context: website/zelus-website-api

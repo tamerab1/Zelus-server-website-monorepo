@@ -10,15 +10,121 @@ services:
             # If you need to profile or debug in production, use an SSH tunnel:
             # ssh -L 10001:10001 user@vps-ip
         environment:
-            - KRONOS_BOOT_OPTS=-Xmx16g
+            # Sized for a 4GB VPS running MariaDB+Mongo+API alongside this —
+            # -Xmx16g on a 4GB box would fail to start outright. Heap + JVM
+            # overhead (metaspace, thread stacks, direct buffers) needs to
+            # fit inside the 2g hard limit below with margin. Watch
+            # `docker stats` under real beta load and raise both together
+            # (in step with the VPS's actual RAM) if you see heap pressure.
+            - KRONOS_BOOT_OPTS=-Xmx1536m
         volumes:
-            # Fix #1: Securely inject the host's server.properties as Read-Only
-            - ./server.properties:/app/server.properties:ro
-            # Persistent live runtime data (saves, logs, metrics)
-            - data_server:/app/data/runtime/
+            # ABSOLUTE path, deliberately not "./server.properties": `docker
+            # stack deploy` resolves relative bind sources on whichever
+            # machine issues the command, not the Swarm node the container
+            # actually lands on. Deploys run with DOCKER_HOST=ssh://... from
+            # a GitHub Actions runner (see ci-cd.yml), so a relative path
+            # here would resolve to a runner-local path that doesn't exist
+            # on the VPS — Docker's fallback for a missing bind source is to
+            # silently mount an empty directory, which would boot the game
+            # server with no real config and no error. This absolute path
+            # must be created once on the VPS itself — see README-beta.md.
+            - /opt/zelus/server.properties:/app/server.properties:ro
+            # OSRS cache + TOML source tree — lives outside this repo
+            # entirely (the sibling `data zelus/` folder), never built into
+            # the image (CI's :kronos-boot:build_cache step is deliberately
+            # excluded — it shells out to a native tool against that folder,
+            # which no CI runner has). Must be staged on the VPS itself at
+            # this absolute path — see README-beta.md. server.properties'
+            # data_path/cache_path must point at /data and /data/cache
+            # respectively to match this mount.
+            - /opt/zelus/data:/data
+            # NOTE: there is deliberately no separate runtime-data volume
+            # here. Player saves, IP bans, custom presets, referral data,
+            # etc. are all written under ${data_path}/runtime/... (see
+            # CentralSaves.java, IPBans.java, PresetManager.java) — i.e.
+            # under the /opt/zelus/data mount above, not a separate path.
+            # A prior data_server:/app/data/runtime/ volume here didn't
+            # match that and was dead weight (nothing ever wrote there).
         depends_on:
             - db_sql
             - db_mongo
+        deploy:
+            resources:
+                limits:
+                    memory: 2g
+
+    # Website API (FastAPI) — talks to db_sql over the internal Swarm overlay
+    # network (service name resolves automatically), never publishes a host
+    # port directly. Only reachable through reverse_proxy.
+    website_api:
+        image: "${IMAGE_REGISTRY}/website-api:${IMAGE_TAG}"
+        restart: unless-stopped
+        environment:
+            DB_HOST: db_sql
+            DB_PORT: 3306
+            DB_USER: website_api
+            DB_PASS: ${WEBSITE_DB_PASSWORD}
+            DB_NAME: zelusrsps_db
+            GAME_DB_HOST: db_sql
+            GAME_DB_NAME: reason
+            GAME_DB_USERNAME: website_api
+            GAME_DB_PASSWORD: ${WEBSITE_DB_PASSWORD}
+            SITE_URL: https://${BETA_DOMAIN}
+            CORS_ORIGINS: https://${BETA_DOMAIN}
+            TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
+            SMTP_HOST: ${SMTP_HOST}
+            SMTP_PORT: ${SMTP_PORT}
+            SMTP_USER: ${SMTP_USER}
+            SMTP_PASS: ${SMTP_PASS}
+            STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+            STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+            PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
+            PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
+            PAYPAL_BASE_URL: https://api-m.sandbox.paypal.com
+            PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
+        depends_on:
+            - db_sql
+        deploy:
+            resources:
+                limits:
+                    memory: 512m
+
+    # React dashboard — VITE_API_URL/VITE_TURNSTILE_SITE_KEY are baked in at
+    # image build time (see .github/workflows/ci-cd.yml build-args), not
+    # configurable here at runtime. Only reachable through reverse_proxy.
+    website_client:
+        image: "${IMAGE_REGISTRY}/website-client:${IMAGE_TAG}"
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    memory: 64m
+
+    # Public HTTPS entrypoint — the ONLY service exposing 80/443. Terminates
+    # TLS (automatic Let's Encrypt via Caddy) and reverse-proxies to
+    # website_client / website_api by domain. See ./Caddyfile.
+    reverse_proxy:
+        image: caddy:2-alpine
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        environment:
+            BETA_DOMAIN: ${BETA_DOMAIN}
+            BETA_API_DOMAIN: ${BETA_API_DOMAIN}
+        volumes:
+            # Same absolute-path reasoning as game_server's server.properties
+            # mount above — see the comment there.
+            - /opt/zelus/Caddyfile:/etc/caddy/Caddyfile:ro
+            - data_caddy:/data
+            - data_caddy_config:/config
+        depends_on:
+            - website_client
+            - website_api
+        deploy:
+            resources:
+                limits:
+                    memory: 128m
 
     # Relational Database Layer
     db_sql:
@@ -29,8 +135,15 @@ services:
             MARIADB_USER: ${DB_SQL_USER}
             MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
             MARIADB_DATABASE: zelus_prod
+            # WEBSITE_DB_PASSWORD is set in the base docker-compose.yml's
+            # db_sql block (merged in here by `docker stack config`) —
+            # not repeated here to avoid two sources of truth for it.
         volumes:
             - data_db_sql:/var/lib/mysql
+        deploy:
+            resources:
+                limits:
+                    memory: 768m
 
     # Document Store Layer (Hardened Credentials)
     db_mongo:
@@ -42,6 +155,10 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
         volumes:
             - data_db_mongo:/data/db
+        deploy:
+            resources:
+                limits:
+                    memory: 512m
 
     # Database Management Tool (Secured for Internal Network Only)
     adminer:
@@ -59,12 +176,18 @@ services:
               mode: host
         depends_on:
             - db_sql
+        deploy:
+            resources:
+                limits:
+                    memory: 128m
 
 # Persistent Infrastructure Volumes Matrix
 volumes:
-    data_server:
-        driver: local
     data_db_sql:
         driver: local
     data_db_mongo:
+        driver: local
+    data_caddy:
+        driver: local
+    data_caddy_config:
         driver: local

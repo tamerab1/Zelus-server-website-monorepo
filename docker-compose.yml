@@ -7,6 +7,9 @@ services:
             MARIADB_ROOT_PASSWORD: ${DB_SQL_ROOT_PASSWORD}
             MARIADB_USER: ${DB_SQL_USER}
             MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
+            # Consumed by docker-entrypoint-initdb.d/init_website.sh to create
+            # the website_api DB user + zelusrsps_db schema on first boot.
+            WEBSITE_DB_PASSWORD: ${WEBSITE_DB_PASSWORD}
         volumes:
             - data_db_sql:/var/lib/mysql
 

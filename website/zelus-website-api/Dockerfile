@@ -39,9 +39,14 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
 
-# 4 Uvicorn workers; tune WEB_CONCURRENCY env var per server CPU count
+# 2 Uvicorn workers — sized for a small beta box (see docker-compose-prod.yml's
+# 512m limit on this service). Note: gunicorn's WEB_CONCURRENCY env var is
+# ignored whenever --workers is passed explicitly like this, regardless of
+# exec- vs shell-form CMD — bump the literal number below (and the compose
+# memory limit alongside it) once the VPS is upsized, rather than trying to
+# set that env var.
 CMD ["gunicorn", "main:app", \
-     "--workers", "4", \
+     "--workers", "2", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
      "--bind", "0.0.0.0:8000", \
      "--timeout", "120", \

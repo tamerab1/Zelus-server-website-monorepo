@@ -1,0 +1,15 @@
+# Caddy automatically provisions and renews Let's Encrypt certs for any
+# domain here — requires BETA_DOMAIN/BETA_API_DOMAIN to already resolve
+# (via DNS A records) to this VPS's public IP before the stack starts, or
+# the ACME HTTP-01 challenge will fail and it'll retry/backoff.
+#
+# Service names (website_client, website_api) resolve via the Swarm
+# overlay network — no IPs or ports needed, Docker's embedded DNS handles it.
+
+{$BETA_DOMAIN} {
+	reverse_proxy website_client:80
+}
+
+{$BETA_API_DOMAIN} {
+	reverse_proxy website_api:8000
+}
