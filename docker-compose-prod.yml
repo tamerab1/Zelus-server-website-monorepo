@@ -4,11 +4,17 @@ services:
         image: "${IMAGE_REGISTRY}/server:${IMAGE_TAG}"
         restart: unless-stopped
         ports:
-            # ONLY expose the public game service port to the world
             - "43594:43594"
-            # Ports 10001 (YourKit) and 9292 are deliberately removed from public routing.
-            # If you need to profile or debug in production, use an SSH tunnel:
-            # ssh -L 10001:10001 user@vps-ip
+            # 9292 is NOT a profiler/debug port -- that assumption was wrong.
+            # It's world-list/src/main/kotlin/.../WorldListServer.kt, a real
+            # Ktor HTTP server serving GET /worlds.ws, which the client's
+            # jav_config.ws param=17 depends on for its actual login/world
+            # connection target. Confirmed by tracing a real "Error
+            # connecting to server. Please try using a different world."
+            # client-side failure back to this exact port being unreachable.
+            # Port 10001 (YourKit) is the one still deliberately excluded --
+            # for that, use an SSH tunnel: ssh -L 10001:10001 user@vps-ip
+            - "9292:9292"
         environment:
             # History: -Xmx1536m and then -Xmx1800m both hit a real
             # OutOfMemoryError loading the actual cache on the original 4GB
