@@ -16,8 +16,9 @@ Environment variables (all optional — defaults match server.properties):
 """
 
 import os
-from sqlalchemy import create_engine, Column, BigInteger, Integer, String, DateTime
-from sqlalchemy.orm import sessionmaker, declarative_base
+
+from sqlalchemy import BigInteger, Column, DateTime, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # ── Connection ────────────────────────────────────────────────────────────────
 _host     = os.getenv("GAME_DB_HOST",     "localhost")

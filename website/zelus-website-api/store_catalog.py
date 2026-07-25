@@ -18,7 +18,6 @@ tokens field:
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -98,7 +97,7 @@ CATALOG: dict[str, StoreItem] = {
 }
 
 
-def get_item(slug: str) -> Optional[StoreItem]:
+def get_item(slug: str) -> StoreItem | None:
     """
     Case-insensitive lookup by slug.  Returns None if the slug is not in the
     catalog — the checkout endpoint must reject unknown slugs with a 400 error.

@@ -8,9 +8,9 @@ Security contract:
   - OSRS GP: a Discord webhook notifies staff; fulfillment is manual until confirmed.
   - Crypto: placeholder endpoint — no automatic fulfillment wired yet.
 """
-import os
 import logging
 import math
+import os
 
 import httpx
 import stripe

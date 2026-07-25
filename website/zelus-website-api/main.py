@@ -1,23 +1,24 @@
 import hashlib
+import json
 import logging
 import math
 import os
-import json
 import secrets
 import smtplib
 import time
+
 from dotenv import load_dotenv
+
 load_dotenv()
 from datetime import datetime, timedelta, timezone
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
-from typing import Optional
 
 import bcrypt
 import requests as _requests
 import stripe as _stripe
-from fastapi import FastAPI, Depends, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr, Field
@@ -29,7 +30,11 @@ from sqlalchemy.orm import Session
 
 import models
 from database import engine, get_db
-from game_database import get_game_db, HiscoreUser, HISCORE_SORT_COLUMNS, PlayerKillLog, DropLog
+from game_database import (
+    HISCORE_SORT_COLUMNS,
+    HiscoreUser,
+    get_game_db,
+)
 from routers import checkout as checkout_router_module
 from routers import webhooks as webhooks_router_module
 
@@ -523,7 +528,7 @@ class ResendVerificationRequest(BaseModel):
 # ── Vote cooldown ─────────────────────────────────────────────────────────────
 VOTE_COOLDOWN_HOURS = 12
 
-def _get_vote_state(vote: Optional[models.Vote]) -> dict:
+def _get_vote_state(vote: models.Vote | None) -> dict:
     if not vote:
         return {"state": "idle", "seconds_remaining": None, "vote_id": None}
     now     = datetime.now(timezone.utc)
@@ -1533,7 +1538,7 @@ def store_claim(
             "username":         username,
             "paymentStatus":    "paid",
             "hasClaimed":       False,
-            "transactionAmount": int((claim.tokens_to_give or 0)),
+            "transactionAmount": int(claim.tokens_to_give or 0),
         }
 
         view_models.append({

@@ -1,7 +1,18 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, Text, UniqueConstraint, ForeignKey
+import enum
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-import enum
 
 Base = declarative_base()
 
