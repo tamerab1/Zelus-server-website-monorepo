@@ -1,5 +1,6 @@
 package io.ruin.rsprot;
 
+import io.ruin.api.utils.ServerWrapper;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -29,7 +30,13 @@ public class RSProtNetworkSnapshotService {
 		@SuppressWarnings("unchecked")
 		var snapshot = (ConcurrentNetworkTrafficSnapshot<LoginBlock<?>>) monitor.resetTransient();
 		var data = ConcurrentNetworkTrafficWriter.INSTANCE.write(snapshot);
-		var dir = new File("data/runtime/network/");
+		// Was a bare relative path ("data/runtime/network/"), resolved
+		// against the JVM's working directory (/app in the container)
+		// rather than the configured data_path -- even where mkdirs()
+		// succeeded this would be ephemeral container storage, lost on
+		// every redeploy, not the persistent /data mount. Matched to the
+		// same ServerWrapper.dataFolder convention everything else uses.
+		var dir = new File(ServerWrapper.dataFolder, "runtime/network/");
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}

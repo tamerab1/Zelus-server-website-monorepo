@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.ruin.api.utils.ExecutorUtils;
+import io.ruin.api.utils.ServerWrapper;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -24,7 +25,13 @@ import static io.ruin.util.ByteBufExtensions.writeString;
 @Slf4j
 public final class HWIDManager implements Runnable {
 
-	private static final Path DEFAULT_PATH = Path.of("data", "banned_hwids.dat");
+	// Was a bare relative path ("data/banned_hwids.dat"), resolved against
+	// the JVM's working directory (/app in the container) rather than the
+	// configured data_path -- failed every minute in the container since
+	// /app/data doesn't exist (only /data is mounted). Matched to the same
+	// ServerWrapper.dataFolder convention every other runtime-state writer
+	// uses (IPBans.java, CentralSaves.java, PresetManager.java, etc.).
+	private static final Path DEFAULT_PATH = Path.of(ServerWrapper.dataFolder.getAbsolutePath(), "runtime", "banned_hwids.dat");
 	private static final ObjectSet<String> banned = new ObjectOpenHashSet<>();
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
