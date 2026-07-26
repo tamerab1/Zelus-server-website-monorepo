@@ -120,7 +120,6 @@ public class IcyEventBoss extends NPCCombat {
     }
 
     private void magicAttack() {
-        npc.animate(10402);
         getPlayers().forEach(p -> {
             World.startEvent(e -> {
                 e.setCancelCondition(() -> npc.getHp() < 1);
@@ -136,7 +135,6 @@ public class IcyEventBoss extends NPCCombat {
     }
 
     private void rangedAttack() {
-        npc.animate(10403);
         getPlayers().forEach(p -> {
             World.startEvent(e -> {
                 e.setCancelCondition(() -> npc.getHp() < 1);
