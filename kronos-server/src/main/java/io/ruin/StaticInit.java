@@ -22,6 +22,7 @@ public final class StaticInit {
 		io.ruin.model.activities.DonationBossHandler.init();
 		io.ruin.model.activities.VoteBossHandler.init();
 		io.ruin.model.activities.VorathHandler.init(); // fixed position, no DynamicMap
+		io.ruin.model.activities.IcyEventBossHandler.init(); // fixed position, no DynamicMap
 		io.ruin.services.http.hiscores.Hiscores.sendBossDetails();
 		io.ruin.model.content.HomeHandler.init();
 		io.ruin.network.HWIDManager.start();

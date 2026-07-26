@@ -9,6 +9,7 @@ import io.ruin.model.World;
 import io.ruin.model.activities.DonationBossHandler;
 import io.ruin.model.activities.VoteBossHandler;
 import io.ruin.model.activities.VorathHandler;
+import io.ruin.model.activities.IcyEventBossHandler;
 import io.ruin.model.activities.bosses.instancetoken.InstanceManager;
 import io.ruin.model.activities.bosses.instancetoken.InstanceMaps;
 import io.ruin.model.activities.dailytasks.DailyTasksInterface;
@@ -235,6 +236,18 @@ public class CommandHandlerRegular {
 					return true;
 				}
 				teleport(player, VorathHandler.teleportPosition);
+				if (player.pet != null && player.familiarNPC != null) {
+					Pet.pickup(player, player.familiarNPC, player.pet, true);
+				}
+				return true;
+			}
+
+			case "icy", "icyboss": {
+				if (IcyEventBossHandler.teleportPosition == null) {
+					player.sendMessage("The Icy Event Boss is currently unavailable.");
+					return true;
+				}
+				teleport(player, IcyEventBossHandler.teleportPosition);
 				if (player.pet != null && player.familiarNPC != null) {
 					Pet.pickup(player, player.familiarNPC, player.pet, true);
 				}
