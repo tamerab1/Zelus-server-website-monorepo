@@ -16,7 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,13 +28,22 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CamelStatueHandler {
 	public static final AtomicLong totalDonated = new AtomicLong(0);
 	public static final AtomicLong amountSinceLastUpdate = new AtomicLong(0);
-	static CamelStatueRewards lastReward = null;
+
+	private static final Map<CamelStatueRewards, AtomicLong> donatedPerReward = new EnumMap<>(CamelStatueRewards.class);
+	static {
+		for (CamelStatueRewards reward : CamelStatueRewards.values())
+			donatedPerReward.put(reward, new AtomicLong(0));
+	}
 
 	@Getter
 	static List<CamelStatueRewards> activeRewards = new ArrayList<>();
 
 	public static boolean isRewardActive(CamelStatueRewards reward) {
 		return activeRewards.contains(reward);
+	}
+
+	public static long getDonated(CamelStatueRewards reward) {
+		return donatedPerReward.get(reward).get();
 	}
 
 	public static final ScheduledExecutorService scheduler =
@@ -57,9 +68,10 @@ public class CamelStatueHandler {
 					amount = player.getInventory().getAmount(995);
 				}
 				player.getInventory().remove(995, amount);
-				addGoldPieceValueToStatue(player, amount);
+				CamelStatueRewards reward = player.getCamelStatueInterface().getLastSection();
+				addGoldPieceValueToStatue(player, amount, reward, "");
 				player.getCamelStatueInterface().update(player);
-				updateWell();
+				checkRewardUnlock(reward);
 			} catch (Exception e) {
 				log.error("Error processing donation from player: %s".formatted(player.getName()), e);
 				player.sendMessage("There was an error processing your donation. Please try again.");
@@ -85,9 +97,10 @@ public class CamelStatueHandler {
 
 				var goldValue = amount * 1_000L;
 
-				addGoldPieceValueToStatue(player, goldValue);
+				CamelStatueRewards reward = player.getCamelStatueInterface().getLastSection();
+				addGoldPieceValueToStatue(player, goldValue, reward, "");
 				player.getCamelStatueInterface().update(player);
-				updateWell();
+				checkRewardUnlock(reward);
 			} catch (Exception e) {
 				log.error("Error processing donation from player: %s".formatted(player.getName()), e);
 				player.sendMessage("There was an error processing your donation. Please try again.");
@@ -95,36 +108,34 @@ public class CamelStatueHandler {
 		});
 	}
 
-	private static void addGoldPieceValueToStatue(Player player, long amount) {
+	private static void addGoldPieceValueToStatue(Player player, long amount, CamelStatueRewards reward, String broadcastPrefix) {
 		totalDonated.addAndGet(amount);
 		amountSinceLastUpdate.addAndGet(amount);
+		donatedPerReward.get(reward).addAndGet(amount);
 
-		player.sendMessage("You have donated %s coins to the statue."
-				.formatted(NumberUtils.formatNumber(amount)));
+		player.sendMessage("You have donated %s coins towards %s."
+				.formatted(NumberUtils.formatNumber(amount), reward.getName()));
 		player.sendMessage("There's been a total of %s coins donated to the statue."
 				.formatted(NumberUtils.formatNumber(totalDonated.get())));
 
 		if (amount > 50_000_000)
 			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
-					"%s has donated %s coins to the Camel Statue at home!"
+					broadcastPrefix + "%s has donated %s coins to the Camel Statue at home!"
 							.formatted(player.getName(), NumberUtils.formatNumber(amount)));
+
+		if (amountSinceLastUpdate.get() >= 250_000_000) {
+			amountSinceLastUpdate.set(0);
+			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+					"Another 250,000,000 coins have been donated to the Camel Statue at home!");
+		}
 	}
 
 	public static void adminDonateToWell(Player player, int amount) {
 		try {
-			player.sendMessage("You have donated " + NumberUtils.formatNumber(amount) + " coins to the statue.");
-			player.sendMessage(
-					"There's been a total of " + NumberUtils.formatNumber(totalDonated.get()) + " coins donated to the statue.");
-
-			totalDonated.addAndGet(amount);
-			amountSinceLastUpdate.addAndGet(amount);
-
-			if (amount > 50000000)
-				Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue", "[Admin Fill] " + player.getName() +
-						" has donated " + NumberUtils.formatNumber(amount) + " coins to the Camel Statue at home!");
-
+			CamelStatueRewards reward = player.getCamelStatueInterface().getLastSection();
+			addGoldPieceValueToStatue(player, amount, reward, "[Admin Fill] ");
 			player.getCamelStatueInterface().update(player);
-			updateWell();
+			checkRewardUnlock(reward);
 		} catch (Exception e) {
 			log.error("Error processing admin donation from player: " + player.getName(), e);
 			player.sendMessage("There was an error processing your donation.");
@@ -136,8 +147,8 @@ public class CamelStatueHandler {
 			try {
 				totalDonated.set(0);
 				amountSinceLastUpdate.set(0);
+				donatedPerReward.values().forEach(donated -> donated.set(0));
 				activeRewards.clear();
-				updateWell();
 				log.info("Well cleared at midnight.");
 				Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
 						"A new day has started and the camel statue has been wiped!");
@@ -153,49 +164,32 @@ public class CamelStatueHandler {
 		return midnight - now;
 	}
 
-	private static void updateWell() {
+	private static void checkRewardUnlock(CamelStatueRewards reward) {
 		try {
-			if (amountSinceLastUpdate.get() >= 250000000) {
-				amountSinceLastUpdate.set(0);
-				Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
-						"Another 250,000,000 coins have been donated to the Camel Statue at home!");
-			}
+			if (activeRewards.contains(reward))
+				return;
+			if (donatedPerReward.get(reward).get() < reward.getUnlockAmount())
+				return;
+
+			activeRewards.add(reward);
+			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+				"The Camel Statue at home has been upgraded and is now giving " +
+					reward.name().toLowerCase().replace("_", " ") + "!");
 
 			var dtoArray = new JSONArray();
-
-			for (int i = 0; i < CamelStatueRewards.values().length; i++) {
-				if (totalDonated.get() < getNextRewardCost(i)) {
-					break;
-				}
-				if (!activeRewards.contains(CamelStatueRewards.values()[i])) {
-					lastReward = CamelStatueRewards.values()[i];
-					Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
-						"The Camel Statue at home has been upgraded and is now giving " +
-							lastReward.name().toLowerCase().replace("_", " ") + "!");
-//					RareDropEmbedMessage.sendWellMessage(
-//						lastReward.name().toLowerCase().replace("_", " ") + " has been globally activated!");
-					activeRewards.add(lastReward);
-
-					dtoArray.put(new JSONObject()
-						.put("perk_name", lastReward.getName())
-						.put("perk_description", lastReward.getDescription())
-					);
-				}
-			}
+			dtoArray.put(new JSONObject()
+				.put("perk_name", reward.getName())
+				.put("perk_description", reward.getDescription())
+			);
 			var dto = new JSONObject();
-				dto.put("enabled_perks", dtoArray);
-
+			dto.put("enabled_perks", dtoArray);
 			GlobalBroadcastHook.sendWellMessage(dto);
 
-			if (activeRewards.contains(CamelStatueRewards.DOUBLE_SLAYER_POINTS) && !World.doubleSlayer)
+			if (reward == CamelStatueRewards.DOUBLE_SLAYER_POINTS && !World.doubleSlayer)
 				World.doubleSlayer = true;
 		} catch (Exception e) {
 			log.error("Error updating well", e);
 		}
-	}
-
-	private static long getNextRewardCost(int ordinal) {
-		return CamelStatueRewards.values()[ordinal].getUnlockAmount();
 	}
 
 	public static void shutdown() {
