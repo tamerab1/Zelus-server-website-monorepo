@@ -457,6 +457,7 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient JournalTab.Section currentSection;
 	public transient DailyVoteInterface dailyVote;
 	public transient DailyLoginInterface dailyLogin;
+	public transient io.ruin.model.content.casino.CasinoBlackjackGame casinoBlackjack;
 	public transient NewcomerTasksInterface newcomerTaskInterface;
 	public transient DailyTasksInterface dailyTasksInterface;
 	public transient NewShopInterface newShopInterface = new NewShopInterface();

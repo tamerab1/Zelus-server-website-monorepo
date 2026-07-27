@@ -208,6 +208,7 @@ public final class StaticInit {
 		io.ruin.model.content.Announcements.register();
 		io.ruin.model.content.DailyVoteInterface.register();
 		io.ruin.model.content.DailyLoginInterface.register();
+		io.ruin.model.content.casino.CasinoBlackjackInterface.register();
 		io.ruin.model.content.HomeHandler.register();
 		io.ruin.model.content.HydraLeather.register();
 		io.ruin.model.content.ItemExchange.register();

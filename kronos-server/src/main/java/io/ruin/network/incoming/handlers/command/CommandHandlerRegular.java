@@ -482,6 +482,19 @@ public class CommandHandlerRegular {
 				player.getDailyLogin().open();
 				return true;
 			}
+			case "casino":
+			case "blackjack21": {
+				io.ruin.model.content.casino.CasinoBlackjackInterface.open(player);
+				return true;
+			}
+			case "casinoseed": {
+				if (args.length < 1) {
+					player.sendMessage("Usage: ::casinoseed <value>");
+					return true;
+				}
+				io.ruin.model.content.casino.CasinoBlackjackInterface.setClientSeed(player, args[0]);
+				return true;
+			}
 			case "globalboss":
 			case "gb": {
 				teleport(player, new Position(2900, 3616, 0));

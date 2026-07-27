@@ -85,12 +85,19 @@ public class HomeHandler {
 		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
 		ObjectAction.register(panda, 1, (player, obj) -> NewShopHandler.openShop(player, NewShopHandler.pvmPointStore));
 		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
-		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> player.dialogue(
-			new OptionsDialogue("Gambling carries the risk of losing whatever you stake. Continue?",
-				new Option("Yes, I understand the risk.", () -> player.getMovement().teleport(3123, 3476, 0)),
-				new Option("No, take me back.", player::closeDialogue)
-			)
-		));
+		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> {
+			if (player.getPosition().inBounds(io.ruin.model.activities.gamble.Gamble.GAMBLE_ZONE)) {
+				// already inside -- just let them walk back out, no risk warning needed
+				player.getMovement().teleport(3123, 3479, 0);
+			} else {
+				player.dialogue(
+					new OptionsDialogue("Gambling carries the risk of losing whatever you stake. Continue?",
+						new Option("Yes, I understand the risk.", () -> player.getMovement().teleport(3123, 3476, 0)),
+						new Option("No, take me back.", player::closeDialogue)
+					)
+				);
+			}
+		});
 		var gauntletBankChest = GameObject.spawn(4483, 3037, 6129, 1, 10, 2);
 		// Fountain (879) baked into the RSPSi home map export, unwanted --
 		// spawning id -1 at the same tile/type/rotation overrides and
@@ -108,6 +115,8 @@ public class HomeHandler {
 			SummerEvent.newEventStart();
 		}
 		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
+		new NPC(5840).spawn(new Position(3125, 3464, 0), Direction.NORTH);
+		new NPC(5840).spawn(new Position(3121, 3464, 0), Direction.NORTH);
 	}
 
 	public static void switchBook(Player player, SpellBook book, boolean altar) {

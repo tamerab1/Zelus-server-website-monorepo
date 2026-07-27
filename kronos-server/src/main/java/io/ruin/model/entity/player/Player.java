@@ -469,6 +469,14 @@ public class Player extends PlayerAttributes {
 		return dailyLogin;
 	}
 
+	public io.ruin.model.content.casino.CasinoBlackjackGame getCasinoBlackjack() {
+		return casinoBlackjack;
+	}
+
+	public void setCasinoBlackjack(io.ruin.model.content.casino.CasinoBlackjackGame casinoBlackjack) {
+		this.casinoBlackjack = casinoBlackjack;
+	}
+
 	public void teleportToSlayerTask(Player player) {
 		int left = VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player);
 		if (left < 1) {
