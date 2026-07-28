@@ -114,6 +114,12 @@ public class HomeHandler {
 			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();
 		}
+		// Tournament registration board ("Scoreboard", 44930). RSPSi-placed
+		// copies of this object showed as null in-game -- spawning it
+		// server-side instead as a fallback. Type/rotation are a guess
+		// (matching the Camel Statue's spawn convention above); check
+		// in-game and adjust if it renders wrong.
+		GameObject.spawn(44930, 3072, 3473, 0, 10, 0);
 		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
 		new NPC(5840).spawn(new Position(3125, 3464, 0), Direction.NORTH);
 		new NPC(5840).spawn(new Position(3121, 3464, 0), Direction.NORTH);

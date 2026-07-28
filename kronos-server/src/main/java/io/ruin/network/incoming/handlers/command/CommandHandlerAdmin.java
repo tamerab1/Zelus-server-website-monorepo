@@ -1918,6 +1918,26 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "locsat": {
+				// Same as ::locs but for an arbitrary tile, since some objects
+				// (barriers, stalls) block their own tile so you can't stand
+				// on them to run ::locs directly.
+				int lx = Integer.parseInt(args[0]);
+				int ly = Integer.parseInt(args[1]);
+				int lz = args.length > 2 ? Integer.parseInt(args[2]) : player.getHeight();
+				Tile atTile = Tile.get(lx, ly, lz, false);
+				if (atTile == null || atTile.gameObjects == null || atTile.gameObjects.isEmpty()) {
+					player.sendMessage("No locations at " + lx + "," + ly + "," + lz + ".");
+					return true;
+				}
+				for (GameObject object : atTile.gameObjects) {
+					player.sendMessage(
+							"id=" + object.getId() + "  x=" + object.x + "  y=" + object.y + "  z=" + object.z
+									+ "  type=" + object.getType() + "  dir=" + object.getDirection());
+				}
+				return true;
+			}
+
 			case "locs": {
 				Tile tile = Tile.get(player.getAbsX(), player.getAbsY(), player.getHeight(), false);
 				if (tile == null || tile.gameObjects == null) {

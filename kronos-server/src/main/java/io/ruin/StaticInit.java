@@ -161,6 +161,7 @@ public final class StaticInit {
 		io.ruin.model.activities.tempevents.hweenevent.HalloweenDeathNPC.register();
 		io.ruin.model.activities.tempoross.TemporossActions.register();
 		io.ruin.model.activities.tempoross.TemporossRewards.register();
+		io.ruin.model.activities.tournament.TournamentHandler.register();
 		io.ruin.model.activities.warriorsguild.AnimatedArmor.register();
 		io.ruin.model.activities.warriorsguild.CyclopsRoom.register();
 		io.ruin.model.activities.warriorsguild.WarriorsGuild.register();
