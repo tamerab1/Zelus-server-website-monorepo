@@ -1,6 +1,6 @@
 import { useApp } from '../../context/AppContext.jsx';
 
-const DISCORD_URL = 'https://discord.gg/eSgzHWaeqd';
+const DISCORD_URL = 'https://discord.gg/XZ3E6Nur2r';
 
 const NAV_LINKS = [
   { label: 'Play Now',         view: 'download' },

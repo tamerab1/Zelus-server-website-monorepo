@@ -37,6 +37,7 @@ dependencies {
 	implementation(projects.worldList)
 	implementation(projects.tradepost)
 	implementation(projects.playerMongo)
+	implementation(projects.economyProtection)
 
 	implementation(libs.hotswap.agent.core)
 }

@@ -160,7 +160,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "discord": {
-				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/eSgzHWaeqd");
+				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 

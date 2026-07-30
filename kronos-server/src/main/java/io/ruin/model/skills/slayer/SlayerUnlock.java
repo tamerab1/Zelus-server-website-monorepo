@@ -629,6 +629,9 @@ public enum SlayerUnlock {
 			var bossName = StructType.get(metaStructId).stringParam(1801);
 			return bossName;
 		}
+		if (id == TuraelTask.SOURHOG.getTaskId()) {
+			return TuraelTask.SOURHOG.getTaskName();
+		}
 		return EnumMap.get(693).strings().get(id);
 	}
 

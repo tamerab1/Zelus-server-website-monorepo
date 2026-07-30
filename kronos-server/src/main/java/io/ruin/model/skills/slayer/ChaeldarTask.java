@@ -164,7 +164,7 @@ public enum ChaeldarTask {
 		110,
 		170
 	),
-	BREIN_RAT(98,
+	BREIN_RAT(84,
 		"Brine rat",
 		new int[]{4501},
 		45,

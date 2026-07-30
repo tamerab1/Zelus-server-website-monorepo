@@ -481,7 +481,7 @@ export default function CheckoutModal({ pkg, currentUser, onClose }) {
             Discord and we can arrange a manual crypto payment.
           </p>
           <a
-            href="https://discord.gg/eSgzHWaeqd"
+            href="https://discord.gg/XZ3E6Nur2r"
             target="_blank"
             rel="noopener noreferrer"
             className="font-fantasy text-xs tracking-widest px-6 py-2.5 rounded-sm transition-all duration-200"

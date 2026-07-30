@@ -193,7 +193,8 @@ public final class Server extends ServerWrapper {
 				"tormenteddemon.module",
 				"donationdeals.module",
 				"gemstonecrab.module",
-				"player.mongo.module");
+				"player.mongo.module",
+				"economy.protection.module");
 
 		RSProtService.create();
 
