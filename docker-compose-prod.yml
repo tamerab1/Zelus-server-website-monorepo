@@ -3,6 +3,10 @@ services:
     game_server:
         image: "${IMAGE_REGISTRY}/server:${IMAGE_TAG}"
         restart: unless-stopped
+        # Docker's default is 10s between SIGTERM and SIGKILL -- too tight a margin
+        # for the shutdown hook (Server.java) to reliably save every online player
+        # before being force-killed. 30s gives it comfortable headroom.
+        stop_grace_period: 30s
         ports:
             - "43594:43594"
             # 9292 is NOT a profiler/debug port -- that assumption was wrong.

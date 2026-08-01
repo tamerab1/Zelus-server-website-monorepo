@@ -1212,11 +1212,6 @@ public enum ClueType {
 				}
 
 				player.addToCollectionLog(item);
-
-				if (player.uniqueDrops.get(item.getId()) == null)
-					player.uniqueDrops.put(item.getId(), item.getAmount());
-				else
-					player.uniqueDrops.replace(item.getId(), player.uniqueDrops.get(item.getId()) + item.getAmount());
 			}
 
 			player.openInterface(ToplevelComponent.MAINMODAL, 73);

@@ -29,10 +29,12 @@ import io.ruin.data.yaml.YamlLoader;
 import io.ruin.db.DatabaseFile;
 import io.ruin.db.PlayerDatabase;
 import io.ruin.model.World;
+import io.ruin.model.activities.pkbots.ZelusBotPlayer;
 import io.ruin.model.combat.special.Special;
 import io.ruin.model.content.XPWeekend;
 import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.entity.npc.actions.edgeville.StarterGuide;
+import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerLoginWorker;
 import io.ruin.model.item.containers.TournamentSuppliesInterface;
 import io.ruin.model.skills.slayer.Slayer;
@@ -306,6 +308,26 @@ public final class Server extends ServerWrapper {
 		 */
 
 		CentralSaves.normalizeFilenamesInDirectory();
+
+		// Deploys/restarts send SIGTERM (Docker's default stop_grace_period gives the
+		// process ~10s before SIGKILL) -- without this, any progress since the last
+		// periodic autosave (every 50 ticks, ~30s -- see CoreWorker.savePlayers()) is
+		// silently lost, which is exactly what happened to a player's slayer task kill
+		// count during a deploy. This forces an immediate save of every online player
+		// and blocks until it's actually flushed to disk (not just queued) before the
+		// JVM is allowed to exit.
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			log.info("Shutdown signal received, saving all online players before exit...");
+			int count = 0;
+			for (Player player : World.players()) {
+				if (player instanceof ZelusBotPlayer)
+					continue;
+				if (PlayerDatabase.insertQueue(player))
+					count++;
+			}
+			PlayerDatabase.db().awaitNoPendingSaves();
+			log.info("Saved " + count + " player(s) before shutdown.");
+		}, "shutdown-save-hook"));
 
 		log.info("Started server in " + (System.currentTimeMillis() - startTime) + "ms.");
 	}

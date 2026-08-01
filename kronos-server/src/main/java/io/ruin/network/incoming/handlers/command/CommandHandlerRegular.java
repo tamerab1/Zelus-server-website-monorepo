@@ -44,8 +44,6 @@ import io.ruin.model.skills.events.ShootingStars;
 import io.ruin.model.skills.magic.spells.modern.ModernTeleport;
 import io.ruin.model.skills.slayer.SlayerUnlock;
 import io.ruin.model.activities.pkbots.ZelusBotManager;
-import io.ruin.model.content.loadouts.ZelusLoadoutInterface;
-import io.ruin.model.content.loadouts.ZelusLoadoutManager;
 import io.ruin.model.var.VarPlayerRepository;
 import io.ruin.process.event.EventWorker;
 import io.ruin.services.Loggers;
@@ -72,14 +70,8 @@ public class CommandHandlerRegular {
 
 		switch (command) {
 
-			// -------------------------------------------------------------------
-			// PvP Preset system (DMMPVP-style: Pure NH / Max Dharok / F2P)
-			// -------------------------------------------------------------------
-			case "presets":
-			case "preset": {
-				io.ruin.model.inter.questtab.presets.PresetsMenu.open(player);
-				return true;
-			}
+			// "::presets"/"::preset" (PresetsMenu, DMMPVP-style fixed Zerker/Melee/Pure kits)
+			// retired -- replaced by the new GearLoadouts system (::loadouts/::gearloadouts/::kits).
 
 			case "movreth": {
 				player.getMovement().teleport(3018, 4391, 0);
@@ -95,34 +87,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			// -------------------------------------------------------------------
-			// Zelus Custom Loadout System
-			// -------------------------------------------------------------------
-			case "loadouts": {
-				ZelusLoadoutInterface.open(player);
-				return true;
-			}
-
-			// Quick-load a specific slot by number: ::ql 1  (1-based)
-			case "ql": {
-				if (args.length < 1) {
-					player.sendMessage("Usage: <col=ffd700>::ql <slot></col>  (e.g. ::ql 1)");
-					return true;
-				}
-				try {
-					int slot = Integer.parseInt(args[0]) - 1; // convert 1-based to 0-based
-					ZelusLoadoutManager.quickLoad(player, slot);
-				} catch (NumberFormatException e) {
-					player.sendMessage("Usage: <col=ffd700>::ql <slot number></col>");
-				}
-				return true;
-			}
-
-			// Deposit all gear to bank
-			case "depositall": {
-				ZelusLoadoutManager.depositAll(player);
-				return true;
-			}
+			// Zelus Custom Loadout System (::loadouts/::ql/::depositall) retired -- replaced by
+			// the new GearLoadouts system (see core.reason.module.GearLoadoutsModule, which
+			// already intercepts "loadouts"/"gearloadouts"/"kits" earlier in the command
+			// pipeline via CommandHandler's hooks.handle() check, so those cases here were
+			// already dead code). ZelusLoadoutInterface/ZelusLoadoutManager left in place,
+			// unreferenced, in case any saved player data needs a one-off migration later.
 
 			// PvP preset: ::pvpmode opens the interface, ::pvpmode off deactivates
 			case "pvpmode": {

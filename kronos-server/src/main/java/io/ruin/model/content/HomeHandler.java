@@ -71,7 +71,13 @@ public class HomeHandler {
 
 	public static void init() {
 		var devouringForge = GameObject.spawn(60003, 3081, 3516, 0, 10, 0);
-		ObjectAction.register(devouringForge, 1, (player, obj) -> io.ruin.model.content.pvppreset.PvpPresetInterface.open(player));
+		ObjectAction.register(devouringForge, 1, (player, obj) -> {
+			if (!player.isPvpMode() && !player.isOwner()) {
+				player.sendMessage("You must be in PvP mode to use the devouring forge.");
+				return;
+			}
+			io.ruin.model.content.gearloadouts.GearLoadoutInterface.open(player);
+		});
 		var bhChest = GameObject.spawn(60001, 3094, 3516, 0, 10, 0);
 		ObjectAction.register(bhChest, 1, (player, obj) -> io.ruin.model.activities.wilderness.WantedManager.openMenu(player));
 		//var tradingPost = GameObject.spawn(46240, 3094, 3495, 0, 10, 1);
