@@ -91,6 +91,12 @@ public class PvpPresetManager {
         if (canLoadFromBank(player, preset)) {
             activateFromBank(player, preset);
         } else {
+            // PVM Mode accounts (regular PVM + all ironman tiers) are blocked from renting
+            // system PvP presets — they may only load a preset they already own in their bank.
+            if (player.isPvmMode()) {
+                player.sendMessage("[PvP Preset] PVM Mode accounts can only load presets they already own in their bank.");
+                return;
+            }
             if (player.getInventory().isNotEmpty()) {
                 player.sendMessage("You must have an empty inventory before loading a preset.");
                 return;

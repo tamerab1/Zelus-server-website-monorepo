@@ -439,7 +439,7 @@ public class Gamble extends ItemContainer {
 
 			case 3:
 			case 4:
-				gambleRules += "Black Jack and " + host.getName() + " is the host.<br>";
+				gambleRules += "Black Jack 100 and " + host.getName() + " is the host.<br>";
 				gambleRules += "Closes to 100 without going over 100 wins.<br>";
 				break;
 			case 7:
@@ -550,8 +550,8 @@ public class Gamble extends ItemContainer {
 		ps2.setHidden(876, 127, false);
 		ps2.setHidden(876, 128, false);
 
-		ps1.sendString(876, 127, "Black Jack with the host being: " + host.getName());
-		ps2.sendString(876, 127, "Black Jack with the host being: " + host.getName());
+		ps1.sendString(876, 127, "Black Jack 100 with the host being: " + host.getName());
+		ps2.sendString(876, 127, "Black Jack 100 with the host being: " + host.getName());
 
 		ps1.sendString(876, 128,
 			"Get 100, or as close to 100 as possible, without going over. If you go over, the game is automatically lost without the dealer ever having to roll."
@@ -680,8 +680,8 @@ public class Gamble extends ItemContainer {
 		}
 		ps.sendString(876, 118, "55x2 (" + getGambleData().playerOne.getName() + " host)");
 		ps.sendString(876, 119, "55x2 (" + getGambleData().playerTwo.getName() + " host)");
-		ps.sendString(876, 120, "Black Jack (" + getGambleData().playerOne.getName() + " host)");
-		ps.sendString(876, 121, "Black Jack (" + getGambleData().playerTwo.getName() + " host)");
+		ps.sendString(876, 120, "Black Jack 100 (" + getGambleData().playerOne.getName() + " host)");
+		ps.sendString(876, 121, "Black Jack 100 (" + getGambleData().playerTwo.getName() + " host)");
 	}
 
 	private void remove(Item item, int amount) {

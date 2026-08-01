@@ -34,6 +34,23 @@ public final class AuditLogger {
 		Webhook.send(ServerProperties.get("discord_hook_economy_audit", ""), message);
 	}
 
+	public static void logRejectedBounty(Player killer, String bossName, int pkpAmount, String reason) {
+		var embed = new Embed();
+		embed.setTitle("[Economy] Bounty contract reward rejected");
+		embed.setDescription(reason);
+		embed.setColor(0xBA0000);
+		embed.setFields(
+			new Field("Killer", killer.getName(), true),
+			new Field("Boss", bossName, true),
+			new Field("Pooled PKP", String.valueOf(pkpAmount), true),
+			new Field("Reason", reason, false)
+		);
+
+		var message = new Message();
+		message.setEmbeds(embed);
+		Webhook.send(ServerProperties.get("discord_hook_economy_audit", ""), message);
+	}
+
 	public static void logSink(Player killer, Player victim, Item item) {
 		var embed = new Embed();
 		embed.setTitle("[Economy] High-value drop sunk");

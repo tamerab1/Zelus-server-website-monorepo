@@ -481,6 +481,9 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient XericParty party = null;
 	public transient Party viewingParty = null;
 	public transient Title title = null;
+	public transient int loyaltyTitleFilter = 0;
+	public transient int loyaltyTitlePage = 0;
+	public transient Integer loyaltyTitleSelectedId = null;
 	public transient Seat seat = null;
 	public transient Preset lastPresetUsed = null;
 	public transient StatType selectedSkillLampSkill = null;

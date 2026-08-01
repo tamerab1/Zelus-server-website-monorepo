@@ -8,6 +8,7 @@ import io.ruin.cache.Color;
 import io.ruin.cache.Icon;
 import io.ruin.cache.ItemID;
 import io.ruin.cache.NPCType;
+import io.ruin.HooksV2;
 import io.ruin.data.impl.npcs.npc_combat;
 import io.ruin.data.impl.npcs.npc_drops_new;
 import io.ruin.model.World;
@@ -126,6 +127,18 @@ import static io.ruin.cache.ItemID.*;
 
 @Slf4j
 public abstract class NPCCombat extends Combat {
+
+	/**
+	 * External hook point fired once per player-killed NPC (after loot/PVM-points handling
+	 * below). Lets feature modules (e.g. economy-protection's PvmPointsManager) react to NPC
+	 * deaths without editing this class directly.
+	 */
+	public static interface Hook {
+		record Death(Player killer, NPC npc) implements Hook {
+		}
+	}
+
+	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
 
 	public static final Bounds Wildywars = new Bounds(3015, 10117, 3067, 10169, 0);
 
@@ -416,13 +429,19 @@ public abstract class NPCCombat extends Combat {
 		NPCType def = npc.getDef();
 
 		/*
-		 * Gives players PVM Points
+		 * Gives players PVM Points (legacy named-boss table, PVM Mode only)
 		 */
 		PvmPoints.addPoints(player, npc);
 		/*
 		 * Gives players Boss Points
 		 */
 		// BossPoints.addPoints(pKiller, npc);
+
+		/*
+		 * External hook: economy-protection's PvmPointsManager listens here to award
+		 * combat-level/tier-based PVM Points for kills not covered by the named table above.
+		 */
+		hooks.handle(new Hook.Death(player, npc));
 
 		if (def.name.contains("Revenant") && def.id != 11246) {
 			Objects.requireNonNull(player.combatAchievementsList

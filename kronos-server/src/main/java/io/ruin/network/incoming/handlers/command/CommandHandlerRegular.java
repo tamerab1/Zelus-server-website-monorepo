@@ -487,6 +487,10 @@ public class CommandHandlerRegular {
 				io.ruin.model.content.casino.CasinoBlackjackInterface.open(player);
 				return true;
 			}
+			case "loyaltytitles": {
+				io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player);
+				return true;
+			}
 			case "casinoseed": {
 				if (args.length < 1) {
 					player.sendMessage("Usage: ::casinoseed <value>");
@@ -1333,6 +1337,15 @@ public class CommandHandlerRegular {
 
 				message = BadWords.filterBadWords(message);
 
+				io.ruin.model.content.loyaltytitles.LoyaltyTitle equippedLoyaltyTitle =
+						io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.getEquipped(player);
+				if (equippedLoyaltyTitle != null && equippedLoyaltyTitle.prefix) {
+					title = equippedLoyaltyTitle.text;
+				} else if (player.titleId != -1 && player.titleId < Title.PRESET_TITLES.length
+						&& Title.PRESET_TITLES[player.titleId] != null && Title.PRESET_TITLES[player.titleId].getPrefix() != null) {
+					title = player.titleId == 22 ? player.customTitle : Title.PRESET_TITLES[player.titleId].getPrefix();
+				}
+
 				long ms = System.currentTimeMillis();
 				long delay = player.yellDelay - ms;
 				boolean canYell = player.isDonator() || player.isSuperDonator() || player.isEliteDonator()
@@ -1542,13 +1555,6 @@ public class CommandHandlerRegular {
 						message = "<img=42>" + message;
 					} else {
 						message = "<img=2>" + message;
-					}
-				}
-
-				if (player.titleId != -1 && player.titleId < Title.PRESET_TITLES.length) {
-					title = Title.PRESET_TITLES[player.titleId].getPrefix();
-					if (player.titleId == 22) {
-						title = player.customTitle;
 					}
 				}
 

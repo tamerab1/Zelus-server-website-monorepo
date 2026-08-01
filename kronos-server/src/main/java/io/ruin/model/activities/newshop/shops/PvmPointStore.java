@@ -56,8 +56,18 @@ public class PvmPointStore extends NewShop {
         );
     }
 
+    /** Exclusive to PVM Mode accounts — PVP Mode accounts never earn or spend PvM Points. */
+    @Override
+    public boolean canOpen(Player player) {
+        return player.isPvmMode();
+    }
+
     @Override
     public boolean buy(Player player, ShopItem item, int amount) {
+        if (!player.isPvmMode()) {
+            player.sendMessage("The PVM Point Shop is exclusive to PVM Mode accounts.");
+            return false;
+        }
         int cost = item.getCost() * amount;
         if (player.PvmPoints < cost) {
             int canAfford = player.PvmPoints / item.getCost();

@@ -7,9 +7,6 @@ import io.ruin.model.combat.Killer;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.stat.StatType;
 
-import java.util.Collections;
-import java.util.Set;
-
 /**
  * Registers on {@link Killer.Hook.ValidateKill} to gate PKP/BH-target/killer-directed-drop
  * rewards behind identity and combat-authenticity checks. This runs before, and independently
@@ -69,20 +66,10 @@ public class KillValidationPipeline {
 	}
 
 	private static boolean sameHwid(Player pKiller, Player pKilled) {
-		if (pKiller.hwid != null && pKiller.hwid.equals(pKilled.hwid)) {
-			return true;
-		}
-		Set<String> killerHwids = pKiller.hwids == null ? Collections.emptySet() : pKiller.hwids;
-		Set<String> victimHwids = pKilled.hwids == null ? Collections.emptySet() : pKilled.hwids;
-		for (String hwid : killerHwids) {
-			if (victimHwids.contains(hwid)) {
-				return true;
-			}
-		}
-		return false;
+		return IdentityGuard.sameHwid(pKiller, pKilled);
 	}
 
 	private static boolean sameSubnet(Player pKiller, Player pKilled) {
-		return (pKiller.getIpInt() & 0xFFFFFF00) == (pKilled.getIpInt() & 0xFFFFFF00);
+		return IdentityGuard.sameSubnet(pKiller, pKilled);
 	}
 }

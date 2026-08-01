@@ -57,10 +57,25 @@ public class FriendChats {
 	public static void joinOnLogin(Player player) {
 		var joined = player.clan().joinedName;
 		if (joined.isEmpty()) {
-			join(player, "kal");
+			join(player, "help");
 			return;
 		}
 		joinCurrent(player);
+	}
+
+	/**
+	 * Seeds the shared "help" Friends Chat as an always-on, non-player-owned channel so every
+	 * new/unaffiliated player can be auto-joined to it via {@link #joinOnLogin} — the owner name
+	 * "help" doesn't need a real matching player account, only a persisted record with
+	 * {@code exists=true} (same mechanism a real player activates for themselves via
+	 * {@link #updateChannelName}). Idempotent — safe to call on every module start.
+	 */
+	public static void ensureHelpChannelExists() {
+		queue(() -> {
+			var it = FriendChatDb.db().load("help").await();
+			it.channelName = "Help";
+			it.exists = true;
+		});
 	}
 
 	public static void joinCurrent(Player player) {

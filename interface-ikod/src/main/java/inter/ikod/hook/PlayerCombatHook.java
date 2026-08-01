@@ -25,7 +25,7 @@ public class PlayerCombatHook implements PlayerCombat.Hook {
 		PlayerCombat.hooks.register(PlayerCombat.Hook.OnDeath.class, PlayerCombatHook::handle);
 	}
 
-	private static Result handle(PlayerCombat.Hook.OnDeath ctx) {
+	static Result handle(PlayerCombat.Hook.OnDeath ctx) {
 		var player = ctx.player();
 		var killer = ctx.killer();
 		var pKiller = ctx.pKiller();

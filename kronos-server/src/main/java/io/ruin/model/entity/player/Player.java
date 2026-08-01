@@ -1077,6 +1077,12 @@ public class Player extends PlayerAttributes {
 			tags += PlayerGroup.YOUTUBER.tag();
 		}
 
+		io.ruin.model.content.loyaltytitles.LoyaltyTitle loyaltyTitle =
+				io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.getEquipped(this);
+		if (loyaltyTitle != null) {
+			return tags + loyaltyTitle.preview(getName());
+		}
+
 		return tags + getName();
 	}
 
@@ -3525,6 +3531,41 @@ public class Player extends PlayerAttributes {
 
 	public GameMode getGameMode() {
 		return GameMode.values()[VarPlayerRepository.IRONMAN_MODE.get(this)];
+	}
+
+	/**
+	 * Resolves this account's PVP/PVM segregation. Ironman accounts (any {@link GameMode}
+	 * other than {@code STANDARD}) always resolve to {@link PlayMode#PVM_MODE}, regardless of
+	 * the stored value. Falls back to {@link PlayMode#defaultFor} for saves written before
+	 * this field existed.
+	 */
+	public PlayMode getPlayMode() {
+		GameMode gameMode = getGameMode();
+		if (gameMode.isIronMan()) {
+			return PlayMode.PVM_MODE;
+		}
+		return playMode != null ? playMode : PlayMode.defaultFor(gameMode);
+	}
+
+	public boolean isPvpMode() {
+		return getPlayMode().isPvpMode();
+	}
+
+	public boolean isPvmMode() {
+		return getPlayMode().isPvmMode();
+	}
+
+	/**
+	 * Sets this account's PVP/PVM mode.
+	 *
+	 * @return true if applied; false if rejected (an ironman account can never be set to PVP_MODE)
+	 */
+	public boolean setPlayMode(PlayMode mode) {
+		if (mode == PlayMode.PVP_MODE && getGameMode().isIronMan()) {
+			return false;
+		}
+		this.playMode = mode;
+		return true;
 	}
 
 	public int getTitleEnumId() {

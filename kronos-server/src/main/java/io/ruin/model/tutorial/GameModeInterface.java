@@ -7,6 +7,7 @@ import io.ruin.db.PlayerDatabase;
 import io.ruin.model.entity.npc.actions.edgeville.StarterGuide;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.GameMode;
+import io.ruin.model.entity.player.PlayMode;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.entity.shared.listeners.LoginListener;
@@ -25,6 +26,10 @@ public class GameModeInterface {
 	//@formatter:off
 	enum AccountType {
 		REGULAR("Regular Account", AccountMode.REGULAR, 10545, new Item(ItemID.IRON_FULL_HELM), new Item(ItemID.IRON_PLATEBODY), new Item(ItemID.IRON_PLATELEGS)),
+		// Reuses REGULAR's client script (10545) and equipment preview items — no new cache
+		// assets needed. GameMode-wise this is still STANDARD (non-ironman); PlayMode is what
+		// actually distinguishes it, set in confirmAccountCreation().
+		PVP_MODE("PVP Mode", AccountMode.REGULAR, 10545, new Item(ItemID.IRON_FULL_HELM), new Item(ItemID.IRON_PLATEBODY), new Item(ItemID.IRON_PLATELEGS)),
 		IRONMAN("Standard IM", AccountMode.IRONMAN, 10544, new Item(ItemID.IRONMAN_HELM), new Item(ItemID.IRONMAN_PLATEBODY), new Item(ItemID.IRONMAN_PLATELEGS)),
 		ULTIMATE_IRONMAN("Ultimate IM", AccountMode.ULTIMATE_IRONMAN, 10543, new Item(ItemID.ULTIMATE_IRONMAN_HELM), new Item(ItemID.ULTIMATE_IRONMAN_PLATEBODY), new Item(ItemID.ULTIMATE_IRONMAN_PLATELEGS)),
 		HARDCORE_IRONMAN("Hardcore IM", AccountMode.HARDCORE_IRONMAN, 10542, new Item(ItemID.HARDCORE_IRONMAN_HELM), new Item(ItemID.HARDCORE_IRONMAN_PLATEBODY), new Item(ItemID.HARDCORE_IRONMAN_PLATELEGS)),
@@ -247,7 +252,12 @@ public class GameModeInterface {
 	private static String getModeDescription(AccountType currentAccountType) {
 		switch (currentAccountType) {
 			case REGULAR:
-				return "You will have no account restrictions on this mode, and you can trade with other players.";
+				return "You will have no account restrictions on this mode, and you can trade with other players." +
+					"<br>You'll earn PVM Points from bosses and Slayer, with access to the PVM Points shop.";
+			case PVP_MODE:
+				return "Built for instant PvP: access to the ::spawn command for whitelisted basic gear" +
+					" and system PvP presets, so you can jump straight into the Wilderness." +
+					"<br>Trade-off: no PVM Points shop access, since you're not earning them through PVM Mode's economy.";
 			case IRONMAN:
 				return "Ironman Mode in Zelus is a self-sufficient game" +
 					" mode where players cannot trade with others" +
@@ -346,26 +356,36 @@ public class GameModeInterface {
 		switch (currentAccountType) {
 			case REGULAR:
 				GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
+				break;
+			case PVP_MODE:
+				GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
+				player.setPlayMode(PlayMode.PVP_MODE);
 				break;
 			case IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 1);
 				GameMode.changeForumsGroup(player, GameMode.IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case ULTIMATE_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 2);
 				GameMode.changeForumsGroup(player, GameMode.ULTIMATE_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case HARDCORE_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 3);
 				GameMode.changeForumsGroup(player, GameMode.HARDCORE_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case GROUP_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 4);
 				GameMode.changeForumsGroup(player, GameMode.GROUP_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case HARDCORE_GROUP_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 5);
 				GameMode.changeForumsGroup(player, GameMode.HARDCORE_GROUP_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 		}
 		player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.NONE.id));
@@ -580,6 +600,7 @@ public class GameModeInterface {
 
 		switch (currentAccountType) {
 			case REGULAR:
+			case PVP_MODE:
 				items.add(new Item(1265, 1));
 				items.add(new Item(1323, 1));
 				items.add(new Item(ItemID.LOBSTER + 1, 300));

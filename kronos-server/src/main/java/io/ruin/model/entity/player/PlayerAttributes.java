@@ -196,6 +196,16 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int pkPoints;
 
 	// -----------------------------------------------------------------------
+	// PVP vs PVM gamemode separation
+	// -----------------------------------------------------------------------
+	/**
+	 * Null on saves written before this field existed — {@link Player#getPlayMode()} falls
+	 * back to {@link PlayMode#defaultFor(GameMode)} in that case, so no migration script is
+	 * needed for existing accounts.
+	 */
+	public PlayMode playMode = null;
+
+	// -----------------------------------------------------------------------
 	// PvP Preset system  (phantom gear — not persisted to DB)
 	// -----------------------------------------------------------------------
 	/** True while a PvP preset loadout is active. */
@@ -805,6 +815,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int[] preTournyHitpoints;
 	public int partyAdvertisementsRemaining = 15;
 	public int titleId = -1;
+	public Set<Integer> unlockedLoyaltyTitles = new HashSet<>();
+	public int equippedLoyaltyTitleId = -1;
 	public int teleportPortalUses = 0;
 	public int presetsLoaded = 0;
 	public int expBonusTimeLeft;

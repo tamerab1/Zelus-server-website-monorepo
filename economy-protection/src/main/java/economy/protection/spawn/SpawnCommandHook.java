@@ -28,13 +28,18 @@ public class SpawnCommandHook {
 		CommandHandler.hooks.register(CommandHandler.Hook.Handle.class, SpawnCommandHook::handle);
 	}
 
-	private static Result handle(CommandHandler.Hook.Handle ctx) {
+	static Result handle(CommandHandler.Hook.Handle ctx) {
 		var player = ctx.player();
 		var command = ctx.command();
 		var args = ctx.args();
 
 		if (!command.equalsIgnoreCase("spawn"))
 			return Result.Pass;
+
+		if (!player.isPvpMode()) {
+			player.sendMessage("The ::spawn command is exclusively for PVP Mode accounts!");
+			return Result.Return;
+		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
 			sendList(player);
@@ -69,7 +74,7 @@ public class SpawnCommandHook {
 			if (id <= 0 || id == 65535) {
 				return;
 			}
-			if (!ItemClassification.isSpawnable(id)) {
+			if (!isSpawnAllowed(id)) {
 				String itemName = new Item(id).getDef().getName();
 				showError(player, "That item cannot be spawned.");
 				openSearch(player, "\"" + itemName + "\" cannot be spawned — search for another item: ");
@@ -95,6 +100,7 @@ public class SpawnCommandHook {
 		}
 		player.sendMessage("Spawnable items:");
 		for (ClassifiedItem item : items) {
+			if (ItemClassification.isHighValue(item.id)) continue;
 			ObjType def = ObjType.get(item.id);
 			if (def == null) continue;
 			String cap = item.dailySpawnCap > 0 ? (item.dailySpawnCap + "/day") : "unlimited";
@@ -103,7 +109,7 @@ public class SpawnCommandHook {
 	}
 
 	private static void trySpawn(Player player, int id, int amount) {
-		if (!ItemClassification.isSpawnable(id)) {
+		if (!isSpawnAllowed(id)) {
 			showError(player, "That item cannot be spawned.");
 			return;
 		}
@@ -124,6 +130,15 @@ public class SpawnCommandHook {
 		player.getInventory().addOrDrop(item);
 		data.recordSpawn(id, amount);
 		player.sendMessage("Spawned " + amount + "x " + item.getDef().getName() + ".");
+	}
+
+	/**
+	 * PVP Mode's ::spawn is limited to whitelisted basic items — anything flagged HIGH_VALUE
+	 * in {@link ItemClassification} (rare/high-tier gear) is never spawnable, regardless of
+	 * the SPAWNABLE flag.
+	 */
+	static boolean isSpawnAllowed(int id) {
+		return ItemClassification.isSpawnable(id) && !ItemClassification.isHighValue(id);
 	}
 
 	/** Red fading notification banner (~3s) at the top of the screen. */

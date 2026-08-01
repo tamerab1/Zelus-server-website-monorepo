@@ -2,8 +2,11 @@ package economy.protection.module;
 
 import core.module.api.IModule;
 import economy.protection.antifarm.KillValidationPipeline;
+import economy.protection.bounty.BountyContractsManager;
 import economy.protection.classification.ItemClassification;
+import economy.protection.escort.EscortDutyManager;
 import economy.protection.ground.GroundItemGuard;
+import economy.protection.pvm.PvmPointsManager;
 import economy.protection.spawn.Attributes;
 import economy.protection.spawn.SpawnCommandHook;
 
@@ -28,5 +31,8 @@ public class Module implements IModule {
 		SpawnCommandHook.register();
 		GroundItemGuard.register();
 		KillValidationPipeline.register();
+		PvmPointsManager.register();
+		BountyContractsManager.register();
+		EscortDutyManager.register();
 	}
 }

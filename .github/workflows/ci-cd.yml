@@ -76,15 +76,15 @@ jobs:
           java-version: "21"
           cache: gradle
       - run: chmod +x gradlew
-      # :player-mongo:test, :tradepost:test, and :economy-protection:test are
-      # integration tests, not unit tests — some of their test classes call
-      # ServerTest.start(), which loads the real OSRS cache via FileStore and
-      # opens a live MariaDB + MongoDB connection. No CI runner has either,
-      # so the whole module is excluded here (matching the existing
-      # player-mongo/tradepost precedent) rather than run against
+      # :player-mongo:test, :tradepost:test, :economy-protection:test, and
+      # :interface-ikod:test are integration tests, not unit tests — some of
+      # their test classes call ServerTest.start(), which loads the real OSRS
+      # cache via FileStore and opens a live MariaDB + MongoDB connection. No
+      # CI runner has either, so the whole module is excluded here (matching
+      # the existing player-mongo/tradepost precedent) rather than run against
       # infrastructure that doesn't exist. Run them locally where the cache
       # and DBs are already set up.
-      - run: ./gradlew --console=plain test -x :player-mongo:test -x :tradepost:test -x :economy-protection:test
+      - run: ./gradlew --console=plain test -x :player-mongo:test -x :tradepost:test -x :economy-protection:test -x :interface-ikod:test
 
   test-website-client:
     needs: setup

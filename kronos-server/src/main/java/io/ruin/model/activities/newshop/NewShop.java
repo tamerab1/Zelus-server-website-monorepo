@@ -23,6 +23,11 @@ public abstract class NewShop {
 
 	public abstract void openMessage(Player player);
 
+	/** Override to restrict which accounts may open/use this shop (e.g. gamemode-gated shops). */
+	public boolean canOpen(Player player) {
+		return true;
+	}
+
 	public void handleUpgradeItem(Player player, ShopUpgradeItems upgrade) {
 		player.getInventory().remove(upgrade.getToUpggradeId(), 1);
 		player.getInventory().add(upgrade.getUpgradeId());
