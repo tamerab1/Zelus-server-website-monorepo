@@ -23,8 +23,13 @@ public enum PlayMode {
 	/**
 	 * Fallback used for saves written before this field existed (where the stored value is
 	 * {@code null}) and to force ironman accounts into PVM_MODE regardless of what's stored.
+	 *
+	 * Defaults to PVM_MODE: pre-existing standard accounts already had PvmPoints shop access
+	 * before this PVP/PVM split existed, so defaulting them into PVP_MODE (which blocks that
+	 * shop) silently took away something they used to have. PVP_MODE-specific features
+	 * (::spawn, preset rental) are comparatively niche, so PVM_MODE is the safer default.
 	 */
 	public static PlayMode defaultFor(GameMode gameMode) {
-		return gameMode != null && gameMode.isIronMan() ? PVM_MODE : PVP_MODE;
+		return PVM_MODE; // gameMode kept for API stability; ironman is already handled by the caller
 	}
 }

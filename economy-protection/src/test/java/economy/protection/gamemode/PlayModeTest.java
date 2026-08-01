@@ -33,24 +33,25 @@ class PlayModeTest {
 	}
 
 	@Test
-	void freshStandardAccountDefaultsToPvpMode() {
+	void freshStandardAccountDefaultsToPvmMode() {
 		Player player = ServerTest.createPlayer();
 
 		// No migration script needed: saves written before `playMode` existed come back
-		// null and fall back to PlayMode.defaultFor(STANDARD) == PVP_MODE, preserving the
-		// pre-feature behaviour where every standard account could use ::spawn.
-		assertTrue(player.isPvpMode());
-		assertFalse(player.isPvmMode());
+		// null and fall back to PlayMode.defaultFor(STANDARD) == PVM_MODE, preserving the
+		// pre-feature behaviour where every standard account already had PvmPoints shop
+		// access (PVP_MODE-only features like ::spawn are the newer, more niche addition).
+		assertTrue(player.isPvmMode());
+		assertFalse(player.isPvpMode());
 	}
 
 	@Test
-	void standardAccountCanOptIntoPvmMode() {
+	void standardAccountCanOptIntoPvpMode() {
 		Player player = ServerTest.createPlayer();
 
-		assertTrue(player.setPlayMode(PlayMode.PVM_MODE));
+		assertTrue(player.setPlayMode(PlayMode.PVP_MODE));
 
-		assertTrue(player.isPvmMode());
-		assertFalse(player.isPvpMode());
+		assertTrue(player.isPvpMode());
+		assertFalse(player.isPvmMode());
 	}
 
 	@Test
