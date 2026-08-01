@@ -20,18 +20,21 @@ public class LoyaltyTitleInterface {
 
 	private static final int CLOSE = 3;
 
-	private static final int[] TAB_IDS = {5, 6, 7, 8, 9, 10, 11, 12};
+	private static final int[] TAB_IDS = {9, 10, 11, 12, 13, 14, 15, 16};
 	// index into TAB_IDS -> filter: 0=All 1=Unlocked 2=Locked 3=General 4=Mastery 5=PvM 6=PvP 7=Skilling
 
-	// 2-column x 8-row grid (16 slots/page), matching the source interface's own row/button
-	// template width (200px, not full-panel-width -- their list is a grid, not one wide column)
-	private static final int[] ROW_IDS = {14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
+	// 2-column x 6-row grid (12 slots/page), 34px stride so each row has real breathing room.
+	// Ids 30-34 in the toml are the divider lines drawn between these rows -- not clickable,
+	// not referenced here.
+	private static final int[] ROW_IDS = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
 	private static final int ROWS_PER_PAGE = ROW_IDS.length;
 
-	private static final int PREVIEW = 32;
-	private static final int PREV_PAGE = 33;
-	private static final int NEXT_PAGE = 34;
-	private static final int APPLY = 35;
+	private static final int PREVIEW = 37;
+	// These target the clickable Sprite child of each button's Layer wrapper (the wrapper and
+	// its Text label aren't referenced here -- see the "Prev / Next / Apply" block in 5105.toml).
+	private static final int PREV_PAGE = 39;
+	private static final int NEXT_PAGE = 42;
+	private static final int APPLY = 45;
 
 	public static void register() {
 		InterfaceHandler.register(INTERFACE_ID, h -> {
@@ -103,9 +106,9 @@ public class LoyaltyTitleInterface {
 			}
 			LoyaltyTitle title = titles.get(index);
 			boolean unlocked = LoyaltyTitleManager.isUnlocked(player, title);
-			String line1 = unlocked
-				? title.preview(player.getName())
-				: "<col=808080>" + stripColorTags(title.preview(player.getName())) + "</col>";
+			// Always show the title's own real colour, even while locked, so players can see
+			// what they're working toward -- lock state is already conveyed clearly by line2.
+			String line1 = title.preview(player.getName());
 			String line2;
 			if (unlocked) {
 				line2 = "<col=00b000>Unlocked</col>";
@@ -155,10 +158,6 @@ public class LoyaltyTitleInterface {
 			return;
 		LoyaltyTitleManager.select(player, selected);
 		render(player);
-	}
-
-	private static String stripColorTags(String text) {
-		return text.replaceAll("</?col[^>]*>", "");
 	}
 
 	private static String formatAmount(int amount) {

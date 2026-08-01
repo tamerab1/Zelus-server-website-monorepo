@@ -1077,6 +1077,10 @@ public class Player extends PlayerAttributes {
 			tags += PlayerGroup.YOUTUBER.tag();
 		}
 
+		if (this.isPvpMode()) {
+			tags += io.ruin.cache.Icon.PVP_MODE_SKULL.tag();
+		}
+
 		io.ruin.model.content.loyaltytitles.LoyaltyTitle loyaltyTitle =
 				io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.getEquipped(this);
 		if (loyaltyTitle != null) {

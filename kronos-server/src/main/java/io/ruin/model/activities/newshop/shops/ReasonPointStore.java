@@ -80,8 +80,6 @@ public class ReasonPointStore extends NewShop {
 			new ShopItem(new Item(ItemID.IMBUED_GUTHIX_CAPE), 250000, ShopCategories.EQUIPMENT, null, true),
 			new ShopItem(new Item(ItemID.IMBUED_ZAMORAK_CAPE), 250000, ShopCategories.EQUIPMENT, null, true),
 			new ShopItem(new Item(ItemID.IMBUED_SARADOMIN_CAPE), 250000, ShopCategories.EQUIPMENT, null, true),
-			new ShopItem(new Item(ItemID.FIRE_CAPE), 100000, ShopCategories.EQUIPMENT, null, true),
-			new ShopItem(new Item(ItemID.INFERNAL_CAPE), 300000, ShopCategories.EQUIPMENT, null, true),
 			new ShopItem(new Item(ItemID.BARROWS_GLOVES), 50000, ShopCategories.EQUIPMENT, null, true),
 			new ShopItem(new Item(ItemID.ARCLIGHT), 100000, ShopCategories.EQUIPMENT, null, true),
 			new ShopItem(new Item(ItemID.IBANS_STAFF), 35000, ShopCategories.EQUIPMENT, null, true),

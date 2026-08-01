@@ -3397,6 +3397,7 @@ public class PlayerCombat extends Combat {
 			 * Crystal bow, Knifes, Darts, etc
 			 */
 			if (rangedWep != RangedWeapon.CRYSTAL_BOW
+					&& rangedWep != RangedWeapon.COMP_BOW
 					&& rangedWep != RangedWeapon.CRAWS_BOW
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_BLUE

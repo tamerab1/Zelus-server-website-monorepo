@@ -886,7 +886,7 @@ public class JournalTab {
 						return;
 					}
 					if (left < 1) {
-						ModernTeleport.teleport(player, new Position(3097, 3511, 0));
+						ModernTeleport.teleport(player, new Position(3105, 3489, 0));
 						return;
 					}
 					if (player.slayerTaskPosition == null) {
