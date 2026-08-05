@@ -644,23 +644,23 @@ public class Player extends PlayerAttributes {
 	}
 
 	public boolean isNobleDonator() {
-		return totalDonated >= 250 && totalDonated < 500;
+		return totalDonated >= 250 && totalDonated < 400;
 	}
 
 	public boolean isGoldDonator() {
-		return totalDonated >= 500 && totalDonated < 1000;
+		return totalDonated >= 400 && totalDonated < 700;
 	}
 
 	public boolean isPlatinumDonator() {
-		return totalDonated >= 1000 && totalDonated < 2500;
+		return totalDonated >= 700 && totalDonated < 1000;
 	}
 
 	public boolean isLegendaryDonator() {
-		return totalDonated >= 2500 && totalDonated < 5000;
+		return totalDonated >= 1000 && totalDonated < 1750;
 	}
 
 	public boolean isSupremeDonator() {
-		return totalDonated >= 5000 && totalDonated < 7500;
+		return totalDonated >= 1750;
 	}
 
 	public int getCurrentItemUpgrades(int currentItem) {
@@ -4554,6 +4554,22 @@ public class Player extends PlayerAttributes {
 		this.rsmodPlayer = rsmodPlayer;
 	}
 
+	public static void registerDummyStatsFix() {
+		// Repairs accounts saved before dummyStats[5] (prayer slot) was always populated --
+		// a null element in that array makes the Mongo player-save codec throw on every save,
+		// which repeatedly disconnects the player. Prevents the null at the source now too
+		// (see copyNpcToPlayerDummy below), but this heals already-corrupted saved data.
+		io.ruin.model.entity.shared.listeners.LoginListener.register(player -> {
+			if (player.dummyStats != null) {
+				for (int i = 0; i < player.dummyStats.length; i++) {
+					if (player.dummyStats[i] == null) {
+						player.dummyStats[i] = new io.ruin.model.stat.Stat(1);
+					}
+				}
+			}
+		});
+	}
+
 	public void copyNpcToPlayerDummy(npc_combat.Info info) {
 		if (dummyStats == null)
 			dummyStats = new Stat[7];
@@ -4562,6 +4578,7 @@ public class Player extends PlayerAttributes {
 		this.dummyStats[2] = new Stat(info.strength);
 		this.dummyStats[3] = new Stat(info.hitpoints);
 		this.dummyStats[4] = new Stat(info.ranged);
+		this.dummyStats[5] = new Stat(1); // NPCs have no prayer level to copy; must stay non-null for Mongo serialization
 		this.dummyStats[6] = new Stat(info.magic);
 	}
 

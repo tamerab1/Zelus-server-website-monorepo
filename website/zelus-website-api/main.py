@@ -1376,9 +1376,9 @@ def _require_game_session(request: Request) -> str:
 #   30573 = $50 donated scroll
 #   30574 = $100 donated scroll
 #
-# Rank thresholds (totalDonated $):
-#   DONATOR≥10 | SUPER≥50 | ELITE≥100 | NOBLE≥250 | GOLD≥500
-#   PLATINUM≥1000 | LEGENDARY≥2500 | SUPREME≥5000
+# Rank thresholds (totalDonated $) — equal to the store price, no bridge math:
+#   DONATOR≥10 | SUPER≥50 | ELITE≥100 | NOBLE≥250 | GOLD≥400
+#   PLATINUM≥700 | LEGENDARY≥1000 | SUPREME≥1750
 #
 # Booster scrolls are stackable — amounts represent boost duration in 30-min units.
 #   30460 = Double exp scroll (30 min)
@@ -1423,14 +1423,14 @@ SLUG_TO_ITEMS: dict[str, list[tuple[int, int]]] = {
 
     # ── Donor ranks  (claim scrolls — triggers updateTotalDonated + auto-rank)
     # Non-stackable scrolls go to bank automatically if inventory is full.
-    "donator":           [(30575,  1)],                      # $10  donated
-    "super_donator":     [(30573,  1)],                      # $50  donated
-    "elite_donator":     [(30574,  1)],                      # $100 donated
-    "noble_donator":     [(30574,  2), (30573, 1)],          # $250 donated ($200 + $50)
-    "gold_donator":      [(30574,  5)],                      # $500 donated
-    "platinum_donator":  [(30574, 10)],                      # $1 000 donated
-    "legendary_donator": [(30574, 25)],                      # $2 500 donated
-    "supreme_donator":   [(30574, 50)],                      # $5 000 donated
+    "donator":           [(30575,  1)],                      # $10   donated
+    "super_donator":     [(30573,  1)],                      # $50   donated
+    "elite_donator":     [(30574,  1)],                      # $100  donated
+    "noble_donator":     [(30574,  2), (30573, 1)],          # $250  donated ($200 + $50)
+    "gold_donator":      [(30574,  4)],                      # $400  donated
+    "platinum_donator":  [(30574,  7)],                      # $700  donated
+    "legendary_donator": [(30574, 10)],                      # $1 000 donated
+    "supreme_donator":   [(30574, 17), (30573, 1)],          # $1 750 donated ($1 700 + $50)
 
     # ── Packages  (DP bond + key items; physical gear must be granted server-side)
     # pkg_starter_pvm ($15):   donator scroll + $5 bond (500 DP) + 24 h XP

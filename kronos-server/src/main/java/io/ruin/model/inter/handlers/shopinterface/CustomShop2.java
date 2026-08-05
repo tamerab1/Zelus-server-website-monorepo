@@ -247,7 +247,8 @@ public enum CustomShop2 {
 			new ShopItem(20703, 150),
 			new ShopItem(21791, 3000),
 			new ShopItem(21795, 3000),
-			new ShopItem(21793, 3000)
+			new ShopItem(21793, 3000),
+			new ShopItem(59601, 1)
 		}
 	),
 	MISC_STORE(
@@ -304,7 +305,7 @@ public enum CustomShop2 {
 	),
 	DONATOR_STORE(
 		9,
-		Currency.DTICKETS,
+		Currency.DONATOR,
 		new ShopItem[]{
 			new ShopItem(6199, 5),
 			new ShopItem(290, 25),
@@ -341,11 +342,12 @@ public enum CustomShop2 {
 			new ShopItem(8839, 15),
 			new ShopItem(8840, 15),
 			new ShopItem(8842, 5),
-			new ShopItem(30016, 150)
+			new ShopItem(30016, 150),
 //                    new ShopItem(24868,25),
 //                    new ShopItem(24869,25),
 //                    new ShopItem(24870,25),
 //                    new ShopItem(24871,25)
+			new ShopItem(59600, 1)
 		}
 	),
 	VOTE_STORE(
@@ -442,6 +444,107 @@ public enum CustomShop2 {
 			new ShopItem(9672, 4800),
 			new ShopItem(9674, 7200),
 			new ShopItem(9676, 6000)
+		}
+	),
+
+	// Placeholder item lists copied from existing shops -- swap out once real lists are provided.
+	PKP_SHOP(
+		13,
+		Currency.PK,
+		new ShopItem[]{
+			new ShopItem(6758, 1500),
+			new ShopItem(608, 2000),
+			new ShopItem(607, 2000),
+			new ShopItem(12791, 5000),
+			new ShopItem(12783, 10000),
+			new ShopItem(11738, 100),
+			new ShopItem(23071, 250),
+			new ShopItem(20703, 150),
+			new ShopItem(21791, 3000),
+			new ShopItem(21795, 3000),
+			new ShopItem(21793, 3000),
+			new ShopItem(59599, 1)
+		}
+	),
+	ZELUS_POINTS_SHOP(
+		14,
+		Currency.REASON,
+		new ShopItem[]{
+			new ShopItem(6199, 5),
+			new ShopItem(290, 25),
+			new ShopItem(30448, 40),
+			new ShopItem(30185, 100),
+			new ShopItem(10600, 1),
+			new ShopItem(12791, 15),
+			new ShopItem(30389, 100),
+			new ShopItem(20724, 10),
+			new ShopItem(6806, 25),
+			new ShopItem(6807, 25),
+			new ShopItem(6808, 25),
+			new ShopItem(12877, 5),
+			new ShopItem(12875, 5),
+			new ShopItem(12881, 5),
+			new ShopItem(12883, 5),
+			new ShopItem(12873, 5),
+			new ShopItem(12004, 5),
+			new ShopItem(21034, 65),
+			new ShopItem(21079, 65),
+			new ShopItem(21295, 150),
+			new ShopItem(20405, 5),
+			new ShopItem(10551, 10),
+			new ShopItem(12954, 10),
+			new ShopItem(6585, 10),
+			new ShopItem(19707, 10),
+			new ShopItem(20714, 25),
+			new ShopItem(12849, 10),
+			new ShopItem(12863, 20),
+			new ShopItem(11663, 5),
+			new ShopItem(11664, 5),
+			new ShopItem(11665, 5),
+			new ShopItem(8839, 15),
+			new ShopItem(8840, 15),
+			new ShopItem(8842, 5),
+			new ShopItem(30016, 150)
+		}
+	),
+	ACHIEVEMENT_POINTS_SHOP(
+		15,
+		Currency.ACHIEVEMENT,
+		new ShopItem[]{
+			new ShopItem(10548, 275),
+			new ShopItem(10547, 275),
+			new ShopItem(10549, 275),
+			new ShopItem(10550, 275),
+			new ShopItem(10551, 375),
+			new ShopItem(10555, 375),
+			new ShopItem(10552, 100),
+			new ShopItem(10553, 150),
+			new ShopItem(7453, 25),
+			new ShopItem(7454, 50),
+			new ShopItem(7455, 75),
+			new ShopItem(7456, 100),
+			new ShopItem(7457, 125),
+			new ShopItem(7458, 150),
+			new ShopItem(7459, 175),
+			new ShopItem(7460, 200),
+			new ShopItem(7461, 225),
+			new ShopItem(7462, 250),
+			new ShopItem(3840, 250),
+			new ShopItem(3842, 250),
+			new ShopItem(3844, 250),
+			new ShopItem(12608, 500),
+			new ShopItem(12610, 500),
+			new ShopItem(12612, 500),
+			new ShopItem(12863, 1250),
+			new ShopItem(1409, 500),
+			new ShopItem(4081, 20),
+			new ShopItem(30427, 10),
+			new ShopItem(30104, 25),
+			new ShopItem(23071, 75),
+			new ShopItem(22114, 500),
+			new ShopItem(7510, 500),
+			new ShopItem(6758, 750),
+			new ShopItem(11738, 5)
 		}
 	);
 

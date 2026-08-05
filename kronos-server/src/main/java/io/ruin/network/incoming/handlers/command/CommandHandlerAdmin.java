@@ -127,12 +127,16 @@ public class CommandHandlerAdmin {
 
 			case "bank_show": {
 				var bank = player.getBank();
+				System.out.println("=== bank_show for " + player.getName() + " ===");
 				for (var item : bank.getItems()) {
 					if (item == null) {
 						continue;
 					}
-					player.sendMessage(item.getId() + " : " + item.getAmount());
+					String line = item.getSlot() + ": id=" + item.getId() + " amount=" + item.getAmount();
+					player.sendMessage(line);
+					System.out.println(line);
 				}
+				System.out.println("=== end bank_show ===");
 				return true;
 			}
 
@@ -1468,6 +1472,49 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "maxbonus": {
+				int[] bonuses = player.getEquipment().bonuses;
+				for (int i = 0; i < bonuses.length; i++)
+					bonuses[i] = 15000;
+				player.sendMessage("Your bonuses have been set to 15000.");
+				return true;
+			}
+
+			case "maxbonus2": {
+				int value = Integer.parseInt(args[0]);
+				int[] bonuses = player.getEquipment().bonuses;
+				for (int i = 0; i < bonuses.length; i++)
+					bonuses[i] = value;
+				player.sendMessage("Your bonuses have been set to " + value + ".");
+				return true;
+			}
+
+			case "astradoxwand": {
+				Item item = new Item(ItemID.KODAI_WAND, 1);
+				item.putAttribute(AttributeTypes.ASTRADOX_WAND, 1);
+				player.getInventory().add(item);
+				player.sendMessage("Spawned the Astradox Wand.");
+				return true;
+			}
+
+			case "accursedbow": {
+				Item item = new Item(ItemID.CRAWS_BOW, 1);
+				item.putAttribute(AttributeTypes.ACCURSED_BOW, 1);
+				player.getInventory().add(item);
+				player.sendMessage("Spawned the Accursed Bow.");
+				return true;
+			}
+
+			case "pointshops": {
+				player.getPacketSender().sendString(891, 14, "PKP Shop");
+				player.setShopIdentifier(13);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.handleEnteringShop(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.PKP_SHOP);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.open(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.getItemsFromShop(player));
+				return true;
+			}
+
 			case "giveperkpoints": {
 				forPlayer(player, query, "::giveperkpoints playerName",
 						p2 -> p2.perkPoints += args[0] == null ? 10_000 : Integer.parseInt(args[0]));
@@ -2418,6 +2465,16 @@ public class CommandHandlerAdmin {
 			case "bank":
 			case "openbank": {
 				player.getBank().open();
+				return true;
+			}
+
+			// Graceful shutdown for local dev use: System.exit fires the shutdown hook
+			// registered in Server.java (force-saves every online player and blocks
+			// until it's confirmed written to disk) before the JVM actually exits --
+			// unlike killing the process externally, which skips that hook entirely.
+			case "shutdown": {
+				player.sendMessage("Shutting down server -- saving all online players...");
+				System.exit(0);
 				return true;
 			}
 

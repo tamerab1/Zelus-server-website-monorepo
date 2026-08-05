@@ -72,12 +72,17 @@ public class CollectionLog {
 	}
 
 	public void add(Player player, Item item) {
-		boolean unique = false;
-		if (player.uniqueDrops.get(item.getId()) == null) {
+		// Viewing a collection log category pre-seeds every unobtained item's entry to 0
+		// (see CollectionLogUpdated.updateCollectionLog()) so it has something to render --
+		// that 0 is not null, so a plain null-check here would treat an item the player has
+		// simply looked at (but never received) as "not their first time" the moment they
+		// actually get it, silently skipping the new-item notification below.
+		Integer existing = player.uniqueDrops.get(item.getId());
+		boolean unique = existing == null || existing <= 0;
+		if (existing == null) {
 			player.uniqueDrops.put(item.getId(), item.getAmount());
-			unique = true;
 		} else {
-			player.uniqueDrops.replace(item.getId(), player.uniqueDrops.get(item.getId()) + item.getAmount());
+			player.uniqueDrops.replace(item.getId(), existing + item.getAmount());
 		}
 
 		if (unique && CollectionLogData.isCollectionLogSlotItem(item)) {

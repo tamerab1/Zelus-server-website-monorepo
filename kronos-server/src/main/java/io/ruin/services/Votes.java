@@ -43,7 +43,7 @@ public class Votes implements Runnable {
 				// Vote boss -1 each vote, when 0 Spawn
 				amount--;
 				player.voteLimit--;
-				player.getInventory().add(4067, 1);
+				player.getInventory().add(59602, 1);
 //                if (Random.rollDie(5, 1)) {
 //                    player.getInventory().add(1464, 1);
 //                    Broadcast.WORLD.sendNews(player.getName() + " Just got a vote lottery ticket! Don't forget to vote!");

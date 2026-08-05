@@ -21,7 +21,7 @@ public enum Currency {
 	SURVIVAL_TOKENS(new ItemCurrencyHandler(ItemID.SURVIVAL_TOKEN)),
 	GOLDEN_NUGGETS(new ItemCurrencyHandler(ItemID.GOLDEN_NUGGET)),
 	WARRIOR_GUILD_TOKEN(new ItemCurrencyHandler(ItemID.WARRIOR_GUILD_TOKEN)),
-	VOTE_TICKETS(new ItemCurrencyHandler(ItemID.VOTE_TICKETS)),
+	VOTE_TICKETS(new ItemCurrencyHandler(59602)), // replaced ItemID.VOTE_TICKETS (4067) -- new Vote Ticket item
 	UNIDENTIFIED_MINERALS(new ItemCurrencyHandler(ItemID.UNIDENTIFIED_MINERALS)),
 	TASK_POINTS(new CurrencyHandler("daily task points") {
 		@Override

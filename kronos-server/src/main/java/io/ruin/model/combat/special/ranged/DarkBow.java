@@ -35,7 +35,7 @@ public class DarkBow implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dark bow");
+		return name.contains("dark bow") || name.contains("nightfall bow");
 	}
 
 	@Override

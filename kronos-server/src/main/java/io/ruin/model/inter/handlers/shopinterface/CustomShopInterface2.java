@@ -18,115 +18,44 @@ public class CustomShopInterface2 {
 	public static void register() {
 		InterfaceHandler.register(Interface.CUSTOM_SHOP2, h -> {
 			h.actions[16] = (DefaultAction) (player, option, slot, itemId) -> {
-////                if (player.getGameMode().isIronMan()) {
-////              //      player.closeInterface(InterfaceType.MAIN);
-////                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Melee Shop");
-				player.setShopIdentifier(1);
-				handleEnteringShop(player, CustomShop2.MELEE_STORE);
+				player.getPacketSender().sendString(891, 14, "PKP Shop");
+				player.setShopIdentifier(13);
+				handleEnteringShop(player, CustomShop2.PKP_SHOP);
 				open(player, CustomShop2.getItemsFromShop(player));
-				// }
 			};
 			h.actions[18] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Ranged Shop");
-				player.setShopIdentifier(2);
-				handleEnteringShop(player, CustomShop2.RANGED_STORE);
-				open(player, CustomShop2.getItemsFromShop(player));
-				// }
-			};
-			h.actions[20] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Magic Shop");
-				player.setShopIdentifier(3);
-				handleEnteringShop(player, CustomShop2.MAGIC_STORE);
-				open(player, CustomShop2.getItemsFromShop(player));
-//                }
-			};
-			h.actions[22] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Ironman Shop");
-				player.setShopIdentifier(4);
-				handleEnteringShop(player, CustomShop2.IRONMAN_SHOP);
-				open(player, CustomShop2.getItemsFromShop(player));
-//                }
-			};
-			h.actions[24] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "PVM Point Shop");
-				player.setShopIdentifier(5);
-				handleEnteringShop(player, CustomShop2.PVM_POINT_SHOP);
-				open(player, CustomShop2.getItemsFromShop(player));
-//                }
-			};
-			h.actions[26] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Blood Money Shop");
+				player.getPacketSender().sendString(891, 14, "Bounty Hunter Shop");
 				player.setShopIdentifier(6);
 				handleEnteringShop(player, CustomShop2.BLOOD_MONEY_STORE);
 				open(player, CustomShop2.getItemsFromShop(player));
-//                }
 			};
-			h.actions[28] = (DefaultAction) (player, option, slot, itemId) -> {
-//                if (player.getGameMode().isIronMan()) {
-//                //    player.closeInterface(InterfaceType.MAIN);
-//                    player.sendMessage("You can't access this shop.");
-//                    return;
-//                } else {
-				player.getPacketSender().sendString(891, 14, "Supplies Shop");
-				player.setShopIdentifier(7);
-				handleEnteringShop(player, CustomShop2.MISC_STORE);
+			h.actions[20] = (DefaultAction) (player, option, slot, itemId) -> {
+				player.getPacketSender().sendString(891, 14, "Zelus Points Shop");
+				player.setShopIdentifier(14);
+				handleEnteringShop(player, CustomShop2.ZELUS_POINTS_SHOP);
 				open(player, CustomShop2.getItemsFromShop(player));
-//                }
 			};
-			h.actions[30] = (DefaultAction) (player, option, slot, itemId) -> {
-				if (player.getGameMode().isIronMan()) {//GameMode().STANDARD) {
-					//    player.closeInterface(InterfaceType.MAIN);
-					player.sendMessage("You can't access this shop.");
-					return;
-				} else {
-					player.getPacketSender().sendString(891, 14, "Skilling Shop");
-					player.setShopIdentifier(8);
-					handleEnteringShop(player, CustomShop2.SKILLING_SUPPLIES);
-					open(player, CustomShop2.getItemsFromShop(player));
-				}
+			h.actions[22] = (DefaultAction) (player, option, slot, itemId) -> {
+				player.getPacketSender().sendString(891, 14, "Achievement Points Shop");
+				player.setShopIdentifier(15);
+				handleEnteringShop(player, CustomShop2.ACHIEVEMENT_POINTS_SHOP);
+				open(player, CustomShop2.getItemsFromShop(player));
 			};
-			h.actions[32] = (DefaultAction) (player, option, slot, itemId) -> {
+			h.actions[24] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Donation Shop");
 				player.setShopIdentifier(9);
 				handleEnteringShop(player, CustomShop2.DONATOR_STORE);
 				open(player, CustomShop2.getItemsFromShop(player));
-
 			};
-			h.actions[35] = (DefaultAction) (player, option, slot, itemId) -> {
+			h.actions[26] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Voting Shop");
 				player.setShopIdentifier(10);
 				handleEnteringShop(player, CustomShop2.VOTE_STORE);
 				open(player, CustomShop2.getItemsFromShop(player));
-
 			};
+			h.simpleAction(49, player -> {
+				player.stringInput("Enter an item name to search for:", search -> searchShop(player, search));
+			});
 			h.actions[41] = (DefaultAction) (player, option, slot, itemId) -> {
 				if (option == 1) {
 					priceCheck(player, slot, itemId);
@@ -154,6 +83,20 @@ public class CustomShopInterface2 {
 	public static void handleEnteringShop(Player player, CustomShop2 CustomShop2) {
 		CustomShop2.addPlayerToShop(player);
 		player.setActiveCustomShop2(CustomShop2);
+	}
+
+	private static void searchShop(Player player, String search) {
+		CustomShop2 shop = CustomShop2.get(player.getShopIdentifier());
+		if (shop == null) {
+			return;
+		}
+		String needle = search.toLowerCase();
+		Item[] filtered = Arrays.stream(shop.getShopItems())
+			.map(si -> ObjType.get(si.getItemId()))
+			.filter(def -> def != null && def.name.toLowerCase().contains(needle))
+			.map(def -> new Item(def.id))
+			.toArray(Item[]::new);
+		player.getPacketSender().sendItems(10005, filtered);
 	}
 
 	private static void attemptBuy(Player player, int option, int slot, int itemId) {
@@ -405,9 +348,9 @@ public class CustomShopInterface2 {
 		player.getPacketSender().sendItems(-1, 1, 93, player.getInventory().getItems());
 		player.getPacketSender().sendItems(10005, shopItems);
 		if (player.getShopIdentifier() < 1) {
-			player.setShopIdentifier(1);
+			player.setShopIdentifier(13);
+			handleEnteringShop(player, CustomShop2.PKP_SHOP);
 		}
-		handleEnteringShop(player, CustomShop2.MELEE_STORE);
 		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
 		player.getPacketSender().sendClientScript(10208, 11802, 11235, 12904, 12810, 7462, 13307, 23685, 6739);
 		player.getPacketSender().sendClientScript(10207);

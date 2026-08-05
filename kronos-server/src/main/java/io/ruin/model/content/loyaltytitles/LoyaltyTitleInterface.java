@@ -32,6 +32,9 @@ public class LoyaltyTitleInterface {
 	private static final int PREVIEW = 37;
 	// These target the clickable Sprite child of each button's Layer wrapper (the wrapper and
 	// its Text label aren't referenced here -- see the "Prev / Next / Apply" block in 5105.toml).
+	// Confirmed correct via the editor's component tree 2026-08-03: wrappers 38/41/44 each contain
+	// a starred (active) sprite child (39/42/45) and a plain text label (40/43/46) -- these three
+	// constants are the starred children, not the wrappers.
 	private static final int PREV_PAGE = 39;
 	private static final int NEXT_PAGE = 42;
 	private static final int APPLY = 45;

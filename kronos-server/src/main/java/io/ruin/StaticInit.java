@@ -345,6 +345,7 @@ public final class StaticInit {
 		io.ruin.model.entity.npc.actions.zeah.Tynan.register();
 		io.ruin.model.entity.player.DifficultyChanger.register();
 		io.ruin.model.entity.player.KillCounter.register();
+		io.ruin.model.entity.player.Player.registerDummyStatsFix();
 		io.ruin.model.entity.player.Title.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitle.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.register();
@@ -682,6 +683,7 @@ public final class StaticInit {
 		// io.ruin.model.map.object.actions.impl.edgeville.Giveaway.register();
 		io.ruin.model.map.object.actions.impl.edgeville.PetList.register();
 		io.ruin.model.map.object.actions.impl.edgeville.RejuvenationPool.register();
+		io.ruin.model.map.object.actions.impl.ScratchMachine.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.HouseOnTheHillObjects.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.MushTree.register();
 		io.ruin.model.map.object.actions.impl.gnome_stronghold.MonkeyMadness.register();

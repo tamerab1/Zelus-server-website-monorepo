@@ -69,31 +69,32 @@ export const getPrivilegeLabel = (privilege) => {
 };
 
 // ── Donor ranks — NR 288 SecondaryGroup ───────────────────────────────────────
-// Thresholds match store_catalog.py prices exactly.
+// Thresholds match store_catalog.py prices exactly (which equal the kronos-server
+// totalDonated threshold in Player.java / DonatorBond.java — no bridge math).
 // getDonorRank() is called with the user's `total_spent` (USD float) and
 // returns the display name + Tailwind colour for their current tier.
 //
 // SecondaryGroup  | Price threshold | Drop boost
 // ─────────────── | ─────────────── | ──────────
 // DONATOR         | $10             | +2.50 %
-// SUPER_DONATOR   | $25             | +2.75 %
-// ELITE_DONATOR   | $50             | +3.00 %
-// NOBLE_DONATOR   | $75             | +3.20 %
-// GOLD_DONATOR    | $100            | +3.50 %
-// PLATINUM_DONATOR| $150            | +4.00 %
-// LEGENDARY_DONATOR| $200           | +5.00 %
-// SUPREME_DONATOR | $300            | +7.00 %
+// SUPER_DONATOR   | $50             | +2.75 %
+// ELITE_DONATOR   | $100            | +3.00 %
+// NOBLE_DONATOR   | $250            | +3.20 %
+// GOLD_DONATOR    | $400            | +3.50 %
+// PLATINUM_DONATOR| $700            | +4.00 %
+// LEGENDARY_DONATOR| $1,000         | +5.00 %
+// SUPREME_DONATOR | $1,750          | +7.00 %
 
 export const getDonorRank = (spent) => {
-  if (spent >= 300) return { name: 'Supreme Donator',   color: 'text-fuchsia-400' };
-  if (spent >= 200) return { name: 'Legendary Donator', color: 'text-yellow-300'  };
-  if (spent >= 150) return { name: 'Platinum Donator',  color: 'text-cyan-300'    };
-  if (spent >= 100) return { name: 'Gold Donator',      color: 'text-amber-400'   };
-  if (spent >= 75)  return { name: 'Noble Donator',     color: 'text-orange-400'  };
-  if (spent >= 50)  return { name: 'Elite Donator',     color: 'text-purple-400'  };
-  if (spent >= 25)  return { name: 'Super Donator',     color: 'text-blue-400'    };
-  if (spent >= 10)  return { name: 'Donator',           color: 'text-emerald-400' };
-  return                    { name: 'Player',            color: 'text-gray-400'    };
+  if (spent >= 1750) return { name: 'Supreme Donator',   color: 'text-fuchsia-400' };
+  if (spent >= 1000) return { name: 'Legendary Donator', color: 'text-yellow-300'  };
+  if (spent >= 700)  return { name: 'Platinum Donator',  color: 'text-cyan-300'    };
+  if (spent >= 400)  return { name: 'Gold Donator',      color: 'text-amber-400'   };
+  if (spent >= 250)  return { name: 'Noble Donator',     color: 'text-orange-400'  };
+  if (spent >= 100)  return { name: 'Elite Donator',     color: 'text-purple-400'  };
+  if (spent >= 50)   return { name: 'Super Donator',     color: 'text-blue-400'    };
+  if (spent >= 10)   return { name: 'Donator',           color: 'text-emerald-400' };
+  return                     { name: 'Player',            color: 'text-gray-400'    };
 };
 
 /**

@@ -432,6 +432,11 @@ public class Item {
 		if(id == 30763) {
 			player.getLootsViewer().updateInterface(player, LootsTables.FORGOTTEN_LOCKBOX);
 		}
+		if (AttributeExtensions.hasAttribute(this, AttributeTypes.ASTRADOX_WAND)) {
+			examine = "The Astradox Wand. A raid-exclusive wand humming with residual magic power.";
+		} else if (AttributeExtensions.hasAttribute(this, AttributeTypes.ACCURSED_BOW)) {
+			examine = "The Accursed Bow. A raid-exclusive bow that needs no ammunition.";
+		}
 		player.sendMessage(examine);
 		ItemEffect[] effects = AttributeExtensions.getCurrentEffects(this);
 		if (effects.length > 0) {

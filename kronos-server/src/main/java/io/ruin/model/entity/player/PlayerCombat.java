@@ -5317,7 +5317,7 @@ public class PlayerCombat extends Combat {
 		}
 
 		/* twisted bow */
-		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515);
+		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626);
 		if (hit.attackStyle != null && hit.attackStyle.isRanged() && hasTwistedBow) {
 			double magicLevel = target.getCombat().getLevel(StatType.Magic);
 			// if we're fighting the Combat Dummy

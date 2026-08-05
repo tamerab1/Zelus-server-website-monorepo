@@ -82,6 +82,7 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 		// if(player.getBankPin().requiresVerification(p -> open()))
 		// return;
+		removeBlankItems(); // don't rely solely on the close-triggered cleanup -- guarantee a clean, gap-free bank on every open
 		player.getPacketSender().sendClientScript(917, "ii", -1, -2);
 		player.setInterfaceUnderlay(-1, -2);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.BANK);
@@ -296,7 +297,7 @@ public class Bank extends ItemContainerG<BankItem> {
 		int removed = 0;
 		for (BankItem item : items) {
 			if (item == null)
-				break;
+				continue; // don't stop scanning -- a stray null shouldn't hide blanks that come after it
 			if (item.getId() == BLANK_ID) {
 				set(item.getSlot(), null);
 				removed++;
@@ -472,6 +473,8 @@ public class Bank extends ItemContainerG<BankItem> {
 		item.toBlank();
 		if (removed)
 			set(item.getSlot(), item);
+		else
+			update(item.getSlot()); // item stays in its slot (middle of tab) -- still needs to be marked dirty so the client actually sees the blank
 	}
 
 	private boolean allowPlaceHolder(ObjType def) {

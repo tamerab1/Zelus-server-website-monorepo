@@ -86,8 +86,8 @@ public class HomeHandler {
 		var slayerChest = GameObject.spawn(46243, 3109, 3486, 0, 10, 1);
 		//var singingBowl = GameObject.spawn(36552, 3091, 3510, 0, 10, 5);
 		//var pohPortal = GameObject.spawn(15478, 3085, 3511, 0, 10, 2);
-		var upgradeStation = GameObject.spawn(46241, 3115, 3482, 0, 10, 3);
-		var upgradeStation2 = GameObject.spawn(53226, 3112, 3485, 0, 10, 3);
+		var upgradeStation = GameObject.spawn(60015, 3116, 3485, 0, 10, 3); // Zelus Upgrader (was 46241)
+		var upgradeStation2 = GameObject.spawn(60016, 3114, 3482, 0, 10, 3); // Zelus Workbench (was 53226)
 		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
 		ObjectAction.register(panda, 1, (player, obj) -> NewShopHandler.openShop(player, NewShopHandler.pvmPointStore));
 		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
@@ -129,6 +129,8 @@ public class HomeHandler {
 		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
 		new NPC(5840).spawn(new Position(3125, 3464, 0), Direction.NORTH);
 		new NPC(5840).spawn(new Position(3121, 3464, 0), Direction.NORTH);
+		new NPC(1867).spawn(new Position(3114, 3504, 0), Direction.SOUTH);
+		NPCAction.register(1867, 1, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player));
 	}
 
 	public static void switchBook(Player player, SpellBook book, boolean altar) {
@@ -486,7 +488,7 @@ public class HomeHandler {
 
 		ObjType.forEach(itemDef -> {
 			if (itemDef != null) {
-				ItemObjectAction.register(itemDef.id, 53226, (player, item, obj) -> {
+				ItemObjectAction.register(itemDef.id, 60016, (player, item, obj) -> {
 					if (ItemBreakingHandler.getTotalAttachments(item).isEmpty()) {
 						player.sendMessage("This item does not have any perks to break.");
 						return;
@@ -502,8 +504,8 @@ public class HomeHandler {
 		ObjectAction.register(31681, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 2, (player, obj) -> enterGrotesqueGuardians(player));
-		ObjectAction.register(53226, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
-		ObjectAction.register(53226, 3, (player, obj) -> player.getItemBreakInterface().open(player));
+		ObjectAction.register(60016, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
+		ObjectAction.register(60016, 3, (player, obj) -> player.getItemBreakInterface().open(player));
 		ObjectAction.register(33410, 3, (player, obj) -> openTeleportInterface(player));
 		ObjectAction.register(31861, actions -> {
 			actions[1] = (player, obj) -> {

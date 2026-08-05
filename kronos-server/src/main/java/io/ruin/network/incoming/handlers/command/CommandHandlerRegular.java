@@ -457,7 +457,7 @@ public class CommandHandlerRegular {
 				io.ruin.model.content.casino.CasinoBlackjackInterface.open(player);
 				return true;
 			}
-			case "loyaltytitles": {
+			case "titles": {
 				io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player);
 				return true;
 			}

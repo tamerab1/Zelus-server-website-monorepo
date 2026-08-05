@@ -202,8 +202,7 @@ src/
 │   └── hiscores.js             # OSRS XP table, xpToLevel(), SKILL_DEFS (23 skills)
 │
 ├── data/
-│   ├── storePackages.js        # 5 donator rank packages (Donator → Sponsor)
-│   ├── storePacks.js           # 6 item packs (Starter → Ultimate)
+│   ├── storeItems.js           # Full store catalog incl. 8 donator ranks (Donator → Supreme)
 │   └── voteSites.js            # Voting site configs (RuneLocus, RSPS-List)
 │
 ├── components/

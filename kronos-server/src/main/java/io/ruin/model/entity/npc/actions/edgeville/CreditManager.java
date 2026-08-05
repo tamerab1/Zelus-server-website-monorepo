@@ -45,13 +45,12 @@ public class CreditManager {
 				new Option("What are the different tiers of donators?", () -> player.dialogue(
 					new PlayerDialogue("What are the different available tiers of donation?"),
 					new NPCDialogue(npc, "Ahh, yes! You want to know about the different titles. Of course, of course."),
-					new NPCDialogue(npc, "Right now, there's 6 available tiers, ranging from all different amounts. As you spend more, you'll automatically increase in title. I am in the highest possible tier, but that's to be expected."),
-					new NPCDialogue(npc, "There's the standard donator, which you'll likely see most people have, and an " + SecondaryGroup.DONATOR.tag() + " icon beside their name."),
-					new NPCDialogue(npc, "Next comes the Super Donator, a step above, and the people who hold " + SecondaryGroup.ELITE_DONATOR.tag() + " beside their name."),
-					new NPCDialogue(npc, "Following that, there's the Extreme Donators, and their names will have a " + SecondaryGroup.NOBLE_DONATOR.tag() + " beside it."),
-					new NPCDialogue(npc, "Afterward, you'll find the Ultimate Donators, a growingly prestigious rank, and their names will be next to a " + SecondaryGroup.GOLD_DONATOR.tag() + " icon."),
-					new NPCDialogue(npc, "The next rank is quite excellent, and a personal favorite of mine, and that's the Master Donators. You'll find their names beside a " + SecondaryGroup.PLATINUM_DONATOR.tag() + " icon."),
-					new NPCDialogue(npc, "And finally, and the highest rank of all, is the Godlike Donators. Their names will be beside a " + SecondaryGroup.LEGENDARY_DONATOR.tag() + "."),
+					new NPCDialogue(npc, "Right now, there's 8 available tiers, ranging from all different amounts. As you spend more, you'll automatically increase in title."),
+					new NPCDialogue(npc, "There's the standard Donator, which you'll likely see most people have, and an " + SecondaryGroup.DONATOR.tag() + " icon beside their name."),
+					new NPCDialogue(npc, "Next comes the Super Donator, holding an " + SecondaryGroup.SUPER_DONATOR.tag() + " icon, followed by the Elite Donator with an " + SecondaryGroup.ELITE_DONATOR.tag() + " icon."),
+					new NPCDialogue(npc, "Above that sits the Noble Donator, marked by an " + SecondaryGroup.NOBLE_DONATOR.tag() + " icon, and the Gold Donator with a " + SecondaryGroup.GOLD_DONATOR.tag() + " icon."),
+					new NPCDialogue(npc, "Then comes the Platinum Donator, beside a " + SecondaryGroup.PLATINUM_DONATOR.tag() + " icon, and the Legendary Donator with a " + SecondaryGroup.LEGENDARY_DONATOR.tag() + " icon."),
+					new NPCDialogue(npc, "And finally, and the highest rank of all, is the Supreme Donator. Their names will be beside a " + SecondaryGroup.SUPREME_DONATOR.tag() + " icon. I am in the highest possible tier, but that's to be expected."),
 					new NPCDialogue(npc, "There may be more ranks to come, but those are all I know of at the moment! As great as I may be, the decisions do come down from the top."),
 					new PlayerDialogue("Awesome, thanks!"))
 				),
@@ -151,11 +150,13 @@ public class CreditManager {
 	 */
 
 	public static SecondaryGroup getGroup(Player player) {
-		if (player.storeAmountSpent >= 2500)
-			return SecondaryGroup.LEGENDARY_DONATOR;
+		if (player.storeAmountSpent >= 1750)
+			return SecondaryGroup.SUPREME_DONATOR;
 		if (player.storeAmountSpent >= 1000)
+			return SecondaryGroup.LEGENDARY_DONATOR;
+		if (player.storeAmountSpent >= 700)
 			return SecondaryGroup.PLATINUM_DONATOR;
-		if (player.storeAmountSpent >= 500)
+		if (player.storeAmountSpent >= 400)
 			return SecondaryGroup.GOLD_DONATOR;
 		if (player.storeAmountSpent >= 250)
 			return SecondaryGroup.NOBLE_DONATOR;

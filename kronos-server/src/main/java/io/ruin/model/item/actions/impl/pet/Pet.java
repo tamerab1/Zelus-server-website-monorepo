@@ -253,6 +253,7 @@ public enum Pet {
 	CORRUPTED_YOUNGLLEF(23759, 8738, 8737, false),
 
 	KEEP_OF_ECHOES(33018, 17023, false),
+	NOX(59603, 17050, false),
 	///  DoE Event Winners got a Pet
 	NULL(33024, 17025, false),
 	ACOUSTIC(33023, 17024, false),

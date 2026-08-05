@@ -357,6 +357,10 @@ public class ObjType {
 			inventoryOptions[1] = null;
 		}
 
+		if (id == 10600) { // Kgp id card, repurposed as the scratch card trigger item
+			inventoryOptions[0] = "Scratch";
+		}
+
 		if (id == 2748) {
 			name = "Coin Casket (giant)";
 			inventoryOptions[1] = null;

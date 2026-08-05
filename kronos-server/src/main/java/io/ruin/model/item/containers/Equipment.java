@@ -468,6 +468,13 @@ public class Equipment extends ItemContainer {
 					bonuses[EquipmentStats.MAGIC_ATTACK] *= 3;
 				}
 			}
+			if (AttributeExtensions.hasAttribute(wep, AttributeTypes.ASTRADOX_WAND)) {
+				bonuses[EquipmentStats.MAGIC_ATTACK] += 15;
+				bonuses[EquipmentStats.MAGIC_DAMAGE] += 10;
+			} else if (AttributeExtensions.hasAttribute(wep, AttributeTypes.ACCURSED_BOW)) {
+				bonuses[EquipmentStats.RANGE_ATTACK] += 15;
+				bonuses[EquipmentStats.RANGED_STRENGTH] += 15;
+			}
 		}
 		/**
 		 * Update equipment stats interface
