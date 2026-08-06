@@ -32,6 +32,8 @@ import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
 import io.ruin.model.content.HomeHandler;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitle;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitleManager;
 import io.ruin.model.content.upgrade.ItemEffect;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.*;
@@ -1521,6 +1523,33 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "givetitle": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				String usage = "Usage: ::givetitle playerName searchTerm";
+				int prefixLen = command.length() + 1;
+				if (query.length() <= prefixLen) {
+					player.sendMessage(usage);
+					return true;
+				}
+				String remainder = query.substring(prefixLen).trim();
+				int lastSpace = remainder.lastIndexOf(' ');
+				if (lastSpace <= 0) {
+					player.sendMessage(usage);
+					return true;
+				}
+				String name = remainder.substring(0, lastSpace).trim();
+				String search = remainder.substring(lastSpace).trim();
+				Player target = World.getPlayer(name);
+				if (target == null) {
+					player.sendMessage("User '" + name + "' is not online.");
+					return true;
+				}
+				givetitleSearch(player, target, search);
+				return true;
+			}
+
 			case "searchi":
 			case "searchitem":
 			case "finditem":
@@ -2504,5 +2533,40 @@ public class CommandHandlerAdmin {
 		}
 
 		return false;
+	}
+
+	private static void grantTitle(Player admin, Player target, LoyaltyTitle title) {
+		LoyaltyTitleManager.unlock(target, title);
+		LoyaltyTitleManager.equip(target, title);
+		String plain = title.preview(target.getName()).replaceAll("<[^>]*>", "");
+		target.sendMessage("You have been granted the title: " + plain);
+		admin.sendMessage("Granted title '" + plain + "' to " + target.getName() + ".");
+	}
+
+	private static void givetitleSearch(Player admin, Player target, String search) {
+		String needle = search.toLowerCase();
+		List<LoyaltyTitle> matches = new ArrayList<>();
+		for (LoyaltyTitle title : LoyaltyTitle.all()) {
+			String plainText = title.text.replaceAll("<[^>]*>", "").toLowerCase();
+			String requirement = title.requirement == null ? "" : title.requirement.toLowerCase();
+			if (plainText.contains(needle) || requirement.contains(needle)) {
+				matches.add(title);
+			}
+		}
+		if (matches.isEmpty()) {
+			admin.sendMessage("No title found matching: " + search);
+			return;
+		}
+		if (matches.size() == 1) {
+			grantTitle(admin, target, matches.get(0));
+			return;
+		}
+		List<Option> options = new ArrayList<>();
+		for (LoyaltyTitle title : matches) {
+			if (options.size() >= 128) break;
+			String label = title.id + ": " + title.preview(target.getName()).replaceAll("<[^>]*>", "");
+			options.add(new Option(label, p -> grantTitle(admin, target, title)));
+		}
+		OptionScroll.openKeepOpen(admin, "Title Search: " + search + " (" + options.size() + " results)", options);
 	}
 }

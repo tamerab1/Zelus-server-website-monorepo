@@ -4236,6 +4236,9 @@ public class Player extends PlayerAttributes {
 	private void finish() {
 		try {
 			MapListener.onLogout(player);
+			// Safety-net sweep so no loyalty title achievement is missed even if its underlying
+			// category has no dedicated trigger (see LoyaltyTitleManager#checkAllUnlocks).
+			io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.checkAllUnlocks(player);
 			this.finishMisc();
 			this.finishDynamicMap();
 			this.finishPet();

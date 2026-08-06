@@ -632,7 +632,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "slayer": {
-				teleport(player, new Position(3097, 3511, 0));
+				teleport(player, new Position(3104, 3490, 0));
 				return true;
 			}
 

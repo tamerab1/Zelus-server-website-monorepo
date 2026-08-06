@@ -251,5 +251,6 @@ public class LoyaltyTitle {
 		s(30172, Category.MASTERY, "<col=EDA011>, Jack of All Trades</col>", "Obtain all pets", 500000000);
 		p(30173, Category.GENERAL, "<col=C86402>Esquire </col>", PURCHASE, 50000000);
 		s(30174, Category.GENERAL, "<col=C86402> the Magnificent</col>", PURCHASE, 100000000);
+		p(30175, Category.GENERAL, "<col=00008B>Beta Tester </col>", "Awarded to players who took part in the beta test", 0);
 	}
 }

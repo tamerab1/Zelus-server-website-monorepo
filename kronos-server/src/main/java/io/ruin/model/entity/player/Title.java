@@ -26,7 +26,7 @@ public class Title {
 	//0 -> <col=0da8af><shad=000000>Owner </col></shad>
 
 	public static final Title[] PRESET_TITLES = { //Todo @F16 Title id
-		prefixTitle("<col=0da8af><shad=000000>Owner </col></shad>").setPredicate(p -> p.isGroup(PlayerGroup.OWNER)).setHidden(),
+		prefixTitle("<col=000000><shad=000000>Owner </col></shad>").setPredicate(p -> p.isGroup(PlayerGroup.OWNER)).setHidden(),
 		prefixTitle("<col=ffff00><shad=000000>Admin </col></shad>").setPredicate(p -> p.isGroup(PlayerGroup.ADMINISTRATOR)).setHidden(),
 		prefixTitle("<col=a239db><shad=000000><img=31>Developer </shad></col>").setPredicate(p -> p.isGroup(PlayerGroup.ADMINISTRATOR)).setHidden(),
 		prefixTitle(colorAndShadow("d6daff", "000000", "Moderator ")).setPredicate(p -> p.isGroup(PlayerGroup.MODERATOR)).setHidden(),

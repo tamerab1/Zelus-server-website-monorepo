@@ -2,6 +2,7 @@ package collectionlog;
 
 import io.ruin.cache.Color;
 import io.ruin.cache.Icon;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitleManager;
 import io.ruin.model.entity.player.KillCounter;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.InterfaceHandler;
@@ -113,6 +114,16 @@ public class CollectionLogUpdated {
 	}
 
 	private boolean finishedLog(Player player, CollectionLogData log) {
+		return isLogComplete(player, log);
+	}
+
+	/**
+	 * Returns true if every unique item in the given collection log has been obtained by the
+	 * player. Also used by {@link LoyaltyTitleManager#collectionLogsComplete} (wired up in
+	 * {@link #register()}) since loyalty titles' collection-log requirements need the exact
+	 * same "is this log finished" check the collection log interface itself uses.
+	 */
+	public static boolean isLogComplete(Player player, CollectionLogData log) {
 		for (Item item : log.uniqueItems) {
 			if (player.uniqueDrops.get(item.getId()) == null || player.uniqueDrops.get(item.getId()) < 1) {
 				return false;
@@ -339,6 +350,25 @@ public class CollectionLogUpdated {
 	}
 
 	public static void register() {
+		// Wire up the loyalty titles extension point: given a player and one or more collection
+		// log names, report whether every named log is fully completed. kronos-server can't
+		// reference CollectionLogData directly (this module depends on kronos-server, not the
+		// other way around), so LoyaltyTitleManager exposes this as a settable hook instead.
+		LoyaltyTitleManager.collectionLogsComplete = (player, logNames) -> {
+			for (String logName : logNames) {
+				CollectionLogData match = null;
+				for (CollectionLogData log : CollectionLogData.VALUES) {
+					if (log.name.equalsIgnoreCase(logName)) {
+						match = log;
+						break;
+					}
+				}
+				if (match == null || !isLogComplete(player, match))
+					return false;
+			}
+			return true;
+		};
+
 		//@formatter:off
 		InterfaceHandler.register(1134, h -> {
 			h.actions[526] = (SimpleAction) (p) -> p.stringInput("Search collection log (name):", name -> {
