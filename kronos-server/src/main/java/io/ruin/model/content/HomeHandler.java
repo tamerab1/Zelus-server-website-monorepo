@@ -337,6 +337,7 @@ public class HomeHandler {
 		NPCAction.register(2817, 1, (player, npc) -> ShopManager.openIfExists(player, "GeneralStore"));
 		NPCAction.register(9053, "Trade", (player, npc) -> ShopManager.openIfExists(player, "347ca8b3-dd43-4a46-bf05-3a452e5e1f3c"));
 		NPCAction.register(5523, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openDonatorStoreShop(player));
+		NPCAction.register(5523, 2, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.openDonatorTab(player));
 		NPCAction.register(2989, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openZelusPointsShop(player));
 		NPCAction.register(4058, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openVoteStoreShop(player));
 		NPCAction.register(5527, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openAchievementPointsShop(player));

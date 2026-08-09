@@ -361,11 +361,11 @@ public class CustomShopInterface2 {
 			return;
 		}
 
-		// Explicit-buyback shops (sellAtListedPrice) are built to sink specific non-tradeable
-		// items at a fixed price -- same pattern as the Wilderness Emblem Trader's Archaic
-		// emblems, which aren't GE-tradeable either. Only the general case requires tradeable.
-		if (!CustomShop2.isSellAtListedPrice() && !item.getDef().tradeable) {
-			player.sendMessage("You can't sell that item.");
+		// Only explicit-buyback shops (sellAtListedPrice, e.g. SELL_BH_EMBLEMS) accept selling
+		// at all -- the other CustomShop2 shops are buy-only point stores and were never meant
+		// to buy items back, even ones that happen to be tradeable and in their own stock list.
+		if (!CustomShop2.isSellAtListedPrice()) {
+			player.sendMessage("You can't sell items to this shop.");
 			return;
 		}
 
@@ -383,7 +383,9 @@ public class CustomShopInterface2 {
 			return;
 		}
 
-		int price = CustomShop2.isSellAtListedPrice() ? CustomShop2Item.getPrice() : (int) (CustomShop2Item.getPrice() * 0.70);
+		// isSellAtListedPrice() is always true here -- attemptSell() already returned above for
+		// any shop where it's false, so there's no 70%-buyback case left to compute.
+		int price = CustomShop2Item.getPrice();
 
 		if (option == 1) {
 			if (CustomShop2Item.getPrice() <= 0) {

@@ -1193,15 +1193,18 @@ public class Player extends PlayerAttributes {
 			packetSender.sendString(119, childId++, s);
 		packetSender.sendClientScript(917, "ii", -1, -1);
 		openInterface(ToplevelComponent.MAINMODAL, 119);
+		// +1 accounts for the blank spacer row written above (childId 4), which is itself
+		// part of the scrollable container and so counts toward its total row height.
+		int rowCount = lines.length + 1;
 		ScrollbarClientScript.create()
 				.interfaceId(119)
 				.containerId(3)
 				.scrollbarChildId(204)
-				.childrenCount(lines.length)
+				.childrenCount(rowCount)
 				.withDarkGraphics()
 				.build()
 				.send(player);
-		packetSender.sendClientScript(2523, "1i", 1, lines.length);
+		packetSender.sendClientScript(2523, "1i", 1, rowCount);
 	}
 
 	public void sendHintArrow(Entity target) {

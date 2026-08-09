@@ -20,7 +20,6 @@ import io.ruin.model.inter.dialogue.OptionsDialogue;
 import io.ruin.model.inter.handlers.AchievementInterface;
 import io.ruin.model.inter.handlers.LootsTables;
 import io.ruin.model.inter.questtab.bestiary.Bestiary;
-import io.ruin.model.inter.questtab.presets.PresetsMenu;
 import io.ruin.model.inter.questtab.main.Achievements;
 import io.ruin.model.inter.questtab.toggles.*;
 import io.ruin.model.inter.utils.Option;
@@ -236,7 +235,8 @@ public class JournalTab {
 		HIDE_ICON(Tab.MISCELLANEOUS, t4++, new HideIcon()),
 		RISK_PROTECTION(Tab.MISCELLANEOUS, t4++, RiskProtection.INSTANCE),
 		HIDE_YELLS(Tab.MISCELLANEOUS, t4++, new HideYells()),
-		PVP_PRESETS(Tab.MISCELLANEOUS, t4++, player -> "PvP Presets", (SimpleAction) p -> PresetsMenu.open(p)),
+		// PVP_PRESETS retired -- opened the old PresetsMenu (DMMPVP-style fixed Zerker/Melee/Pure
+		// kits), superseded by the GearLoadouts system.
 		;
 
 		private Tab tab;

@@ -72,7 +72,15 @@ public class ShopManager {
 		InterfaceHandler.register(301, h -> { //Player inventory
 			h.actions[0] = (DefaultAction) (player, option, slot, itemId) -> {
 
-				if (player.isVisibleInterface(Interface.CUSTOM_SHOP)) {
+				// CustomShopInterface2.register() also binds interface 301's action[0] (it runs
+				// earlier in StaticInit), but InterfaceHandler.register() reuses one handler
+				// object per interface id and this registration overwrites that slot -- so
+				// without this check, CustomShopInterface2.attemptSell() (and any shop built on
+				// it, e.g. the BH emblem sell shop) never actually runs; every sell click here
+				// fell through to the dead player.viewingShop branch below and silently no-op'd.
+				if (player.getActiveCustomShop2() != null) {
+					io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.attemptSell(player, option, slot, itemId);
+				} else if (player.isVisibleInterface(Interface.CUSTOM_SHOP)) {
 					CustomShopInterface.attemptSell(player, option, slot, itemId);
 				} else {
 					Shop shop = player.viewingShop;

@@ -2,6 +2,7 @@ package io.ruin.model.content.gearloadouts;
 
 import io.ruin.cache.InterfaceDef;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.inter.InterfaceHandler;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.actions.SimpleAction;
@@ -52,14 +53,18 @@ public class GearLoadoutInterface {
 
 	private static final int[] PRESET_BUTTONS = { 71, 74, 77, 80, 83, 86, 89, 92, 95, 98, 101, 104, 107 };
 	private static final int[] PRESET_TEXTS = { 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108 };
+	// Each row of 4 must be ascending (left-to-right) to match slot order -- this used to be
+	// descending per row (136,135,134,133, ...), which mirrored every row in the preview so it
+	// no longer matched the preset's actual stored item order (confirmed by comparing a free
+	// kit's saved JSON against what actually spawns -- spawning already used plain slot order).
 	private static final int[] INVENTORY_COMPONENTS = {
-			136, 135, 134, 133,
-			140, 139, 138, 137,
-			144, 143, 142, 141,
-			148, 147, 146, 145,
-			152, 151, 150, 149,
-			156, 155, 154, 153,
-			160, 159, 158, 157
+			133, 134, 135, 136,
+			137, 138, 139, 140,
+			141, 142, 143, 144,
+			145, 146, 147, 148,
+			149, 150, 151, 152,
+			153, 154, 155, 156,
+			157, 158, 159, 160
 	};
 	private static final int[] STAT_TEXTS = { 174, 175, 176, 177, 178, 179, 180 };
 	private static final int[] STAT_ICON_BUTTONS = { 187, 188, 189, 190, 191, 192, 193 };
@@ -216,20 +221,13 @@ public class GearLoadoutInterface {
 		});
 	}
 
+	// Regular players get 3 slots; Donator (the base rank) gets 5, and each donator rank above
+	// that adds one more (Super=6, Elite=7, Noble=8, Gold=9, Platinum=10, Legendary=11, Supreme=12).
 	public int getUnlockedPresets(Player player) {
-		if (player.totalDonated > 1000)
-			return 13;
-		if (player.totalDonated > 500)
-			return 11;
-		if (player.totalDonated > 200)
-			return 9;
-		if (player.totalDonated > 100)
-			return 7;
-		if (player.totalDonated > 50)
-			return 4;
-		if (player.totalDonated > 10)
+		SecondaryGroup group = player.getSecondaryGroup();
+		if (group.id < SecondaryGroup.DONATOR.id)
 			return 3;
-		return 2;
+		return 5 + (group.id - SecondaryGroup.DONATOR.id);
 	}
 
 	private void update(Player player) {
@@ -434,7 +432,10 @@ public class GearLoadoutInterface {
 					player.sendMessage("You don't have anymore preset slots to save this to.");
 					return;
 				}
-				GearLoadoutHandler.createBlankPreset(player);
+				// createBlankPreset() made an empty preset (no items, just combat stats) --
+				// saveGearPreset() captures the player's current inventory/equipment instead,
+				// which is what "Create" is actually meant to do here.
+				GearLoadoutHandler.saveGearPreset(player);
 			};
 			h.actions[CREATE_BUTTON] = createPreset;
 			h.actions[CREATE_BUTTON_BACKGROUND] = createPreset;

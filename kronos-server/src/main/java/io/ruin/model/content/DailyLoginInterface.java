@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Daily login reward streak. Shares interface 1109 with DailyVoteInterface
@@ -40,13 +41,23 @@ public class DailyLoginInterface {
 
 	private static final int INTERFACE_ID = 1109;
 
+	// icon used to display donator-point rewards in the reward slots (matches the same
+	// stand-in icon used elsewhere for this currency, e.g. LoyaltyTitleManager.DONATOR_POINTS_ICON)
+	private static final int DONATOR_POINTS_ICON = 8851;
+
+	// 1-indexed login day -> donator points awarded instead of an inventory item; checked in
+	// claimReward() before the normal item-granting path
+	private static final Map<Integer, Integer> DONATOR_POINTS_DAYS = Map.of(
+			6, 100,
+			25, 500);
+
 	private static final List<Item> loginRewards = Arrays.asList(
 			new Item(ItemID.PRAYER_POTION4, 5),
 			new Item(ItemID.SUPER_RESTORE4, 5),
 			new Item(ItemID.DIVINE_SUPER_COMBAT_POTION4, 1),
 			new Item(ItemID.COINS_995, 350000),
 			new Item(ItemID.SARADOMIN_BREW4, 5),
-			new Item(30464, 1),                              // $5 Donator Bond
+			new Item(DONATOR_POINTS_ICON, 100),              // Day 6: 100 Donator Points (see DONATOR_POINTS_DAYS)
 			new Item(ItemID.DHAROKS_ARMOUR_SET, 1),
 			new Item(ItemID.COINS_995, 1000000),
 			new Item(608, 5),                                // Drop Rate Scroll
@@ -55,20 +66,20 @@ public class DailyLoginInterface {
 			new Item(ItemID.BANDOS_TASSETS, 1),
 			new Item(30452, 1),                              // Mystery box
 			new Item(33020, 1),                              // Perk Exp Lamp
-			new Item(30464, 2),                              // $5 Donator Bond x2
-			new Item(ItemID.COINS_995, 4000000),
+			new Item(30464, 1),                              // $5 Donator Bond
+			new Item(ItemID.COINS_995, 10000000),
 			new Item(ItemID.ABYSSAL_WHIP, 1),
-			new Item(6828, 1),                               // Pet Mystery Box
+			new Item(6199, 1),                               // Mystery box
 			new Item(30426, 1),                              // Limited Mystery Box
 			new Item(ItemID.TOXIC_BLOWPIPE, 1),
-			new Item(ItemID.COINS_995, 10000000),
+			new Item(ItemID.COINS_995, 15000000),
 			new Item(ItemID.VESTAS_CHAINBODY, 1),
 			new Item(ItemID.MASORI_CHAPS, 1),
-			new Item(ItemID.BLOOD_MONEY, 500000),
-			new Item(30464, 3),                              // $5 Donator Bond x3
+			new Item(6199, 2),                               // Mystery box x2
+			new Item(DONATOR_POINTS_ICON, 500),              // Day 25: 500 Donator Points (see DONATOR_POINTS_DAYS)
 			new Item(ItemID.DEVOUT_BOOTS, 1),
-			new Item(ItemID.BLACK_PARTYHAT, 1),
-			new Item(30464, 4));                             // $20 Donator Bond -- no single $20 denomination exists (only $5/$10/$25/$50/$100)
+			new Item(ItemID.RED_PARTYHAT, 1),
+			new Item(30464, 2));                             // $5 Donator Bond x2
 
 	public static void register() {
 		// Interface action 468 is registered once, in DailyVoteInterface,
@@ -221,6 +232,16 @@ public class DailyLoginInterface {
 		}
 
 		player.canClaimLoginReward = false;
+
+		Integer donatorPoints = DONATOR_POINTS_DAYS.get(player.loginStreak);
+		if (donatorPoints != null) {
+			player.updateDonatorPoints(donatorPoints);
+			player.claimedLoginToday = true;
+			player.sendMessage("You have received " + donatorPoints + " donator points.");
+			player.getDailyLogin().open();
+			return;
+		}
+
 		var rewardIdx = player.loginStreak - 1;
 
 		Item reward;

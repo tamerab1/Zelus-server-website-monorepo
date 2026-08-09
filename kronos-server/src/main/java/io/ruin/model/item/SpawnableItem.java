@@ -24,6 +24,8 @@ public enum SpawnableItem {
 	SHARK(World.spawnableOffset + ItemID.SHARK, 0),
 	LOBSTER(World.spawnableOffset + ItemID.LOBSTER, 0),
 	MONKFISH(World.spawnableOffset + ItemID.MONKFISH, 0),
+	COOKED_KARAMBWAN(World.spawnableOffset + ItemID.COOKED_KARAMBWAN, 0),
+	DARK_CRAB(World.spawnableOffset + ItemID.DARK_CRAB, 0),
 	/*
 	 * Potions
 	 */
@@ -35,6 +37,7 @@ public enum SpawnableItem {
 	SANFEW_SERUM(World.spawnableOffset + SANFEW_SERUM4, 0),
 	SUPER_RESTORE(World.spawnableOffset + SUPER_RESTORE4, 0),
 	SARA_BREW(World.spawnableOffset + SARADOMIN_BREW4, 0),
+	SARA_BREW_23575(World.spawnableOffset + ItemID.SARADOMIN_BREW4_23575, 0),
 	/*
 	 * Armor
 	 */
@@ -86,6 +89,15 @@ public enum SpawnableItem {
 	BLACK_VAMBRACES(World.spawnableOffset + BLACK_DHIDE_VAMB, 0),
 	BLACK_BODY(World.spawnableOffset + BLACK_DHIDE_BODY, 0),
 	ANTI_DRAGON_SHIELD(World.spawnableOffset + ANTIDRAGON_SHIELD, 0),
+	MYSTIC_ROBE_TOP(World.spawnableOffset + ItemID.MYSTIC_ROBE_TOP, 0),
+	MYSTIC_ROBE_BOTTOM(World.spawnableOffset + ItemID.MYSTIC_ROBE_BOTTOM, 0),
+	GHOSTLY_ROBE_TOP(World.spawnableOffset + ItemID.GHOSTLY_ROBE, 0),
+	GHOSTLY_ROBE_BOTTOM(World.spawnableOffset + ItemID.GHOSTLY_ROBE_6108, 0),
+	BARROWS_GLOVES(World.spawnableOffset + ItemID.BARROWS_GLOVES, 0),
+	HELM_OF_NEITIZNOT(World.spawnableOffset + ItemID.HELM_OF_NEITIZNOT, 0),
+	SARADOMIN_CHAPS(World.spawnableOffset + ItemID.SARADOMIN_CHAPS, 0),
+	SARADOMIN_HALO(World.spawnableOffset + ItemID.SARADOMIN_HALO, 0),
+	RUNE_DEFENDER(World.spawnableOffset + ItemID.RUNE_DEFENDER, 0),
 	/*
 	 * Weapons
 	 */
@@ -104,6 +116,8 @@ public enum SpawnableItem {
 	DRAGON_MACE(World.spawnableOffset + ItemID.DRAGON_MACE, 0),
 	DRAGON_2H(World.spawnableOffset + ItemID.DRAGON_2H_SWORD, 0),
 	GRANITE_MAUL(World.spawnableOffset + ItemID.GRANITE_MAUL, 0),
+	DRAGON_THROWNAXE(World.spawnableOffset + ItemID.DRAGON_THROWNAXE, 0),
+	DRAGON_KNIFE(World.spawnableOffset + ItemID.DRAGON_KNIFE, 0),
 
 	SHORTBOW(World.spawnableOffset + ItemID.SHORTBOW, 0),
 	OAK_SHORTBOW(World.spawnableOffset + ItemID.OAK_SHORTBOW, 0),
@@ -118,6 +132,7 @@ public enum SpawnableItem {
 	MITHRIL_ARROW(World.spawnableOffset + ItemID.MITHRIL_ARROW, 0),
 	ADAMANT_ARROW(World.spawnableOffset + ItemID.ADAMANT_ARROW, 0),
 	RUNE_ARROW(World.spawnableOffset + ItemID.RUNE_ARROW, 0),
+	DRAGONSTONE_BOLTS_E(World.spawnableOffset + ItemID.DRAGONSTONE_BOLTS_E, 0),
 
 	AIR_STAFF(World.spawnableOffset + STAFF_OF_AIR, 0),
 	AIR_BSTAFF(World.spawnableOffset + AIR_BATTLESTAFF, 0),
@@ -140,6 +155,7 @@ public enum SpawnableItem {
 	DEATH_RUNE(World.spawnableOffset + ItemID.DEATH_RUNE, 0),
 	NATURE_RUNE(World.spawnableOffset + ItemID.NATURE_RUNE, 0),
 	ASTRAL_RUNE(World.spawnableOffset + ItemID.ASTRAL_RUNE, 0),
+	BLOOD_RUNE(World.spawnableOffset + ItemID.BLOOD_RUNE, 0),
 	/*
 	 * Jewelry
 	 */
@@ -148,10 +164,14 @@ public enum SpawnableItem {
 	AMULET_OF_ACCURACY(World.spawnableOffset + ItemID.AMULET_OF_ACCURACY, 0),
 	AMULET_OF_STRENGTH(World.spawnableOffset + ItemID.AMULET_OF_STRENGTH, 0),
 	AMULET_OF_GLORY(World.spawnableOffset + ItemID.AMULET_OF_GLORY4, 0),
+	AMULET_OF_GLORY6(World.spawnableOffset + ItemID.AMULET_OF_GLORY6, 0),
+	UNHOLY_BOOK(World.spawnableOffset + ItemID.UNHOLY_BOOK, 0),
 
 	ZAMORAK_CAPE(World.spawnableOffset + ItemID.ZAMORAK_CAPE, 0),
 	GUTHIX_CAPE(World.spawnableOffset + ItemID.GUTHIX_CAPE, 0),
 	SARADOMIN_CAPE(World.spawnableOffset + ItemID.SARADOMIN_CAPE, 0),
+	OBSIDIAN_CAPE(World.spawnableOffset + ItemID.OBSIDIAN_CAPE, 0),
+	AVAS_ACCUMULATOR(World.spawnableOffset + ItemID.AVAS_ACCUMULATOR, 0),
 
 	MITHRIL_GLOVES(World.spawnableOffset + ItemID.MITHRIL_GLOVES, 0),
 	RUNE_GLOVES(World.spawnableOffset + ItemID.RUNE_GLOVES, 0),

@@ -157,7 +157,6 @@ public class BlackjackSession {
 		}
 		player.dialogue(new OptionsDialogue("Please select a currency to bet:",
 				currencyOption(player, BlackjackCurrency.DONATOR_POINTS),
-				currencyOption(player, BlackjackCurrency.PK_POINTS),
 				currencyOption(player, BlackjackCurrency.PLATINUM_TOKENS),
 				new Option("Cancel", player::closeDialogue)));
 	}

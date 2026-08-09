@@ -14,6 +14,7 @@ import io.ruin.model.World;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.GameMode;
+import io.ruin.model.entity.player.PlayMode;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecurityPin;
 import io.ruin.model.entity.shared.LockType;
@@ -52,9 +53,14 @@ public class StarterGuide {
 	}
 
 	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
-	public static List<String> ipsClaimed = new ArrayList<>();
+	// IP -> number of accounts on that IP that have already received the tradeable STANDARD-mode
+	// starter kit (500k coins, thousands of runes, etc). Capped so alt-account farming can't be
+	// used to funnel unlimited free starter wealth into a main account via trading.
+	public static final int MAX_STARTER_CLAIMS_PER_IP = 2;
+	public static java.util.Map<String, Integer> ipClaimCounts = new java.util.HashMap<>();
 
 	public static void register() {
+		loadIps();
 		LoginListener.register(player -> {
 			if (player.newPlayer) {
 				player.hasFreePerkUnlock = true;
@@ -179,7 +185,18 @@ public class StarterGuide {
 						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!") {
 							@Override
 							public void open(Player player) {
-								giveEcoStarter(player);
+								// Both STANDARD-mode starter kits (PVP_MODE and PVM_MODE) are
+								// freely tradeable, so they share one per-IP cap -- otherwise an
+								// alt-farmer could just alternate playmodes to double their claims.
+								if (claimLimitReached(player)) {
+									player.sendMessage("This IP has already claimed the starter pack on "
+											+ MAX_STARTER_CLAIMS_PER_IP + " accounts, so you won't receive it again.");
+								} else if (player.getPlayMode() == PlayMode.PVP_MODE) {
+									givePvpModeStarter(player);
+									recordClaim(player.getIp());
+								} else {
+									giveEcoStarter(player);
+								}
 								player.newPlayer = false;
 								super.open(player);
 							}
@@ -332,16 +349,13 @@ public class StarterGuide {
 		});
 	}
 
-	public static boolean alreadyClaimed(Player player) {
-		if (ipsClaimed.contains(player.getIp()))
-			return true;
-		return false;
+	/** True once this IP has already claimed the STANDARD-mode starter kit on MAX_STARTER_CLAIMS_PER_IP accounts. */
+	public static boolean claimLimitReached(Player player) {
+		return ipClaimCounts.getOrDefault(player.getIp(), 0) >= MAX_STARTER_CLAIMS_PER_IP;
 	}
 
-	public static void addIpsClaimed(String ip) {
-		if (ipsClaimed.contains(ip))
-			return;
-		ipsClaimed.add(ip);
+	public static void recordClaim(String ip) {
+		ipClaimCounts.merge(ip, 1, Integer::sum);
 		saveIps();
 	}
 
@@ -358,7 +372,7 @@ public class StarterGuide {
 			try {
 				FileWriter fileWriter = new FileWriter(file);
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
-				String toJson = gson.toJson(ipsClaimed);
+				String toJson = gson.toJson(ipClaimCounts);
 				fileWriter.write(toJson);
 				fileWriter.flush();
 			} catch (IOException e) {
@@ -377,21 +391,36 @@ public class StarterGuide {
 				e.printStackTrace();
 			}
 		}
-		Type type = new TypeToken<ArrayList<String>>() {
-		}.getType();
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		try {
-			ArrayList<String> temp = gson.fromJson(new FileReader(file), type);
-			if (temp != null)
-				ipsClaimed = temp;
-			log.info("Loaded " + ipsClaimed.size() + " starter pack ids.");
-		} catch (FileNotFoundException e) {
+			String json = new String(java.nio.file.Files.readAllBytes(file.toPath()));
+			if (json.isBlank())
+				return;
+			if (json.trim().startsWith("[")) {
+				// migrate the old format (a plain list of IPs that had claimed once) -- each
+				// existing entry already used up one of its two claims, not zero.
+				Type oldType = new TypeToken<ArrayList<String>>() {
+				}.getType();
+				ArrayList<String> oldIps = gson.fromJson(json, oldType);
+				if (oldIps != null)
+					for (String ip : oldIps)
+						ipClaimCounts.put(ip, 1);
+				log.info("Migrated " + ipClaimCounts.size() + " starter pack ips from the old one-claim format.");
+				saveIps();
+			} else {
+				Type type = new TypeToken<java.util.HashMap<String, Integer>>() {
+				}.getType();
+				java.util.Map<String, Integer> temp = gson.fromJson(json, type);
+				if (temp != null)
+					ipClaimCounts = temp;
+				log.info("Loaded " + ipClaimCounts.size() + " starter pack ip claim counts.");
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private static void giveEcoStarter(Player player) {
-		boolean alreadyClaimed = alreadyClaimed(player);
 		player.getInventory().add(30035);
 		player.getInventory().add(30496);
 		player.getInventory().add(30477);
@@ -540,9 +569,8 @@ public class StarterGuide {
 				player.getInventory().add(new Item(ItemID.LOBSTER + 1, 300));
 				break;
 			case STANDARD:
-				// if(alreadyClaimed){
-				// break;
-				// }
+				// Per-IP claim limit for this (and the PVP_MODE kit) is enforced by the caller
+				// in continueTutorial(), before this method is ever invoked for STANDARD mode.
 				player.getInventory().add(COINS_995, 500000);
 				player.getInventory().add(562, 500);
 				player.getInventory().add(558, 1000);
@@ -563,11 +591,9 @@ public class StarterGuide {
 				player.getInventory().add(1115, 1);
 				player.getInventory().add(1153, 1);
 				player.getInventory().add(1323, 1);
+				recordClaim(player.getIp());
 				break;
 		}
-
-		addIpsClaimed(player.getIp());
-
 	}
 
 	private static NPC find(Player player, int id) {
@@ -593,83 +619,33 @@ public class StarterGuide {
 		ecoTutorial(player);
 	}
 
-	private static void addPKModeItemToBank(Player player) {
-		player.getBank().add(19625, 5); // Home teleport
-		player.getBank().add(2550, 3); // Recoils
-		player.getBank().add(385, 125); // Sharks
-		player.getBank().add(3144, 50); // Karambwans
-		player.getBank().add(2436, 5); // attk
-		player.getBank().add(2440, 5); // str
-		player.getBank().add(2444, 5); // range
-		player.getBank().add(3024, 5); // restore
-		// Next Line
-		player.getBank().add(6685, 10); // brew
-		player.getBank().add(560, 2250); // Death runes
-		player.getBank().add(565, 1000); // Blood runes
-		player.getBank().add(561, 300); // Nature runes
-		player.getBank().add(145, 1); // atk
-		player.getBank().add(157, 1); // str
-		player.getBank().add(169, 1); // range
-		player.getBank().add(3026, 1); // restore
-		// Next Line
-		player.getBank().add(6687, 1); // brew
-		player.getBank().add(9075, 400); // Astral runes
-		player.getBank().add(555, 6000); // Water runes
-		player.getBank().add(557, 1000); // Earth runes
-		player.getBank().add(147, 1); // atk
-		player.getBank().add(159, 1); // str
-		player.getBank().add(171, 1); // range
-		player.getBank().add(3028, 1); // restore
-		// Next Line
-		player.getBank().add(6689, 1); // brew
-		player.getBank().add(7458, 100); // mithril gloves for pures
-		player.getBank().add(7462, 100); // gloves
-		player.getBank().add(3842, 100); // god book
-		player.getBank().add(149, 1); // atk
-		player.getBank().add(161, 1); // str
-		player.getBank().add(173, 1); // range
-		player.getBank().add(3030, 1); // restore
-		// Next Line
-		player.getBank().add(6691, 1); // brew
-		player.getBank().add(9144, 500); // bolts
-		player.getBank().add(2503, 5); // hides
-		player.getBank().add(4099, 5); // Mystic
-		player.getBank().add(2414, 100); // zamy god cape
-		player.getBank().add(10828, 5); // neit helm
-		player.getBank().add(4587, 5); // Scim
-		player.getBank().add(1163, 3); // rune full helm
-		// Next Line
-		player.getBank().add(562, 50); // Chaos rune
-		player.getBank().add(892, 400); // rune arrows
-		player.getBank().add(2497, 5); // hides
-		player.getBank().add(4101, 5); // Mystic
-		player.getBank().add(4675, 5); // ancient staff
-		player.getBank().add(1201, 5); // rune
-		player.getBank().add(5698, 5); // dagger
-		player.getBank().add(1127, 3); // rune pl8
-		// Next Line
-		player.getBank().add(563, 50); // law rune
-		player.getBank().add(9185, 5); // crossbow
-		player.getBank().add(10499, 100); // avas
-		player.getBank().add(4103, 5); // Mystic
-		player.getBank().add(4107, 5); // Mystic
-		player.getBank().add(3105, 5); // climbers
-		player.getBank().add(11978, 3); // glory(6)
-		player.getBank().add(1079, 3); // rune legs
-		// Next Line
-		player.getBank().add(1215, 2); // dagger unpoisoned
-		player.getBank().add(3751, 2); // zerker helm
-		player.getBank().add(1093, 2); // rune
+	/**
+	 * PVP_MODE's starter kit -- equips a PK-ready loadout immediately (whip+defender rather
+	 * than the 2h dharok's greataxe, which is carried in the inventory instead so both options
+	 * are available) plus the rest of the requested gear/supplies in the inventory.
+	 */
+	private static void givePvpModeStarter(Player player) {
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_WEAPON, new Item(ItemID.ABYSSAL_WHIP));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_SHIELD, new Item(ItemID.DRAGON_DEFENDER));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_HAT, new Item(ItemID.DHAROKS_HELM));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_CHEST, new Item(ItemID.DHAROKS_PLATEBODY));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_LEGS, new Item(ItemID.DHAROKS_PLATELEGS));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_FEET, new Item(ItemID.DRAGON_BOOTS));
 
-		// Give the players PK stats
-		player.getStats().get(StatType.Attack).set(99);
-		player.getStats().get(StatType.Strength).set(99);
-		player.getStats().get(StatType.Defence).set(99);
-		player.getStats().get(StatType.Hitpoints).set(99);
-		player.getStats().get(StatType.Magic).set(99);
-		player.getStats().get(StatType.Ranged).set(99);
-		player.getStats().get(StatType.Prayer).set(99);
-		player.getCombat().updateLevel();
+		player.getInventory().add(ItemID.ARMADYL_GODSWORD, 1);
+		player.getInventory().add(ItemID.FIRE_CAPE, 1);
+		player.getInventory().add(ItemID.DHAROKS_GREATAXE, 1);
+		player.getInventory().add(ItemID.COOKED_KARAMBWAN, 100);
+		player.getInventory().add(ItemID.SUPER_COMBAT_POTION4, 20);
+		player.getInventory().add(ItemID.BERSERKER_RING, 1);
+		player.getInventory().add(ItemID.KARILS_LEATHERSKIRT, 1);
+		player.getInventory().add(ItemID.KARILS_LEATHERTOP, 1);
+		player.getInventory().add(ItemID.KARILS_COIF, 1);
+		player.getInventory().add(ItemID.KARILS_CROSSBOW, 1);
+		player.getInventory().add(19625, 15); // Home teleport
+
+		player.getEquipment().sendUpdates();
+		player.getInventory().sendUpdates();
 	}
 
 }

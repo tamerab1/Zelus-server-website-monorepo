@@ -2,6 +2,7 @@ package io.ruin.network.incoming.handlers.command;
 
 import com.google.gson.reflect.TypeToken;
 import discord.webhooks.logs.VotingHook;
+import io.ruin.api.utils.NumberUtils;
 import io.ruin.Server;
 import io.ruin.cache.Color;
 import io.ruin.model.VoteHandler;
@@ -73,6 +74,40 @@ public class CommandHandlerRegular {
 			// "::presets"/"::preset" (PresetsMenu, DMMPVP-style fixed Zerker/Melee/Pure kits)
 			// retired -- replaced by the new GearLoadouts system (::loadouts/::gearloadouts/::kits).
 
+			// Lists every point-type currency the player has a balance in, pulled from the
+			// Currency enum's own registry (skipping item-backed currencies like coins/tokkul,
+			// which are already visible in the player's inventory) plus the two point systems
+			// that live outside that enum (regular Slayer Points, Perk Points).
+			case "points": {
+				// Same scrollable "scroll" interface (119) ::commands uses, so any number of
+				// entries fits cleanly instead of overflowing a fixed-height dialogue/chat spam.
+				// Rows alternate red/cyan for readability, matching the shop interfaces' style.
+				List<String> lines = new LinkedList<>();
+				int row = 0;
+				for (io.ruin.model.shop.Currency currency : io.ruin.model.shop.Currency.values()) {
+					if (currency.currencyHandler instanceof io.ruin.model.shop.ItemCurrencyHandler)
+						continue;
+					// dead currencies -- nothing in the codebase ever awards these, always 0
+					if (currency == io.ruin.model.shop.Currency.BOSS_POINTS || currency == io.ruin.model.shop.Currency.LOYALTY
+							|| currency == io.ruin.model.shop.Currency.APPRECIATION_POINTS)
+						continue;
+					// excluded from this list per user request
+					if (currency == io.ruin.model.shop.Currency.TASK_POINTS || currency == io.ruin.model.shop.Currency.SNOWBALL_POINTS
+							|| currency == io.ruin.model.shop.Currency.WINTERTODT_POINTS || currency == io.ruin.model.shop.Currency.WILDERNESS_POINTS
+							|| currency == io.ruin.model.shop.Currency.WILDERNESS_SLAYER_POINTS || currency == io.ruin.model.shop.Currency.PEST_CONTROL_POINTS)
+						continue;
+					int amount = currency.currencyHandler.getCurrencyCount(player);
+					String color = row++ % 2 == 0 ? "ff0000" : "00ffff";
+					lines.add("<col=" + color + ">" + NumberUtils.formatNumber(amount) + " " + currency.currencyHandler.pluralName() + "</col>");
+				}
+				String slayerColor = row++ % 2 == 0 ? "ff0000" : "00ffff";
+				lines.add("<col=" + slayerColor + ">" + NumberUtils.formatNumber(io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player)) + " slayer points</col>");
+				String perkColor = row % 2 == 0 ? "ff0000" : "00ffff";
+				lines.add("<col=" + perkColor + ">" + NumberUtils.formatNumber(player.perkPoints) + " perk points</col>");
+				player.sendScroll("Your Points", lines.toArray(new String[0]));
+				return true;
+			}
+
 			case "gamble":
 			case "gamblezone":
 			case "gambling": {
@@ -130,7 +165,7 @@ public class CommandHandlerRegular {
 
 			case "ticket": {
 				player.openUrl(World.type.getWorldName() + " Discord",
-						"https://ptb.discord.com/channels/1150539550561681508/1199283936153571338");
+						"https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 			case "araxxor": {
@@ -143,11 +178,11 @@ public class CommandHandlerRegular {
 				player.getInstanceTokenInterface().startInstance(player, true);
 				return true;
 			}
-			case "deals": {
-				player.openUrl(World.type.getWorldName() + " Discord",
-						"https://ptb.discord.com/channels/1150539550561681508/1188203513973579836");
-				return true;
-			}
+			//case "deals": {
+			//	player.openUrl(World.type.getWorldName() + " Discord",
+			//			"https://ptb.discord.com/channels/1150539550561681508/1188203513973579836");
+			//	return true;
+			//}
 
 			case "toa": {
 				teleport(player, 3355, 9119, 0);
@@ -779,7 +814,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "shops": {
-				teleport(player, 3079, 3512, 0);
+				teleport(player, 3083, 3484, 0);
 				return true;
 			}
 
@@ -789,7 +824,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "slay": {
-				teleport(player, 3095, 3512, 0);
+				teleport(player, 3104, 3489, 0);
 				return true;
 			}
 
@@ -1752,7 +1787,7 @@ public class CommandHandlerRegular {
 
 			case "rules": {
 				player.openUrl(World.type.getWorldName().concat(" Rules"),
-						"https://discord.com/channels/1150539550561681508/1150539551027249155");
+						"https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 
@@ -1768,55 +1803,10 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			case "sipsick": {
-				player.openUrl("Sipsick", "https://www.youtube.com/@sips1ck");
-				return true;
-			}
-			case "eggy": {
-				player.openUrl("Eggy", "https://www.youtube.com/@EggyRS");
-				return true;
-			}
-			case "wizard":
-			case "wetwizard": {
-				player.openUrl("Wet Wizard", "https://www.youtube.com/@WetWizard");
-				return true;
-			}
-			case "effigy": {
-				player.openUrl("Effigy Swiper", "https://www.youtube.com/@effigyswiper");
-				return true;
-			}
-			case "smoothie": {
-				player.openUrl("Smoothie RSPS", "https://www.youtube.com/@smoothiersps7941");
-				return true;
-			}
-			case "ruben": {
-				player.openUrl("RubenRSPS", "https://www.youtube.com/@RubenRSPS");
-				return true;
-			}
-			case "rspsguy": {
-				player.openUrl("RSPSGuy", "https://www.youtube.com/@RSPSguy");
-				return true;
-			}
-			case "slapped": {
-				player.openUrl("Slapped", "https://www.youtube.com/@SLAPPEDRSPS");
-				return true;
-			}
-			case "bonkloots": {
-				player.openUrl("Bonkloots", "https://www.youtube.com/@Bonkloots");
-				return true;
-			}
-			case "didy": {
-				player.openUrl("Didyscape", "https://www.youtube.com/@DidyScape");
-				return true;
-			}
-			case "walkchaos": {
-				player.openUrl("Walkchaos", "https://www.youtube.com/@Walkchaos");
-				return true;
-			}
-			case "zig": {
-				player.openUrl("PkedByZig", "https://www.youtube.com/@pkedbyzigrsps663");
-				return true;
-			}
+			//case "zig": {
+				//player.openUrl("PkedByZig", "https://www.youtube.com/@pkedbyzigrsps663");
+				//return true;
+			//}
 
 			case "highscores":
 			case "hiscores": {

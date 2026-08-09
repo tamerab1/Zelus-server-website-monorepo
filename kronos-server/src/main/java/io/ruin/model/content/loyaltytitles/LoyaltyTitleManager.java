@@ -4,6 +4,7 @@ import io.ruin.Server;
 import io.ruin.cache.ItemID;
 import io.ruin.model.entity.player.KillCounter;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.entity.shared.listeners.LoginListener;
 import io.ruin.model.inter.dialogue.MessageDialogue;
 import io.ruin.model.inter.dialogue.YesNoDialogue;
@@ -12,33 +13,46 @@ import io.ruin.model.stat.StatType;
 import io.ruin.model.var.VarPlayerRepository;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class LoyaltyTitleManager {
 
+	// matches the icon items used for these currencies elsewhere (e.g. BlackjackCurrency)
+	private static final int DONATOR_POINTS_ICON = 8851;
+	private static final int PK_POINTS_ICON = 964; // Skull, same as BlackjackCurrency.PK_POINTS
+	private static final int PVM_POINTS_ICON = ItemID.CRYSTAL_KEY; // no dedicated PVM points icon exists yet, this is a stand-in
+
 	public static boolean isUnlocked(Player player, LoyaltyTitle title) {
-		return player.unlockedLoyaltyTitles.contains(title.id);
+		return title != null && unlockedTitles(player).contains(title.id);
 	}
 
 	public static void unlock(Player player, LoyaltyTitle title) {
-		player.unlockedLoyaltyTitles.add(title.id);
+		if (title != null)
+			unlockedTitles(player).add(title.id);
 	}
 
 	public static void equip(Player player, LoyaltyTitle title) {
 		player.equippedLoyaltyTitleId = title.id;
+		player.getAppearance().update();
 	}
 
 	public static void clearEquipped(Player player) {
 		player.equippedLoyaltyTitleId = -1;
+		player.getAppearance().update();
 	}
 
 	public static LoyaltyTitle getEquipped(Player player) {
 		if (player.equippedLoyaltyTitleId == -1)
 			return null;
-		return LoyaltyTitle.get(player.equippedLoyaltyTitleId);
+		LoyaltyTitle title = LoyaltyTitle.get(player.equippedLoyaltyTitleId);
+		if (title == null)
+			player.equippedLoyaltyTitleId = -1;
+		return title;
 	}
 
 	/**
@@ -64,13 +78,15 @@ public class LoyaltyTitleManager {
 		}
 		if (title.isPurchasable()) {
 			int cost = title.cost;
-			player.dialogue(new YesNoDialogue("Purchase Title", "Purchase the title \"" + stripTags(title.preview(player.getName())) + "\" for " + cost + " coins?",
-				ItemID.COINS_995, cost, () -> {
-					if (player.getInventory().getAmount(ItemID.COINS_995) < cost) {
-						player.dialogue(new MessageDialogue("You don't have enough coins."));
+			String titleName = stripTags(title.preview(player.getName()));
+			PurchaseCurrency pc = purchaseCurrency(title.currency);
+			player.dialogue(new YesNoDialogue("Purchase Title", "Purchase the title \"" + titleName + "\" for " + cost + " " + title.currency.label + "?",
+				pc.iconItemId, cost, pc.customItemName, () -> {
+					if (pc.balance.applyAsInt(player) < cost) {
+						player.dialogue(new MessageDialogue("You don't have enough " + title.currency.label + "."));
 						return;
 					}
-					player.getInventory().remove(ItemID.COINS_995, cost);
+					pc.deduct.accept(player, cost);
 					unlock(player, title);
 					equip(player, title);
 					player.dialogue(new MessageDialogue("Your title has been updated."));
@@ -80,8 +96,46 @@ public class LoyaltyTitleManager {
 		player.dialogue(new MessageDialogue("You have not yet unlocked this title.<br><br>Unlock condition: " + title.requirement));
 	}
 
+	private static final class PurchaseCurrency {
+		final int iconItemId;
+		final String customItemName;
+		final java.util.function.ToIntFunction<Player> balance;
+		final java.util.function.ObjIntConsumer<Player> deduct;
+
+		PurchaseCurrency(int iconItemId, String customItemName, java.util.function.ToIntFunction<Player> balance, java.util.function.ObjIntConsumer<Player> deduct) {
+			this.iconItemId = iconItemId;
+			this.customItemName = customItemName;
+			this.balance = balance;
+			this.deduct = deduct;
+		}
+	}
+
+	private static PurchaseCurrency purchaseCurrency(LoyaltyTitle.Currency currency) {
+		switch (currency) {
+			case DONATOR_POINTS:
+				return new PurchaseCurrency(DONATOR_POINTS_ICON, "Donator Points",
+					Player::getDonatorPoints, (p, amt) -> p.updateDonatorPoints(-amt));
+			case PVM_POINTS:
+				return new PurchaseCurrency(PVM_POINTS_ICON, "PVM Points",
+					p -> p.PvmPoints, (p, amt) -> p.PvmPoints -= amt);
+			case PK_POINTS:
+				return new PurchaseCurrency(PK_POINTS_ICON, "PK Points",
+					Player::getPKPoints, (p, amt) -> p.updatePKPoints(-amt));
+			case COINS:
+			default:
+				return new PurchaseCurrency(ItemID.COINS_995, null,
+					p -> p.getInventory().getAmount(ItemID.COINS_995), (p, amt) -> p.getInventory().remove(ItemID.COINS_995, amt));
+		}
+	}
+
 	private static String stripTags(String text) {
 		return text.replaceAll("<[^>]*>", "");
+	}
+
+	private static Set<Integer> unlockedTitles(Player player) {
+		if (player.unlockedLoyaltyTitles == null)
+			player.unlockedLoyaltyTitles = new HashSet<>();
+		return player.unlockedLoyaltyTitles;
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -108,6 +162,14 @@ public class LoyaltyTitleManager {
 	}
 
 	private static final long XP_200M = 200_000_000L;
+
+	private static boolean hasLevel(Player player, StatType type, int level) {
+		return player.getStats().get(type).fixedLevel >= level;
+	}
+
+	private static boolean hasExperience(Player player, StatType type, long experience) {
+		return player.getStats().get(type).experience >= experience;
+	}
 
 	/** "Demonic Creatures" has no dedicated KillCounter category - grouped from the individual
 	 *  demon-type NPCs KillCounter does track (demonic gorillas, jungle demons, tormented demons). */
@@ -176,36 +238,36 @@ public class LoyaltyTitleManager {
 		// 30159 "Kill 1000 Rats" - skipped, no generic "Rats" kill tracking exists.
 
 		// --- B. Skill XP / level thresholds -------------------------------------------------
-		c.put(30016, p -> p.getStats().get(StatType.Woodcutting).getCurrentLevel() >= 99);
-		c.put(30017, p -> p.getStats().get(StatType.Farming).getExperience() >= XP_200M);
-		c.put(30026, p -> p.getStats().get(StatType.Slayer).getExperience() >= XP_200M);
-		c.put(30028, p -> p.getStats().get(StatType.Fletching).getCurrentLevel() >= 99);
-		c.put(30034, p -> p.getStats().get(StatType.Slayer).getCurrentLevel() >= 99);
-		c.put(30037, p -> p.getStats().get(StatType.Fishing).getExperience() >= XP_200M);
-		c.put(30039, p -> p.getStats().get(StatType.Firemaking).getCurrentLevel() >= 99);
-		c.put(30048, p -> p.getStats().get(StatType.Thieving).getCurrentLevel() >= 99);
-		c.put(30057, p -> p.getStats().get(StatType.Firemaking).getExperience() >= XP_200M);
-		c.put(30058, p -> p.getStats().get(StatType.Herblore).getExperience() >= XP_200M);
-		c.put(30064, p -> p.getStats().get(StatType.Hunter).getCurrentLevel() >= 99);
-		c.put(30068, p -> p.getStats().get(StatType.Farming).getCurrentLevel() >= 99);
-		c.put(30085, p -> p.getStats().get(StatType.Cooking).getExperience() >= XP_200M);
-		c.put(30087, p -> p.getStats().get(StatType.Thieving).getExperience() >= XP_200M);
-		c.put(30089, p -> p.getStats().get(StatType.Fishing).getCurrentLevel() >= 99);
-		c.put(30096, p -> p.getStats().get(StatType.Crafting).getExperience() >= XP_200M);
-		c.put(30097, p -> p.getStats().get(StatType.Fletching).getExperience() >= XP_200M);
-		c.put(30100, p -> p.getStats().get(StatType.Runecrafting).getExperience() >= XP_200M);
-		c.put(30106, p -> p.getStats().get(StatType.Woodcutting).getExperience() >= XP_200M);
-		c.put(30107, p -> p.getStats().get(StatType.Smithing).getExperience() >= XP_200M);
-		c.put(30112, p -> p.getStats().get(StatType.Smithing).getCurrentLevel() >= 99);
-		c.put(30126, p -> p.getStats().get(StatType.Agility).getExperience() >= 99_000_000L);
-		c.put(30134, p -> p.getStats().get(StatType.Hunter).getExperience() >= XP_200M);
-		c.put(30136, p -> p.getStats().get(StatType.Agility).getCurrentLevel() >= 99);
-		c.put(30137, p -> p.getStats().get(StatType.Crafting).getCurrentLevel() >= 99);
-		c.put(30145, p -> p.getStats().get(StatType.Mining).getExperience() >= XP_200M);
-		c.put(30158, p -> p.getStats().get(StatType.Herblore).getCurrentLevel() >= 99);
-		c.put(30161, p -> p.getStats().get(StatType.Cooking).getCurrentLevel() >= 99);
-		c.put(30162, p -> p.getStats().get(StatType.Runecrafting).getCurrentLevel() >= 99);
-		c.put(30164, p -> p.getStats().get(StatType.Mining).getCurrentLevel() >= 99);
+		c.put(30016, p -> hasLevel(p, StatType.Woodcutting, 99));
+		c.put(30017, p -> hasExperience(p, StatType.Farming, XP_200M));
+		c.put(30026, p -> hasExperience(p, StatType.Slayer, XP_200M));
+		c.put(30028, p -> hasLevel(p, StatType.Fletching, 99));
+		c.put(30034, p -> hasLevel(p, StatType.Slayer, 99));
+		c.put(30037, p -> hasExperience(p, StatType.Fishing, XP_200M));
+		c.put(30039, p -> hasLevel(p, StatType.Firemaking, 99));
+		c.put(30048, p -> hasLevel(p, StatType.Thieving, 99));
+		c.put(30057, p -> hasExperience(p, StatType.Firemaking, XP_200M));
+		c.put(30058, p -> hasExperience(p, StatType.Herblore, XP_200M));
+		c.put(30064, p -> hasLevel(p, StatType.Hunter, 99));
+		c.put(30068, p -> hasLevel(p, StatType.Farming, 99));
+		c.put(30085, p -> hasExperience(p, StatType.Cooking, XP_200M));
+		c.put(30087, p -> hasExperience(p, StatType.Thieving, XP_200M));
+		c.put(30089, p -> hasLevel(p, StatType.Fishing, 99));
+		c.put(30096, p -> hasExperience(p, StatType.Crafting, XP_200M));
+		c.put(30097, p -> hasExperience(p, StatType.Fletching, XP_200M));
+		c.put(30100, p -> hasExperience(p, StatType.Runecrafting, XP_200M));
+		c.put(30106, p -> hasExperience(p, StatType.Woodcutting, XP_200M));
+		c.put(30107, p -> hasExperience(p, StatType.Smithing, XP_200M));
+		c.put(30112, p -> hasLevel(p, StatType.Smithing, 99));
+		c.put(30126, p -> hasExperience(p, StatType.Agility, 99_000_000L));
+		c.put(30134, p -> hasExperience(p, StatType.Hunter, XP_200M));
+		c.put(30136, p -> hasLevel(p, StatType.Agility, 99));
+		c.put(30137, p -> hasLevel(p, StatType.Crafting, 99));
+		c.put(30145, p -> hasExperience(p, StatType.Mining, XP_200M));
+		c.put(30158, p -> hasLevel(p, StatType.Herblore, 99));
+		c.put(30161, p -> hasLevel(p, StatType.Cooking, 99));
+		c.put(30162, p -> hasLevel(p, StatType.Runecrafting, 99));
+		c.put(30164, p -> hasLevel(p, StatType.Mining, 99));
 
 		// --- C. Collection log completions --------------------------------------------------
 		c.put(30008, p -> logComplete(p, "Dagannoth Kings"));
@@ -301,7 +363,21 @@ public class LoyaltyTitleManager {
 		// 30148 "Gamble a Fire Cape" - skipped, no fire cape gamble tracking exists.
 		// 30120 "the Gamebreaker" - intentionally excluded (admin-only manual grant, cost 0).
 
+		c.put(30200, p -> hasDonatorRank(p, SecondaryGroup.DONATOR));
+		c.put(30201, p -> hasDonatorRank(p, SecondaryGroup.SUPER_DONATOR));
+		c.put(30202, p -> hasDonatorRank(p, SecondaryGroup.ELITE_DONATOR));
+		c.put(30203, p -> hasDonatorRank(p, SecondaryGroup.NOBLE_DONATOR));
+		c.put(30204, p -> hasDonatorRank(p, SecondaryGroup.GOLD_DONATOR));
+		c.put(30205, p -> hasDonatorRank(p, SecondaryGroup.PLATINUM_DONATOR));
+		c.put(30206, p -> hasDonatorRank(p, SecondaryGroup.LEGENDARY_DONATOR));
+		c.put(30207, p -> hasDonatorRank(p, SecondaryGroup.SUPREME_DONATOR));
+
 		return c;
+	}
+
+	private static boolean hasDonatorRank(Player player, SecondaryGroup rank) {
+		SecondaryGroup highest = player.getHighestDonatorGroup();
+		return highest != null && highest.equalToOrGreaterThan(rank);
 	}
 
 	private static int totalClues(Player player) {
@@ -329,6 +405,9 @@ public class LoyaltyTitleManager {
 	}
 
 	public static void register() {
-		LoginListener.register(LoyaltyTitleManager::checkAllUnlocks);
+		LoginListener.register(player -> {
+			unlockedTitles(player);
+			checkAllUnlocks(player);
+		});
 	}
 }

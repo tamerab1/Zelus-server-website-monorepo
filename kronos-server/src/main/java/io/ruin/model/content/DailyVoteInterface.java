@@ -33,24 +33,24 @@ public class DailyVoteInterface {
 
 	private static final List<Item> voteRewards = Arrays.asList(
 			new Item(30570, 1),
-			new Item(620, 1),
+			new Item(59602, 1),                              // Vote Ticket
 			new Item(7478, 2),
 			new Item(995, 2500000),
-			new Item(30596, 2),
+			new Item(30596, 1),
 			new Item(608, 1),
 			new Item(30461, 1),
-			new Item(620, 2),
+			new Item(59602, 2),                              // Vote Ticket x2
 			new Item(995, 10000000),
 			new Item(30464, 1),
 			new Item(30570, 2),
-			new Item(620, 3),
+			new Item(59602, 3),                              // Vote Ticket x3
 			new Item(7478, 3),
 			new Item(30596, 3),
 			new Item(608, 2),
 			new Item(995, 2500000),
 			new Item(30461, 1),
 			new Item(22092, 1),
-			new Item(620, 4),
+			new Item(59602, 4),                              // Vote Ticket x4
 			new Item(30464, 2),
 			new Item(30456, 2),
 			new Item(7478, 4),
