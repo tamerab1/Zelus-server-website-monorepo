@@ -615,7 +615,7 @@ public class GameModeInterface {
 			items.add(new Item(ItemID.ARMADYL_GODSWORD, 1));
 			items.add(new Item(ItemID.FIRE_CAPE, 1));
 			items.add(new Item(ItemID.DHAROKS_GREATAXE, 1));
-			items.add(new Item(ItemID.COOKED_KARAMBWAN, 100));
+			items.add(new Item(3145, 100)); // Cooked karambwan (noted)
 			items.add(new Item(ItemID.SUPER_COMBAT_POTION4, 20));
 			items.add(new Item(ItemID.BERSERKER_RING, 1));
 			items.add(new Item(ItemID.KARILS_LEATHERSKIRT, 1));

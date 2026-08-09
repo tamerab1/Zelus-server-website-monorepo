@@ -635,7 +635,7 @@ public class StarterGuide {
 		player.getInventory().add(ItemID.ARMADYL_GODSWORD, 1);
 		player.getInventory().add(ItemID.FIRE_CAPE, 1);
 		player.getInventory().add(ItemID.DHAROKS_GREATAXE, 1);
-		player.getInventory().add(ItemID.COOKED_KARAMBWAN, 100);
+		player.getInventory().add(3145, 100); // Cooked karambwan (noted) -- 3144's own def points noted_id here
 		player.getInventory().add(ItemID.SUPER_COMBAT_POTION4, 20);
 		player.getInventory().add(ItemID.BERSERKER_RING, 1);
 		player.getInventory().add(ItemID.KARILS_LEATHERSKIRT, 1);
