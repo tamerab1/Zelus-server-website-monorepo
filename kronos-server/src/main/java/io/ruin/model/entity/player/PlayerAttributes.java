@@ -263,6 +263,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int larranChestsOpened;
 	public int crystalChestsOpened;
 	public int enhancedCrystalChestsOpened;
+	public int zelusChestsOpened;
 	public int slayerChestsT1Opened;
 	public int slayerChestsT2Opened;
 	public int slayerChestsT3Opened;

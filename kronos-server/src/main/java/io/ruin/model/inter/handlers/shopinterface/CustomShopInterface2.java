@@ -1,7 +1,7 @@
 package io.ruin.model.inter.handlers.shopinterface;
 
 import io.ruin.api.utils.NumberUtils;
-import io.ruin.api.utils.StringUtils;
+import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.Interface;
@@ -15,42 +15,127 @@ import io.ruin.model.inter.handlers.shopinterface.CustomShop2;
 import java.util.Arrays;
 
 public class CustomShopInterface2 {
+	// Component 41 on interface 891 is the buy-grid's scrollable layer, sized 456x224.
+	// Root cause of the long-standing "no items visible" bug: it was being driven with
+	// PacketSender.sendItem() (IfSetObject) against 60 cloned type=2 sub-widgets (52-111).
+	// IfSetObject only updates type=6 "model" widgets (e.g. ONE_ITEM_DIALOGUE's OBJ_MODEL1,
+	// confirmed via direct cache inspection) -- it's a no-op against type=2 container widgets.
+	//
+	// The real client mechanism for a live item grid (confirmed by inspecting the vanilla
+	// shop's own interface 300/component 16, which already renders correctly) is: call
+	// clientscript 149 ("iiiiiisssss": combinedId, containerId, cols, rows, 0, -1, then 5
+	// right-click option labels matching option codes 1-5) once to bind a widget to a
+	// container id + grid shape, then push contents to that same container id via a plain
+	// UpdateInvFull (PacketSender.sendItems). The sell-side grid in open() below already did
+	// this correctly (script 149 targeting interface 301/component 0, container 93) -- this
+	// mirrors that for the buy side, targeting 891/41 + container 10005.
+	// "rows" genuinely controls pixel pitch (confirmed: 6 was too sparse, 15 was too tight).
+	// 10 is the current best-guess middle ground.
+	private static final int BUY_GRID_COLUMNS = 10;
+	private static final int BUY_GRID_ROWS = 10;
+
+	// The shop tabs reachable from interface 891 -- search and item resolution both scan
+	// across all of them, not just whichever tab happens to be active.
+	private static final CustomShop2[] SEARCHABLE_SHOPS = {
+		CustomShop2.PKP_SHOP, CustomShop2.BLOOD_MONEY_STORE, CustomShop2.ZELUS_POINTS_SHOP,
+		CustomShop2.ACHIEVEMENT_POINTS_SHOP, CustomShop2.DONATOR_STORE, CustomShop2.VOTE_STORE,
+		CustomShop2.PVM_SHOP
+	};
+
+	// Finds which shop tab a given item actually belongs to, preferring the player's currently
+	// active tab (so pricing/currency stays as displayed) and falling back to a scan across all
+	// searchable shops -- needed because search results can surface items from tabs other than
+	// the one currently open.
+	private static CustomShop2 resolveShopForItem(Player player, int itemId) {
+		CustomShop2 active = CustomShop2.get(player.getShopIdentifier());
+		if (active != null && active.getShopItem(itemId) != null) {
+			return active;
+		}
+		for (CustomShop2 shop : SEARCHABLE_SHOPS) {
+			if (shop.isPvmOnly() && !player.isPvmMode()) {
+				continue;
+			}
+			if (shop.getShopItem(itemId) != null) {
+				return shop;
+			}
+		}
+		return null;
+	}
+
+	// Package-private (not private): CustomShop2.refreshShop() also needs to reassert this
+	// binding, for the same reason searchShop() does -- see its call site below.
+	static void configureBuyGrid(Player player) {
+		player.getPacketSender().sendClientScript(149, "iiiiiisssss", (891 << 16) | 41, 10005,
+			BUY_GRID_COLUMNS, BUY_GRID_ROWS, 0, -1,
+			"Value<col=ff9040>", "Buy 1<col=ff9040>", "Buy 5<col=ff9040>",
+			"Buy 10<col=ff9040>", "Buy X<col=ff9040>");
+	}
+
 	public static void register() {
 		InterfaceHandler.register(Interface.CUSTOM_SHOP2, h -> {
 			h.actions[16] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "PKP Shop");
 				player.setShopIdentifier(13);
 				handleEnteringShop(player, CustomShop2.PKP_SHOP);
+				sendBalanceMessage(player, CustomShop2.PKP_SHOP);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[18] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Bounty Hunter Shop");
 				player.setShopIdentifier(6);
 				handleEnteringShop(player, CustomShop2.BLOOD_MONEY_STORE);
+				sendBalanceMessage(player, CustomShop2.BLOOD_MONEY_STORE);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[20] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Zelus Points Shop");
 				player.setShopIdentifier(14);
 				handleEnteringShop(player, CustomShop2.ZELUS_POINTS_SHOP);
+				sendBalanceMessage(player, CustomShop2.ZELUS_POINTS_SHOP);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[22] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Achievement Points Shop");
 				player.setShopIdentifier(15);
 				handleEnteringShop(player, CustomShop2.ACHIEVEMENT_POINTS_SHOP);
+				sendBalanceMessage(player, CustomShop2.ACHIEVEMENT_POINTS_SHOP);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[24] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Donation Shop");
 				player.setShopIdentifier(9);
 				handleEnteringShop(player, CustomShop2.DONATOR_STORE);
+				sendBalanceMessage(player, CustomShop2.DONATOR_STORE);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[26] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Voting Shop");
 				player.setShopIdentifier(10);
 				handleEnteringShop(player, CustomShop2.VOTE_STORE);
+				sendBalanceMessage(player, CustomShop2.VOTE_STORE);
+				open(player, CustomShop2.getItemsFromShop(player));
+			};
+			// Component 28 pre-existed on interface 891 (baked label "Supplies Shop", unused
+			// until now) -- repurposed here for the PVM Point Shop. PVP_MODE accounts never
+			// earn/spend PVM Points, so the tab itself refuses to open for them.
+			h.actions[28] = (DefaultAction) (player, option, slot, itemId) -> {
+				if (!player.isPvmMode()) {
+					player.sendMessage("The PVM Point Shop is exclusive to PVM Mode accounts.");
+					return;
+				}
+				player.getPacketSender().sendString(891, 14, "PVM Point Shop");
+				player.setShopIdentifier(16);
+				handleEnteringShop(player, CustomShop2.PVM_SHOP);
+				sendBalanceMessage(player, CustomShop2.PVM_SHOP);
+				open(player, CustomShop2.getItemsFromShop(player));
+			};
+			// Component 30 -- new tab added to interface 891 for selling Antique emblems back for
+			// BH Points. Sell-only: no buy grid, see the sellAtListedPrice guard in buy() below.
+			h.actions[30] = (DefaultAction) (player, option, slot, itemId) -> {
+				player.getPacketSender().sendString(891, 14, "Sell Bounty Hunter Emblems");
+				player.setShopIdentifier(17);
+				handleEnteringShop(player, CustomShop2.SELL_BH_EMBLEMS);
+				sendBalanceMessage(player, CustomShop2.SELL_BH_EMBLEMS);
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.simpleAction(49, player -> {
@@ -73,11 +158,14 @@ public class CustomShopInterface2 {
 			};
 		});
 
-       /* InterfaceHandler.register(Interface.PLAYER_SHOP_INVENTORY, h -> h.actions[0] = (DefaultAction) (player, option, slot, itemId) -> {
-            if(player.isVisibleInterface(Interface.CUSTOM_SHOP2)) {
-                attemptSell(player, option, slot, itemId);
-            }
-        });*/
+		// Was dead code (never registered) -- the sell-side inventory grid in open() above has
+		// been sending real items into 301/0 since the interface-891 rework, but nothing was
+		// wired to handle clicks on it until now.
+		InterfaceHandler.register(Interface.PLAYER_SHOP_INVENTORY, h -> h.actions[0] = (DefaultAction) (player, option, slot, itemId) -> {
+			if (player.isVisibleInterface(Interface.CUSTOM_SHOP2)) {
+				attemptSell(player, option, slot, itemId);
+			}
+		});
 	}
 
 	public static void handleEnteringShop(Player player, CustomShop2 CustomShop2) {
@@ -85,22 +173,46 @@ public class CustomShopInterface2 {
 		player.setActiveCustomShop2(CustomShop2);
 	}
 
+	// Matches the old newshop-framework shops' openMessage() behaviour (e.g.
+	// AchievementPointStore/PvmPointStore/ReasonPointStore) -- announce the player's current
+	// balance in chat every time they switch to a shop tab.
+	private static void sendBalanceMessage(Player player, CustomShop2 shop) {
+		Currency currency = shop.getCurrency();
+		int balance = currency.getCurrencyHandler().getCurrencyCount(player);
+		player.sendMessage("You have " + Color.RED.wrap(NumberUtils.formatNumber(balance)) + " " + currency.getCurrencyHandler().name() + ".");
+	}
+
 	private static void searchShop(Player player, String search) {
-		CustomShop2 shop = CustomShop2.get(player.getShopIdentifier());
-		if (shop == null) {
-			return;
-		}
 		String needle = search.toLowerCase();
-		Item[] filtered = Arrays.stream(shop.getShopItems())
-			.map(si -> ObjType.get(si.getItemId()))
-			.filter(def -> def != null && def.name.toLowerCase().contains(needle))
-			.map(def -> new Item(def.id))
-			.toArray(Item[]::new);
-		player.getPacketSender().sendItems(10005, filtered);
+		java.util.LinkedHashSet<Integer> matchedIds = new java.util.LinkedHashSet<>();
+		for (CustomShop2 shop : SEARCHABLE_SHOPS) {
+			if (shop.isPvmOnly() && !player.isPvmMode()) {
+				continue;
+			}
+			for (ShopItem si : shop.getShopItems()) {
+				ObjType def = ObjType.get(si.getItemId());
+				if (def != null && def.name.toLowerCase().contains(needle)) {
+					matchedIds.add(def.id);
+				}
+			}
+		}
+		Item[] filtered = matchedIds.stream().map(Item::new).toArray(Item[]::new);
+
+		int capacity = Arrays.stream(SEARCHABLE_SHOPS).mapToInt(shop -> shop.getShopItems().length).max().orElse(0);
+		Item[] slots = new Item[capacity];
+		boolean[] updatedSlots = new boolean[capacity];
+		for (int i = 0; i < capacity; i++) {
+			slots[i] = i < filtered.length ? filtered[i] : null;
+			updatedSlots[i] = true;
+		}
+		// Container updates sent outside the open()/configureBuyGrid() flow don't render unless
+		// the grid binding is reasserted first -- see configureBuyGrid()'s call site in open().
+		configureBuyGrid(player);
+		player.getPacketSender().updateItems(-1, 10005, slots, updatedSlots, capacity);
 	}
 
 	private static void attemptBuy(Player player, int option, int slot, int itemId) {
-		CustomShop2 CustomShop2 = io.ruin.model.inter.handlers.shopinterface.CustomShop2.get(player.getShopIdentifier());
+		CustomShop2 CustomShop2 = resolveShopForItem(player, itemId);
 		if (CustomShop2 == null) {
 			return;
 		}
@@ -156,6 +268,11 @@ public class CustomShopInterface2 {
 		if (amount <= 0 || CustomShop2 == null || CustomShop2Item == null || itemId <= 0)
 			return;
 
+		if (CustomShop2.isSellAtListedPrice()) {
+			player.sendMessage("This shop only buys items from you -- it doesn't sell anything.");
+			return;
+		}
+
 
 		/**
 		 * Container check
@@ -208,7 +325,7 @@ public class CustomShopInterface2 {
 				}
 
 				if (amount <= 0) {
-					player.sendMessage("You did not bring enough " + StringUtils.fixCaps(currency.name().toString().replace("_", " ")) + " to make this purchase.");
+					player.sendMessage("You don't have enough " + currency.getCurrencyHandler().name() + " to buy this item.");
 					return;
 				}
 			}
@@ -263,15 +380,15 @@ public class CustomShopInterface2 {
 			return;
 		}
 
-		int price = (int) (CustomShop2Item.getPrice() * 0.70);
+		int price = CustomShop2.isSellAtListedPrice() ? CustomShop2Item.getPrice() : (int) (CustomShop2Item.getPrice() * 0.70);
 
 		if (option == 1) {
 			if (CustomShop2Item.getPrice() <= 0) {
 				player.sendMessage("You can't sell that item to this store.");
 			} else {
-				player.sendMessage(item.getDef().name + " can be sold for "
-					+ (NumberUtils.formatNumber(price)
-					+ " " + CustomShop2.getCurrency().name()) + ".");
+				player.sendMessage(Color.COOL_BLUE.wrap(item.getDef().name) + " can be sold for "
+					+ (Color.RED.wrap(NumberUtils.formatNumber(price))
+					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name()) + ".");
 			}
 			return;
 		} else if (option == 2) {
@@ -289,8 +406,8 @@ public class CustomShopInterface2 {
 	public static void sell(Player player, ShopItem CustomShop2Item, CustomShop2 CustomShop2,
 	                        int price, int itemId, int amount) {
 
-		if (CustomShop2.getCurrency() != Currency.BLOOD_MONEY) {
-			player.sendMessage("You can't sell any items to this store.");
+		if (CustomShop2Item.getPrice() <= 0) {
+			player.sendMessage("You can't sell that item to this store.");
 			return;
 		}
 
@@ -303,8 +420,10 @@ public class CustomShopInterface2 {
 
 		int totalPrice = amount * price;
 
-		player.getInventory().add(13307, totalPrice);
+		CustomShop2.getCurrency().getCurrencyHandler().addCurrency(player, totalPrice);
 		player.getInventory().remove(itemId, amount);
+		player.sendMessage("You sell " + amount + " x " + new Item(itemId).getDef().name + " for "
+			+ Color.RED.wrap(NumberUtils.formatNumber(totalPrice)) + " " + CustomShop2.getCurrency().getCurrencyHandler().name() + ".");
 		CustomShop2.refreshShop();
 	}
 
@@ -322,7 +441,7 @@ public class CustomShopInterface2 {
 			return;
 		}
 
-		CustomShop2 CustomShop2 = io.ruin.model.inter.handlers.shopinterface.CustomShop2.get(shopId);
+		CustomShop2 CustomShop2 = resolveShopForItem(player, itemId);
 
 		if (CustomShop2 != null) {
 			ShopItem selectedItem = Arrays.stream(CustomShop2.getShopItems())
@@ -337,32 +456,40 @@ public class CustomShopInterface2 {
 			ObjType def = ObjType.get(selectedItem.getItemId());
 
 			if (def != null) {
-				player.sendMessage(def.name + " costs " + NumberUtils.formatNumber(selectedItem.getPrice())
-					+ " " + StringUtils.fixCaps(CustomShop2.getCurrency().toString().replace("_", " ")) + "."
+				player.sendMessage(Color.COOL_BLUE.wrap(def.name) + " costs "
+					+ Color.RED.wrap(NumberUtils.formatNumber(selectedItem.getPrice()))
+					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name() + "."
 				);
 			}
 		}
 	}
 
 	public static void open(Player player, Item[] shopItems) {
-		player.getPacketSender().sendItems(-1, 1, 93, player.getInventory().getItems());
-		player.getPacketSender().sendItems(10005, shopItems);
 		if (player.getShopIdentifier() < 1) {
 			player.setShopIdentifier(13);
 			handleEnteringShop(player, CustomShop2.PKP_SHOP);
 		}
-		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
-		player.getPacketSender().sendClientScript(10208, 11802, 11235, 12904, 12810, 7462, 13307, 23685, 6739);
-		player.getPacketSender().sendClientScript(10207);
-		player.getPacketSender().sendClientScript(149, "iiiiiisssss", 19726336, 93, 4, 7, 0, -1,
-			"Value<col=ff9040>", "Sell 1<col=ff9040>", "Sell 5<col=ff9040>",
-			"Sell 10<col=ff9040>", "Sell X<col=ff9040>");
-		player.getPacketSender().sendIfEvents(891, 41, 0,
-			127, 1150);
-		player.getPacketSender().sendIfEvents(301, 0, 0, 27, 1086);
 		if (!player.isVisibleInterface(Interface.CUSTOM_SHOP2)) {
 			player.openInterface(ToplevelComponent.MAINMODAL, Interface.CUSTOM_SHOP2);
 			player.openInterface(ToplevelComponent.SIDEMODAL, Interface.PLAYER_SHOP_INVENTORY);
 		}
+		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
+		// script 10208 (per-tab preview item icons) intentionally not sent -- its cc_create calls
+		// target IF3-format tab components, which this client's cc_create implementation can't
+		// resolve (throws ArrayIndexOutOfBoundsException client-side). Cosmetic only, safe to skip.
+		// script 10207 (item grid via cc_deleteall + cc_create loop) also intentionally not sent --
+		// confirmed via Widget Inspector that cc_create never attaches children to the real widget
+		// tree on this client build even when it doesn't throw (component 41 stayed at 0 children).
+		// Replaced with the real grid-binding mechanism (script 149 + UpdateInvFull) -- see
+		// configureBuyGrid() above.
+		configureBuyGrid(player);
+		player.getPacketSender().sendClientScript(149, "iiiiiisssss", 19726336, 93, 4, 7, 0, -1,
+			"Value<col=ff9040>", "Sell 1<col=ff9040>", "Sell 5<col=ff9040>",
+			"Sell 10<col=ff9040>", "Sell X<col=ff9040>");
+		player.getPacketSender().sendItems(-1, 1, 93, player.getInventory().getItems());
+		player.getPacketSender().sendItems(10005, shopItems);
+		player.getPacketSender().sendIfEvents(891, 41, 0,
+			127, 1150);
+		player.getPacketSender().sendIfEvents(301, 0, 0, 27, 1086);
 	}
 }

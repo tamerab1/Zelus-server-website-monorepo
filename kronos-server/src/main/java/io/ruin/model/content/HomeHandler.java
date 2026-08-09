@@ -89,7 +89,7 @@ public class HomeHandler {
 		var upgradeStation = GameObject.spawn(60015, 3116, 3485, 0, 10, 3); // Zelus Upgrader (was 46241)
 		var upgradeStation2 = GameObject.spawn(60016, 3114, 3482, 0, 10, 3); // Zelus Workbench (was 53226)
 		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
-		ObjectAction.register(panda, 1, (player, obj) -> NewShopHandler.openShop(player, NewShopHandler.pvmPointStore));
+		ObjectAction.register(panda, 1, (player, obj) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openPvmShop(player));
 		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
 		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> {
 			if (player.getPosition().inBounds(io.ruin.model.activities.gamble.Gamble.GAMBLE_ZONE)) {
@@ -336,10 +336,10 @@ public class HomeHandler {
 		NPCAction.register(2817, 2, (player, npc) -> ShopManager.openIfExists(player, "GeneralStore"));
 		NPCAction.register(2817, 1, (player, npc) -> ShopManager.openIfExists(player, "GeneralStore"));
 		NPCAction.register(9053, "Trade", (player, npc) -> ShopManager.openIfExists(player, "347ca8b3-dd43-4a46-bf05-3a452e5e1f3c"));
-		NPCAction.register(5523, 1, (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.donatorPointStore));
-		NPCAction.register(2989, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.reasonPointStore));
-		NPCAction.register(4058, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.votePointStore));
-		NPCAction.register(5527, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.achievementPointStore));
+		NPCAction.register(5523, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openDonatorStoreShop(player));
+		NPCAction.register(2989, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openZelusPointsShop(player));
+		NPCAction.register(4058, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openVoteStoreShop(player));
+		NPCAction.register(5527, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openAchievementPointsShop(player));
 		NPCAction.register(7456, 1, (player, npc) -> {
 			player.dialogue(new NPCDialogue(7456, "Use your broken items on me to get them repaired."));
 		});

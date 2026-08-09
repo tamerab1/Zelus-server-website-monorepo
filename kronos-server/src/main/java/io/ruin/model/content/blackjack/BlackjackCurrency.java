@@ -43,6 +43,30 @@ public enum BlackjackCurrency {
 			else
 				player.updateDonatorPoints(amount);
 		}
+	},
+	PK_POINTS("PK Points", "PKP", 964) {
+		@Override
+		public int balance(Player player) {
+			return player.getPKPoints();
+		}
+
+		@Override
+		public boolean remove(Player player, int amount) {
+			if (amount <= 0 || player.getPKPoints() < amount)
+				return false;
+			player.updatePKPoints(-amount);
+			return true;
+		}
+
+		@Override
+		public void add(Player player, int amount) {
+			if (amount <= 0)
+				return;
+			if ((long) player.pkPoints + amount > Integer.MAX_VALUE)
+				player.pkPoints = Integer.MAX_VALUE;
+			else
+				player.updatePKPoints(amount);
+		}
 	};
 
 	public final String displayName;

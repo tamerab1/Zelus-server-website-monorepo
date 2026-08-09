@@ -1,6 +1,7 @@
 package io.ruin.model.content.blackjack;
 
 import io.ruin.api.utils.NumberUtils;
+import io.ruin.cache.Color;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
@@ -67,6 +68,18 @@ public class BlackjackSession {
 	public void render(Player player) {
 		renderMain(player);
 		renderSide(player);
+	}
+
+	/** Called when the player closes the blackjack interface -- the session object itself
+	 * persists (keyed by name in BlackjackInterface.SESSIONS) so a mid-round hand can survive
+	 * an accidental close/reopen, but the running "session stats" tally should not carry over. */
+	public void resetSessionStats() {
+		wins = 0;
+		losses = 0;
+		pushes = 0;
+		profit = 0;
+		result = "";
+		status = "Place Bets";
 	}
 
 	public void toggleRules(Player player) {
@@ -143,11 +156,19 @@ public class BlackjackSession {
 			return;
 		}
 		player.dialogue(new OptionsDialogue("Please select a currency to bet:",
-				new Option("Platinum Tokens | Your balance: " + NumberUtils.formatNumber(BlackjackCurrency.PLATINUM_TOKENS.balance(player)),
-						() -> setCurrency(player, BlackjackCurrency.PLATINUM_TOKENS)),
-				new Option("Donator Points | Your balance: " + NumberUtils.formatNumber(BlackjackCurrency.DONATOR_POINTS.balance(player)),
-						() -> setCurrency(player, BlackjackCurrency.DONATOR_POINTS)),
+				currencyOption(player, BlackjackCurrency.DONATOR_POINTS),
+				currencyOption(player, BlackjackCurrency.PK_POINTS),
+				currencyOption(player, BlackjackCurrency.PLATINUM_TOKENS),
 				new Option("Cancel", player::closeDialogue)));
+	}
+
+	private Option currencyOption(Player player, BlackjackCurrency selected) {
+		// Not a literal "|" -- OptionsDialogue joins every option's text with "|" as the
+		// delimiter the client script splits on, so a real pipe inside one option's own text
+		// gets misread as an extra option boundary and wraps onto a second line.
+		String text = Color.COOL_BLUE.wrap(selected.displayName) + " - Your Balance: "
+				+ Color.RED.wrap(NumberUtils.formatNumber(selected.balance(player)));
+		return new Option(text, () -> setCurrency(player, selected));
 	}
 
 	public void enterBet(Player player) {
@@ -518,7 +539,18 @@ public class BlackjackSession {
 		profit += net;
 		status = outcomeStatus(settledWins, settledLosses, settledPushes, net);
 		result = status;
+		player.sendMessage(chatOutcomeMessage(settledWins, settledLosses, settledPushes, net));
 		render(player);
+	}
+
+	private String chatOutcomeMessage(int settledWins, int settledLosses, int settledPushes, long net) {
+		if (settledWins > 0 && settledLosses == 0 && settledPushes == 0)
+			return "<col=00ff00>[Blackjack] You won " + signed(net) + " " + currency.shortName + "!";
+		if (settledLosses > 0 && settledWins == 0 && settledPushes == 0)
+			return "<col=ff0000>[Blackjack] You lost. (" + signed(net) + " " + currency.shortName + ")";
+		if (settledPushes > 0 && settledWins == 0 && settledLosses == 0)
+			return "<col=ffff00>[Blackjack] Push - your bet was returned.";
+		return "<col=ffffff>[Blackjack] Round settled: " + signed(net) + " " + currency.shortName;
 	}
 
 	private int payoutFor(BlackjackHand hand, int dealerValue, boolean dealerBust, boolean dealerBlackjack) {

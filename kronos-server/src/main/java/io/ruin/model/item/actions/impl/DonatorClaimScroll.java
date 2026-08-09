@@ -63,18 +63,20 @@ public class DonatorClaimScroll {
 			player.donatorPoints += amount;
 			DonatorBond.checkDonatorStatus(player);
 		});
-		registerClaimTicket(59601, "Blood Money", (player, amount) -> player.getInventory().addOrDrop(io.ruin.cache.ItemID.BLOOD_MONEY, amount));
-		// 59602 (Vote Ticket) has no "claim" -- it IS the vote shop's currency directly now
-		// (replaces the old item 4067), same as how 4067 itself was never claimable.
+		// Fixed: this item's own cache name is "Bounty Hunter Ticket", but it was previously
+		// wired to claim Blood Money -- a pre-existing mismatch. Now claims BH points, matching
+		// the item's actual name (and the shop entry that uses this same item id as its ticket).
+		registerClaimTicket(59601, "BH point", (player, amount) -> player.UpdateBountyPoints(amount));
+		registerClaimTicket(59602, "Vote Point", (player, amount) -> player.updateVotePoints(amount));
 
 		ItemAction.registerInventory(59599, "check", (player, item) ->
 			player.sendMessage("You currently have " + player.getPKPoints() + " PK points."));
 		ItemAction.registerInventory(59600, "check", (player, item) ->
 			player.sendMessage("You currently have " + player.getDonatorPoints() + " donator points."));
 		ItemAction.registerInventory(59601, "check", (player, item) ->
-			player.sendMessage("You currently have " + player.getInventory().getAmount(io.ruin.cache.ItemID.BLOOD_MONEY) + " Blood Money."));
+			player.sendMessage("You currently have " + player.GetBountyPoints() + " BH points."));
 		ItemAction.registerInventory(59602, "check", (player, item) ->
-			player.sendMessage("You currently have " + player.getInventory().getAmount(59602) + " Vote Tickets."));
+			player.sendMessage("You currently have " + player.getVotePoints() + " vote points."));
 		ItemAction.registerInventory(30575, "read", (player, item) -> {
 			player.dialogue(new MessageDialogue("This will redeem $10 donated on your account"));
 			player.dialogue(new OptionsDialogue("Are you sure you want to claim this?",

@@ -913,7 +913,7 @@ public class JournalTab {
 						return;
 					}
 					if (player.bossSlayerName == null) {
-						ModernTeleport.teleport(player, new Position(3099, 3508, 0));
+						ModernTeleport.teleport(player, new Position(3104, 3489, 0));
 						return;
 					}
 					if (player.bossSlayerPosition == null) {

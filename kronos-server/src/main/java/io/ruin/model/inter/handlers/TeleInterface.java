@@ -1244,6 +1244,9 @@ public class TeleInterface extends ItemContainer {
 				else if (currentCategory == Categories.TRAINING) {
 					currentTeleport = ServerTeleports.ARMOURED_ZOMBIES;
 				}
+				else if (currentCategory == Categories.WILDERNESS) {
+					currentTeleport = ServerTeleports.FUN_PK;
+				}
 				break;
 			case 33:
 
@@ -1622,9 +1625,9 @@ public class TeleInterface extends ItemContainer {
 		player.getPacketSender().sendString(851, 29, ServerTeleports.CHAOS_ELE.name);
 		player.getPacketSender().sendString(851, 30, ServerTeleports.WILDY_RESOURCE_AREA.name);
 		player.getPacketSender().sendString(851, 31, ServerTeleports.CHAOS_ALTAR.name);
-		for (int i = 32; i < 34; i++) {
-			player.getPacketSender().setHidden(851, i, true);
-		}
+		player.getPacketSender().sendString(851, 32, ServerTeleports.FUN_PK.name);
+		player.getPacketSender().setHidden(851, 32, false);
+		player.getPacketSender().setHidden(851, 33, true);
 	}
 
 	public void startTeleport(Player player) {

@@ -60,7 +60,10 @@ public class CasinoBlackjackInterface {
 			h.closedAction = (p, i) -> forfeit(p);
 		});
 
-		NPCAction.register(5840, "BlackJack", (player, npc) -> open(player));
+		// Redirected to the new provably-fair blackjack system -- old interface (5104) kept
+		// registered above (still reachable via ::casino/::blackjack21) but no longer wired to
+		// the BJ Dealer NPC.
+		NPCAction.register(5840, "BlackJack", (player, npc) -> io.ruin.model.content.blackjack.BlackjackInterface.open(player));
 	}
 
 	public static void open(Player player) {

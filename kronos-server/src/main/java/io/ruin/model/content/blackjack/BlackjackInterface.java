@@ -125,7 +125,10 @@ public class BlackjackInterface {
 		if (registered)
 			return;
 		InterfaceHandler.register(MAIN_INTERFACE_ID, h -> {
-			h.closedAction = (player, replacement) -> player.closeInterface(ToplevelComponent.SIDEMODAL);
+			h.closedAction = (player, replacement) -> {
+				get(player).resetSessionStats();
+				player.closeInterface(ToplevelComponent.SIDEMODAL);
+			};
 			bind(h, MAIN_CLOSE_BUTTON, player -> player.closeInterface(ToplevelComponent.MAINMODAL));
 			bind(h, MAIN_LIGHT_BUTTON, player -> get(player).toggleTransparentBackground(player));
 			bind(h, MAIN_RULES_BUTTON, player -> get(player).toggleRules(player));

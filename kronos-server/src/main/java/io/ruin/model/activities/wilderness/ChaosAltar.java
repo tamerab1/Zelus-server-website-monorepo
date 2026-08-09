@@ -16,6 +16,9 @@ import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.ItemNPCAction;
 import io.ruin.model.item.actions.ItemObjectAction;
 import io.ruin.model.map.object.GameObject;
+import io.ruin.model.map.object.actions.ObjectAction;
+import io.ruin.model.map.object.actions.impl.PrayerAltar;
+import io.ruin.model.skills.magic.SpellBook;
 import io.ruin.model.skills.prayer.Bone;
 import io.ruin.model.stat.StatType;
 
@@ -47,6 +50,26 @@ public class ChaosAltar {
 				continue;
 			ItemNPCAction.register(bone.notedId, ELDER_CHAOS_DRUID, ChaosAltar::promptForAmount);
 		}
+
+		// "Pray-at" is already handled generically by PrayerAltar's own LocType.forEach() scan
+		// (any object with that cache option auto-works) -- these 3 are the new options added
+		// to interface 891's Chaos altar cache def to match the requested convenience-altar menu.
+		ObjectAction.register(CHAOS_ALTAR, "Restore-health", (player, obj) -> {
+			player.getStats().get(StatType.Hitpoints).restore();
+			player.sendMessage("Your health has been restored.");
+		});
+		ObjectAction.register(CHAOS_ALTAR, "Restore-special", (player, obj) -> {
+			player.getCombat().restoreSpecial(100);
+			player.sendMessage("Your special attack energy has been restored.");
+		});
+		ObjectAction.register(CHAOS_ALTAR, "Change-spellbook", (player, obj) -> player.dialogue(
+			new OptionsDialogue("Select which prayer book you'd like to switch to:",
+				new Option("Modern", () -> PrayerAltar.switchBook(player, SpellBook.MODERN, true)),
+				new Option("Ancient", () -> PrayerAltar.switchBook(player, SpellBook.ANCIENT, true)),
+				new Option("Lunar", () -> PrayerAltar.switchBook(player, SpellBook.LUNAR, true)),
+				new Option("Arceuus", () -> PrayerAltar.switchBook(player, SpellBook.ARCEUUS, true))
+			)
+		));
 	}
 
 	/**

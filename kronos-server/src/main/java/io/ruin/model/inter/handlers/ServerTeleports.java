@@ -428,6 +428,7 @@ public enum ServerTeleports {
 		"", "No requirements.", 0, 0),
 	EAST_DRAGONS("East dragons", new Position(3112, 3710, 0), null, "You will be teleported to level 24 <br>wilderness.", "Medium", "No requirements.", 0, 0),
 	CHAOS_ALTAR("Chaos Altar (Bones)", new Position(2960, 3818, 0), null, "You will be teleported to level 40+ <br>wilderness.", "Easy", "No requirements.", 0, 0),
+	FUN_PK("Fun-PK Zone", new Position(3329, 4751, 0), null, "A dedicated zone for casual PKing.", "Easy", "No requirements.", 0, 0),
 	WEST_DRAGONS("West dragons", new Position(2980, 3631, 0), null, "You will be teleported to level 14 <br>wilderness.", "Medium", "No requirements.", 0, 0),
 	MAGE_BANK("Mage bank", new Position(2539, 4715, 0), null, "You will be teleported to the <br>mage bank (safe).", "", "No requirements.", 0, 0),
 	REVENANTS("Revenants", new Position(3255, 10197, 0), new Item[]{

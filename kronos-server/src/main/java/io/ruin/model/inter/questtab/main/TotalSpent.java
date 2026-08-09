@@ -22,9 +22,9 @@ public class TotalSpent extends QuestTabEntry {
 		player.dialogue(
 			new MessageDialogue("You have spent a total of " + Color.COOL_BLUE.wrap("$" + player.storeAmountSpent) +
 				" inside the store. You can view a list of donator benefits by going to "
-				+ Color.COOL_BLUE.wrap(World.type.getWebsiteUrl() + "/forums/index.php?/topic/226-gauntlet-donator-benefits/") + "."),
-			new OptionsDialogue("View the " + World.type.getWorldName() + " Donator Benefits?",
-				new Option("Yes", () -> player.openUrl(World.type.getWorldName() + " Donator Benefits", World.type.getWebsiteUrl() + "/forums/index.php?/topic/226-gauntlet-donator-benefits/")),
+				+ Color.COOL_BLUE.wrap(World.type.getWebsiteUrl() + "/store") + "."),
+			new OptionsDialogue("View the " + World.type.getWorldName() + " Store?",
+				new Option("Yes", () -> player.openUrl(World.type.getWorldName() + " Store", World.type.getWebsiteUrl() + "/store")),
 				new Option("No", player::closeDialogue)));
 	}
 

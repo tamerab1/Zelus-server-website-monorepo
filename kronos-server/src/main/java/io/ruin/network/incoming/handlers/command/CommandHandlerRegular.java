@@ -73,12 +73,6 @@ public class CommandHandlerRegular {
 			// "::presets"/"::preset" (PresetsMenu, DMMPVP-style fixed Zerker/Melee/Pure kits)
 			// retired -- replaced by the new GearLoadouts system (::loadouts/::gearloadouts/::kits).
 
-			case "movreth": {
-				player.getMovement().teleport(3018, 4391, 0);
-				player.sendMessage("<col=ff4500>You enter the Movreth dungeon. Defeat all three guards to face Movreth!</col>");
-				return true;
-			}
-
 			case "gamble":
 			case "gamblezone":
 			case "gambling": {
@@ -450,6 +444,10 @@ public class CommandHandlerRegular {
 			case "loginstreak":
 			case "dailylogin": {
 				player.getDailyLogin().open();
+				return true;
+			}
+			case "funpk": {
+				player.getMovement().teleport(3329, 4751, 0);
 				return true;
 			}
 			case "casino":

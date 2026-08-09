@@ -278,6 +278,28 @@ public enum Currency {
 			return amount;
 		}
 	}),
+	BH_POINTS(new CurrencyHandler("BH points") {
+
+		@Override
+		public int getCurrencyCount(Player player) {
+			return player.GetBountyPoints();
+		}
+
+		@Override
+		public int removeCurrency(Player player, int amount) {
+			if (amount > player.GetBountyPoints()) {
+				return 0;
+			}
+			player.UpdateBountyPoints(-amount);
+			return amount;
+		}
+
+		@Override
+		public int addCurrency(Player player, int amount) {
+			player.UpdateBountyPoints(amount);
+			return amount;
+		}
+	}),
 	PK(new CurrencyHandler("PK points") {
 
 		@Override

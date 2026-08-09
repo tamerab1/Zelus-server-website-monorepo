@@ -685,6 +685,7 @@ public final class StaticInit {
 		io.ruin.model.map.object.actions.impl.edgeville.PetList.register();
 		io.ruin.model.map.object.actions.impl.edgeville.RejuvenationPool.register();
 		io.ruin.model.map.object.actions.impl.ScratchMachine.register();
+		io.ruin.model.map.object.actions.impl.ZelusChest.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.HouseOnTheHillObjects.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.MushTree.register();
 		io.ruin.model.map.object.actions.impl.gnome_stronghold.MonkeyMadness.register();

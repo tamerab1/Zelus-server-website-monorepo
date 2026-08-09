@@ -39,6 +39,8 @@ public final class PvmPointsManager {
 		int points = pointsForKill(player, npc);
 		if (points <= 0) return;
 		player.PvmPoints += points;
+		player.sendMessage("<shad=000000><col=BA0000>[PVM Points]</shad> <col=0C2AC1>You earn <col=C10CB9>(+" + points + ") pvm points <col=0C2AC1>after killing <col=0C2AC1>"
+			+ npc.getDef().name + "<col=0C2AC1>! You now have <col=0C2AC1>" + player.PvmPoints + " PVM Points<col=0C2AC1>!");
 	}
 
 	/**

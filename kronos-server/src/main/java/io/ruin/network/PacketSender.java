@@ -1083,6 +1083,22 @@ public final class PacketSender {
 		write(CamReset.INSTANCE);
 	}
 
+	// KNOWN BROKEN for IF3-format components (confirmed via Blackjack card-slot investigation,
+	// same root cause as the shop's sendItems/UpdateInvFull crash). `parent << 16 | child` is
+	// always positive; clientscript 44 feeds that straight into the native IF_SETGRAPHIC opcode
+	// (2105, confirmed via disassembly: `iload 1 / iload 0 / if_setgraphic / return`) as its
+	// direct addressing argument. Per net.rsprot's own CombinedId/UpdateInvFull docs, IF3-type
+	// interfaces require a NEGATIVE combined id -- positive ids silently fail to resolve (no
+	// exception, since this goes through a raw CS2 script argument with no rsprot-side guard,
+	// unlike UpdateInvFull which throws outright for the same mistake). No native rsprot packet
+	// exists for "set component graphic" to switch to instead (checked exhaustively against
+	// net.rsprot:osrs-231-api sources) -- clientscript 44 is the only mechanism available, and I
+	// don't have a verified way to construct a valid negative combinedId for a real interface id
+	// (CombinedId's own interfaceId/componentId getters don't round-trip a negated id back to the
+	// original -- the real negative value is very likely a client-assigned ephemeral IF3-window
+	// handle this codebase has no mechanism to obtain). Used by BlackjackSession.java (dealt/back/
+	// blank card sprites) and GearLoadoutInterface.java (spellbook icon) -- both currently
+	// silently non-functional for this reason. Do not "fix" by guessing a negative constant.
 	public void setGraphic(int parent, int child, int gfx) {
 		sendClientScript(44, "", parent << 16 | child, gfx);
 	}

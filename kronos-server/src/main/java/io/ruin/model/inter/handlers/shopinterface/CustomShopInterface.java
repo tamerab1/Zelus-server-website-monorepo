@@ -1,7 +1,7 @@
 package io.ruin.model.inter.handlers.shopinterface;
 
 import io.ruin.api.utils.NumberUtils;
-import io.ruin.api.utils.StringUtils;
+import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.Interface;
@@ -274,7 +274,7 @@ public class CustomShopInterface {
 				}
 
 				if (amount <= 0) {
-					player.sendMessage("You did not bring enough " + StringUtils.fixCaps(currency.name().toString().replace("_", " ")) + " to make this purchase.");
+					player.sendMessage("You don't have enough " + currency.getCurrencyHandler().name() + " to buy this item.");
 					return;
 				}
 			}
@@ -335,9 +335,9 @@ public class CustomShopInterface {
 			if (customShopItem.getPrice() <= 0) {
 				player.sendMessage("You can't sell that item to this store.");
 			} else {
-				player.sendMessage(item.getDef().name + " can be sold for "
-					+ (NumberUtils.formatNumber(price)
-					+ " " + customShop.getCurrency().name()) + ".");
+				player.sendMessage(Color.COOL_BLUE.wrap(item.getDef().name) + " can be sold for "
+					+ (Color.RED.wrap(NumberUtils.formatNumber(price))
+					+ " " + customShop.getCurrency().getCurrencyHandler().name()) + ".");
 			}
 			return;
 		} else if (option == 2) {
@@ -403,8 +403,9 @@ public class CustomShopInterface {
 			ObjType def = ObjType.get(selectedItem.getItemId());
 
 			if (def != null) {
-				player.sendMessage(def.name + " costs " + NumberUtils.formatNumber(selectedItem.getPrice())
-					+ " " + StringUtils.fixCaps(customShop.getCurrency().toString().replace("_", " ")) + "."
+				player.sendMessage(Color.COOL_BLUE.wrap(def.name) + " costs "
+					+ Color.RED.wrap(NumberUtils.formatNumber(selectedItem.getPrice()))
+					+ " " + customShop.getCurrency().getCurrencyHandler().name() + "."
 				);
 			}
 		}
