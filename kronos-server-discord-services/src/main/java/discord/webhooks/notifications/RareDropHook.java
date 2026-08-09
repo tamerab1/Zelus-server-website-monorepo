@@ -2,6 +2,7 @@ package discord.webhooks.notifications;
 
 import discord.comp.impl.*;
 import discord.webhooks.Webhook;
+import java.text.NumberFormat;
 import java.util.function.Supplier;
 import org.json.JSONObject;
 import properties.ServerProperties;
@@ -45,8 +46,14 @@ public class RareDropHook {
 			embedMessage.setColor(8917522);
 			embedMessage.setThumbnail(thumbnail);
 			embedMessage.setFooter(footer);
+			var fields = new java.util.ArrayList<Field>();
+			if (object.has("value") && object.getLong("value") > 0)
+				fields.add(new Field("Approx Value:",
+						NumberFormat.getInstance().format(object.getLong("value")) + " coins", false));
 			if (object.has("source"))
-				embedMessage.setFields(new Field("Source:", object.get("source").toString(), false));
+				fields.add(new Field("Source:", object.get("source").toString(), false));
+			if (!fields.isEmpty())
+				embedMessage.setFields(fields.toArray(Field[]::new));
 
 			var message = new Message();
 			message.setEmbeds(embedMessage);

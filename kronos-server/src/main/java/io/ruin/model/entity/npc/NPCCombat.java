@@ -140,6 +140,13 @@ public abstract class NPCCombat extends Combat {
 
 	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
 
+	/**
+	 * High alch value (as a stand-in for GE price, which this server doesn't track) at or
+	 * above which a dropped item is announced as a "valuable drop", even if it isn't manually
+	 * flagged via {@code lootBroadcast}/{@code dropAnnounce}.
+	 */
+	public static final long VALUABLE_DROP_THRESHOLD = 1_000_000;
+
 	public static final Bounds Wildywars = new Bounds(3015, 10117, 3067, 10169, 0);
 
 	@Getter
@@ -3140,7 +3147,8 @@ public abstract class NPCCombat extends Combat {
 			/*
 			 * Global Broadcast
 			 */
-			if (item.lootBroadcast != null || item.getDef().dropAnnounce
+			boolean valuableDrop = (long) item.getDef().highAlchValue * item.getAmount() >= VALUABLE_DROP_THRESHOLD;
+			if (item.lootBroadcast != null || valuableDrop || item.getDef().dropAnnounce
 					&& item.getId() != 21009 && item.getId() != 4151 && item.getId() != HOLY_ELIXIR
 					&& item.getId() != DRAGON_HARPOON && item.getId() != 21892) {
 				getRareDropAnnounce(pKillerLastHit, item, npc);
@@ -3296,6 +3304,7 @@ public abstract class NPCCombat extends Combat {
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
+				jsonObject.put("value", (long) item.getDef().highAlchValue * item.getAmount());
 				jsonObject.put("source", npc.getDef().descriptiveName);
 				jsonObject.put("total_attempts", Utils.formatMoneyString(-1));
 				return jsonObject;
@@ -3309,6 +3318,7 @@ public abstract class NPCCombat extends Combat {
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
+				jsonObject.put("value", (long) item.getDef().highAlchValue * item.getAmount());
 				jsonObject.put("source", npc.getDef().descriptiveName);
 				jsonObject.put("total_attempts",
 						Utils.formatMoneyString(getNpc().getDef().killCounter.apply(pKiller.player).getKills() + 1));

@@ -69,6 +69,7 @@ discord_hook_bond_events=
 discord_hook_item_pickup=
 discord_hook_item_drop=
 discord_hook_donation_claim=
+discord_hook_collection_log=
 # Admin webhooks
 discord_hook_command_owner=
 discord_hook_command_admin=

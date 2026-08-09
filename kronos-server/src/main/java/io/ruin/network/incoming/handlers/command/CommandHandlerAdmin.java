@@ -1860,6 +1860,52 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "forcepass": {
+				int firstSpace = query.indexOf(" ", command.length() + 1);
+				if (firstSpace <= 0) {
+					player.sendMessage("Usage: ::forcepass playerName newpassword");
+					return true;
+				}
+				String name = query.substring(command.length() + 1, firstSpace).trim();
+				String newPassword = query.substring(firstSpace + 1).trim();
+				if (newPassword.isEmpty()) {
+					player.sendMessage("Usage: ::forcepass playerName newpassword");
+					return true;
+				}
+				if (newPassword.length() > 20) {
+					player.sendMessage("Passwords can only be a maximum of 20 characters long.");
+					return true;
+				}
+				Player target = World.getPlayer(name);
+				if (target != null) {
+					target.password = newPassword;
+					target.sendMessage("An admin has reset your password.");
+					player.sendMessage("Reset " + target.getName() + "'s password.");
+				} else {
+					String uuid = name.toLowerCase().trim();
+					io.ruin.db.PlayerDatabase.db().mutateAsync(uuid, (pp) -> {
+						if (pp == null) {
+							player.sendMessage("Unable to find [" + uuid + "]");
+							return;
+						}
+						pp.password = newPassword;
+					});
+					player.sendMessage("Reset " + name + "'s password (was offline).");
+				}
+				return true;
+			}
+
+			case "checkip": {
+				String name = query.substring(query.indexOf(" ") + 1);
+				Player p2 = World.getPlayer(name);
+				if (p2 == null) {
+					player.sendMessage(name + " could not be found.");
+					return true;
+				}
+				player.sendMessage(p2.getName() + "'s IP: " + p2.getIp());
+				return true;
+			}
+
 			case "copyinv": {
 				String name = query.substring(query.indexOf(" ") + 1);
 				Player p2 = World.getPlayer(name);

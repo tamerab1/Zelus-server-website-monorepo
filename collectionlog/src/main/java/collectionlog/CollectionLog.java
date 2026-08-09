@@ -1,7 +1,9 @@
 package collectionlog;
 
 import com.google.gson.annotations.Expose;
+import discord.webhooks.notifications.CollectionLogHook;
 import io.ruin.cache.ItemID;
+import org.json.JSONObject;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
@@ -96,6 +98,14 @@ public class CollectionLog {
 			if ((notifySetting & 0b10) != 0) {
 				notifyNewItemAddedPopup(player, item);
 			}
+
+			CollectionLogHook.sendDiscordMessage(() -> {
+				var jsonObject = new JSONObject();
+				jsonObject.put("player", player.getName());
+				jsonObject.put("item_id", item.getId());
+				jsonObject.put("item_name", item.getDef().name);
+				return jsonObject;
+			});
 		}
 
 		player.collectionLog().collect(player, item.getId(), item.getAmount());
