@@ -74,6 +74,41 @@ public class CommandHandlerRegular {
 			// "::presets"/"::preset" (PresetsMenu, DMMPVP-style fixed Zerker/Melee/Pure kits)
 			// retired -- replaced by the new GearLoadouts system (::loadouts/::gearloadouts/::kits).
 
+			// Donator+/staff shortcut to the teleport menu (interface 851) -- no coordinate input,
+			// unlike the owner-only ::tele command in CommandHandlerManager/CommandHandlerCommunityAdmin.
+			case "tp":
+			case "t":
+			case "teleport": {
+				if (!player.isDonator() && !player.isStaff()) {
+					player.sendMessage("This command is for donators and staff only.");
+					return true;
+				}
+				new io.ruin.model.inter.handlers.TeleInterface().open(player);
+				return true;
+			}
+
+			// Instant-open bank shortcut -- mod+ staff or legendary+ donator.
+			case "b":
+			case "bank":
+			case "openbank": {
+				if (!player.isModerator() && !player.isLegendaryDonator() && !player.isSupremeDonator()) {
+					player.sendMessage("This command is for legendary+ donators and staff only.");
+					return true;
+				}
+				player.getBank().open();
+				return true;
+			}
+
+			case "pointshops": {
+				player.getPacketSender().sendString(891, 14, "PKP Shop");
+				player.setShopIdentifier(13);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.handleEnteringShop(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.PKP_SHOP);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.open(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.getItemsFromShop(player));
+				return true;
+			}
+
 			// Lists every point-type currency the player has a balance in, pulled from the
 			// Currency enum's own registry (skipping item-backed currencies like coins/tokkul,
 			// which are already visible in the player's inventory) plus the two point systems
@@ -82,6 +117,8 @@ public class CommandHandlerRegular {
 				// Same scrollable "scroll" interface (119) ::commands uses, so any number of
 				// entries fits cleanly instead of overflowing a fixed-height dialogue/chat spam.
 				// Rows alternate red/cyan for readability, matching the shop interfaces' style.
+				// Shaded (<col=X><shad=000000>text</shad></col>) to match the chatbox/nameplate
+				// look used elsewhere (e.g. LoyaltyTitle.shadedText()) instead of flat/bright text.
 				List<String> lines = new LinkedList<>();
 				int row = 0;
 				for (io.ruin.model.shop.Currency currency : io.ruin.model.shop.Currency.values()) {
@@ -98,12 +135,12 @@ public class CommandHandlerRegular {
 						continue;
 					int amount = currency.currencyHandler.getCurrencyCount(player);
 					String color = row++ % 2 == 0 ? "ff0000" : "00ffff";
-					lines.add("<col=" + color + ">" + NumberUtils.formatNumber(amount) + " " + currency.currencyHandler.pluralName() + "</col>");
+					lines.add("<col=" + color + "><shad=000000>" + NumberUtils.formatNumber(amount) + " " + currency.currencyHandler.pluralName() + "</shad></col>");
 				}
 				String slayerColor = row++ % 2 == 0 ? "ff0000" : "00ffff";
-				lines.add("<col=" + slayerColor + ">" + NumberUtils.formatNumber(io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player)) + " slayer points</col>");
+				lines.add("<col=" + slayerColor + "><shad=000000>" + NumberUtils.formatNumber(io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player)) + " slayer points</shad></col>");
 				String perkColor = row % 2 == 0 ? "ff0000" : "00ffff";
-				lines.add("<col=" + perkColor + ">" + NumberUtils.formatNumber(player.perkPoints) + " perk points</col>");
+				lines.add("<col=" + perkColor + "><shad=000000>" + NumberUtils.formatNumber(player.perkPoints) + " perk points</shad></col>");
 				player.sendScroll("Your Points", lines.toArray(new String[0]));
 				return true;
 			}

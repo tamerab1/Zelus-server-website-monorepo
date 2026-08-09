@@ -34,9 +34,11 @@ public class CommandHandlerManager {
 			}
 
 
-			case "tp":
-			case "tele":
-			case "teleport": {
+			case "tele": {
+				if (!player.isOwner()) {
+					player.sendMessage("This command is owner-only.");
+					return true;
+				}
 
 				if (args == null || args.length == 0) {
 					TeleInterface teleInterface = new TeleInterface();

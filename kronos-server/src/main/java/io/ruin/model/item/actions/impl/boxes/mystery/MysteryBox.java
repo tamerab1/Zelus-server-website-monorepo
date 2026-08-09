@@ -1500,7 +1500,7 @@ public class MysteryBox {
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Forgotten lockbox!");
 			player.unlock();
 		});
-		ItemAction.registerInventory(59524, "open", (player, item) -> {
+		ItemAction donatorWeaponBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1545,11 +1545,15 @@ public class MysteryBox {
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(59524).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
-		});
+		};
+		// Item 30628 is an unregistered cache duplicate of 59524 (identical name "Donator Weapon
+		// Box"), so it needs the same handler registered explicitly or opening it silently does nothing.
+		ItemAction.registerInventory(59524, "open", donatorWeaponBoxAction);
+		ItemAction.registerInventory(30628, "open", donatorWeaponBoxAction);
 
 		ItemAction.registerInventory(32000, "open", (player, item) -> {
 			if (!player.getInventory().hasFreeSlots(1)) {
@@ -1627,7 +1631,7 @@ public class MysteryBox {
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
 		});
-		ItemAction.registerInventory(59525, "open", (player, item) -> {
+		ItemAction donatorArmourBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1666,12 +1670,16 @@ public class MysteryBox {
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(59525).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
 			player.unlock();
-		});
+		};
+		// Item 30627 is an unregistered cache duplicate of 59525 (identical name "Donator Armour
+		// Box"), so it needs the same handler registered explicitly or opening it silently does nothing.
+		ItemAction.registerInventory(59525, "open", donatorArmourBoxAction);
+		ItemAction.registerInventory(30627, "open", donatorArmourBoxAction);
 		ItemAction.registerInventory(30596, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();
@@ -1855,7 +1863,7 @@ public class MysteryBox {
 			}
 			player.unlock();
 		});
-		ItemAction.registerInventory(30462, "open", (player, item) -> {
+		ItemAction advancedDonatorMysteryBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1894,13 +1902,19 @@ public class MysteryBox {
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(30462).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
 			}
 			player.unlock();
-		});
+		};
+		// Item 30447 is an unregistered cache duplicate of 30462 (identical name "Advanced donator
+		// mystery box"), so it needs the same handler registered explicitly or opening it silently
+		// does nothing. It's also a genuine reward in SummerMysteryBox's loot table, so real players
+		// can end up holding it, not just via admin item-search commands.
+		ItemAction.registerInventory(30462, "open", advancedDonatorMysteryBoxAction);
+		ItemAction.registerInventory(30447, "open", advancedDonatorMysteryBoxAction);
 		ItemAction.registerInventory(30448, "open", (player, item) -> {
 			if (player.getInventory().getFreeSlots() < 3) {
 				player.sendMessage("You need at least 3 inventory spaces to open this!");

@@ -1507,16 +1507,6 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
-			case "pointshops": {
-				player.getPacketSender().sendString(891, 14, "PKP Shop");
-				player.setShopIdentifier(13);
-				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.handleEnteringShop(player,
-						io.ruin.model.inter.handlers.shopinterface.CustomShop2.PKP_SHOP);
-				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.open(player,
-						io.ruin.model.inter.handlers.shopinterface.CustomShop2.getItemsFromShop(player));
-				return true;
-			}
-
 			case "giveperkpoints": {
 				forPlayer(player, query, "::giveperkpoints playerName",
 						p2 -> p2.perkPoints += args[0] == null ? 10_000 : Integer.parseInt(args[0]));
@@ -2533,13 +2523,6 @@ public class CommandHandlerAdmin {
 						sb.append(item.getId()).append(",");
 				}
 				System.out.println(sb.substring(0, sb.length() - 1));
-				return true;
-			}
-
-			case "b":
-			case "bank":
-			case "openbank": {
-				player.getBank().open();
 				return true;
 			}
 
