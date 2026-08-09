@@ -179,7 +179,7 @@ public class CustomShopInterface2 {
 	private static void sendBalanceMessage(Player player, CustomShop2 shop) {
 		Currency currency = shop.getCurrency();
 		int balance = currency.getCurrencyHandler().getCurrencyCount(player);
-		player.sendMessage("You have " + Color.RED.wrap(NumberUtils.formatNumber(balance)) + " " + currency.getCurrencyHandler().name() + ".");
+		player.sendMessage("<shad=000000>You have " + Color.RED.wrap(NumberUtils.formatNumber(balance)) + " " + currency.getCurrencyHandler().name() + ".</shad>");
 	}
 
 	private static void searchShop(Player player, String search) {
@@ -391,9 +391,9 @@ public class CustomShopInterface2 {
 			if (CustomShop2Item.getPrice() <= 0) {
 				player.sendMessage("You can't sell that item to this store.");
 			} else {
-				player.sendMessage(Color.COOL_BLUE.wrap(item.getDef().name) + " can be sold for "
+				player.sendMessage("<shad=000000>" + Color.COOL_BLUE.wrap(item.getDef().name) + " can be sold for "
 					+ (Color.RED.wrap(NumberUtils.formatNumber(price))
-					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name()) + ".");
+					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name()) + ".</shad>");
 			}
 			return;
 		} else if (option == 2) {
@@ -461,9 +461,9 @@ public class CustomShopInterface2 {
 			ObjType def = ObjType.get(selectedItem.getItemId());
 
 			if (def != null) {
-				player.sendMessage(Color.COOL_BLUE.wrap(def.name) + " costs "
+				player.sendMessage("<shad=000000>" + Color.COOL_BLUE.wrap(def.name) + " costs "
 					+ Color.RED.wrap(NumberUtils.formatNumber(selectedItem.getPrice()))
-					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name() + "."
+					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name() + ".</shad>"
 				);
 			}
 		}

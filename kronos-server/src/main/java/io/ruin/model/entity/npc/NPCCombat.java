@@ -769,7 +769,7 @@ public abstract class NPCCombat extends Combat {
 
 		RareDropHook.sendDiscordMessage(() -> {
 			var jsonObject = new JSONObject();
-			jsonObject.put("player", player.getName());
+			jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 			jsonObject.put("game_mode", player.getGameMode());
 			jsonObject.put("item_id", item.getId());
 			jsonObject.put("item_name", item.getDef().name);
@@ -3300,7 +3300,7 @@ public abstract class NPCCombat extends Combat {
 
 			RareDropHook.sendDiscordMessage(() -> {
 				var jsonObject = new JSONObject();
-				jsonObject.put("player", pKiller.player.getName());
+				jsonObject.put("player", pKiller.player.getName().replaceAll("<[^>]*>", ""));
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
@@ -3314,7 +3314,7 @@ public abstract class NPCCombat extends Combat {
 
 			RareDropHook.sendDiscordMessage(() -> {
 				var jsonObject = new JSONObject();
-				jsonObject.put("player", pKiller.player.getName());
+				jsonObject.put("player", pKiller.player.getName().replaceAll("<[^>]*>", ""));
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);

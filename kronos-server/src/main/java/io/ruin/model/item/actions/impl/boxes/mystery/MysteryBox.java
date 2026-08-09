@@ -1287,7 +1287,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30461), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1539,7 +1539,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59524), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1582,7 +1582,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1620,7 +1620,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1664,7 +1664,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59525), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1798,7 +1798,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(4810), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -1847,7 +1847,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30446), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -1896,7 +1896,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30462), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1950,7 +1950,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30448), reward.getId());
 
 					var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -2001,7 +2001,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30449), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());

@@ -101,7 +101,9 @@ public class CollectionLog {
 
 			CollectionLogHook.sendDiscordMessage(() -> {
 				var jsonObject = new JSONObject();
-				jsonObject.put("player", player.getName());
+				// Strip any OSRS chat markup (<col=>, <shad=>, <img=>) -- Discord doesn't
+				// understand it and would otherwise show the raw tags as literal text.
+				jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
 				return jsonObject;
