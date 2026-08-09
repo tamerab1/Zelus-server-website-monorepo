@@ -355,14 +355,17 @@ public class CustomShopInterface2 {
 			return;
 		}
 
-		if (!item.getDef().tradeable) {
-			player.sendMessage("You can't sell that item.");
-			return;
-		}
-
 		CustomShop2 CustomShop2 = io.ruin.model.inter.handlers.shopinterface.CustomShop2.get(player.getShopIdentifier());
 
 		if (CustomShop2 == null) {
+			return;
+		}
+
+		// Explicit-buyback shops (sellAtListedPrice) are built to sink specific non-tradeable
+		// items at a fixed price -- same pattern as the Wilderness Emblem Trader's Archaic
+		// emblems, which aren't GE-tradeable either. Only the general case requires tradeable.
+		if (!CustomShop2.isSellAtListedPrice() && !item.getDef().tradeable) {
+			player.sendMessage("You can't sell that item.");
 			return;
 		}
 
