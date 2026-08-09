@@ -56,8 +56,8 @@ public class Preset extends QuestTabEntry {
 	public static final int SUPER_RESTORE_POTION_1 = 3030;
 	public static final int PRAYER_POTION_4 = 2434;
 	public static final int SARADOMIN_BREW_4 = 6685;
-	public static final int SARADOMIN_BREW_3 = 6689;
-	public static final int SARADOMIN_BREW_2 = 6687;
+	public static final int SARADOMIN_BREW_3 = 6687;
+	public static final int SARADOMIN_BREW_2 = 6689;
 	public static final int SARADOMIN_BREW_1 = 6691;
 	public static final int SANFEW_SERUM = 10925;
 	public static final int GUTHIX_REST = 4417;

@@ -37,7 +37,6 @@ public enum SpawnableItem {
 	SANFEW_SERUM(World.spawnableOffset + SANFEW_SERUM4, 0),
 	SUPER_RESTORE(World.spawnableOffset + SUPER_RESTORE4, 0),
 	SARA_BREW(World.spawnableOffset + SARADOMIN_BREW4, 0),
-	SARA_BREW_23575(World.spawnableOffset + ItemID.SARADOMIN_BREW4_23575, 0),
 	/*
 	 * Armor
 	 */
