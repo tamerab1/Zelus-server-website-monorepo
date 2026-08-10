@@ -31,7 +31,14 @@ services:
             # VPS was upsized to 8GB specifically to give this real headroom
             # rather than keep tuning around a box that was too small for
             # the workload.
-            - KRONOS_BOOT_OPTS=-Xmx3200m
+            #
+            # This file is shared between the development (beta) and
+            # production stacks (see ci-cd.yml's deploy-development /
+            # deploy-production jobs, both of which use this same compose
+            # file). The default here is the beta box's known-safe value;
+            # production overrides it via KRONOS_BOOT_OPTS in its own
+            # DOCKER_COMPOSE_ENV secret without touching this file.
+            - KRONOS_BOOT_OPTS=${KRONOS_BOOT_OPTS:--Xmx3200m}
         volumes:
             # ABSOLUTE path, deliberately not "./server.properties": `docker
             # stack deploy` resolves relative bind sources on whichever
@@ -66,7 +73,10 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 4g
+                    # Same shared-file reasoning as KRONOS_BOOT_OPTS above:
+                    # default matches beta's current limit, production
+                    # overrides via GAME_SERVER_MEM_LIMIT in its own secret.
+                    memory: ${GAME_SERVER_MEM_LIMIT:-4g}
 
     # Website API (FastAPI) — talks to db_sql over the internal Swarm overlay
     # network (service name resolves automatically), never publishes a host
@@ -95,7 +105,11 @@ services:
             STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
             PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
             PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
-            PAYPAL_BASE_URL: https://api-m.sandbox.paypal.com
+            # Default is beta's sandbox value; production overrides via
+            # PAYPAL_BASE_URL in its own DOCKER_COMPOSE_ENV secret (see
+            # the KRONOS_BOOT_OPTS comment on game_server for why this
+            # pattern instead of hardcoding here).
+            PAYPAL_BASE_URL: ${PAYPAL_BASE_URL:-https://api-m.sandbox.paypal.com}
             PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
         depends_on:
             - db_sql
