@@ -18,9 +18,9 @@ const PLATFORMS = [
     id:        'mac',
     label:     'macOS',
     badge:     'macOS 11+',
-    file:      'ZelusLauncher-mac.dmg',
-    note:      'Coming soon.',
-    available: false,
+    file:      'client.jar',
+    note:      'No native installer yet — requires Java 21. See instructions below.',
+    available: true,
   },
   {
     id:        'linux',
@@ -202,6 +202,59 @@ export default function DownloadView() {
               <div style={{ fontSize:12, color:'#c8bfb0', lineHeight:1.7 }}>{body}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── Manual install (no launcher) ── */}
+      <div id="manual-install" style={{ maxWidth:700, margin:'88px auto 0', padding:'0 24px' }}>
+        <div style={{ textAlign:'center', marginBottom:36 }}>
+          <div className="font-fantasy" style={{ fontSize:16, letterSpacing:'0.2em',
+            color:'#d4af37', marginBottom:8,
+            textShadow:'0 2px 12px rgba(0,0,0,0.9)' }}>
+            MANUAL INSTALL (NO LAUNCHER)
+          </div>
+          <div style={{ width:60, height:1, margin:'0 auto',
+            background:'linear-gradient(90deg,transparent,rgba(212,175,55,0.6),transparent)' }} />
+        </div>
+
+        <div style={{
+          background:   'linear-gradient(180deg, rgba(30,25,15,0.95) 0%, rgba(18,15,8,0.98) 100%)',
+          border:       '1px solid rgba(212,175,55,0.2)',
+          boxShadow:    '0 4px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04)',
+          padding:      '32px 28px',
+        }}>
+          <p style={{ fontSize:13, color:'#c8bfb0', lineHeight:1.8, marginBottom:20 }}>
+            Prefer to run the game client directly instead of using the launcher?
+            Works on Windows, macOS, and Linux — you just need{' '}
+            <a href="https://adoptium.net/temurin/releases/?version=21" target="_blank" rel="noreferrer"
+              style={{ color:'#d4af37' }}>
+              Java 21 (Temurin)
+            </a>{' '}
+            installed first.
+          </p>
+
+          <ol style={{ fontSize:13, color:'#c8bfb0', lineHeight:2, paddingLeft:20, marginBottom:20 }}>
+            <li>Install Java 21 if you don't already have it.</li>
+            <li>
+              Download{' '}
+              <a href={`${RELEASES_BASE}/client.jar`} style={{ color:'#d4af37' }}>client.jar</a>.
+            </li>
+            <li>Open a terminal in the folder you saved it to and run:</li>
+          </ol>
+
+          <pre style={{
+            background:'rgba(0,0,0,0.5)', border:'1px solid rgba(212,175,55,0.25)',
+            padding:'16px 18px', fontSize:12, color:'#f0d060', overflowX:'auto',
+            fontFamily:'monospace', lineHeight:1.6,
+          }}>
+{`java -Xmx768m --add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED \\
+  --add-opens=java.base/java.lang=ALL-UNNAMED -jar client.jar`}
+          </pre>
+
+          <p style={{ fontSize:12, color:'#8a8070', lineHeight:1.7, marginTop:20 }}>
+            Note: this jar is a fixed snapshot, not auto-updating like the launcher —
+            re-download it here if a server update ever breaks compatibility.
+          </p>
         </div>
       </div>
     </div>
