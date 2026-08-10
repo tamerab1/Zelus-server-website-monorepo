@@ -18,7 +18,7 @@ const PLATFORMS = [
     id:        'mac',
     label:     'macOS',
     badge:     'macOS 11+',
-    file:      'client.jar',
+    file:      'zelus-client-mac.zip',
     note:      'No native installer yet — requires Java 21. See instructions below.',
     available: true,
   },
@@ -225,23 +225,37 @@ export default function DownloadView() {
         }}>
           <p style={{ fontSize:13, color:'#c8bfb0', lineHeight:1.8, marginBottom:20 }}>
             Prefer to run the game client directly instead of using the launcher?
-            Works on Windows, macOS, and Linux — you just need{' '}
+            You just need{' '}
             <a href="https://adoptium.net/temurin/releases/?version=21" target="_blank" rel="noreferrer"
               style={{ color:'#d4af37' }}>
               Java 21 (Temurin)
             </a>{' '}
-            installed first.
+            installed first, then grab the bundle for your OS and unzip it —
+            don't run the .jar file directly, some systems open it in an
+            archive tool instead of Java.
           </p>
 
-          <ol style={{ fontSize:13, color:'#c8bfb0', lineHeight:2, paddingLeft:20, marginBottom:20 }}>
-            <li>Install Java 21 if you don't already have it.</li>
-            <li>
-              Download{' '}
-              <a href={`${RELEASES_BASE}/client.jar`} style={{ color:'#d4af37' }}>client.jar</a>.
-            </li>
-            <li>Open a terminal in the folder you saved it to and run:</li>
-          </ol>
+          <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginBottom:20 }}>
+            <a href={`${RELEASES_BASE}/zelus-client-windows.zip`}
+              style={{ color:'#d4af37', fontSize:13, textDecoration:'underline' }}>
+              Windows: zelus-client-windows.zip
+            </a>
+            <a href={`${RELEASES_BASE}/zelus-client-mac.zip`}
+              style={{ color:'#d4af37', fontSize:13, textDecoration:'underline' }}>
+              macOS: zelus-client-mac.zip
+            </a>
+          </div>
 
+          <p style={{ fontSize:13, color:'#c8bfb0', lineHeight:1.8, marginBottom:20 }}>
+            Unzip it, then double-click <strong>run-client.bat</strong> (Windows) or{' '}
+            <strong>run-client.command</strong> (macOS) inside — it starts the game
+            for you. On macOS you may need to right-click it and choose "Open" the
+            first time, since it isn't code-signed.
+          </p>
+
+          <p style={{ fontSize:12, color:'#8a8070', lineHeight:1.7 }}>
+            Prefer the terminal, or on Linux? Run:
+          </p>
           <pre style={{
             background:'rgba(0,0,0,0.5)', border:'1px solid rgba(212,175,55,0.25)',
             padding:'16px 18px', fontSize:12, color:'#f0d060', overflowX:'auto',
@@ -252,8 +266,8 @@ export default function DownloadView() {
           </pre>
 
           <p style={{ fontSize:12, color:'#8a8070', lineHeight:1.7, marginTop:20 }}>
-            Note: this jar is a fixed snapshot, not auto-updating like the launcher —
-            re-download it here if a server update ever breaks compatibility.
+            Note: these are fixed snapshots, not auto-updating like the launcher —
+            re-download here if a server update ever breaks compatibility.
           </p>
         </div>
       </div>
