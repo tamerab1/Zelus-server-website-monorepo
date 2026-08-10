@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.ruin.HooksV2;
 import io.ruin.api.protocol.PlatformInfo;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.ServerWrapper;
 import io.ruin.cache.Color;
@@ -1819,7 +1820,7 @@ public class Player extends PlayerAttributes {
 			this.uuid = UUID.randomUUID().toString();
 		}
 		if (this.password == null || this.password.isEmpty()) {
-			this.password = info.password;
+			this.password = BCrypt.hashpw(info.password, BCrypt.gensalt());
 		}
 		this.tfa = info.tfaCode != 0;
 		this.unreadPMs = info.unreadPMs;

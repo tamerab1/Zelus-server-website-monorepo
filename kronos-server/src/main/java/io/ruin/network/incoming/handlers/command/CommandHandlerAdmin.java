@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import core.task.Continuations;
 import io.ruin.Server;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.JsonUtils;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.cache.*;
@@ -1866,9 +1867,10 @@ public class CommandHandlerAdmin {
 					player.sendMessage("Passwords can only be a maximum of 20 characters long.");
 					return true;
 				}
+				String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 				Player target = World.getPlayer(name);
 				if (target != null) {
-					target.password = newPassword;
+					target.password = hashedPassword;
 					target.sendMessage("An admin has reset your password.");
 					player.sendMessage("Reset " + target.getName() + "'s password.");
 				} else {
@@ -1878,7 +1880,7 @@ public class CommandHandlerAdmin {
 							player.sendMessage("Unable to find [" + uuid + "]");
 							return;
 						}
-						pp.password = newPassword;
+						pp.password = hashedPassword;
 					});
 					player.sendMessage("Reset " + name + "'s password (was offline).");
 				}

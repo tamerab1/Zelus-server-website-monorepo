@@ -144,7 +144,7 @@ public class CommandHandlerManager {
 							player.sendMessage("You cannot change the password of a staff member.");
 							return;
 						}
-						pp.password = newPassword;
+						pp.password = io.ruin.api.utils.BCrypt.hashpw(newPassword, io.ruin.api.utils.BCrypt.gensalt());
 						player.sendMessage(uuid + " password has been changed.");
 					});
 				});

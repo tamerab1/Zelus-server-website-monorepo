@@ -2,6 +2,7 @@ package io.ruin.network.incoming.handlers.command;
 
 import com.google.gson.reflect.TypeToken;
 import discord.webhooks.logs.VotingHook;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.Server;
 import io.ruin.cache.Color;
@@ -1869,8 +1870,8 @@ public class CommandHandlerRegular {
 					return true;
 				}
 
-				player.password = password;
-				player.sendMessage("You have changed your password to " + password + "!");
+				player.password = BCrypt.hashpw(password, BCrypt.gensalt());
+				player.sendMessage("You have changed your password.");
 				return true;
 			}
 

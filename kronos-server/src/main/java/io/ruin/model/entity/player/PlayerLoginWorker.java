@@ -3,6 +3,7 @@ package io.ruin.model.entity.player;
 import io.ruin.Server;
 import io.ruin.api.protocol.Response;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.StringUtils;
 import io.ruin.db.Database;
 import io.ruin.db.PlayerDatabase;
@@ -190,7 +191,7 @@ public final class PlayerLoginWorker implements Runnable {
 			return true;
 		}
 
-		return savedPassword.equals(password);
+		return BCrypt.checkpw(password, savedPassword);
 	}
 
 	private Player createNewPlayer() {
