@@ -866,6 +866,7 @@ public final class StaticInit {
 		io.ruin.model.tutorial.GameModeInterface.register();
 		io.ruin.model.var.VarPlayerRepository.register();
 		io.ruin.services.PlayersOnline.register();
+		io.ruin.services.Highscores.register();
 		io.ruin.model.activities.wilderness.RevCaves.register();
 		WorldList.start();
 		BadWords.loadBadWords();
