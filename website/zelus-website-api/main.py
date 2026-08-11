@@ -13,7 +13,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import bcrypt
-import requests as _requests
 import stripe as _stripe
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -981,11 +980,10 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
     if not site_name:
         raise HTTPException(status_code=404, detail=f"Unknown vote callback site: {site}")
 
-    if _VOTE_CALLBACK_SECRET:
-        if provided_secret != _VOTE_CALLBACK_SECRET:
-            log.warning("vote_callback: rejected %s ping with bad/missing secret from %s",
-                        site_name, get_remote_address(request))
-            raise HTTPException(status_code=403, detail="Invalid callback secret.")
+    if _VOTE_CALLBACK_SECRET and provided_secret != _VOTE_CALLBACK_SECRET:
+        log.warning("vote_callback: rejected %s ping with bad/missing secret from %s",
+                    site_name, get_remote_address(request))
+        raise HTTPException(status_code=403, detail="Invalid callback secret.")
 
     # "voted" (RSPS-List): if the topsite tells us explicitly whether the vote
     # succeeded, believe it -- only "1" counts. Sites that don't send this
