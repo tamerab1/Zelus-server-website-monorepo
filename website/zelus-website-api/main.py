@@ -1088,12 +1088,14 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
 
 
 @app.get("/api/vote/callback/{site}")
+@app.post("/api/vote/callback/{site}")
 @limiter.limit("120/minute")
 def vote_callback_query_secret(site: str, request: Request, db: Session = Depends(get_db)):
     return _handle_vote_callback(site, request.query_params.get("secret"), request, db)
 
 
 @app.get("/api/vote/callback/{site}/{secret}")
+@app.post("/api/vote/callback/{site}/{secret}")
 @limiter.limit("120/minute")
 def vote_callback_path_secret(site: str, secret: str, request: Request, db: Session = Depends(get_db)):
     return _handle_vote_callback(site, secret, request, db)
