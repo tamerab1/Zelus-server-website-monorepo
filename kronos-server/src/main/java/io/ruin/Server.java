@@ -226,9 +226,27 @@ public final class Server extends ServerWrapper {
 		long startTime = System.currentTimeMillis();
 		init(Server.class);
 
-		try {
-			HttpClient.authenticate();
-		} catch (Exception ignore) {
+		// Retries with backoff: on a combined deploy, this container can boot and
+		// reach here before the website API container (also being redeployed) is
+		// ready to accept connections. A single attempt would silently leave
+		// HttpClient's auth cookie null for the rest of this process's life --
+		// every subsequent ::claim*-style request then NPEs on a null Cookie header.
+		for (int attempt = 1; attempt <= 5; attempt++) {
+			try {
+				HttpClient.authenticate();
+				break;
+			} catch (Exception e) {
+				if (attempt == 5) {
+					log.error("Failed to authenticate with the website API after 5 attempts", e);
+				} else {
+					try {
+						Thread.sleep(3000L * attempt);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
 		}
 
 		loadData();
