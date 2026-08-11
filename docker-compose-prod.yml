@@ -117,6 +117,11 @@ services:
             # in the DOCKER_COMPOSE_ENV secret for this environment.
             GAME_EVENTS_SECRET: ${GAME_EVENTS_SECRET}
             VOTE_CALLBACK_SECRET: ${VOTE_CALLBACK_SECRET}
+            # Shared boot-time password for HttpClient.authenticate() (must match
+            # server.properties' api_password on the game_server side). Empty
+            # here means /authenticate/login always 503s and every ::claim*
+            # command silently no-ops -- must be set in DOCKER_COMPOSE_ENV.
+            GAME_API_PASSWORD: ${GAME_API_PASSWORD}
             # Fallback data source for hiscores/username-existence checks when
             # hs_users is unavailable/empty (see main.py's _game_username_exists
             # and /hiscores) -- must match the mount below.
