@@ -370,13 +370,33 @@ public class CommandHandlerRegular {
 					var type = new TypeToken<List<String>>() {
 					}.getType();
 
-					// TODO: This is a list of all the claimed votes, do what you need
+					// Each entry is one server-verified claimed vote (see the website's
+					// /api/vote/callback/{site} + /voting/claim/{username} endpoints).
 					List<String> claimedVotes = s.getResponseObject(type);
 					if (claimedVotes.isEmpty()) {
 						player.sendMessage("You have no votes to claim, please try again later.");
 						return;
 					}
-					int points = claimedVotes.size() + DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
+
+					// Points are per-site (not a flat per-vote amount), plus the usual
+					// donator bonus added once per claim (same as before).
+					// Bonus: voting on BOTH sites in the same claim also awards a Vote
+					// raffle ticket (see VoteRaffleTicket/VoteGambler for the raffle itself).
+					boolean votedRuneLocus = false;
+					boolean votedRspsList  = false;
+					int points = 0;
+					for (String site : claimedVotes) {
+						if (site.equalsIgnoreCase("RUNELOCUS")) {
+							points += 2;
+							votedRuneLocus = true;
+						} else if (site.equalsIgnoreCase("RSPS_LIST")) {
+							points += 1;
+							votedRspsList = true;
+						}
+					}
+					points += DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
+					boolean votedBothSites = votedRuneLocus && votedRspsList;
+
 					VoteHandler.addHwid(player.hwid);
 					player.votePoints += points;
 					player.votesClaimed += claimedVotes.size();
@@ -393,15 +413,22 @@ public class CommandHandlerRegular {
 						player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
 								+ NewcomerTasks.VOTE_CLAIM.getFormattedName() + "!");
 
-					// Add regular vote rewards
-					player.getInventory().addOrDrop(30596, claimedVotes.size());
-					player.getInventory().addOrDrop(30602, claimedVotes.size());
+					// Vote Points are credited directly above -- no need to also hand out
+					// Vote Tickets (59602), since redeeming those just grants more vote
+					// points again (see DonatorClaimScroll.java's "claim" action on
+					// 59602). Only the raffle ticket remains, since that's a genuinely
+					// separate reward (raffle entry), not another way to get points.
+					if (votedBothSites) {
+						player.getInventory().addOrDrop(30602, 1);
+					}
 
 					// Add single chance for presents per claim
 
 					player.sendMessage(
 							"You have received " + points + " vote points, you now have " + player.getVotePoints() + " vote points.");
-					player.sendMessage("You are rewarded with a Vote Buff Streak Box and a Vote raffle ticket for each vote.");
+					if (votedBothSites) {
+						player.sendMessage("You are also rewarded with a Vote raffle ticket for voting on both sites!");
+					}
 					player.getDailyVote().open();
 //					VotingWebhook.sendVoted(player);
 
