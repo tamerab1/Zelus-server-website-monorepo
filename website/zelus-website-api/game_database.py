@@ -49,13 +49,15 @@ GameBase = declarative_base()
 class HiscoreUser(GameBase):
     __tablename__ = "hs_users"
 
-    # NOTE: the real table's primary key is an auto-increment `id` column with
-    # no unique constraint on user_id/username — Highscores.java deletes any
-    # existing row for a username before inserting its fresh one, so exactly
-    # one row per player is maintained despite that. `user_id` is marked as
-    # the ORM primary key purely for SQLAlchemy identity tracking; it is NOT
-    # unique at the DB level, so this model must stay read-only.
-    user_id    = Column(Integer,     primary_key=True, name="user_id")
+    # `id` (auto-increment) is the table's actual primary key. user_id is NOT
+    # unique at the DB level (Highscores.java's own writes dedupe by username,
+    # not user_id, and backfilled rows all share a 0 placeholder since no save
+    # file exposes a real userId) — mapping user_id as the ORM primary key
+    # previously made SQLAlchemy's identity map silently collapse every row
+    # sharing a user_id into a single object, dropping the rest from query
+    # results. Must map the real `id` column instead.
+    id         = Column(Integer,     primary_key=True, name="id")
+    user_id    = Column(Integer,     name="user_id")
     username   = Column(String(50),  name="username")
 
     # Plain int(11) columns on the live table, written by Highscores.java as
