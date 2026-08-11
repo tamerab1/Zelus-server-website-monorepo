@@ -5,7 +5,6 @@ import logo from '../../assets/logo.png';
 
 const LEFT_LINKS = [
   { label: 'HOME',     view: 'home'     },
-  { label: 'FORUMS',   view: null       },
   { label: 'STORE',    view: 'store'    },
   { label: 'DOWNLOAD', view: 'download' },
 ];
@@ -185,58 +184,20 @@ export default function Navbar() {
               </svg>
               DISCORD
             </a>
-          </div>
 
-          {/* Auth divider */}
-          <div style={{ width: '1px', height: '32px', background: 'linear-gradient(180deg, transparent, rgba(212,175,55,0.25), transparent)', margin: '0 16px' }} />
-
-          {/* Auth buttons */}
-          <div className="flex items-center gap-4 shrink-0">
-            {!currentUser ? (
+            {/* Staff-only: logout (only visible once signed in via /staff-login) */}
+            {currentUser && (
               <>
-                <button
-                  onClick={() => navigate('login')}
-                  className="font-fantasy text-xs tracking-[0.18em] transition-all"
-                  style={{ color: '#c8bfa8' }}
-                  onMouseOver={e => e.currentTarget.style.color = '#f0d060'}
-                  onMouseOut={e  => e.currentTarget.style.color = '#c8bfa8'}
-                >
-                  LOGIN
-                </button>
-                <button
-                  onClick={() => navigate('register')}
-                  className="font-fantasy text-xs tracking-[0.18em] transition-all"
-                  style={{
-                    background: 'linear-gradient(180deg, #2a2010 0%, #1a1408 100%)',
-                    border: '1px solid rgba(212,175,55,0.5)',
-                    color: '#d4af37',
-                    padding: '5px 14px',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.5)',
-                  }}
-                  onMouseOver={e => e.currentTarget.style.borderColor = '#d4af37'}
-                  onMouseOut={e  => e.currentTarget.style.borderColor = 'rgba(212,175,55,0.5)'}
-                >
-                  REGISTER
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate('panel')}
-                  className="font-fantasy text-xs tracking-[0.18em]"
-                  style={{ color: '#d4af37', textShadow: '0 0 8px rgba(212,175,55,0.4)' }}
-                >
-                  {currentUser.username}
-                </button>
+                <div style={{ width: '1px', height: '32px', background: 'linear-gradient(180deg, transparent, rgba(212,175,55,0.25), transparent)', margin: '0 16px' }} />
                 <button
                   onClick={handleLogout}
                   title="Logout"
-                  className="text-xs transition-colors"
+                  className="font-fantasy text-xs tracking-[0.18em] transition-colors"
                   style={{ color: '#555' }}
                   onMouseOver={e => e.currentTarget.style.color = '#f87171'}
                   onMouseOut={e  => e.currentTarget.style.color = '#555'}
                 >
-                  ✕
+                  LOGOUT
                 </button>
               </>
             )}
@@ -313,22 +274,11 @@ export default function Navbar() {
                 ADMIN CP
               </button>
             )}
-            <div className="pt-4 pb-2 flex flex-col gap-3">
-              {!currentUser ? (
-                <>
-                  <button onClick={() => navigate('login')} className="font-fantasy text-xs tracking-[0.18em] text-left py-2" style={{ color: '#c8bfa8' }}>LOGIN</button>
-                  <button onClick={() => navigate('register')} className="font-fantasy text-xs tracking-[0.18em] py-3 w-full"
-                    style={{ background: 'linear-gradient(180deg,#2a2010,#1a1408)', border: '1px solid rgba(212,175,55,0.5)', color: '#d4af37' }}>
-                    REGISTER
-                  </button>
-                </>
-              ) : (
-                <div className="flex justify-between items-center py-2">
-                  <button onClick={() => navigate('panel')} className="font-fantasy text-xs tracking-[0.18em]" style={{ color: '#d4af37' }}>{currentUser.username}</button>
-                  <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="font-fantasy text-xs tracking-[0.18em]" style={{ color: '#666' }}>LOGOUT</button>
-                </div>
-              )}
-            </div>
+            {currentUser && (
+              <div className="pt-4 pb-2 flex justify-end">
+                <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="font-fantasy text-xs tracking-[0.18em]" style={{ color: '#666' }}>LOGOUT</button>
+              </div>
+            )}
           </div>
         </div>
       )}

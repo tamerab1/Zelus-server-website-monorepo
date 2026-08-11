@@ -176,7 +176,7 @@ export default function StoreView() {
       : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3';
 
   return (
-    <main className="max-w-7xl mx-auto pt-16 px-4 sm:px-6 pb-32">
+    <main className="store-page max-w-7xl mx-auto pt-16 px-4 sm:px-6 pb-32" style={{ width: '100%', maxWidth: '100%' }}>
 
       {/* ── Page header ─────────────────────────────────────────────── */}
       <div className="text-center mb-12">
@@ -214,7 +214,9 @@ export default function StoreView() {
       <AlertBox status={storeMessage} className="max-w-2xl mx-auto mb-8" />
 
       {/* ── Store body: sidebar + content ────────────────────────────── */}
-      <div className="flex gap-7 items-start">
+      {/* flex-col on mobile — a row here forces the full-width mobile category
+          tabs to fight the content column for space, causing horizontal overflow */}
+      <div className="store-body flex flex-col lg:flex-row gap-7 items-start w-full max-w-full">
 
         {/* Sidebar — desktop only; mobile tabs rendered inside CategoryNav */}
         <CategoryNav
@@ -232,14 +234,38 @@ export default function StoreView() {
             label={activeCategoryMeta?.label?.toUpperCase() ?? ''}
           />
 
-          {/* Category description */}
-          {activeCategoryMeta?.desc && (
+          {/* Category description — skipped on Ranks, where the banner below says it fully */}
+          {activeCategoryMeta?.desc && activeCategory !== 'ranks' && (
             <p
               className="text-xs mb-6 -mt-2"
-              style={{ color: '#6a6058' }}
+              style={{ color: '#c8bfb0' }}
             >
               {activeCategoryMeta.desc}
             </p>
+          )}
+
+          {/* Ranks: explain the auto-unlock model — no card here has a buy button.
+              Solid dark backdrop (matches the page-header panel) so it reads over
+              the busy hero background instead of blending into it. */}
+          {activeCategory === 'ranks' && (
+            <div
+              className="mb-6 p-4 flex items-start gap-3"
+              style={{
+                background: 'rgba(5,4,8,0.88)',
+                backdropFilter: 'blur(2px)',
+                border: '1px solid rgba(212,175,55,0.3)',
+                borderRadius: 2,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+              }}
+            >
+              <span style={{ color: '#d4af37', fontSize: '16px' }}>ℹ</span>
+              <p className="text-xs leading-relaxed" style={{ color: '#e8e0d0' }}>
+                Donator ranks are <strong style={{ color: '#f0d060' }}>not purchased directly</strong> — they unlock
+                automatically once your lifetime <strong style={{ color: '#f0d060' }}>Total Donated</strong> reaches
+                each threshold. Buy Donator Points or any other item in the store to build up your total; your rank
+                (and its perks) upgrades on its own the moment you cross the line.
+              </p>
+            </div>
           )}
 
           {/* Product grid */}

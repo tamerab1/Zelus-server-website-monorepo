@@ -5,14 +5,16 @@ import storeItems from '../../data/storeItems.js';
 /**
  * Featured Store Widget — Homepage sidebar panel.
  *
- * Displays two hand-picked items from the new store catalog:
- *   • pkg_raiders_arsenal  — premium mid-tier package  ($60, BEST VALUE)
- *   • grand_promo_box      — exciting misc item         ($30, RARE)
+ * Displays two hand-picked Donator Points items — the only category that's
+ * directly purchasable (ranks unlock automatically via Total Donated and
+ * have no buy button, so they're never featured here):
+ *   • dp_3000  — most popular top-up ($20, POPULAR)
+ *   • dp_8000  — high-tier top-up    ($50)
  *
  * Both items have their slug in store_catalog.py so checkout works out-of-the-box.
- * To change the featured items, edit FEATURED_SLUGS below.
+ * To change the featured items, edit FEATURED_SLUGS below — keep them 'dp' items.
  */
-const FEATURED_SLUGS = ['pkg_raiders_arsenal', 'grand_promo_box'];
+const FEATURED_SLUGS = ['dp_3000', 'dp_8000'];
 const featured = FEATURED_SLUGS
   .map(slug => storeItems.find(i => i.slug === slug))
   .filter(Boolean);
@@ -82,23 +84,6 @@ export default function FeaturedStoreWidget() {
             >
               {item.description}
             </p>
-
-            {/* Reward preview (packages only) */}
-            {item.rewards?.length > 0 && (
-              <ul className="mb-3 space-y-1">
-                {item.rewards.slice(0, 3).map((r, i) => (
-                  <li key={i} className="flex items-center gap-1.5">
-                    <span className="text-xs" style={{ color: item.badge }}>◆</span>
-                    <span className="font-sans text-xs" style={{ color: '#7a7060' }}>{r.label}</span>
-                  </li>
-                ))}
-                {item.rewards.length > 3 && (
-                  <li className="font-fantasy text-xs" style={{ color: '#4a4038', paddingLeft: '14px' }}>
-                    +{item.rewards.length - 3} more…
-                  </li>
-                )}
-              </ul>
-            )}
 
             {/* CTA */}
             <div className="flex justify-end">

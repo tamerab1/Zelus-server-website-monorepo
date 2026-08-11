@@ -132,20 +132,23 @@ class UserSkillStat(Base):
 
 # ---------------------------------------------------------------------------
 # Vote — tracks vote submissions through the website portal.
+# Identity is the validated in-game username (game_username) — voting no
+# longer requires a website account.  user_id is kept only for legacy rows
+# from before accounts were removed.
 # The game server reads this table (or a mirror) to award in-game rewards.
 # ---------------------------------------------------------------------------
 class Vote(Base):
     __tablename__ = "votes"
 
     id            = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id       = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    user_id       = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
     site_name     = Column(String(50), nullable=False)    # e.g. RUNELOCUS, RSPS_LIST
     vote_points   = Column(Integer, default=2)             # points awarded on claim
     status        = Column(String(20), default="pending")  # pending | claimed
     created_at    = Column(DateTime, default=func.now())
     claimed_at    = Column(DateTime, nullable=True)
     ip_address    = Column(String(45), nullable=True)      # IPv4 or IPv6
-    game_username = Column(String(12), nullable=True)      # validated in-game character name
+    game_username = Column(String(12), nullable=True, index=True)  # validated in-game character name
 
 
 # ---------------------------------------------------------------------------
@@ -247,26 +250,3 @@ class GameEvent(Base):
     username   = Column(String(50), nullable=False, index=True)
     message    = Column(String(500), nullable=False)
     timestamp  = Column(DateTime, default=func.now(), index=True)
-
-
-# ---------------------------------------------------------------------------
-# AuthToken — secure, single-use, expiring tokens for email verification and
-# password reset.  Only the SHA-256 hash is stored; the raw token lives only
-# in the email link so a DB dump can never be replayed.
-# ---------------------------------------------------------------------------
-
-class TokenPurpose(enum.Enum):
-    EMAIL_VERIFICATION = "email_verification"
-    PASSWORD_RESET     = "password_reset"
-
-
-class AuthToken(Base):
-    __tablename__ = "auth_tokens"
-
-    id         = Column(Integer, primary_key=True, autoincrement=True)
-    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    purpose    = Column(String(30), nullable=False)
-    token_hash = Column(String(64), nullable=False, unique=True, index=True)
-    expires_at = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=func.now())
-    used_at    = Column(DateTime, nullable=True)

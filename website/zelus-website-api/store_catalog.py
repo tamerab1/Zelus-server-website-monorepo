@@ -33,12 +33,13 @@ CATALOG: dict[str, StoreItem] = {
 
     # ── Donator Points ─────────────────────────────────────────────────────────
     # tokens = exact DP credited to player's in-game balance.
+    # Amounts confirmed live in-game 2026-08-11 after a server-side DP rebalance.
 
-    "dp_500":   StoreItem("dp_500",   "500 Donator Points",    5.00,    500),
-    "dp_1200":  StoreItem("dp_1200",  "1,200 Donator Points", 10.00,   1200),
-    "dp_3000":  StoreItem("dp_3000",  "3,000 Donator Points", 20.00,   3000),
-    "dp_8000":  StoreItem("dp_8000",  "8,000 Donator Points", 50.00,   8000),
-    "dp_20000": StoreItem("dp_20000", "20,000 Donator Points",100.00, 20000),
+    "dp_500":   StoreItem("dp_500",   "$5 Donator Bond",     5.00,   350),
+    "dp_1200":  StoreItem("dp_1200",  "$10 Donator Bond",   10.00,   770),
+    "dp_3000":  StoreItem("dp_3000",  "$25 Donator Bond",   25.00,  2180),
+    "dp_8000":  StoreItem("dp_8000",  "$50 Donator Bond",   50.00,  4350),
+    "dp_20000": StoreItem("dp_20000", "$100 Donator Bond", 100.00,  9450),
 
     # ── Donor Ranks (8 tiers — matches NR 288 SecondaryGroup enum) ────────────
     # Slug must match SecondaryGroup name in lowercase with underscores.

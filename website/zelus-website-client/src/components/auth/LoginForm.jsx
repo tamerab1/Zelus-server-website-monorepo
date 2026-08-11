@@ -1,6 +1,15 @@
+/**
+ * LoginForm — staff-only sign-in for Admin CP.
+ *
+ * Player accounts were removed; this form is reachable only at the hidden
+ * /staff-login route (not linked from the navbar). Staff accounts are
+ * created directly in the database — there is no self-service registration
+ * or password-recovery flow here.
+ */
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
 import { login } from '../../services/authService.js';
+import { isAdmin } from '../../utils/ranks.js';
 import AlertBox from '../ui/AlertBox.jsx';
 
 export default function LoginForm() {
@@ -14,10 +23,14 @@ export default function LoginForm() {
     setAuthStatus({ type: 'info', message: 'Authenticating...' });
     try {
       const data = await login(loginData);
+      if (!isAdmin(data.user?.privilege)) {
+        setAuthStatus({ type: 'error', message: 'This account does not have staff access.' });
+        return;
+      }
       setCurrentUser(data.user);
       setAuthStatus({ type: '', message: '' });
       setLoginData({ username: '', password: '' });
-      setCurrentView('panel');
+      setCurrentView('admin');
     } catch (error) {
       setAuthStatus({ type: 'error', message: error.message });
     } finally {
@@ -30,9 +43,9 @@ export default function LoginForm() {
       <div className="stone-panel w-full max-w-md" style={{ borderRadius: 2 }}>
 
         <div className="panel-header text-center py-6">
-          <h2 className="font-fantasy text-2xl font-bold tracking-widest text-white">WELCOME BACK</h2>
+          <h2 className="font-fantasy text-2xl font-bold tracking-widest text-white">STAFF SIGN-IN</h2>
           <p className="font-fantasy text-xs tracking-[0.3em] mt-2" style={{ color: '#555' }}>
-            ENTER YOUR CREDENTIALS
+            AUTHORIZED PERSONNEL ONLY
           </p>
         </div>
 
@@ -42,7 +55,7 @@ export default function LoginForm() {
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <input
               type="text"
-              placeholder="Character Name"
+              placeholder="Username"
               required
               className="rpg-input font-fantasy text-sm tracking-wide px-4 py-3"
               value={loginData.username}
@@ -64,27 +77,6 @@ export default function LoginForm() {
               {isSubmitting ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
-
-          <div className="text-center mt-6 flex flex-col gap-3">
-            <button
-              onClick={() => setCurrentView('forgot_password')}
-              className="font-fantasy text-xs tracking-widest transition-colors"
-              style={{ color: '#555' }}
-              onMouseOver={e => e.currentTarget.style.color = '#d4af37'}
-              onMouseOut={e  => e.currentTarget.style.color = '#555'}
-            >
-              Forgot your password?
-            </button>
-            <button
-              onClick={() => setCurrentView('register')}
-              className="font-fantasy text-xs tracking-widest transition-colors"
-              style={{ color: '#555' }}
-              onMouseOver={e => e.currentTarget.style.color = '#d4af37'}
-              onMouseOut={e  => e.currentTarget.style.color = '#555'}
-            >
-              New adventurer? REGISTER
-            </button>
-          </div>
         </div>
       </div>
     </main>

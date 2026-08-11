@@ -128,17 +128,20 @@ export default function ServerStatusWidget({ hiscores, loading }) {
         )}
 
         {/* Action buttons */}
-        <button className="btn-download w-full py-3 font-fantasy text-xs tracking-widest uppercase">
+        <button
+          onClick={() => setCurrentView('download')}
+          className="btn-download w-full py-3 font-fantasy text-xs tracking-widest uppercase"
+        >
           ⬇&nbsp; Download Client
         </button>
         <button
-          onClick={() => setCurrentView('register')}
+          onClick={() => setCurrentView('store')}
           className="w-full py-3 font-fantasy text-xs tracking-widest uppercase transition-colors"
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #1e1a14', borderRadius: 3, color: '#555' }}
           onMouseOver={e => (e.currentTarget.style.color = '#999')}
           onMouseOut={e  => (e.currentTarget.style.color = '#555')}
         >
-          Create Account
+          Visit Store
         </button>
       </div>
     </div>

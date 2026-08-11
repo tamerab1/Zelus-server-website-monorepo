@@ -1,7 +1,7 @@
 /**
  * ProductCard — Universal card component for all store categories.
  *
- * Handles: dp | packages | ranks | boosters | misc
+ * Handles: dp | ranks
  *
  * Props:
  *   item        — item object from storeItems.js
@@ -28,33 +28,7 @@ function ItemIcon({ item, size = 'lg' }) {
     );
   }
 
-  // Packages use thematic renders (boss/item detail) — smooth scaling + strong glow
-  if (item.category === 'packages') {
-    return (
-      <div className="relative flex items-center justify-center" style={{ width: 80, height: 80 }}>
-        {!loaded && (
-          <span style={{ fontSize: 28, opacity: 0.2, position: 'absolute' }}>
-            {item.iconFallback}
-          </span>
-        )}
-        <img
-          src={item.icon_path}
-          alt={item.name}
-          onError={() => setErrored(true)}
-          onLoad={() => setLoaded(true)}
-          className="w-20 h-20 object-contain"
-          style={{
-            imageRendering: 'auto',
-            filter: `drop-shadow(0 0 10px ${item.badge ?? '#d4af37'}77) drop-shadow(0 0 20px ${item.badge ?? '#d4af37'}33)`,
-            opacity: loaded ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-          }}
-        />
-      </div>
-    );
-  }
-
-  // All other categories (dp, ranks, boosters, misc) — pixelated inventory sprites
+  // dp / ranks — pixelated inventory sprites
   const sizeClass = size === 'lg' ? 'w-14 h-14' : 'w-10 h-10';
   const isRank    = item.category === 'ranks';
   return (
@@ -85,21 +59,6 @@ function ItemIcon({ item, size = 'lg' }) {
   );
 }
 
-// ── Wiki reward icon (packages) ───────────────────────────────────────────────
-function RewardIcon({ src, label }) {
-  const [errored, setErrored] = useState(false);
-  if (errored) return <span className="text-sm leading-none">◆</span>;
-  return (
-    <img
-      src={src}
-      alt={label}
-      onError={() => setErrored(true)}
-      className="w-5 h-5 object-contain shrink-0"
-      style={{ imageRendering: 'pixelated' }}
-    />
-  );
-}
-
 // ── Category-specific card body content ──────────────────────────────────────
 
 function CoinsContent({ item }) {
@@ -127,37 +86,6 @@ function CoinsContent({ item }) {
       <p className="text-center text-xs mt-3 leading-snug" style={{ color: '#7a7060' }}>
         {item.description}
       </p>
-    </div>
-  );
-}
-
-function PackageContent({ item }) {
-  return (
-    <div className="flex-grow px-5 py-4">
-      <div className="flex items-center justify-center mb-4">
-        <ItemIcon item={item} />
-      </div>
-      <p className="text-xs text-center mb-4 leading-snug" style={{ color: '#8a8070' }}>
-        {item.description}
-      </p>
-      {item.rewards?.length > 0 && (
-        <>
-          <p
-            className="font-fantasy text-xs tracking-widest mb-2"
-            style={{ color: '#6a6058' }}
-          >
-            INCLUDES
-          </p>
-          <ul className="space-y-2">
-            {item.rewards.map((r, i) => (
-              <li key={i} className="flex items-center gap-2.5">
-                <RewardIcon src={r.icon} label={r.label} />
-                <span className="text-xs" style={{ color: '#c8bfb0' }}>{r.label}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
     </div>
   );
 }
@@ -239,46 +167,12 @@ function RankContent({ item }) {
   );
 }
 
-function BoosterContent({ item }) {
-  return (
-    <div className="flex-grow px-5 py-4">
-      <div className="flex items-center justify-center mb-4">
-        <ItemIcon item={item} />
-      </div>
-      <p className="text-xs text-center mb-3 leading-snug" style={{ color: '#8a8070' }}>
-        {item.description}
-      </p>
-      {item.duration && (
-        <div className="flex items-center justify-center gap-2">
-          <span style={{ color: '#6a6058', fontSize: '11px' }}>⏱</span>
-          <span
-            className="font-fantasy text-xs tracking-wider"
-            style={{ color: item.badge }}
-          >
-            {item.duration}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MiscContent({ item }) {
-  return (
-    <div className="flex-grow px-5 py-4">
-      <div className="flex items-center justify-center mb-4">
-        <ItemIcon item={item} />
-      </div>
-      <p className="text-xs text-center leading-snug" style={{ color: '#8a8070' }}>
-        {item.description}
-      </p>
-    </div>
-  );
-}
-
 // ── Main card shell ───────────────────────────────────────────────────────────
 export default function ProductCard({ item, onAddToCart, onBuyNow }) {
   const [inCart, setInCart] = useState(false);
+  // Ranks are never bought directly — they unlock automatically once a
+  // player's lifetime Total Donated crosses the threshold. No price/CTA.
+  const isRank = item.category === 'ranks';
 
   const handleAddToCart = () => {
     onAddToCart(item);
@@ -289,12 +183,9 @@ export default function ProductCard({ item, onAddToCart, onBuyNow }) {
 
   const renderBody = () => {
     switch (item.category) {
-      case 'dp':       return <CoinsContent    item={item} />;
-      case 'packages': return <PackageContent  item={item} />;
-      case 'ranks':    return <RankContent     item={item} />;
-      case 'boosters': return <BoosterContent  item={item} />;
-      case 'misc':     return <MiscContent     item={item} />;
-      default:         return <MiscContent     item={item} />;
+      case 'dp':    return <CoinsContent item={item} />;
+      case 'ranks': return <RankContent  item={item} />;
+      default:      return <CoinsContent item={item} />;
     }
   };
 
@@ -346,80 +237,110 @@ export default function ProductCard({ item, onAddToCart, onBuyNow }) {
         />
       </div>
 
-      {/* ── Price row ── */}
-      <div
-        className="text-center py-3 px-4"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-      >
-        <span className="font-fantasy text-3xl font-bold" style={{ color: item.badge }}>
-          ${item.price}
-        </span>
-        <span className="text-xs ml-1" style={{ color: '#5a5248' }}>USD</span>
-      </div>
+      {/* ── Price row (dp) / Unlock threshold (ranks) ── */}
+      {isRank ? (
+        <div
+          className="text-center py-3 px-4"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <p className="font-fantasy text-xs tracking-widest mb-1" style={{ color: '#6a6058' }}>
+            UNLOCKS AT
+          </p>
+          <span className="font-fantasy text-2xl font-bold" style={{ color: item.badge }}>
+            ${item.price}
+          </span>
+          <span className="text-xs ml-1" style={{ color: '#5a5248' }}>TOTAL DONATED</span>
+        </div>
+      ) : (
+        <div
+          className="text-center py-3 px-4"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <span className="font-fantasy text-3xl font-bold" style={{ color: item.badge }}>
+            ${item.price}
+          </span>
+          <span className="text-xs ml-1" style={{ color: '#5a5248' }}>USD</span>
+        </div>
+      )}
 
       {/* ── Category-specific body ── */}
       {renderBody()}
 
-      {/* ── CTA buttons ── */}
-      <div className="px-4 pb-5 pt-3 flex flex-col gap-2">
-        {/* Add to Cart */}
-        <button
-          onClick={handleAddToCart}
-          className="w-full py-2.5 font-fantasy text-xs tracking-widest uppercase font-bold rounded-sm transition-all duration-200 flex items-center justify-center gap-2"
-          style={{
-            background: inCart ? `${item.badge}33` : 'rgba(255,255,255,0.05)',
-            border: `1px solid ${inCart ? item.badge : 'rgba(255,255,255,0.1)'}`,
-            color: inCart ? item.badge : '#9a9080',
-          }}
-          onMouseOver={e => {
-            if (!inCart) {
-              e.currentTarget.style.background = `${item.badge}18`;
-              e.currentTarget.style.borderColor = `${item.badge}55`;
-              e.currentTarget.style.color = item.badge;
-            }
-          }}
-          onMouseOut={e => {
-            if (!inCart) {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-              e.currentTarget.style.color = '#9a9080';
-            }
-          }}
-        >
-          {inCart ? (
-            <>
-              <span>✓</span>
-              <span>Added!</span>
-            </>
-          ) : (
-            <>
-              <span>🛒</span>
-              <span>Add to Cart</span>
-            </>
-          )}
-        </button>
+      {/* ── CTA (dp) / Auto-unlock note (ranks) ── */}
+      {isRank ? (
+        <div className="px-4 pb-5 pt-3">
+          <div
+            className="w-full py-2.5 text-center font-fantasy text-xs tracking-widest rounded-sm"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: '#6a6058',
+            }}
+          >
+            🔒 Unlocks automatically — no purchase needed
+          </div>
+        </div>
+      ) : (
+        <div className="px-4 pb-5 pt-3 flex flex-col gap-2">
+          {/* Add to Cart */}
+          <button
+            onClick={handleAddToCart}
+            className="w-full py-2.5 font-fantasy text-xs tracking-widest uppercase font-bold rounded-sm transition-all duration-200 flex items-center justify-center gap-2"
+            style={{
+              background: inCart ? `${item.badge}33` : 'rgba(255,255,255,0.05)',
+              border: `1px solid ${inCart ? item.badge : 'rgba(255,255,255,0.1)'}`,
+              color: inCart ? item.badge : '#9a9080',
+            }}
+            onMouseOver={e => {
+              if (!inCart) {
+                e.currentTarget.style.background = `${item.badge}18`;
+                e.currentTarget.style.borderColor = `${item.badge}55`;
+                e.currentTarget.style.color = item.badge;
+              }
+            }}
+            onMouseOut={e => {
+              if (!inCart) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                e.currentTarget.style.color = '#9a9080';
+              }
+            }}
+          >
+            {inCart ? (
+              <>
+                <span>✓</span>
+                <span>Added!</span>
+              </>
+            ) : (
+              <>
+                <span>🛒</span>
+                <span>Add to Cart</span>
+              </>
+            )}
+          </button>
 
-        {/* Buy Now */}
-        <button
-          onClick={() => onBuyNow(item)}
-          className="w-full py-2.5 font-fantasy text-xs tracking-widest uppercase font-bold rounded-sm transition-all duration-200"
-          style={{
-            background: `${item.badge}22`,
-            border: `1px solid ${item.badge}66`,
-            color: item.badge,
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.background = item.badge;
-            e.currentTarget.style.color = '#0a0a14';
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.background = `${item.badge}22`;
-            e.currentTarget.style.color = item.badge;
-          }}
-        >
-          Buy Now
-        </button>
-      </div>
+          {/* Buy Now */}
+          <button
+            onClick={() => onBuyNow(item)}
+            className="w-full py-2.5 font-fantasy text-xs tracking-widest uppercase font-bold rounded-sm transition-all duration-200"
+            style={{
+              background: `${item.badge}22`,
+              border: `1px solid ${item.badge}66`,
+              color: item.badge,
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = item.badge;
+              e.currentTarget.style.color = '#0a0a14';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = `${item.badge}22`;
+              e.currentTarget.style.color = item.badge;
+            }}
+          >
+            Buy Now
+          </button>
+        </div>
+      )}
     </article>
   );
 }

@@ -36,35 +36,26 @@ const _initialPaymentResult = consumePaymentResult();
 
 /** Maps URL pathname → view name */
 const PATH_TO_VIEW = {
-  '/':                'home',
-  '/store':           'store',
-  '/donate':          'store',
-  '/vote':            'vote',
-  '/hiscores':        'hiscores',
-  '/download':        'download',
-  '/login':           'login',
-  '/register':        'register',
-  '/account':         'panel',
-  '/forgot-password': 'forgot_password',
-  '/reset-password':  'reset_password',
-  '/verify-email':    'verify_email',
+  '/':             'home',
+  '/store':        'store',
+  '/donate':       'store',
+  '/vote':         'vote',
+  '/hiscores':     'hiscores',
+  '/download':     'download',
+  '/staff-login':  'staff_login',
+  '/admin':        'admin',
 };
 
 /** Maps view name → canonical URL path */
 const VIEW_TO_PATH = {
-  home:            '/',
-  store:           '/store',
-  vote:            '/vote',
-  hiscores:        '/hiscores',
-  download:        '/download',
-  login:           '/login',
-  register:        '/register',
-  panel:           '/account',
-  admin:           '/account',
-  payment_result:  '/',
-  forgot_password: '/forgot-password',
-  reset_password:  '/reset-password',
-  verify_email:    '/verify-email',
+  home:           '/',
+  store:          '/store',
+  vote:           '/vote',
+  hiscores:       '/hiscores',
+  download:       '/download',
+  staff_login:    '/staff-login',
+  admin:          '/admin',
+  payment_result: '/',
 };
 
 function getInitialView() {
@@ -77,7 +68,7 @@ function getInitialView() {
 // Aligned with NR 288 GameMode enum.
 // STANDARD replaces the old NORMAL value — NORMAL is kept as a legacy alias so
 // any account that hasn't been migrated yet still renders correctly.
-// Exported so AccountPanel and any other component can import it directly.
+// Exported so any component can import it directly.
 // eslint-disable-next-line react-refresh/only-export-components -- constant map, not a component; idiomatic to keep beside the context it labels
 export const GAME_MODE_LABELS = {
   STANDARD:               { label: 'Standard',              icon: '⚔️'  },
@@ -144,14 +135,10 @@ export function AppProvider({ children }) {
 
   /**
    * Called by store cards and the featured widget.
-   * Redirects to login if not authenticated; otherwise opens the checkout modal.
+   * Opens the checkout modal directly — no account required, just an
+   * in-game username (collected inside CheckoutModal).
    */
   const handleCheckout = (pkg) => {
-    if (!currentUser) {
-      setAuthStatus({ type: 'error', message: 'You must be logged in to make a purchase.' });
-      setCurrentView('login');
-      return;
-    }
     setCheckoutPkg(pkg);
   };
 

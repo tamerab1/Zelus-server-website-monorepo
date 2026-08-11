@@ -68,7 +68,7 @@ function MMOButton({ children, onClick, wide = false, ghost = false, className =
       <button
         onClick={onClick}
         className={`btn-mmo-ghost font-fantasy ${className}`}
-        style={{ minWidth: wide ? '320px' : '220px' }}
+        style={{ width: wide ? 'min(320px, 100%)' : 'min(220px, 100%)' }}
       >
         {children}
       </button>
@@ -82,7 +82,7 @@ function MMOButton({ children, onClick, wide = false, ghost = false, className =
       onMouseLeave={() => setHovered(false)}
       className={`btn-mmo font-fantasy ${className}`}
       style={{
-        minWidth: wide ? '340px' : '240px',
+        width: wide ? 'min(340px, 100%)' : 'min(240px, 100%)',
         boxShadow: hovered
           ? '0 0 40px rgba(0,180,220,0.25), 0 0 60px rgba(212,175,55,0.12), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(100,210,240,0.12)'
           : '0 0 20px rgba(0,130,180,0.12), 0 4px 18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(100,210,240,0.07)',
@@ -184,7 +184,7 @@ export default function Hero() {
                   className="text-sm tracking-[0.2em] font-bold"
                   style={{ color: '#f0e060', textShadow: '0 0 14px rgba(212,175,55,0.7), 0 1px 3px rgba(0,0,0,0.9)' }}
                 >
-                  DOWNLOAD CLIENT (v2.1)
+                  DOWNLOAD CLIENT
                 </span>
                 <KeyIcon />
               </div>
@@ -192,7 +192,7 @@ export default function Hero() {
                 className="text-xs tracking-[0.25em]"
                 style={{ color: '#7ab8cc', fontSize: '9px', letterSpacing: '0.2em' }}
               >
-                — WINDOWS, MAC &amp; LINUX —
+                — FREE TO PLAY, WINDOWS —
               </span>
             </div>
           </MMOButton>

@@ -94,8 +94,8 @@ function UsernameField({ value, onChange, disabled }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function CheckoutModal({ pkg, currentUser, onClose }) {
-  const [username, setUsername] = useState(currentUser?.username ?? '');
+export default function CheckoutModal({ pkg, onClose }) {
+  const [username, setUsername] = useState('');
   const [step,     setStep]     = useState('method');   // 'method' | 'confirm' | 'done'
   const [method,   setMethod]   = useState(null);       // 'stripe' | 'paypal' | 'osrs-gp' | 'crypto'
   const [loading,  setLoading]  = useState(false);

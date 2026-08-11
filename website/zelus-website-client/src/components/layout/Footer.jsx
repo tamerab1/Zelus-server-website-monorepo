@@ -9,18 +9,14 @@ const NAV_LINKS = [
   { label: 'Hiscores',         view: 'hiscores' },
 ];
 
+// Real, working links only. Anything without a destination yet renders as
+// dimmed/disabled text (see FooterComingSoon) instead of a dead "#" link.
 const COMMUNITY_LINKS = [
   { label: 'Discord Server', href: DISCORD_URL },
-  { label: 'Server Rules',   href: '#rules'    },
-  { label: 'Support Ticket', href: '#support'  },
-  { label: 'Report a Bug',   href: '#report'   },
 ];
 
-const LEGAL_LINKS = [
-  { label: 'Terms of Service', href: '#tos'     },
-  { label: 'Privacy Policy',   href: '#privacy' },
-  { label: 'Disclaimer',       href: '#disclaimer' },
-];
+const COMMUNITY_COMING_SOON = ['Server Rules', 'Support Ticket', 'Report a Bug'];
+const LEGAL_COMING_SOON     = ['Terms of Service', 'Privacy Policy', 'Disclaimer'];
 
 function FooterNavLink({ label, onClick }) {
   return (
@@ -34,6 +30,20 @@ function FooterNavLink({ label, onClick }) {
       >
         {label}
       </button>
+    </li>
+  );
+}
+
+function FooterComingSoon({ label }) {
+  return (
+    <li>
+      <span
+        className="font-fantasy text-xs tracking-wide cursor-default"
+        style={{ color: '#4a4038' }}
+        title="Coming soon"
+      >
+        {label}
+      </span>
     </li>
   );
 }
@@ -78,27 +88,38 @@ export default function Footer() {
               A dedicated team delivering the most immersive custom RuneScape
               experience. Join our ever-growing community today.
             </p>
-            {/* Social icons */}
+            {/* Social icons — only Discord is live; others render disabled until we have real accounts */}
             <div className="flex gap-2">
               {[
-                { label: 'Discord', letter: 'D', href: DISCORD_URL },
-                { label: 'YouTube', letter: 'YT', href: '#youtube' },
-                { label: 'Twitter', letter: 'X',  href: '#twitter' },
-              ].map(({ label, letter, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  title={label}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 flex items-center justify-center font-fantasy text-xs font-bold transition-all no-underline"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2420', borderRadius: 2, color: '#8a7f72' }}
-                  onMouseOver={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)'; }}
-                  onMouseOut={e  => { e.currentTarget.style.color = '#8a7f72'; e.currentTarget.style.borderColor = '#2a2420'; }}
-                >
-                  {letter}
-                </a>
-              ))}
+                { label: 'Discord', letter: 'D',  href: DISCORD_URL },
+                { label: 'YouTube', letter: 'YT', href: null },
+                { label: 'Twitter', letter: 'X',  href: null },
+              ].map(({ label, letter, href }) =>
+                href ? (
+                  <a
+                    key={label}
+                    href={href}
+                    title={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 flex items-center justify-center font-fantasy text-xs font-bold transition-all no-underline"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2420', borderRadius: 2, color: '#8a7f72' }}
+                    onMouseOver={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)'; }}
+                    onMouseOut={e  => { e.currentTarget.style.color = '#8a7f72'; e.currentTarget.style.borderColor = '#2a2420'; }}
+                  >
+                    {letter}
+                  </a>
+                ) : (
+                  <span
+                    key={label}
+                    title={`${label} — coming soon`}
+                    className="w-8 h-8 flex items-center justify-center font-fantasy text-xs font-bold cursor-default"
+                    style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid #201c16', borderRadius: 2, color: '#3a352e' }}
+                  >
+                    {letter}
+                  </span>
+                )
+              )}
             </div>
           </div>
 
@@ -123,6 +144,9 @@ export default function Footer() {
               {COMMUNITY_LINKS.map(({ label, href }) => (
                 <FooterExternalLink key={label} label={label} href={href} />
               ))}
+              {COMMUNITY_COMING_SOON.map(label => (
+                <FooterComingSoon key={label} label={label} />
+              ))}
             </ul>
           </div>
 
@@ -132,8 +156,8 @@ export default function Footer() {
               LEGAL
             </h5>
             <ul className="space-y-2.5">
-              {LEGAL_LINKS.map(({ label, href }) => (
-                <FooterExternalLink key={label} label={label} href={href} />
+              {LEGAL_COMING_SOON.map(label => (
+                <FooterComingSoon key={label} label={label} />
               ))}
             </ul>
           </div>

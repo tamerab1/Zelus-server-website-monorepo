@@ -49,24 +49,25 @@ export default function VoteCard({ site, initialState = 'idle', initialSecondsLe
   };
 
   /* ── Derived visuals ─────────────────────────────────────── */
-  const isPending  = cardState === 'pending';
-  const isCooldown = cardState === 'cooldown';
-  const isLoading  = cardState === 'loading';
-  const isIdle     = cardState === 'idle';
+  const isPending    = cardState === 'pending';
+  const isUnverified = cardState === 'unverified';
+  const isCooldown   = cardState === 'cooldown';
+  const isLoading    = cardState === 'loading';
+  const isIdle       = cardState === 'idle';
 
   return (
     <div
       className="stone-panel flex flex-col transition-transform duration-300"
       style={{
         borderRadius: 2,
-        borderTopColor: isPending ? '#22c55e' : isCooldown ? '#ef4444' : '#d4af37',
+        borderTopColor: isPending ? '#22c55e' : isUnverified ? '#f59e0b' : isCooldown ? '#ef4444' : '#d4af37',
         transform: isIdle ? undefined : 'none',
       }}
     >
       {/* ── Card header ── */}
       <div
         className="panel-header flex items-center gap-3 py-5"
-        style={{ background: isPending ? 'rgba(34,197,94,0.06)' : isCooldown ? 'rgba(239,68,68,0.06)' : undefined }}
+        style={{ background: isPending ? 'rgba(34,197,94,0.06)' : isUnverified ? 'rgba(245,158,11,0.06)' : isCooldown ? 'rgba(239,68,68,0.06)' : undefined }}
       >
         <span className="text-2xl">{site.icon}</span>
         <div>
@@ -114,6 +115,26 @@ export default function VoteCard({ site, initialState = 'idle', initialSecondsLe
             />
             <span style={{ color: '#d4af37' }}>SUBMITTING...</span>
           </div>
+        )}
+
+        {/* UNVERIFIED — submitted, waiting on the topsite's confirmation ping */}
+        {isUnverified && (
+          <>
+            <div
+              className="w-full py-3.5 flex items-center justify-center gap-2 font-fantasy text-xs tracking-widest"
+              style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 3 }}
+            >
+              <span
+                className="w-3.5 h-3.5 rounded-full border-2 inline-block"
+                style={{ borderColor: 'rgba(245,158,11,0.3)', borderTopColor: '#f59e0b' }}
+              />
+              <span style={{ color: '#f59e0b' }}>WAITING FOR CONFIRMATION</span>
+            </div>
+            <p className="font-fantasy text-xs text-center" style={{ color: '#9a8f80' }}>
+              Make sure you completed the vote on the site that opened. This updates automatically
+              once it's confirmed — no need to click anything else.
+            </p>
+          </>
         )}
 
         {/* PENDING — Ready to claim */}

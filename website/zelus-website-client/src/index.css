@@ -21,6 +21,7 @@ html {
 
 body {
   margin: 0;
+  overflow-x: hidden;
   background-color: var(--bg);
   background-image:
     linear-gradient(to bottom, rgba(12,12,20,0.65), rgba(12,12,20,0.75)),
@@ -43,6 +44,19 @@ body {
 /* ─── Store: hide mobile category tab scrollbar ─────── */
 .store-tabs-scroll::-webkit-scrollbar { display: none; }
 .store-tabs-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Store: mobile layout safeguard ──────────────────
+   Belt-and-suspenders for the flex-col/lg:flex-row layout switch above —
+   forces every store container to respect the viewport width instead of
+   overflowing horizontally on small screens. */
+@media (max-width: 768px) {
+  .store-page,
+  .store-body,
+  .store-body > * {
+    width: 100%;
+    max-width: 100%;
+  }
+}
 
 /* ─── Store: product card add-to-cart flash ──────────── */
 @keyframes cartAdded {

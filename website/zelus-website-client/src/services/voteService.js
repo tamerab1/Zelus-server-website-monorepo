@@ -2,14 +2,13 @@ import { apiFetch } from './api.js';
 
 /**
  * Submits a vote for a given site. Creates a 'pending' vote in the database.
- * @param {number} userId
  * @param {string} siteName     - e.g. 'RUNELOCUS' | 'RSPS_LIST'
  * @param {string} gameUsername - validated in-game character name
  */
-export const submitVote = (userId, siteName, gameUsername) =>
+export const submitVote = (siteName, gameUsername) =>
   apiFetch('/vote/submit', {
     method: 'POST',
-    body: JSON.stringify({ user_id: userId, site_name: siteName, game_username: gameUsername }),
+    body: JSON.stringify({ site_name: siteName, game_username: gameUsername }),
   });
 
 /**
@@ -21,8 +20,9 @@ export const checkGameUsername = (username) =>
   apiFetch(`/game/check-username/${encodeURIComponent(username)}`);
 
 /**
- * Returns per-site vote states for the user.
+ * Returns per-site vote states for the given in-game username.
  * Each entry: { site_name, state: 'idle'|'pending'|'cooldown', seconds_remaining, vote_id }
- * @param {number} userId
+ * @param {string} gameUsername
  */
-export const fetchVoteStatus = (userId) => apiFetch(`/votes/status/${userId}`);
+export const fetchVoteStatus = (gameUsername) =>
+  apiFetch(`/votes/status/${encodeURIComponent(gameUsername)}`);

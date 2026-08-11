@@ -9,11 +9,6 @@ import StoreView          from './components/store/StoreView.jsx';
 import CheckoutModal      from './components/store/CheckoutModal.jsx';
 import PaymentResultView  from './components/store/PaymentResultView.jsx';
 import LoginForm           from './components/auth/LoginForm.jsx';
-import RegisterForm        from './components/auth/RegisterForm.jsx';
-import ForgotPasswordForm  from './components/auth/ForgotPasswordForm.jsx';
-import ResetPasswordView   from './components/auth/ResetPasswordView.jsx';
-import VerifyEmailView     from './components/auth/VerifyEmailView.jsx';
-import AccountPanel       from './components/account/AccountPanel.jsx';
 import AdminDashboard     from './components/admin/AdminDashboard.jsx';
 import VoteView           from './components/vote/VoteView.jsx';
 import HiscoresView       from './components/hiscores/HiscoresView.jsx';
@@ -26,12 +21,7 @@ function AppRoutes() {
     <>
       {currentView === 'home'           && <HomeView />}
       {currentView === 'store'          && <StoreView />}
-      {currentView === 'login'           && <LoginForm />}
-      {currentView === 'register'        && <RegisterForm />}
-      {currentView === 'forgot_password' && <ForgotPasswordForm />}
-      {currentView === 'reset_password'  && <ResetPasswordView />}
-      {currentView === 'verify_email'    && <VerifyEmailView />}
-      {currentView === 'panel'          && currentUser && <AccountPanel />}
+      {currentView === 'staff_login'    && <LoginForm />}
       {currentView === 'admin'          && isAdmin(currentUser?.privilege) && <AdminDashboard />}
       {currentView === 'vote'           && <VoteView />}
       {currentView === 'hiscores'       && <HiscoresView />}
@@ -48,7 +38,7 @@ function AppRoutes() {
 }
 
 export default function App() {
-  const { checkoutPkg, setCheckoutPkg, currentUser } = useApp();
+  const { checkoutPkg, setCheckoutPkg } = useApp();
 
   return (
     <div className="min-h-screen text-white font-fantasy flex flex-col"
@@ -72,7 +62,6 @@ export default function App() {
       {checkoutPkg && (
         <CheckoutModal
           pkg={checkoutPkg}
-          currentUser={currentUser}
           onClose={() => setCheckoutPkg(null)}
         />
       )}
