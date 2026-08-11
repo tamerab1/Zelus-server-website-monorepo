@@ -3630,6 +3630,11 @@ public class Player extends PlayerAttributes {
 		this.rsprotPlayerInfo = service.getPlayerInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
 		this.rsprotNPCInfo = service.getNpcInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
 		this.online = true;
+		// Mirrors Loggers.removeOnlinePlayer() in finishDatabase() -- that side was already
+		// wired up, this insert half never was, so online_characters (and therefore the
+		// website's /players/online count) was permanently stuck at 0.
+		io.ruin.services.Loggers.addOnlinePlayer(userId, this.getName(), World.id, this.getIp(),
+				isSupport(), isModerator(), isAdmin());
 	}
 
 	public void onReconnectAccepted(Session<Player> session, int[] newKeys) {
