@@ -374,7 +374,8 @@ public class CommandHandlerRegular {
 					// /api/vote/callback/{site} + /voting/claim/{username} endpoints).
 					List<String> claimedVotes = s.getResponseObject(type);
 					if (claimedVotes.isEmpty()) {
-						player.sendMessage("You have no votes to claim, please try again later.");
+						player.sendMessage("<col=000080>You haven't voted yet! Type <col=800000>::vote<col=000080> to vote for "
+								+ "Zelus and earn rewards -- come back and use <col=800000>::claimvote<col=000080> once you have.");
 						return;
 					}
 
