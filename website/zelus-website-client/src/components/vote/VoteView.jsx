@@ -11,6 +11,8 @@ import LoadingSpinner, { ServerDownBanner } from '../ui/LoadingSpinner.jsx';
  * - handleVoteClick: opens the topsite URL in a new tab, then POSTs to /vote/submit.
  * - Per-card state is tracked in `siteStates` map.
  */
+const VOTE_USERNAME_STORAGE_KEY = 'zelus_vote_username';
+
 export default function VoteView() {
   // { [siteId]: { state: 'idle'|'pending'|'cooldown'|'loading', secondsLeft: 0 } }
   const [siteStates,     setSiteStates]     = useState({});
@@ -18,11 +20,20 @@ export default function VoteView() {
   const [statusError,    setStatusError]    = useState(null);
   const [voteErrors,     setVoteErrors]     = useState({}); // { [siteId]: message }
 
-  // Game username validation gate — this is the player's identity for voting
-  const [gameUsername,        setGameUsername]        = useState('');
+  // Game username validation gate — this is the player's identity for voting.
+  // Persisted across refreshes: the username was already verified server-side
+  // once, so there's no reason to make the player re-type it every reload.
+  const [gameUsername,        setGameUsername]        = useState(
+    () => localStorage.getItem(VOTE_USERNAME_STORAGE_KEY) || ''
+  );
   const [gameUsernameInput,   setGameUsernameInput]   = useState('');
   const [gameUsernameError,   setGameUsernameError]   = useState('');
   const [gameUsernameLoading, setGameUsernameLoading] = useState(false);
+
+  useEffect(() => {
+    if (gameUsername) localStorage.setItem(VOTE_USERNAME_STORAGE_KEY, gameUsername);
+    else localStorage.removeItem(VOTE_USERNAME_STORAGE_KEY);
+  }, [gameUsername]);
 
   /* ── Load vote statuses once the username is verified ────── */
   useEffect(() => {
