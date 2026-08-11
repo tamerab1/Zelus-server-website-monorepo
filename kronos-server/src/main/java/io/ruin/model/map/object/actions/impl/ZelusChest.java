@@ -59,6 +59,7 @@ public class ZelusChest {
 		}
 	};
 	private static final Item[] UNCOMMON_LOOT = {
+		new Item(59979, 1), //Solarflare pet
 		new Item(13440, 250), //Raw anglerfish
 		new Item(11840, 1), //Dragon boots
 		new Item(11944, 75), //Lava dragon bones
@@ -90,6 +91,7 @@ public class ZelusChest {
 		new Item(12004, 1), //Kraken tentacle
 		new Item(20543, 4), //Elite clue reward casket
 		new Item(30582, 1), //GWD Mystery Box
+		new Item(59973, 1), //Blossom pet
 	};
 	private static final Item[] VERY_RARE_LOOT = {
 		new Item(24034, 1), //Dragonstone full helm

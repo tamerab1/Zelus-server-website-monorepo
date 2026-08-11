@@ -440,7 +440,10 @@ public enum CustomShop2 {
 			new ShopItem(12319, 20),     // Crier hat
 			new ShopItem(2528, 500),     // Donator lamp
 			new ShopItem(33020, 750),    // Perk exp lamp
-			new ShopItem(59600, 1)       // Donator ticket
+			new ShopItem(59600, 1),      // Donator ticket
+			new ShopItem(59980, 5000),   // Verdant pet
+			new ShopItem(59977, 7000),   // Frostbane pet
+			new ShopItem(59972, 10000)   // Starfall pet
 		}
 	),
 	VOTE_STORE(
@@ -502,6 +505,9 @@ public enum CustomShop2 {
 			new ShopItem(13072, 200),   // Elite void top
 			new ShopItem(27281, 100),   // Divine rune pouch
 			new ShopItem(19473, 2),     // Bag full of gems
+			new ShopItem(59982, 150),   // Prismcore pet
+			new ShopItem(59965, 75),    // Cinder pet
+			new ShopItem(59966, 75),    // Glacian pet
 			new ShopItem(7478, 2),      // Instance token
 			new ShopItem(11942, 2),     // Ecumenical key
 			new ShopItem(7968, 2),      // Perk task skip scroll
@@ -969,7 +975,9 @@ public enum CustomShop2 {
 			new ShopItem(989, 50),       // Crystal key
 			new ShopItem(23083, 70),     // Brimstone key
 			new ShopItem(23951, 1500),    // Enhanced crystal key
-			new ShopItem(59960, 10000)   // Z Golden key
+			new ShopItem(59960, 10000),  // Z Golden key
+			new ShopItem(59975, 50000),  // Ragnarok pet
+			new ShopItem(59976, 75000)   // Toxic pet
 		},
 		true
 	),
