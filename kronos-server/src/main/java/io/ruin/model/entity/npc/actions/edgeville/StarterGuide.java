@@ -56,7 +56,7 @@ public class StarterGuide {
 	// IP -> number of accounts on that IP that have already received the tradeable STANDARD-mode
 	// starter kit (500k coins, thousands of runes, etc). Capped so alt-account farming can't be
 	// used to funnel unlimited free starter wealth into a main account via trading.
-	public static final int MAX_STARTER_CLAIMS_PER_IP = 2;
+	public static final int MAX_STARTER_CLAIMS_PER_IP = 5;
 	public static java.util.Map<String, Integer> ipClaimCounts = new java.util.HashMap<>();
 
 	public static void register() {
