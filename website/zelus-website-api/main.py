@@ -56,8 +56,18 @@ _CORS_ORIGINS = [o.strip() for o in _CORS_ORIGINS_RAW.split(",") if o.strip()]
 # ── Character file config ─────────────────────────────────────────────────────
 # Path to the game server's JSON save files — used as a fallback data source
 # when the MariaDB is unreachable and for username existence checks.
-_CHARACTERS_DIR = Path(os.getenv("CHARACTERS_DIR") or "") or (
-    Path(__file__).parent.parent / "server reasonps" / "data" / "runtime" / "saves" / "players"
+#
+# BUG FIXED 2026-08-11: `Path(x or "") or fallback` never actually fell back --
+# a Path object has no __bool__/__len__ override, so it's always truthy
+# regardless of content, meaning Path("") (what os.getenv(...) or "" produces
+# when CHARACTERS_DIR is unset) short-circuited the `or fallback` every time.
+# This silently resolved to ".", the container's own working directory, which
+# has no save files -- character-file lookups always found nothing in
+# production. Check the env var's truthiness as a string BEFORE wrapping it.
+_CHARACTERS_DIR_ENV = os.getenv("CHARACTERS_DIR")
+_CHARACTERS_DIR = (
+    Path(_CHARACTERS_DIR_ENV) if _CHARACTERS_DIR_ENV
+    else Path(__file__).parent.parent / "server reasonps" / "data" / "runtime" / "saves" / "players"
 )
 
 _SKILL_ORDER = [
