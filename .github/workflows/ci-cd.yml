@@ -370,6 +370,17 @@ jobs:
   # and the prod box under `production`.
   # ===================================================================
   deploy-development:
+    # Disabled 2026-08-11: the standalone dev/beta VPS was retired -- the
+    # team consolidated onto a single new production VPS, and running this
+    # stack alongside production there isn't safe as configured (both
+    # hardcode the same host ports and the same absolute /opt/zelus/...
+    # bind-mount paths, so a second stack would either fail to schedule or
+    # silently share production's live game data/cache). Left in place
+    # rather than deleted in case a properly-isolated dev environment comes
+    # back later. To re-enable: remove this `if`, and give this stack its
+    # own ports/data path first if it's going to run on the same box as
+    # production.
+    if: false
     needs: [setup, release-dev]
     runs-on: ubuntu-latest
     environment:
