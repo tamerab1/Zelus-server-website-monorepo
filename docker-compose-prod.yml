@@ -111,6 +111,12 @@ services:
             # pattern instead of hardcoding here).
             PAYPAL_BASE_URL: ${PAYPAL_BASE_URL:-https://api-m.sandbox.paypal.com}
             PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
+            # Both default to empty in the app (os.getenv(..., "")), which
+            # skips their respective auth checks entirely -- /events/push and
+            # /api/vote/callback/* are wide open until these are actually set
+            # in the DOCKER_COMPOSE_ENV secret for this environment.
+            GAME_EVENTS_SECRET: ${GAME_EVENTS_SECRET}
+            VOTE_CALLBACK_SECRET: ${VOTE_CALLBACK_SECRET}
         depends_on:
             - db_sql
         deploy:
