@@ -1863,9 +1863,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "vote": {
-				String username = player.getName().replace(" ", "-");
-				String url = "https://zelusrsps.com/vote/" + username;
-				player.openUrl(World.type.getWorldName() + " Vote", url);
+				// The website's vote page (a client-side React route) only
+				// recognises the exact path "/vote" -- there's no "/vote/{username}"
+				// sub-route, so appending the username here (as before) silently
+				// fell through to the homepage instead. The page collects the
+				// player's username itself once they're on it.
+				player.openUrl(World.type.getWorldName() + " Vote", "https://zelusrsps.com/vote");
 				return true;
 			}
 
