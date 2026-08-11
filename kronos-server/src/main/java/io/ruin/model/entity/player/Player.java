@@ -3635,6 +3635,7 @@ public class Player extends PlayerAttributes {
 		// website's /players/online count) was permanently stuck at 0.
 		io.ruin.services.Loggers.addOnlinePlayer(userId, this.getName(), World.id, this.getIp(),
 				isSupport(), isModerator(), isAdmin());
+		io.ruin.model.var.VarPlayerRepository.OWNER_CLIENT_FLAG.set(this, isOwner() ? 1 : 0);
 	}
 
 	public void onReconnectAccepted(Session<Player> session, int[] newKeys) {
