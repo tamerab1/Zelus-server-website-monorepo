@@ -47,7 +47,8 @@ public class LookupNpcNames {
                                         + "\" models=" + java.util.Arrays.toString(def.models)
                                         + " size=" + def.size + " widthScale=" + def.widthScale + " heightScale=" + def.heightScale
                                         + " standingAnimation=" + def.standingAnimation + " walkingAnimation=" + def.walkingAnimation
-                                        + " isFollower=" + def.isFollower + " actions=" + java.util.Arrays.toString(def.actions));
+                                        + " isFollower=" + def.isFollower + " height=" + def.height
+                                        + " actions=" + java.util.Arrays.toString(def.actions));
                             } catch (Exception e) {
                                 System.out.println("id=" + targetId + " slot=" + i + " -- FAILED TO DECODE: " + e);
                             }

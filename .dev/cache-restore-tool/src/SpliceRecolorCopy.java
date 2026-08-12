@@ -89,11 +89,13 @@ public class SpliceRecolorCopy {
                 }
             }
 
+            // This archive has ~828 known duplicate file-id entries (earlier slots are often
+            // broken/stub defs); last matching slot wins, same as DumpModelColors and how the
+            // live server's own loader resolves them -- do NOT break on first match here.
             int sourceSlot = -1;
             for (int i = 0; i < fileData.length; i++) {
                 if (fileData[i].getId() == sourceId) {
                     sourceSlot = i;
-                    break;
                 }
             }
             if (sourceSlot == -1) {

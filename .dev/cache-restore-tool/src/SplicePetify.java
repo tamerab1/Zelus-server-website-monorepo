@@ -46,6 +46,10 @@ public class SplicePetify {
         // hat was authored for a DIFFERENT anchor system (a player's head bone), not this one, so
         // there's no guarantee it lands in a sane position -- verify in-game before trusting it.
         int extraModelId = args.length > 9 ? Integer.parseInt(args[9]) : -1;
+        // Optional hover height (opcode 124, unsigned short) -- the real OSRS mechanism used to
+        // render flying/floating creatures (bats, ghosts) elevated above their tile instead of
+        // grounded. "-" or omitted leaves the source's own value (usually unset/-1) untouched.
+        int hoverHeight = args.length > 10 && !args[10].equals("-") ? Integer.parseInt(args[10]) : -1;
 
         try (Store store = new Store(new File(cachePath))) {
             store.load();
@@ -97,6 +101,10 @@ public class SplicePetify {
             work = replaceOrInsert(work, 97, twoBytes(widthScale));
             work = replaceOrInsert(work, 98, twoBytes(heightScale));
             work = replaceOrInsert(work, 12, new byte[]{(byte) size});
+
+            if (hoverHeight >= 0) {
+                work = replaceOrInsert(work, 124, twoBytes(hoverHeight));
+            }
 
             if (extraModelId > 0) {
                 int[] span = findOpcodeSpan(work, 1);
@@ -156,7 +164,11 @@ public class SplicePetify {
                     + " size=" + before.size + " widthScale=" + before.widthScale + " heightScale=" + before.heightScale + " actions=" + java.util.Arrays.toString(before.actions));
             System.out.println("AFTER  (new " + newId + "):    name=\"" + after.name + "\" models=" + java.util.Arrays.toString(after.models)
                     + " size=" + after.size + " widthScale=" + after.widthScale + " heightScale=" + after.heightScale + " actions=" + java.util.Arrays.toString(after.actions)
-                    + " standingAnimation=" + after.standingAnimation + " walkingAnimation=" + after.walkingAnimation);
+                    + " standingAnimation=" + after.standingAnimation + " walkingAnimation=" + after.walkingAnimation
+                    + " height=" + after.height);
+            if (hoverHeight >= 0 && after.height != hoverHeight) {
+                throw new IllegalStateException("height not applied correctly -- ABORTING");
+            }
             if (colorPairsArg != null) {
                 System.out.println("  recolorToFind=" + java.util.Arrays.toString(after.recolorToFind)
                         + " recolorToReplace=" + java.util.Arrays.toString(after.recolorToReplace));
