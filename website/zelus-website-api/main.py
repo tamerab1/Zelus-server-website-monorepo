@@ -363,6 +363,26 @@ class PushEventsRequest(BaseModel):
     secret: str = Field(default="")
     events: list[PushEventItem] = Field(..., max_items=50)
 
+# ── Real client IP (Cloudflare / reverse proxy aware) ──────────────────────────
+# The API sits behind Cloudflare (and possibly an nginx hop) on the VPS, so
+# request.client.host / slowapi's get_remote_address() resolve to the proxy's
+# IP, not the voter's -- that's what was causing unrelated players to collide
+# on the same IP-based vote cooldown. Cloudflare sets CF-Connecting-IP itself
+# at the edge (not spoofable as long as the origin firewall only accepts
+# connections from Cloudflare's IP ranges, which is how this box is deployed),
+# so it's preferred; X-Forwarded-For's left-most entry is the fallback for any
+# hop that isn't behind Cloudflare (e.g. local/dev).
+def _get_real_client_ip(request: Request) -> str | None:
+    cf_ip = request.headers.get("CF-Connecting-IP")
+    if cf_ip:
+        return cf_ip.strip()
+    xff = request.headers.get("X-Forwarded-For")
+    if xff:
+        first = xff.split(",")[0].strip()
+        if first:
+            return first
+    return get_remote_address(request)
+
 # ── Vote cooldown ─────────────────────────────────────────────────────────────
 VOTE_COOLDOWN_HOURS = 12
 
@@ -385,6 +405,48 @@ def _get_vote_state(vote: models.Vote | None) -> dict:
             return {"state": "cooldown",      "seconds_remaining": remaining, "vote_id": None}
     else:
         return {"state": "idle", "seconds_remaining": None, "vote_id": None}
+
+# ── Vote callback fallback ───────────────────────────────────────────────────
+# If a topsite's callback ping never arrives (RuneLocus's postback format/
+# registration is unconfirmed -- see _handle_vote_callback above), an
+# "unverified" row from /vote/submit would otherwise sit stuck forever even
+# though the player actually voted. After a grace period well beyond how long
+# any real postback should ever take, treat the submit itself as sufficient
+# and auto-promote to "pending" so it becomes claimable.
+#
+# This reopens (bounded by the window below, and still gated by the existing
+# per-username/per-IP VOTE_COOLDOWN_HOURS cooldown) the fake-vote loophole the
+# two-stage design exists to close -- so the window defaults short, is always
+# logged distinctly (search "vote_fallback:") for anti-abuse review, and can
+# be disabled entirely by setting VOTE_CALLBACK_FALLBACK_MINUTES=0 once a
+# site's callback is confirmed reliable.
+VOTE_CALLBACK_FALLBACK_MINUTES = int(os.getenv("VOTE_CALLBACK_FALLBACK_MINUTES", "30"))
+
+def _promote_stale_unverified_votes(db: Session, username: str) -> None:
+    if VOTE_CALLBACK_FALLBACK_MINUTES <= 0:
+        return
+    from sqlalchemy import func as sa_func
+
+    fallback_cutoff = datetime.utcnow() - timedelta(minutes=VOTE_CALLBACK_FALLBACK_MINUTES)
+    stale = (
+        db.query(models.Vote)
+        .filter(
+            sa_func.lower(models.Vote.game_username) == username.lower(),
+            models.Vote.status     == "unverified",
+            models.Vote.created_at <= fallback_cutoff,
+        )
+        .all()
+    )
+    if not stale:
+        return
+    for vote in stale:
+        vote.status = "pending"
+        log.warning(
+            "vote_fallback: promoting vote #%d (%s, '%s') to pending -- no callback "
+            "ping received within %d minutes of submit.",
+            vote.id, vote.site_name, vote.game_username, VOTE_CALLBACK_FALLBACK_MINUTES,
+        )
+    db.commit()
 
 # ── Live feed ─────────────────────────────────────────────────────────────────
 # livefeed.json lives alongside main.py (not inside the players dir).
@@ -875,7 +937,7 @@ def submit_vote(request: Request, req: VoteSubmitRequest, db: Session = Depends(
                 )
             )
 
-        client_ip = get_remote_address(request)
+        client_ip = _get_real_client_ip(request)
         cutoff    = datetime.utcnow() - timedelta(hours=VOTE_COOLDOWN_HOURS)
 
         recent_by_username = (
@@ -986,13 +1048,20 @@ _CALLBACK_USERNAME_PARAMS = ("userid", "postback", "id", "username", "user", "u"
 def _handle_vote_callback(site: str, provided_secret: str | None, request: Request, db: Session):
     from sqlalchemy import func as sa_func
 
+    # Log every ping unconditionally, before any validation can reject it --
+    # RuneLocus's exact postback format/registration is unconfirmed, so this
+    # is the only way to see what they actually send (site slug, params) the
+    # next time their ping doesn't result in a confirmed vote.
+    log.info("vote_callback: received site=%r ip=%s params=%s",
+              site, _get_real_client_ip(request), dict(request.query_params))
+
     site_name = _CALLBACK_SITE_SLUGS.get(site.lower())
     if not site_name:
         raise HTTPException(status_code=404, detail=f"Unknown vote callback site: {site}")
 
     if _VOTE_CALLBACK_SECRET and provided_secret != _VOTE_CALLBACK_SECRET:
         log.warning("vote_callback: rejected %s ping with bad/missing secret from %s",
-                    site_name, get_remote_address(request))
+                    site_name, _get_real_client_ip(request))
         raise HTTPException(status_code=403, detail="Invalid callback secret.")
 
     # "voted" (RSPS-List): if the topsite tells us explicitly whether the vote
@@ -1026,7 +1095,7 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
     # Prefer the topsite's own reported voter IP (RSPS-List's "userip") over
     # the request's own remote address, which is the TOPSITE's server IP, not
     # the voter's -- more useful for any future anti-abuse review.
-    reported_ip = request.query_params.get("userip") or get_remote_address(request)
+    reported_ip = request.query_params.get("userip") or _get_real_client_ip(request)
 
     try:
         now    = datetime.utcnow()
@@ -1120,6 +1189,7 @@ def claim_votes_for_game(username: str, request: Request, db: Session = Depends(
 
     try:
         norm = username.strip().lower()
+        _promote_stale_unverified_votes(db, norm)
         pending = (
             db.query(models.Vote)
             .filter(
@@ -1154,6 +1224,7 @@ def get_vote_status(username: str, db: Session = Depends(get_db)):
 
     try:
         norm = username.strip().lower()
+        _promote_stale_unverified_votes(db, norm)
         result = []
         for site_name in VALID_SITES:
             cutoff = datetime.utcnow() - timedelta(hours=VOTE_COOLDOWN_HOURS)
@@ -1182,6 +1253,7 @@ def get_pending_votes(username: str, db: Session = Depends(get_db)):
 
     try:
         norm = username.strip().lower()
+        _promote_stale_unverified_votes(db, norm)
         pending = (
             db.query(models.Vote)
             .filter(
