@@ -19,8 +19,11 @@ public class TradePostPlayer {
 	public final TradePostInterface inter = new TradePostInterface();
 	public BigInteger cofferCoins = BigInteger.ZERO;
 
-	public int offersEmptySlot() {
-		for (var i = 0; i < offers.length; i++) {
+	// maxSlots caps the search to the player's rank-unlocked slots -- see TradePost.maxOfferSlots().
+	// Always pass it explicitly (no no-arg overload) so a future call site can't silently bypass
+	// the rank gate by forgetting to cap it.
+	public int offersEmptySlot(int maxSlots) {
+		for (var i = 0; i < Math.min(offers.length, maxSlots); i++) {
 			if (offers[i] == null) {
 				return i;
 			}
@@ -28,7 +31,7 @@ public class TradePostPlayer {
 		return -1;
 	}
 
-	public boolean hasEmptySlot() {
-		return offersEmptySlot() != -1;
+	public boolean hasEmptySlot(int maxSlots) {
+		return offersEmptySlot(maxSlots) != -1;
 	}
 }

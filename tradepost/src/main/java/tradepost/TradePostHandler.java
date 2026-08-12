@@ -21,8 +21,9 @@ public class TradePostHandler {
 	public static void promptSellOffer(Player player, Item item) {
 		var pTradePost = player.tradePost();
 
-		if (pTradePost.offersEmptySlot() == -1) {
-			player.sendMessage("You have the maximum amount of offers active.");
+		var maxSlots = TradePost.maxOfferSlots(player);
+		if (pTradePost.offersEmptySlot(maxSlots) == -1) {
+			sendMaxSlotsMessage(player, maxSlots);
 			return;
 		}
 
@@ -62,8 +63,9 @@ public class TradePostHandler {
 
 	public static void promptBuyOffer(Player player) {
 		var pTradePost = player.tradePost();
-		if (pTradePost.offersEmptySlot() == -1) {
-			player.sendMessage("You have the maximum amount of offers active.");
+		var maxSlots = TradePost.maxOfferSlots(player);
+		if (pTradePost.offersEmptySlot(maxSlots) == -1) {
+			sendMaxSlotsMessage(player, maxSlots);
 			return;
 		}
 		player.itemSearch("Enter the name of the item you wish to buy: ", false, s -> {
@@ -92,6 +94,15 @@ public class TradePostHandler {
 				longInputToBuy(player, item, "Enter the price you are willing to pay for each item: ", amt);
 			});
 		});
+	}
+
+	private static void sendMaxSlotsMessage(Player player, int maxSlots) {
+		if (maxSlots >= 10) {
+			player.sendMessage("You have the maximum amount of offers active.");
+		} else {
+			player.sendMessage("You've used all " + maxSlots + " of your unlocked offer slots. "
+					+ "Upgrade your donator rank to unlock more.");
+		}
 	}
 
 	private static void longInputToBuy(Player player, Item item, String prompt, int amountToBuy) {
