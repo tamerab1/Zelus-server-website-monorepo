@@ -157,8 +157,25 @@ services:
         image: caddy:2-alpine
         restart: unless-stopped
         ports:
-            - "80:80"
-            - "443:443"
+            # Long-form + mode: host, deliberately NOT the short "80:80" syntax --
+            # Swarm's default publish mode is "ingress" (the routing mesh), which
+            # SNATs every connection's source IP to an internal 10.0.0.0/24 address
+            # before Caddy ever sees it. That's why CF-Connecting-IP/X-Forwarded-For
+            # downstream were carrying Docker-internal IPs instead of real client
+            # IPs (traced via a live vote-callback test showing ip=10.0.0.2, a
+            # Swarm ingress-network address, not a real requester). "host" mode
+            # binds directly to this node's network interface, bypassing the mesh
+            # and preserving the real source IP -- safe here since this is a
+            # single-node Swarm (only ever the one VPS), so there's no multi-node
+            # load-balancing to lose.
+            - target: 80
+              published: 80
+              protocol: tcp
+              mode: host
+            - target: 443
+              published: 443
+              protocol: tcp
+              mode: host
         environment:
             BETA_DOMAIN: ${BETA_DOMAIN}
             BETA_API_DOMAIN: ${BETA_API_DOMAIN}
