@@ -46,11 +46,20 @@ public final class CoreWorker extends World {
 			processStage.runnable.run();
 		}
 
-		if (tick % 50 == 0) {
-			savePlayers();
-		}
+		savePlayers();
 	}
 
+	// Every online player used to be queued for a save on the exact same tick (tick % 50 == 0,
+	// i.e. once every 30s) -- with each save serializing a player's full state (~140-150KB of
+	// JSON observed in production) across only 4 save-worker threads (World.db_threads), that put
+	// a synchronized multi-MB allocation/IO burst on every 30s boundary. That's the prime suspect
+	// for a periodic, several-second stall affecting every player's packet flush at once (ground
+	// items, inventory, and equipped-appearance updates all going invisible until the burst
+	// cleared and the backlog flushed through) -- reported as "random" because it only visibly
+	// affected whoever's update happened to land inside that window.
+	//
+	// Fix: spread saves across all 50 ticks by player index instead of bursting everyone on the
+	// same tick. Each player still saves roughly once every 30s, just not all in the same instant.
 	private static void savePlayers() {
 		int pendingCount = PlayerDatabase.db().pendingSaves();
 		int queuedCount = 0;
@@ -65,12 +74,18 @@ public final class CoreWorker extends World {
 				continue;
 			}
 
+			if (player.getIndex() % 50 != tick % 50) {
+				continue;
+			}
+
 			if (PlayerDatabase.insertQueue(player)) {
 				queuedCount++;
 			}
 		}
 
-		log.trace("Queued saves for " + queuedCount + " players, pending: " + pendingCount);
+		if (queuedCount > 0) {
+			log.trace("Queued saves for " + queuedCount + " players, pending: " + pendingCount);
+		}
 	}
 
 	public static boolean isPast(final Stage stage) {
