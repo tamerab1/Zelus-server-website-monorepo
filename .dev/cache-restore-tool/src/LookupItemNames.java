@@ -50,7 +50,8 @@ public class LookupItemNames {
                                 ItemDefinition def = loader.load(targetId, fileContents.get(i));
                                 System.out.println("id=" + targetId + " slot=" + i + " name=\"" + def.name
                                         + "\" examine=\"" + def.examine + "\" tradeable=" + def.isTradeable
-                                        + " cost=" + def.cost);
+                                        + " cost=" + def.cost + " groundOptions=" + java.util.Arrays.toString(def.options)
+                                        + " inventoryOptions=" + java.util.Arrays.toString(def.interfaceOptions));
                             } catch (Exception e) {
                                 System.out.println("id=" + targetId + " slot=" + i + " -- FAILED TO DECODE: " + e);
                             }
