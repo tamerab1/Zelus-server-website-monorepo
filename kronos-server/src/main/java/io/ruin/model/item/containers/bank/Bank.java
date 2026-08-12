@@ -242,6 +242,16 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	public int deposit(Item item, int amount, boolean message, boolean forced) {
+		// PvP Preset "rental" gear is stamped phantom specifically so it can't leave the
+		// player's possession -- Trade.java and Shop.java already guard their own single-item
+		// entry points against it, but banking had no check at all, letting rental gear be
+		// unequipped and permanently deposited (surviving ::pvpmode off / death cleanup, both
+		// of which only sweep the live Equipment/Inventory containers, never the bank).
+		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
+			if (message)
+				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
+			return 0;
+		}
 		if (player.isVisibleInterface(Interface.BANK) || player.isVisibleInterface(Interface.DEPOSIT_BOX) || forced) {
 			ObjType def = item.getDef();
 			int moved = item.move(def.isNote() ? def.notedId : def.id, amount, this);
@@ -267,6 +277,14 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 
 		if (item.getId() == 26651) {
+			return 0;
+		}
+
+		// See the other deposit(Item, int, boolean, boolean) overload above -- this is an
+		// independent implementation that doesn't delegate to it, so it needs its own guard.
+		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
+			if (message)
+				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
 			return 0;
 		}
 

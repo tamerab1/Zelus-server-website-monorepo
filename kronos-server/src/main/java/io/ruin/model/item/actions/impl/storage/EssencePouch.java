@@ -169,8 +169,16 @@ public enum EssencePouch {
 				entry.setValue(entry.getValue() + withdraw);
 				player.sendFilteredMessage("You withdraw " + withdraw + " essence directly into your " + pouch.toString().toLowerCase().replace("_", " ") + ".");
 				if (intercepted == amount)
-					return intercepted;
+					break;
 			}
+		}
+		// Bank.withdraw() treats this method's return value as "already moved" and only
+		// removes the REMAINING (amount - intercepted) via item.move() -- without this, the
+		// intercepted portion was never debited from the bank at all, minting free essence
+		// on every withdrawal that had room in an off-inventory pouch. Matches the pattern
+		// CoalBag.withdrawToBag() already uses correctly.
+		if (intercepted > 0) {
+			player.getBank().remove(Essence.PURE.id, intercepted);
 		}
 		return intercepted;
 	}
