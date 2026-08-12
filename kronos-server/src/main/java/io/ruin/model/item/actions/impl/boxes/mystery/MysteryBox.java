@@ -1315,16 +1315,15 @@ public class MysteryBox {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
-			reward = TOB_REFUND_TABLE.rollItem();
+			reward = MYSTERY_BOX_TABLE.rollItem();
 			item.remove();
 			player.getInventory().add(reward);
-			player.theatreOfBloodKills.increment(player);
 			if (reward.lootBroadcast != null)
 				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
-					+ reward.getDef().name.toLowerCase() + "</shad> reward from a ToB chest!");
+					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Mystery box!");
 			player.addToCollectionLog(reward);
 			player.unlock();
-			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the ToB chest!");
+			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Mystery box!");
 		});
 		ItemAction.registerInventory(30530, "open", (player, item) -> {
 			player.lock();
