@@ -35,7 +35,13 @@ COPY --chown=zelus:zelus docker/server/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # 7. Default environment variables - memory limits are deferred to compose
-ENV KRONOS_BOOT_OPTS="-Xmx8g"
+# GC pause logging: written into the /data bind mount (docker-compose-prod.yml maps
+# /opt/zelus/data:/data) so it survives container restarts and is inspectable via SSH
+# without needing `docker service logs`. Rotates at 20M x5 files (~100M cap) so it can't
+# grow unbounded. Added to investigate a suspected periodic GC-pause stall (see
+# CoreWorker.savePlayers()) -- correlate any multi-second pause here against player
+# reports of ground items/inventory/equipped-appearance going briefly invisible.
+ENV KRONOS_BOOT_OPTS="-Xmx8g -Xlog:gc*:file=/data/gc.log:time,uptime,level,tags:filecount=5,filesize=20M"
 
 # Switch to the non-root user for execution
 USER zelus
