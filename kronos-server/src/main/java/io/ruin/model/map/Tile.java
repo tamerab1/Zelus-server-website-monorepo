@@ -316,7 +316,14 @@ public class Tile {
 			for (GroundItem groundItem : groundItems) {
 				if (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
 						|| groundItem.activeOwner.equalsIgnoreCase(player.getName())) {
-					groundItem.sendRemove(player);
+					// This only runs as part of a region reload (see Entity.updateRegion()),
+					// which the client processes by rebuilding its own local zone state from
+					// scratch -- so it can never already have this item rendered, and the
+					// sendRemove() that used to run first here was a guaranteed-redundant
+					// packet on every single ground item in every newly (re)loaded region.
+					// Cut for the teleport-freeze fix: a teleport can reveal up to 9 regions
+					// at once (vs. 1-3 while walking across a border), and this halved the
+					// synchronous per-tick packet burst that caused it.
 					groundItem.sendAdd(player);
 				}
 			}

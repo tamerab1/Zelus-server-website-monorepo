@@ -147,6 +147,17 @@ public abstract class NPCCombat extends Combat {
 	 */
 	public static final long VALUABLE_DROP_THRESHOLD = 1_000_000;
 
+	/**
+	 * High alch value (as a stand-in for GE price) at or above which a drop is considered a
+	 * "mega-rare" worth pinging the public Discord rare-drop webhook. Deliberately higher than
+	 * {@link #VALUABLE_DROP_THRESHOLD} -- that constant only gates the in-game world broadcast
+	 * (cheap, seen by players already online), whereas the Discord webhook posts to an external
+	 * channel everyone sees, so it needs a stricter bar or every {@code lootBroadcast}/
+	 * {@code dropAnnounce}-flagged item from ordinary monsters (many of which are only "rare" in
+	 * drop-table terms, not actually valuable) spams the channel.
+	 */
+	public static final long DISCORD_MEGA_RARE_THRESHOLD = 5_000_000;
+
 	public static final Bounds Wildywars = new Bounds(3015, 10117, 3067, 10169, 0);
 
 	@Getter
@@ -3295,6 +3306,13 @@ public abstract class NPCCombat extends Combat {
 								+ npc.getDef().name.toLowerCase() + "! (<col=FC0101>"
 								+ (npc.getDef().killCounter.apply(pKiller.player).getKills() + 1) + " KC<col=000000>)");
 
+		}
+		// In-game world broadcast above fires for any lootBroadcast/valuableDrop/dropAnnounce
+		// item (as before) -- but the public Discord webhook is reserved for actual mega-rares,
+		// otherwise every drop-table item merely flagged "rare" spams the Discord channel.
+		boolean megaRareForDiscord = (long) item.getDef().highAlchValue * item.getAmount() >= DISCORD_MEGA_RARE_THRESHOLD;
+		if (!megaRareForDiscord) {
+			return;
 		}
 		if (npc.getDef().killCounter == null || npc.getDef().killCounter.apply(pKiller.player) == null) {
 

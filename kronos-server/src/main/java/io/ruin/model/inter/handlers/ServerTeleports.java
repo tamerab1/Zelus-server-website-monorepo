@@ -320,7 +320,7 @@ public enum ServerTeleports {
 	ARDOUGNE_ROOFTOP_COURSE("Ardougne rooftop", new Position(2673, 3296, 0), null, "Train agility whilst obtaining <br>marks of grace.",
 		"", "90 Agility.", 0, 0),
 	WILDERNESS_AGILITY_COURSE("Wilderness course", new Position(2997, 3914, 0), null, "Warning: Level 50 Wilderness.", "", "52 Agility.", 0, 0),
-	EDGEVILLE_MARKETPLACE("Edgeville marketplace", new Position(3083, 3468, 0), null, "Various npcs to pickpocket and <br>stalls to thieve from.", "", "No requirements.", 0, 0),
+	EDGEVILLE_MARKETPLACE("Edgeville marketplace", new Position(3093, 3467, 0), null, "Various npcs to pickpocket and <br>stalls to thieve from.", "", "No requirements.", 0, 0),
 	TAVERLEY_DUNGEON("Taverley dungeon", new Position(2884, 9798, 0), null, "Various slayer creatures lurk <br>within this dungeon", "", "No requirements.", 0, 0),
 	LUMMY_DUNGEON("Lumbridge Dungeon", new Position(3235, 9570, 0), null, "Various slayer creatures lurk <br>within this dungeon", "", "No requirements.", 0, 0),
 	ARDY_DUNGEON("Ardougne dungeon", new Position(2586, 9657, 0), null, "Various slayer creatures lurk <br>within this dungeon", "", "No requirements.", 0, 0),

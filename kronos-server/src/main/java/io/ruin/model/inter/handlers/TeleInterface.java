@@ -46,7 +46,7 @@ public class TeleInterface extends ItemContainer {
 						sendBossTeleports(player);
 						break;
 					case MINIGAMES:
-						sendMiningTeleports(player);
+						sendMinigamesTeleports(player);
 						break;
 					case WILDERNESS:
 						sendWildernessTeleports(player);
@@ -131,6 +131,12 @@ public class TeleInterface extends ItemContainer {
 	}
 
 	public void sendBossTeleports(Player player) {
+		// Reset any selection carried over from a previous page/session -- sendTeleport()
+		// re-derives currentTeleport from currentComponentId + pageNumber (just reset to 1
+		// below), so leaving a stale non-null currentTeleport around would otherwise cause
+		// the reopen path in open() to silently re-select whatever page-1 destination shares
+		// that componentId instead of the player's actual last pick.
+		currentTeleport = null;
 		activateHiddenTeleportNames(player);
 		player.getPacketSender().sendString(851, 20, "Bosses");
 		player.getPacketSender().setHidden(851, 38, true);
@@ -1381,7 +1387,7 @@ public class TeleInterface extends ItemContainer {
 		player.getPacketSender().sendString(851, 25, ServerTeleports.BLOOD_ALTAR.name);
 		player.getPacketSender().sendString(851, 26, ServerTeleports.SOUL_ALTAR.name);
 		player.getPacketSender().sendString(851, 27, ServerTeleports.WRATH_ALTAR.name);
-		for (int i = 26; i < 34; i++) {
+		for (int i = 28; i < 34; i++) {
 			player.getPacketSender().setHidden(851, i, true);
 		}
 	}
@@ -1529,6 +1535,9 @@ public class TeleInterface extends ItemContainer {
 
 	public void sendCityTeleports(Player player) {
 		pageNumber = 1;
+		// See sendBossTeleports() -- avoids the reopen path silently re-selecting a
+		// different (page-1) destination that happens to share the old componentId.
+		currentTeleport = null;
 		currentCategory = Categories.CITIES;
 		activateHiddenTeleportNames(player);
 		player.getPacketSender().sendString(851, 20, "Cities");
