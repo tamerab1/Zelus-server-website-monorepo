@@ -5,6 +5,7 @@ import io.ruin.cache.Icon;
 import io.ruin.cache.ItemID;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
+import io.ruin.model.item.actions.ItemAction;
 import io.ruin.model.map.object.actions.ObjectAction;
 import io.ruin.utility.Broadcast;
 
@@ -134,6 +135,15 @@ public class ZelusChest {
 		});
 		ObjectAction.register(ZELUS_CHEST_ID, "Check", (player, obj) -> {
 			player.sendMessage("You have opened " + player.zelusChestsOpened + " Zelus Chests.");
+		});
+		ItemAction.registerInventory(Z_GOLDEN_KEY, "Teleport", (player, item) -> {
+			player.getMovement().startTeleport(e -> {
+				player.animate(714);
+				player.graphics(111, 92, 0);
+				player.publicSound(200);
+				e.delay(3);
+				player.getMovement().teleport(3083, 3486, 0);
+			});
 		});
 	}
 

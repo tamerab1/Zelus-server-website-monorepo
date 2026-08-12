@@ -451,7 +451,7 @@ public class CommandHandlerRegular {
 						"::slayer/::slay", "::shops",
 						"::cox/raids/tob", "::gwd", "::mining", "::miningguild", "::mlm/motherloadmine",
 						"::wcguild", "::abyss", "::zmi", "::astrals", "::bloods", "::wraths", "::puropuro", "::fremslayer",
-						"::ancientcavern", "::brimdung", "::lumdung", "::edgedung",
+						"::ancientcavern", "::brimdung", "::lumdung", "::edgedung", "::perk/::perks",
 						"<col=800000>Misc Commands:</col>",
 						"::online/players", "::staff", "::clog", "::yell", "::donated/::claim",
 						"::vote/::claimvote/::claimed", "::clear/::empty", "::upgrade",
@@ -1012,6 +1012,12 @@ public class CommandHandlerRegular {
 
 			case "zmi": {
 				teleport(player, ServerTeleports.ZMI.getTeleportPos());
+				return true;
+			}
+
+			case "perk":
+			case "perks": {
+				teleport(player, 3116, 3487, 0);
 				return true;
 			}
 
