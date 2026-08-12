@@ -64,13 +64,13 @@ public class DailyLoginInterface {
 			new Item(ItemID.INSTANCE_TOKEN, 5),
 			new Item(ItemID.BLUE_PARTYHAT, 1),
 			new Item(ItemID.BANDOS_TASSETS, 1),
-			new Item(30452, 1),                              // Mystery box
+			new Item(30452, 1),                              // Slayer mystery box
 			new Item(33020, 1),                              // Perk Exp Lamp
 			new Item(30464, 1),                              // $5 Donator Bond
 			new Item(ItemID.COINS_995, 10000000),
 			new Item(ItemID.ABYSSAL_WHIP, 1),
 			new Item(6199, 1),                               // Mystery box
-			new Item(30426, 1),                              // Limited Mystery Box
+			new Item(30452, 1),                              // Slayer mystery box
 			new Item(ItemID.TOXIC_BLOWPIPE, 1),
 			new Item(ItemID.COINS_995, 15000000),
 			new Item(ItemID.VESTAS_CHAINBODY, 1),

@@ -476,6 +476,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.boxes.mystery.PVPArmourMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.PetMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.Promopackage.register();
+		io.ruin.model.item.actions.impl.boxes.mystery.ResearchPackage.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SlayerCasket.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SlayerChest.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SummerMysteryBox.register();
