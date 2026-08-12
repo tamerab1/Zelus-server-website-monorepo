@@ -58,7 +58,7 @@ public class SummerMysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Legendary Pet Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Summer Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});
 	}
