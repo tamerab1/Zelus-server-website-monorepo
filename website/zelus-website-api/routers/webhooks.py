@@ -77,6 +77,11 @@ TEBEX_SECRET          = os.getenv("TEBEX_SECRET", "")
 # here, payments for it are logged and NOT fulfilled -- money taken with no
 # item/rank granted is worse than a webhook that no-ops until configured.
 TEBEX_PACKAGE_MAP: dict[str, str] = {
+    "7618121": "dp_500",    # $5 Donator Bond
+    "7618124": "dp_1200",   # $10 Donator Bond
+    "7618131": "dp_3000",   # $25 Donator Bond
+    "7618132": "dp_8000",   # $50 Donator Bond
+    "7618134": "dp_20000",  # $100 Donator Bond
 }
 
 
