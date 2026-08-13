@@ -570,6 +570,15 @@ async def _tebex_fulfill_product(db: Session, transaction_id: str, username: str
 # see below) represent money we've actually received.
 _NOWPAYMENTS_SUCCESS_STATUSES = {"finished", "partially_paid"}
 
+# "partially_paid" only counts as a fulfillable success once actually_paid is at
+# least this fraction of pay_amount (both in pay_currency crypto units, per
+# NOWPayments' IPN payload -- a same-currency ratio avoids needing our own
+# fiat conversion). Below this, the payment is logged and left pending rather
+# than fulfilled -- NOWPayments itself doesn't auto-decide this for merchants
+# (their own reference integrations just hold the order for manual review), so
+# without a floor here ANY nonzero partial payment would grant the full item.
+_NOWPAYMENTS_PARTIAL_PAYMENT_THRESHOLD = 0.90
+
 
 def _nowpayments_verify_signature(parsed_body: dict, signature: str) -> tuple[bool, str]:
     """
@@ -639,6 +648,23 @@ async def nowpayments_webhook(request: Request, db: Session = Depends(get_db)):
         log.info("[NOWPayments] order_id=%s status=%s — not a completion state, no fulfillment.",
                   order_id, payment_status)
         return {"status": "received"}
+
+    if payment_status == "partially_paid":
+        pay_amount, actually_paid = event.get("pay_amount"), event.get("actually_paid")
+        try:
+            ratio = float(actually_paid) / float(pay_amount)
+        except (TypeError, ValueError, ZeroDivisionError):
+            ratio = 0.0
+        if ratio < _NOWPAYMENTS_PARTIAL_PAYMENT_THRESHOLD:
+            log.warning(
+                "[NOWPayments] order_id=%s partially_paid at %.1f%% (actually_paid=%s / pay_amount=%s) "
+                "— below the %.0f%% threshold, NOT fulfilling. Left pending for manual review.",
+                order_id, ratio * 100, actually_paid, pay_amount,
+                _NOWPAYMENTS_PARTIAL_PAYMENT_THRESHOLD * 100,
+            )
+            return {"status": "received"}
+        log.info("[NOWPayments] order_id=%s partially_paid at %.1f%% — meets threshold, fulfilling in full.",
+                  order_id, ratio * 100)
 
     await _nowpayments_payment_completed(db, event, raw_payload=raw_body.decode("utf-8"))
     return {"status": "received"}
