@@ -207,6 +207,30 @@ export default function StoreView() {
           >
             Unlock exclusive ranks, zones, items, and perks. All purchases are permanent.
           </p>
+
+          {/* Alternate storefront — Tebex checkout is hosted entirely on their
+              site, so this is a plain external link, not a package purchase. */}
+          <a
+            href="https://zelustore.tebex.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 font-fantasy text-xs tracking-widest rounded-sm transition-all duration-200"
+            style={{
+              background: 'rgba(212,175,55,0.08)',
+              border: '1px solid rgba(212,175,55,0.35)',
+              color: '#d4af37',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = 'rgba(212,175,55,0.16)';
+              e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = 'rgba(212,175,55,0.08)';
+              e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)';
+            }}
+          >
+            🛒 SHOP WITH TEBEX ↗
+          </a>
         </div>
       </div>
 
