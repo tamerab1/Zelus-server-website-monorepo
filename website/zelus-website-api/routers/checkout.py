@@ -345,32 +345,23 @@ async def _send_osrs_gp_discord_alert(
 # Fulfillment happens entirely off the IPN webhook (routers/webhooks.py) since,
 # like Tebex, there's no synchronous confirmation at checkout-creation time.
 #
-# NOWPAYMENTS_MIN_INVOICE_USD: some coins' network-fee-adjusted minimum lands
-# just above a $5 invoice -- confirmed live, a $5 Donator Bond failed on
-# NOWPayments' side with "Crypto amount 4.989157 is less than minimal" on
-# USDT-TRX. We don't collect pay_currency up front (the customer picks it on
-# NOWPayments' own page), so there's no way to check the exact per-currency
-# minimum before creating the invoice -- padding every sub-floor invoice up to
-# a flat floor is the simple fix, not a full per-currency minimum lookup.
-# This only affects what NOWPayments actually invoices; txn.amount_usd (our
-# own record of what the PACKAGE costs) and fulfillment (keyed off
-# txn.package_id, never the amount paid) are both unaffected -- the customer
-# still receives the item's real price_usd()/tokens regardless of this pad.
-#
-# Went 5.50 -> 8.00 -> 5.30 across two real incidents. The 8.00 bump was a
-# reaction to a Binance withdrawal eating ~$1.50 of a $5 invoice -- but no
-# fixed floor can actually guarantee covering an arbitrary exchange's fee on
-# an expensive network, and that specific incident's real cause was a
-# signature-verification bug rejecting the IPN outright (fixed in
-# _nowpayments_verify_signature), not an inadequate floor. Settled back down
-# to a small buffer (just enough to clear NOWPayments' own "less than
-# minimal" per-currency rejection) now that the actual safety net is
-# layered elsewhere: routers/webhooks.py's partially_paid handling only
-# fulfills at >=90% actually_paid/pay_amount (_NOWPAYMENTS_PARTIAL_PAYMENT_
-# THRESHOLD), and cheap/volatile-fee networks like USDT-TRX should be
-# disabled in the NOWPayments dashboard's coin settings -- not something
-# controllable per-invoice via this API.
-NOWPAYMENTS_MIN_INVOICE_USD = 5.30
+# Invoice amount history: 5.50 -> 8.00 -> 5.30 -> exact price_usd (no floor).
+# The floor existed to dodge NOWPayments' own "less than minimal" per-currency
+# rejection on cheap invoices (confirmed live on USDT-TRX) and to cushion
+# against exchange withdrawal fees -- but padding the invoice also means a
+# player who naturally sends a bit more than the item's real price (a common
+# pattern -- wallets/exchanges round transfers up, e.g. sending ~$5.20-5.30
+# for a "$5" purchase) still lands BELOW the padded target and
+# gets NOWPayments' "Partially Paid" screen instead of "Completed", even
+# though they paid enough to cover the real item price. Invoicing the exact
+# item price lets that same natural overpay habit clear the target outright
+# (green "Completed" screen) while routers/webhooks.py's partially_paid
+# handling (_NOWPAYMENTS_PARTIAL_PAYMENT_THRESHOLD, >=90% actually_paid/
+# pay_amount) still catches genuine underpayment as a fallback. Trade-off:
+# this reopens a little exposure to the original "less than minimal"
+# rejection on any currency whose minimum lands above the item's raw price --
+# mitigate by keeping cheap/volatile-fee networks like USDT-TRX disabled in
+# NOWPayments' dashboard coin settings, not something this API controls.
 
 @router.post("/crypto")
 async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):
@@ -398,18 +389,16 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
     db.flush()  # assign txn.id before the API call — order_id needs it
 
     # ── Create NOWPayments invoice ─────────────────────────────────────────────
-    # Pad the INVOICED amount up to the floor for cheap items -- item.price_usd
-    # itself (txn.amount_usd, already set above) is untouched, and fulfillment
-    # never looks at what was actually paid, only txn.package_id -- see the
-    # NOWPAYMENTS_MIN_INVOICE_USD comment above for why this exists.
-    invoice_amount = max(item.price_usd, NOWPAYMENTS_MIN_INVOICE_USD)
+    # No padding -- invoice the item's exact price. See the comment above this
+    # function for why (natural wallet-rounding overpay clears the exact price
+    # outright instead of landing short of a padded target).
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.post(
                 f"{NOWPAYMENTS_BASE_URL}/v1/invoice",
                 headers={"x-api-key": NOWPAYMENTS_API_KEY, "Content-Type": "application/json"},
                 json={
-                    "price_amount":     invoice_amount,
+                    "price_amount":     item.price_usd,
                     "price_currency":   "usd",
                     "order_id":         str(txn.id),
                     "order_description": f"Zelus — {item.name} (+{item.tokens:,} tokens for {req.username})",
