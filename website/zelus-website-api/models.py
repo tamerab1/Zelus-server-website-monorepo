@@ -184,6 +184,8 @@ class PaymentProvider(enum.Enum):
     PAYPAL  = "paypal"
     OSRS_GP = "osrs_gp"   # manual trade, fulfilled by staff after Discord ticket
     CRYPTO  = "crypto"    # placeholder — Coinbase/NowPayments (future)
+    TEBEX   = "tebex"     # webstore hosted entirely on Tebex -- no /api/checkout
+                           # session, fulfillment happens purely off the webhook
 
 
 class Transaction(Base):
