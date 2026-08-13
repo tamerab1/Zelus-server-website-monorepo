@@ -201,7 +201,12 @@ class Transaction(Base):
     package_id          = Column(String(50), nullable=False)
     package_name        = Column(String(100), nullable=False)
     amount_usd          = Column(Float, nullable=False)
-    provider            = Column(String(10), nullable=False)   # "stripe" | "paypal"
+    # Stores PaymentProvider.<X>.value ("stripe"/"paypal"/"osrs_gp"/"crypto"/"tebex") --
+    # NEVER assign the raw enum member here (str(enum_member) is "PaymentProvider.X",
+    # which overflows String(10) and raises pymysql.err.DataError at flush/commit time.
+    # Every call site MUST use .value explicitly; this column is a plain String, not a
+    # SQLAlchemy Enum type, so nothing coerces it automatically).
+    provider            = Column(String(10), nullable=False)
     provider_session_id = Column(String(255), unique=True, index=True, nullable=True)
     status              = Column(String(20), default=TransactionStatus.PENDING.value, nullable=False)
     created_at          = Column(DateTime, default=func.now())

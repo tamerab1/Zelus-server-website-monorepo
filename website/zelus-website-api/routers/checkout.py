@@ -93,7 +93,7 @@ async def create_stripe_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_id=item.slug,
         package_name=item.name,
         amount_usd=item.price_usd,
-        provider=models.PaymentProvider.STRIPE,
+        provider=models.PaymentProvider.STRIPE.value,
         status=models.TransactionStatus.PENDING,
     )
     db.add(txn)
@@ -159,7 +159,7 @@ async def create_paypal_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_id=item.slug,
         package_name=item.name,
         amount_usd=item.price_usd,
-        provider=models.PaymentProvider.PAYPAL,
+        provider=models.PaymentProvider.PAYPAL.value,
         status=models.TransactionStatus.PENDING,
     )
     db.add(txn)
@@ -259,7 +259,7 @@ async def create_osrs_gp_checkout(req: CheckoutRequest, db: Session = Depends(ge
         package_id=item.slug,
         package_name=item.name,
         amount_usd=item.price_usd,
-        provider=models.PaymentProvider.OSRS_GP,
+        provider=models.PaymentProvider.OSRS_GP.value,
         status=models.TransactionStatus.PENDING,
     )
     db.add(txn)
@@ -364,7 +364,7 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_id=item.slug,
         package_name=item.name,
         amount_usd=item.price_usd,
-        provider=models.PaymentProvider.CRYPTO,
+        provider=models.PaymentProvider.CRYPTO.value,
         status=models.TransactionStatus.PENDING,
     )
     db.add(txn)
