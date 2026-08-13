@@ -8,13 +8,13 @@ import storeItems from '../../data/storeItems.js';
  * Displays two hand-picked Donator Points items — the only category that's
  * directly purchasable (ranks unlock automatically via Total Donated and
  * have no buy button, so they're never featured here):
- *   • dp_3000  — most popular top-up ($20, POPULAR)
- *   • dp_8000  — high-tier top-up    ($50)
+ *   • dp_2180  — most popular top-up ($25, POPULAR)
+ *   • dp_4350  — high-tier top-up    ($50)
  *
  * Both items have their slug in store_catalog.py so checkout works out-of-the-box.
  * To change the featured items, edit FEATURED_SLUGS below — keep them 'dp' items.
  */
-const FEATURED_SLUGS = ['dp_3000', 'dp_8000'];
+const FEATURED_SLUGS = ['dp_2180', 'dp_4350'];
 const featured = FEATURED_SLUGS
   .map(slug => storeItems.find(i => i.slug === slug))
   .filter(Boolean);

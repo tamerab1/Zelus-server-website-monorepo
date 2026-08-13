@@ -1379,11 +1379,11 @@ def _require_game_session(request: Request) -> str:
 SLUG_TO_ITEMS: dict[str, list[tuple[int, int]]] = {
 
     # ── Donator Points (bond items — player redeems in-game for DP + rank credit)
-    "dp_500":            [(30464, 1)],        # $5   bond → 350 DP
-    "dp_1200":           [(30497, 1)],        # $10  bond → 770 DP
-    "dp_3000":           [(30466, 1)],        # $25  bond → 2,180 DP
-    "dp_8000":           [(30467, 1)],        # $50  bond → 4,350 DP
-    "dp_20000":          [(30468, 1)],        # $100 bond → 9,450 DP
+    "dp_350":            [(30464, 1)],        # $5   bond → 350 DP
+    "dp_770":            [(30497, 1)],        # $10  bond → 770 DP
+    "dp_2180":           [(30466, 1)],        # $25  bond → 2,180 DP
+    "dp_4350":           [(30467, 1)],        # $50  bond → 4,350 DP
+    "dp_9450":           [(30468, 1)],        # $100 bond → 9,450 DP
 
     # ── Miscellaneous boxes
     "mystery_box":       [(30444, 1)],        # Donator mystery box
@@ -1422,19 +1422,19 @@ SLUG_TO_ITEMS: dict[str, list[tuple[int, int]]] = {
     "supreme_donator":   [(30574, 17), (30573, 1)],          # $1 750 donated ($1 700 + $50)
 
     # ── Packages  (DP bond + key items; physical gear must be granted server-side)
-    # pkg_starter_pvm ($15):   donator scroll + $5 bond (500 DP) + 24 h XP
+    # pkg_starter_pvm ($15):   donator scroll + $5 bond (350 DP) + 24 h XP
     "pkg_starter_pvm":        [(30575, 1), (30464, 1), (30460, 48)],
 
-    # pkg_ironman_headstart ($20):  $10 bond (1 000 DP)
+    # pkg_ironman_headstart ($20):  $10 bond (770 DP)
     "pkg_ironman_headstart":  [(30497, 1)],
 
-    # pkg_ultimate_skiller ($35):  $25 bond (3 000 DP) + 7-day XP
+    # pkg_ultimate_skiller ($35):  $25 bond (2,180 DP) + 7-day XP
     "pkg_ultimate_skiller":   [(30466, 1), (30460, 336)],
 
-    # pkg_wilderness_warlord ($40):  $25 bond (3 000 DP) + 24 h drop boost
+    # pkg_wilderness_warlord ($40):  $25 bond (2,180 DP) + 24 h drop boost
     "pkg_wilderness_warlord": [(30466, 1), (30459, 48)],
 
-    # pkg_raiders_arsenal ($60):  2× $10 bond (2 000 DP) + 5 mystery boxes
+    # pkg_raiders_arsenal ($60):  2× $10 bond (1,540 DP) + 5 mystery boxes
     "pkg_raiders_arsenal":    [(30497, 2), (30444, 5)],
 
     # pkg_rng_god ($90):  $50 scroll (rank) + 3 grand boxes + 5 super + 10 std + 24 h DR

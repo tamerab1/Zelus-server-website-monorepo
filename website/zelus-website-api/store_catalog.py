@@ -34,12 +34,15 @@ CATALOG: dict[str, StoreItem] = {
     # ── Donator Points ─────────────────────────────────────────────────────────
     # tokens = exact DP credited to player's in-game balance.
     # Amounts confirmed live in-game 2026-08-11 after a server-side DP rebalance.
+    # Slugs renamed 2026-08-13 to match the actual DP granted (was dp_500/dp_1200/
+    # dp_3000/dp_8000/dp_20000 -- stale pre-rebalance numbers that no longer
+    # matched the real payout and caused real confusion setting up Tebex packages).
 
-    "dp_500":   StoreItem("dp_500",   "$5 Donator Bond",     5.00,   350),
-    "dp_1200":  StoreItem("dp_1200",  "$10 Donator Bond",   10.00,   770),
-    "dp_3000":  StoreItem("dp_3000",  "$25 Donator Bond",   25.00,  2180),
-    "dp_8000":  StoreItem("dp_8000",  "$50 Donator Bond",   50.00,  4350),
-    "dp_20000": StoreItem("dp_20000", "$100 Donator Bond", 100.00,  9450),
+    "dp_350":  StoreItem("dp_350",  "$5 Donator Bond",     5.00,   350),
+    "dp_770":  StoreItem("dp_770",  "$10 Donator Bond",   10.00,   770),
+    "dp_2180": StoreItem("dp_2180", "$25 Donator Bond",   25.00,  2180),
+    "dp_4350": StoreItem("dp_4350", "$50 Donator Bond",   50.00,  4350),
+    "dp_9450": StoreItem("dp_9450", "$100 Donator Bond", 100.00,  9450),
 
     # ── Donor Ranks (8 tiers — matches NR 288 SecondaryGroup enum) ────────────
     # Slug must match SecondaryGroup name in lowercase with underscores.

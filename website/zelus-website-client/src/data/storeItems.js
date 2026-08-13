@@ -41,11 +41,13 @@ const storeItems = [
 
   // ─── DONATOR POINTS ────────────────────────────────────────────────────────
   // Amounts confirmed live in-game 2026-08-11 after a server-side DP rebalance.
-  // slug/id are kept stable (they're the payment package_id contract with the
-  // backend) even though they no longer match the displayed quantity.
+  // slug/id renamed 2026-08-13 to match the actual quantity granted (was
+  // dp_500/dp_1200/dp_3000/dp_8000/dp_20000 — stale pre-rebalance numbers that
+  // caused real confusion mapping Tebex packages). Must match store_catalog.py's
+  // CATALOG keys exactly — this is the payment package_id contract with the backend.
   {
-    id:           'dp_500',
-    slug:         'dp_500',
+    id:           'dp_350',
+    slug:         'dp_350',
     name:         '$5 Donator Bond',
     category:     'dp',
     price:        5,
@@ -59,8 +61,8 @@ const storeItems = [
     quantity:     350,
   },
   {
-    id:           'dp_1200',
-    slug:         'dp_1200',
+    id:           'dp_770',
+    slug:         'dp_770',
     name:         '$10 Donator Bond',
     category:     'dp',
     price:        10,
@@ -75,8 +77,8 @@ const storeItems = [
     bonus:        '+10% bonus',
   },
   {
-    id:           'dp_3000',
-    slug:         'dp_3000',
+    id:           'dp_2180',
+    slug:         'dp_2180',
     name:         '$25 Donator Bond',
     category:     'dp',
     price:        25,
@@ -92,8 +94,8 @@ const storeItems = [
     badge_label:  'POPULAR',
   },
   {
-    id:           'dp_8000',
-    slug:         'dp_8000',
+    id:           'dp_4350',
+    slug:         'dp_4350',
     name:         '$50 Donator Bond',
     category:     'dp',
     price:        50,
@@ -108,8 +110,8 @@ const storeItems = [
     bonus:        '+24% bonus',
   },
   {
-    id:           'dp_20000',
-    slug:         'dp_20000',
+    id:           'dp_9450',
+    slug:         'dp_9450',
     name:         '$100 Donator Bond',
     category:     'dp',
     price:        100,
