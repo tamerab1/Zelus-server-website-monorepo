@@ -6,13 +6,14 @@
  *   2. "confirm"  — OSRS GP only: show GP total & confirm
  *   3. "done"     — show success / error result for non-redirect providers
  *
- * Stripe, PayPal, and Crypto (NOWPayments) all redirect immediately (no
- * extra confirm step) — fulfillment happens off each provider's webhook.
+ * PayPal and Crypto (NOWPayments) both redirect immediately (no extra
+ * confirm step) — fulfillment happens off each provider's webhook.
  * OSRS GP opens a Discord ticket and stays on-page with a success message.
+ * Card payments are handled entirely through Tebex (see the storefront's
+ * "Shop with Tebex" link), not through this modal.
  */
 import { useState } from 'react';
 import {
-  createStripeCheckout,
   createPayPalCheckout,
   createCryptoCheckout,
   initiateOsrsGpCheckout,
@@ -21,14 +22,12 @@ import {
 } from '../../services/paymentService.js';
 
 // ── Brand colours ──────────────────────────────────────────────────────────────
-const STRIPE_PURPLE = '#635bff';
 const PAYPAL_GOLD   = '#ffc439';
 const PAYPAL_NAVY   = '#003087';
 const GP_GREEN      = '#22c55e';
 const CRYPTO_PURPLE = '#8b5cf6';
 
 const REDIRECT_CHECKOUT_FNS = {
-  stripe: createStripeCheckout,
   paypal: createPayPalCheckout,
   crypto: createCryptoCheckout,
 };
@@ -104,7 +103,7 @@ function UsernameField({ value, onChange, disabled }) {
 export default function CheckoutModal({ pkg, onClose }) {
   const [username, setUsername] = useState('');
   const [step,     setStep]     = useState('method');   // 'method' | 'confirm' | 'done'
-  const [method,   setMethod]   = useState(null);       // 'stripe' | 'paypal' | 'crypto' | 'osrs-gp'
+  const [method,   setMethod]   = useState(null);       // 'paypal' | 'crypto' | 'osrs-gp'
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [result,   setResult]   = useState(null);       // {message, gp_millions?} on done
@@ -123,7 +122,7 @@ export default function CheckoutModal({ pkg, onClose }) {
     return t;
   };
 
-  // ── Stripe / PayPal / Crypto — redirect immediately ──────────────────────────
+  // ── PayPal / Crypto — redirect immediately ───────────────────────────────────
   const handleRedirectPayment = async (provider) => {
     const name = validateUsername();
     if (!name) return;
@@ -224,22 +223,6 @@ export default function CheckoutModal({ pkg, onClose }) {
             </span>
           )}
           <span className="font-sans font-bold">Pay with PayPal</span>
-        </button>
-
-        {/* Stripe */}
-        <button
-          onClick={() => handleRedirectPayment('stripe')}
-          disabled={loading}
-          className="w-full py-3.5 font-bold text-sm tracking-wide rounded-sm transition-all duration-200 flex items-center justify-center gap-2.5"
-          style={{
-            background: STRIPE_PURPLE,
-            color: '#fff',
-            opacity: loading ? 0.5 : 1,
-            cursor: loading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {loading ? <Spinner /> : <span className="text-base">💳</span>}
-          <span className="font-sans font-bold">Pay with Card (Stripe)</span>
         </button>
 
         {/* Divider */}
@@ -440,7 +423,7 @@ export default function CheckoutModal({ pkg, onClose }) {
       );
     }
 
-    return null;   // only osrs-gp reaches this step — stripe/paypal/crypto redirect immediately
+    return null;   // only osrs-gp reaches this step — paypal/crypto redirect immediately
   };
 
   // ── STEP: done (OSRS GP result) ───────────────────────────────────────────────
