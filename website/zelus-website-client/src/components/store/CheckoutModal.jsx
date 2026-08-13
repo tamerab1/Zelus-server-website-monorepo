@@ -3,17 +3,18 @@
  *
  * Three-step flow:
  *   1. "method"   — collect in-game username + choose payment provider
- *   2. "confirm"  — OSRS GP: show GP total & confirm; Crypto: show coming-soon
+ *   2. "confirm"  — OSRS GP only: show GP total & confirm
  *   3. "done"     — show success / error result for non-redirect providers
  *
- * Stripe and PayPal redirect immediately (no extra confirm step).
+ * Stripe, PayPal, and Crypto (NOWPayments) all redirect immediately (no
+ * extra confirm step) — fulfillment happens off each provider's webhook.
  * OSRS GP opens a Discord ticket and stays on-page with a success message.
- * Crypto shows a placeholder "coming soon" screen.
  */
 import { useState } from 'react';
 import {
   createStripeCheckout,
   createPayPalCheckout,
+  createCryptoCheckout,
   initiateOsrsGpCheckout,
   calcGpMillions,
   OSRS_RATE_USD_PER_M,
@@ -25,6 +26,12 @@ const PAYPAL_GOLD   = '#ffc439';
 const PAYPAL_NAVY   = '#003087';
 const GP_GREEN      = '#22c55e';
 const CRYPTO_PURPLE = '#8b5cf6';
+
+const REDIRECT_CHECKOUT_FNS = {
+  stripe: createStripeCheckout,
+  paypal: createPayPalCheckout,
+  crypto: createCryptoCheckout,
+};
 
 // ── Shared sub-components ──────────────────────────────────────────────────────
 
@@ -97,7 +104,7 @@ function UsernameField({ value, onChange, disabled }) {
 export default function CheckoutModal({ pkg, onClose }) {
   const [username, setUsername] = useState('');
   const [step,     setStep]     = useState('method');   // 'method' | 'confirm' | 'done'
-  const [method,   setMethod]   = useState(null);       // 'stripe' | 'paypal' | 'osrs-gp' | 'crypto'
+  const [method,   setMethod]   = useState(null);       // 'stripe' | 'paypal' | 'crypto' | 'osrs-gp'
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [result,   setResult]   = useState(null);       // {message, gp_millions?} on done
@@ -116,15 +123,14 @@ export default function CheckoutModal({ pkg, onClose }) {
     return t;
   };
 
-  // ── Stripe / PayPal — redirect immediately ───────────────────────────────────
+  // ── Stripe / PayPal / Crypto — redirect immediately ──────────────────────────
   const handleRedirectPayment = async (provider) => {
     const name = validateUsername();
     if (!name) return;
     setLoading(true);
     setError('');
     try {
-      const fn   = provider === 'stripe' ? createStripeCheckout : createPayPalCheckout;
-      const data = await fn(packageId, name);
+      const data = await REDIRECT_CHECKOUT_FNS[provider](packageId, name);
       window.location.href = data.checkout_url;
       // (no setLoading(false) — page is navigating away)
     } catch (err) {
@@ -155,14 +161,6 @@ export default function CheckoutModal({ pkg, onClose }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  // ── Crypto — placeholder ──────────────────────────────────────────────────────
-  const handleSelectCrypto = () => {
-    if (!validateUsername()) return;
-    setMethod('crypto');
-    setStep('confirm');
-    setError('');
   };
 
   // ── Render helpers ────────────────────────────────────────────────────────────
@@ -290,9 +288,9 @@ export default function CheckoutModal({ pkg, onClose }) {
           </div>
         </button>
 
-        {/* Crypto — coming soon */}
+        {/* Crypto — via NOWPayments */}
         <button
-          onClick={handleSelectCrypto}
+          onClick={() => handleRedirectPayment('crypto')}
           disabled={loading}
           className="w-full py-3.5 rounded-sm transition-all duration-200 flex items-center justify-between px-5"
           style={{
@@ -311,22 +309,16 @@ export default function CheckoutModal({ pkg, onClose }) {
           }}
         >
           <div className="flex items-center gap-3">
-            <span className="text-xl">₿</span>
+            {loading ? <Spinner color={CRYPTO_PURPLE} /> : <span className="text-xl">₿</span>}
             <div className="text-left">
               <p className="font-fantasy text-xs tracking-widest" style={{ color: CRYPTO_PURPLE }}>
-                CRYPTO
+                PAY WITH CRYPTO
               </p>
               <p className="font-sans text-xs mt-0.5" style={{ color: '#6a6058' }}>
-                BTC, ETH, USDT & more
+                BTC, ETH, USDT & more — via NOWPayments
               </p>
             </div>
           </div>
-          <span
-            className="font-fantasy text-xs tracking-widest px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(139,92,246,0.2)', color: CRYPTO_PURPLE, fontSize: '9px' }}
-          >
-            SOON
-          </span>
         </button>
 
       </div>
@@ -448,60 +440,7 @@ export default function CheckoutModal({ pkg, onClose }) {
       );
     }
 
-    // Crypto placeholder
-    return (
-      <div className="p-6 flex flex-col gap-5">
-        <button
-          onClick={() => { setStep('method'); setError(''); }}
-          className="self-start font-fantasy text-xs tracking-widest transition-colors flex items-center gap-1.5"
-          style={{ color: '#555' }}
-          onMouseOver={e => (e.currentTarget.style.color = '#d4af37')}
-          onMouseOut={e  => (e.currentTarget.style.color = '#555')}
-        >
-          ← Back
-        </button>
-
-        <div
-          className="p-8 text-center flex flex-col items-center gap-4"
-          style={{
-            background: 'rgba(139,92,246,0.06)',
-            border: '1px solid rgba(139,92,246,0.25)',
-            borderRadius: 2,
-          }}
-        >
-          <span className="text-5xl">₿</span>
-          <p className="font-fantasy text-sm tracking-widest" style={{ color: CRYPTO_PURPLE }}>
-            CRYPTO PAYMENTS
-          </p>
-          <p className="font-fantasy text-xs tracking-widest" style={{ color: '#4a4038' }}>
-            COMING SOON
-          </p>
-          <p className="font-sans text-xs leading-relaxed max-w-xs" style={{ color: '#6a6058' }}>
-            We are integrating Coinbase Commerce and NowPayments. In the meantime, contact us on
-            Discord and we can arrange a manual crypto payment.
-          </p>
-          <a
-            href="https://discord.gg/XZ3E6Nur2r"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-fantasy text-xs tracking-widest px-6 py-2.5 rounded-sm transition-all duration-200"
-            style={{
-              background: 'rgba(139,92,246,0.15)',
-              border: '1px solid rgba(139,92,246,0.4)',
-              color: CRYPTO_PURPLE,
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = 'rgba(139,92,246,0.3)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = 'rgba(139,92,246,0.15)';
-            }}
-          >
-            JOIN OUR DISCORD →
-          </a>
-        </div>
-      </div>
-    );
+    return null;   // only osrs-gp reaches this step — stripe/paypal/crypto redirect immediately
   };
 
   // ── STEP: done (OSRS GP result) ───────────────────────────────────────────────
@@ -563,7 +502,7 @@ export default function CheckoutModal({ pkg, onClose }) {
   // ── Shell ─────────────────────────────────────────────────────────────────────
   const titles = {
     method:  'SECURE CHECKOUT',
-    confirm: method === 'osrs-gp' ? 'PAY WITH OSRS GP' : 'CRYPTO PAYMENT',
+    confirm: 'PAY WITH OSRS GP',
     done:    'ORDER RECEIVED',
   };
 
@@ -575,7 +514,7 @@ export default function CheckoutModal({ pkg, onClose }) {
     >
       <div
         className="stone-panel w-full max-w-md relative overflow-hidden"
-        style={{ borderRadius: 3, borderTopColor: step === 'confirm' && method === 'osrs-gp' ? GP_GREEN : step === 'confirm' && method === 'crypto' ? CRYPTO_PURPLE : pkg.badge }}
+        style={{ borderRadius: 3, borderTopColor: step === 'confirm' ? GP_GREEN : pkg.badge }}
       >
         {/* Close */}
         <button

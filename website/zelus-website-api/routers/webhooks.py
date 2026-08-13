@@ -1,5 +1,5 @@
 """
-Webhook handlers for Stripe, PayPal, and Tebex.
+Webhook handlers for Stripe, PayPal, Tebex, and NOWPayments.
 
 Security contract:
   - Stripe:  signature is verified with stripe.Webhook.construct_event() using the
@@ -23,8 +23,17 @@ Security contract:
              Unlike Stripe/PayPal, there is no /api/checkout/tebex session --
              the entire purchase flow happens on Tebex's own hosted store, so this
              webhook is the ONLY place a Tebex order is ever seen by our backend.
+  NOWPayments: signature is verified locally. Per NOWPayments' IPN docs, the
+             x-nowpayments-sig header is HMAC-SHA512(key=NOWPAYMENTS_IPN_SECRET,
+             data=<compact JSON of the body with ALL keys, including nested ones,
+             sorted alphabetically>) -- note this is a re-serialization of the
+             parsed body, not the raw bytes as received (unlike Stripe/Tebex),
+             so field order/whitespace in the actual HTTP request don't matter,
+             only the parsed values do. Must use json.dumps(..., separators=(',',
+             ':')) to match JS's compact JSON.stringify(), or the signature won't
+             match even with the right secret.
 
-  Race condition / replay defense (all three providers):
+  Race condition / replay defense (all four providers):
     1. The Transaction row is loaded with SELECT FOR UPDATE, acquiring a Postgres
        row-level lock. A second concurrent webhook for the same transaction blocks
        at this point until the first one commits and releases the lock.
@@ -67,6 +76,7 @@ PAYPAL_CLIENT_ID      = os.getenv("PAYPAL_CLIENT_ID", "")
 PAYPAL_CLIENT_SECRET  = os.getenv("PAYPAL_CLIENT_SECRET", "")
 PAYPAL_BASE_URL       = os.getenv("PAYPAL_BASE_URL", "https://api-m.sandbox.paypal.com")
 TEBEX_SECRET          = os.getenv("TEBEX_SECRET", "")
+NOWPAYMENTS_IPN_SECRET = os.getenv("NOWPAYMENTS_IPN_SECRET", "")
 
 # Tebex's own numeric package id (as it appears in subject.products[].id, always
 # stringified here for dict-key consistency) -> our internal store_catalog slug.
@@ -548,3 +558,117 @@ async def _tebex_fulfill_product(db: Session, transaction_id: str, username: str
         db.rollback()
         log.error("[Tebex] DB error fulfilling %s: %s", provider_session_id, exc)
         raise  # re-raise → FastAPI returns 500 → Tebex retries
+
+
+# ── NOWPayments IPN webhook ─────────────────────────────────────────────────────
+
+# Statuses that mean the crypto payment is fully settled -- see
+# https://nowpayments.zendesk.com/hc/en-us/articles/18372835216413 for the full
+# waiting -> confirming -> confirmed -> sending -> finished progression.
+# "confirmed"/"sending" are NOT included: the funds haven't actually settled to
+# our payout wallet yet at those stages, only "finished" (and "partially_paid",
+# see below) represent money we've actually received.
+_NOWPAYMENTS_SUCCESS_STATUSES = {"finished", "partially_paid"}
+
+
+def _nowpayments_verify_signature(parsed_body: dict, signature: str) -> bool:
+    """
+    NOWPayments' scheme: HMAC-SHA512, keyed with NOWPAYMENTS_IPN_SECRET, over a
+    re-serialization of the PARSED body with every key (recursively) sorted
+    alphabetically and compact separators -- matching JS's
+    JSON.stringify(sortObjectDeep(body)), NOT the raw bytes as received.
+    """
+    if not signature:
+        return False
+
+    def _sort_deep(value):
+        if isinstance(value, dict):
+            return {k: _sort_deep(value[k]) for k in sorted(value.keys())}
+        if isinstance(value, list):
+            return [_sort_deep(v) for v in value]
+        return value
+
+    sorted_body = _sort_deep(parsed_body)
+    serialized  = json.dumps(sorted_body, separators=(",", ":"))
+    expected    = hmac.new(
+        NOWPAYMENTS_IPN_SECRET.encode("utf-8"), serialized.encode("utf-8"), hashlib.sha512
+    ).hexdigest()
+    return hmac.compare_digest(expected, signature)
+
+
+@router.post("/nowpayments")
+async def nowpayments_webhook(request: Request, db: Session = Depends(get_db)):
+    if not NOWPAYMENTS_IPN_SECRET:
+        log.error("[NOWPayments Webhook] NOWPAYMENTS_IPN_SECRET is not set — rejecting request.")
+        raise HTTPException(500, "Webhook endpoint is not configured.")
+
+    raw_body = await request.body()
+    try:
+        event = json.loads(raw_body)
+    except json.JSONDecodeError:
+        raise HTTPException(400, "Malformed JSON payload.")
+
+    signature = request.headers.get("x-nowpayments-sig", "")
+    if not _nowpayments_verify_signature(event, signature):
+        log.warning("[NOWPayments Webhook] Signature mismatch — possible spoofed request.")
+        raise HTTPException(400, "Webhook signature verification failed.")
+
+    payment_status = event.get("payment_status", "")
+    order_id       = event.get("order_id", "")
+    payment_id     = event.get("payment_id", "")
+    log.info("[NOWPayments] IPN — order_id=%s payment_id=%s status=%s",
+              order_id, payment_id, payment_status)
+
+    if payment_status not in _NOWPAYMENTS_SUCCESS_STATUSES:
+        log.info("[NOWPayments] order_id=%s status=%s — not a completion state, no fulfillment.",
+                  order_id, payment_status)
+        return {"status": "received"}
+
+    await _nowpayments_payment_completed(db, event, raw_payload=raw_body.decode("utf-8"))
+    return {"status": "received"}
+
+
+async def _nowpayments_payment_completed(db: Session, event: dict, raw_payload: str) -> None:
+    order_id = event.get("order_id", "")
+
+    # order_id is str(txn.id), set when the invoice was created in
+    # routers/checkout.py's create_crypto_checkout -- NOWPayments always echoes
+    # it back verbatim, so this is a direct primary-key lookup, not a fuzzy match.
+    try:
+        txn_id = int(order_id)
+    except (ValueError, TypeError):
+        log.error("[NOWPayments] Non-numeric order_id=%r — cannot fulfill.", order_id)
+        return
+
+    # SELECT FOR UPDATE locks the row -- a second IPN for the same payment
+    # (NOWPayments re-sends on every status transition) blocks here until the
+    # first one commits, then sees status=COMPLETED and returns without a write.
+    txn = (
+        db.query(models.Transaction)
+        .filter(models.Transaction.id == txn_id)
+        .with_for_update()
+        .first()
+    )
+    if not txn:
+        log.error("[NOWPayments] No transaction #%d for order_id=%r — order NOT fulfilled.",
+                  txn_id, order_id)
+        return
+
+    if txn.status == models.TransactionStatus.COMPLETED:
+        log.info("[NOWPayments] Transaction #%d already fulfilled — skipping duplicate.", txn_id)
+        return
+
+    txn.raw_webhook_payload = raw_payload
+
+    try:
+        _fulfill(db, txn)
+        db.commit()
+        log.info("[NOWPayments] Order fulfilled — user='%s' txn_id=%d payment_id=%s",
+                  txn.username, txn.id, event.get("payment_id"))
+    except IntegrityError:
+        db.rollback()
+        log.warning("[NOWPayments] IntegrityError on txn #%d — duplicate already fulfilled.", txn_id)
+    except Exception as exc:
+        db.rollback()
+        log.error("[NOWPayments] DB error fulfilling txn #%d: %s", txn_id, exc)
+        raise  # re-raise → FastAPI returns 500 → NOWPayments retries

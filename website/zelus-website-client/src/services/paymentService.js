@@ -40,10 +40,12 @@ export const initiateOsrsGpCheckout = (packageId, username) =>
   });
 
 /**
- * Placeholder — creates a pending transaction; no automatic fulfillment yet.
- * @returns {Promise<{transaction_id: number, message: string}>}
+ * Crypto checkout via NOWPayments — creates a hosted invoice and redirects
+ * the player there. Fulfillment happens off NOWPayments' IPN webhook once the
+ * payment settles; the player never leaves a redirect flow to see it happen.
+ * @returns {Promise<{checkout_url: string, invoice_id: string}>}
  */
-export const initiateCryptoCheckout = (packageId, username) =>
+export const createCryptoCheckout = (packageId, username) =>
   apiFetch('/api/checkout/crypto', {
     method: 'POST',
     body: JSON.stringify({ package_id: packageId, username }),

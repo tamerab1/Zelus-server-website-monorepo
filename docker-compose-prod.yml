@@ -109,6 +109,14 @@ services:
             # the entire checkout is hosted on Tebex's own site, this is only used
             # to verify the authenticity of their POST /api/webhooks/tebex pings.
             TEBEX_SECRET: ${TEBEX_SECRET}
+            # NOWPayments (crypto) -- API_KEY authorizes our POST /v1/invoice calls;
+            # IPN_SECRET verifies their POST /api/webhooks/nowpayments callbacks.
+            NOWPAYMENTS_API_KEY: ${NOWPAYMENTS_API_KEY}
+            NOWPAYMENTS_IPN_SECRET: ${NOWPAYMENTS_IPN_SECRET}
+            # This service's OWN public URL -- embedded in each NOWPayments invoice's
+            # ipn_callback_url so NOWPayments knows where to send its webhook. Not the
+            # same as SITE_URL (that's the frontend, a different subdomain).
+            API_BASE_URL: https://${BETA_API_DOMAIN}
             # Default is beta's sandbox value; production overrides via
             # PAYPAL_BASE_URL in its own DOCKER_COMPOSE_ENV secret (see
             # the KRONOS_BOOT_OPTS comment on game_server for why this
