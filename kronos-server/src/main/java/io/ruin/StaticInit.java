@@ -236,6 +236,7 @@ public final class StaticInit {
 		io.ruin.model.entity.doors.Lighthouse.register();
 		io.ruin.model.entity.doors.MagicGuild.register();
 		io.ruin.model.entity.doors.PortPhasmatys.register();
+		io.ruin.model.entity.npc.actions.AllannasFarmingShop.register();
 		io.ruin.model.entity.npc.actions.Aubury.register();
 		io.ruin.model.entity.npc.actions.CandleShop.register();
 		io.ruin.model.entity.npc.actions.DrunkenDwarf.register();

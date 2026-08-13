@@ -195,8 +195,6 @@ public enum ServerTeleports {
 		" near a bank.", "", "No requirements.", 0, 0),
 	HARDWOOD_GROVE("Hardwood Grove", new Position(2818, 3083, 0), null, "Mahogany and Teak trees can <br>be chopped here.",
 		"", "35 Woodcutting for Teak trees and 50 for Mahogany.", 0, 0),
-	PLEASANT_PARK("Pleasant Park", new Position(3110, 3512, 0), null, "A park filled with numerous <br>tree types.",
-		"", "No requirements.", 0, 0),
 	FARMING_GUILD("Farming Guild", new Position(1249, 3725, 0), null, "The Farming Guild, complete some <br>farming contracts here!",
 		"", "45 Farming.", 0, 0),
 	KOUREND_ALLOTMENT("Kourend Patches", new Position(1737, 3549, 0), null, "The allotment, herb & flower <br>patches in Kourend.",

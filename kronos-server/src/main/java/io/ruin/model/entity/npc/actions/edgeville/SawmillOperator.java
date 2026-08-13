@@ -116,7 +116,7 @@ public class SawmillOperator {
 										npc,
 										"Wood and oak are all over the place, but teak and mahogany can only be found in a few places "
 											+ "like Karamja and Etceteria."))),
-						new Option("Can I buy some housing supplies?", () -> ShopManager.openIfExists(player, "ReasonConstruction")),
+						new Option("Can I buy some housing supplies?", () -> ShopManager.openIfExists(player, "ZelusConstruction")),
 						new Option(
 							"Nothing, thanks.",
 							() ->
@@ -135,19 +135,19 @@ public class SawmillOperator {
 			SAWMILL_OPERATOR_NPC_ID,
 			"trade",
 			(player, npc) -> {
-				ShopManager.openIfExists(player, "ReasonConstruction");
+				ShopManager.openIfExists(player, "ZelusConstruction");
 			});
 		NPCAction.register(
 			1501,
 			"trade",
 			(player, npc) -> {
-				ShopManager.openIfExists(player, "ReasonHunter");
+				ShopManager.openIfExists(player, "ZelusHunter");
 			});
 		NPCAction.register(
 			1501,
 			1,
 			(player, npc) -> {
-				ShopManager.openIfExists(player, "ReasonHunter");
+				ShopManager.openIfExists(player, "ZelusHunter");
 			});
 
 		SpawnListener.register(

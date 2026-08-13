@@ -122,6 +122,44 @@ public class Hunter {
 		});
 	}
 
+	/**
+	 * "Reset" on a failed/triggered box trap -- was previously aliased to
+	 * dismantleTrap() (picks the trap up entirely), which is wrong: real box
+	 * traps re-arm in place without giving the item back. Reuses the same Trap
+	 * instance (its ongoing addTimeoutEvent() loop keeps tracking it via
+	 * trap.getObject(), so it doesn't need restarting) and just swaps the
+	 * GameObject from the failed model back to the active one, same animation
+	 * as an initial placement.
+	 */
+	public static void resetTrap(Player player, GameObject obj) {
+		if (!isOwner(player, obj)) {
+			player.sendMessage("This isn't your trap.");
+			return;
+		}
+		if (obj.trap == null) {
+			destroyTrap(obj);
+			return;
+		}
+		final Trap trap = obj.trap;
+		if (trap.isBusy()) {
+			return;
+		}
+		World.startEvent(event -> {
+			player.lock();
+			player.animate(trap.getTrapType().getPlaceAnimation());
+			event.delay(2);
+			if (!obj.isRemoved()) {
+				GameObject newObj = GameObject.spawn(trap.getTrapType().getActiveObjectId(), obj.x, obj.y, obj.z, 10, 0);
+				obj.trap = null;
+				obj.remove();
+				trap.setObject(newObj);
+				newObj.trap = trap;
+				trap.getTrapType().onPlace(player, newObj);
+			}
+			player.unlock();
+		});
+	}
+
 	public static void destroyTrap(GameObject obj) {
 		if (!obj.isRemoved())
 			obj.remove();
@@ -146,8 +184,8 @@ public class Hunter {
 		}
 		ObjectAction.register(type.getActiveObjectId(), "dismantle", Hunter::dismantleTrap);
 		ObjectAction.register(type.getFailedObjectId(), "dismantle", Hunter::dismantleTrap);
-		ObjectAction.register(type.getActiveObjectId(), "reset", Hunter::dismantleTrap);
-		ObjectAction.register(type.getFailedObjectId(), "reset", Hunter::dismantleTrap);
+		ObjectAction.register(type.getActiveObjectId(), "reset", Hunter::resetTrap);
+		ObjectAction.register(type.getFailedObjectId(), "reset", Hunter::resetTrap);
 		for (int id : type.getSuccessObjects())
 			ObjectAction.register(id, 1, Hunter::checkTrap);
 	}

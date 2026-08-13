@@ -84,7 +84,16 @@ public class CommandHandlerRegular {
 					player.sendMessage("This command is for donators and staff only.");
 					return true;
 				}
-				new io.ruin.model.inter.handlers.TeleInterface().open(player);
+				// Every click handler for interface 851 (TeleInterface.register(), see
+				// h.actions[22..114]) is wired to the persistent per-player instance
+				// player.teleportInterface, not a fresh object -- constructing a new
+				// TeleInterface() here (as this did before) left that persistent
+				// instance's item container uninitialized (init() never ran on it),
+				// so every destination click threw an uncaught NPE in
+				// ItemContainerG.clear() before teleportCheck() ever ran, silently
+				// eating every selection. Confirmed live: this is why ::t/::teleport
+				// opened the interface fine but no destination could ever be selected.
+				player.teleportInterface.open(player);
 				return true;
 			}
 
@@ -161,12 +170,21 @@ public class CommandHandlerRegular {
 			// already dead code). ZelusLoadoutInterface/ZelusLoadoutManager left in place,
 			// unreferenced, in case any saved player data needs a one-off migration later.
 
-			// PvP preset: ::pvpmode opens the interface, ::pvpmode off deactivates
+			// ::pvpmode now opens the current GearLoadouts system (same interface as
+			// ::loadouts/::gearloadouts/::kits and the devouring forge), not the old
+			// PvpPresetInterface -- that legacy preset picker was only ever reachable
+			// through this command, and GearLoadouts replaced it as the live system.
+			// ::pvpmode off is left calling the OLD PvpPresetManager deactivation path
+			// deliberately: it still tracks real state (PHANTOM_KEY rental gear, death
+			// handling) for anyone who has an active old-style preset loaded, and
+			// removing their only way to cleanly exit that would strand their gear.
 			case "pvpmode": {
 				if (args.length >= 1 && args[0].equalsIgnoreCase("off")) {
 					io.ruin.model.content.pvppreset.PvpPresetManager.deactivate(player, true);
+				} else if (!player.isPvpMode() && !player.isOwner()) {
+					player.sendMessage("You must be in PvP mode to use gear loadouts.");
 				} else {
-					io.ruin.model.content.pvppreset.PvpPresetInterface.open(player);
+					io.ruin.model.content.gearloadouts.GearLoadoutInterface.open(player);
 				}
 				return true;
 			}
@@ -997,11 +1015,6 @@ public class CommandHandlerRegular {
 
 			case "hardwoodgrove": {
 				teleport(player, ServerTeleports.HARDWOOD_GROVE.getTeleportPos());
-				return true;
-			}
-
-			case "pleasantpark": {
-				teleport(player, ServerTeleports.PLEASANT_PARK.getTeleportPos());
 				return true;
 			}
 

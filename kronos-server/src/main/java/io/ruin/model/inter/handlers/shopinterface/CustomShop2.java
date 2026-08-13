@@ -786,7 +786,6 @@ public enum CustomShop2 {
 			new ShopItem(10550, 35000),   // Ranger hat
 			new ShopItem(10547, 35000),   // Healer hat
 			new ShopItem(8850, 30000),    // Rune defender
-			new ShopItem(19677, 5000),    // Ancient shard
 
 			new ShopItem(13260, 30000),  // Angler waders
 			new ShopItem(13259, 30000),  // Angler top
