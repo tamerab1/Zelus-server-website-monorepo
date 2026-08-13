@@ -113,7 +113,7 @@ def _fulfill(db: Session, txn: models.Transaction) -> None:
         claimed_status="unclaimed",
     )
     db.add(claim)
-    txn.status = models.TransactionStatus.COMPLETED
+    txn.status = models.TransactionStatus.COMPLETED.value
     txn.completed_at = datetime.now(timezone.utc)
     log.info(
         "[Fulfill] PendingClaim written — user='%s' pkg='%s' tokens=%d txn_id=%d",
@@ -202,14 +202,14 @@ async def _stripe_session_completed(db: Session, session: dict, raw_payload: str
             amount_usd=item.price_usd,
             provider=models.PaymentProvider.STRIPE.value,
             provider_session_id=session_id,
-            status=models.TransactionStatus.PENDING,
+            status=models.TransactionStatus.PENDING.value,
             raw_webhook_payload=raw_payload,
         )
         db.add(txn)
         db.flush()  # assign txn.id; provider_session_id UNIQUE constraint fires here on dupe
     else:
         # ── Idempotency: row is locked — check status now that we hold the lock ─
-        if txn.status == models.TransactionStatus.COMPLETED:
+        if txn.status == models.TransactionStatus.COMPLETED.value:
             log.info("[Stripe] Session %s already fulfilled — skipping duplicate delivery.", session_id)
             return
         txn.raw_webhook_payload = raw_payload
@@ -367,7 +367,7 @@ async def _paypal_capture_completed(db: Session, event: dict, raw_payload: str) 
         return
 
     # ── Idempotency: row is locked — check status now that we hold the lock ────
-    if txn.status == models.TransactionStatus.COMPLETED:
+    if txn.status == models.TransactionStatus.COMPLETED.value:
         log.info("[PayPal] Transaction %d already fulfilled — skipping duplicate.", txn.id)
         return
 
@@ -528,7 +528,7 @@ async def _tebex_fulfill_product(db: Session, transaction_id: str, username: str
         .first()
     )
     if txn:
-        if txn.status == models.TransactionStatus.COMPLETED:
+        if txn.status == models.TransactionStatus.COMPLETED.value:
             log.info("[Tebex] %s already fulfilled — skipping duplicate.", provider_session_id)
             return
         txn.raw_webhook_payload = raw_payload
@@ -540,7 +540,7 @@ async def _tebex_fulfill_product(db: Session, transaction_id: str, username: str
             amount_usd=item.price_usd,
             provider=models.PaymentProvider.TEBEX.value,
             provider_session_id=provider_session_id,
-            status=models.TransactionStatus.PENDING,
+            status=models.TransactionStatus.PENDING.value,
             raw_webhook_payload=raw_payload,
         )
         db.add(txn)
@@ -654,7 +654,7 @@ async def _nowpayments_payment_completed(db: Session, event: dict, raw_payload: 
                   txn_id, order_id)
         return
 
-    if txn.status == models.TransactionStatus.COMPLETED:
+    if txn.status == models.TransactionStatus.COMPLETED.value:
         log.info("[NOWPayments] Transaction #%d already fulfilled — skipping duplicate.", txn_id)
         return
 

@@ -94,7 +94,7 @@ async def create_stripe_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_name=item.name,
         amount_usd=item.price_usd,
         provider=models.PaymentProvider.STRIPE.value,
-        status=models.TransactionStatus.PENDING,
+        status=models.TransactionStatus.PENDING.value,
     )
     db.add(txn)
     db.flush()  # assign txn.id without committing
@@ -160,7 +160,7 @@ async def create_paypal_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_name=item.name,
         amount_usd=item.price_usd,
         provider=models.PaymentProvider.PAYPAL.value,
-        status=models.TransactionStatus.PENDING,
+        status=models.TransactionStatus.PENDING.value,
     )
     db.add(txn)
     db.flush()
@@ -260,7 +260,7 @@ async def create_osrs_gp_checkout(req: CheckoutRequest, db: Session = Depends(ge
         package_name=item.name,
         amount_usd=item.price_usd,
         provider=models.PaymentProvider.OSRS_GP.value,
-        status=models.TransactionStatus.PENDING,
+        status=models.TransactionStatus.PENDING.value,
     )
     db.add(txn)
     db.flush()   # get txn.id before the Discord call
@@ -365,7 +365,7 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
         package_name=item.name,
         amount_usd=item.price_usd,
         provider=models.PaymentProvider.CRYPTO.value,
-        status=models.TransactionStatus.PENDING,
+        status=models.TransactionStatus.PENDING.value,
     )
     db.add(txn)
     db.flush()  # assign txn.id before the API call — order_id needs it

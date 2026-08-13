@@ -208,6 +208,10 @@ class Transaction(Base):
     # SQLAlchemy Enum type, so nothing coerces it automatically).
     provider            = Column(String(10), nullable=False)
     provider_session_id = Column(String(255), unique=True, index=True, nullable=True)
+    # Same footgun as `provider` above -- TransactionStatus is also a plain enum.Enum,
+    # so every read (`txn.status == ...`) and write must use .value on both sides.
+    # Comparing against the bare enum member silently always evaluates False once the
+    # column actually holds a string, which breaks every COMPLETED idempotency check.
     status              = Column(String(20), default=TransactionStatus.PENDING.value, nullable=False)
     created_at          = Column(DateTime, default=func.now())
     completed_at        = Column(DateTime, nullable=True)
