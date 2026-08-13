@@ -356,7 +356,18 @@ async def _send_osrs_gp_discord_alert(
 # own record of what the PACKAGE costs) and fulfillment (keyed off
 # txn.package_id, never the amount paid) are both unaffected -- the customer
 # still receives the item's real price_usd()/tokens regardless of this pad.
-NOWPAYMENTS_MIN_INVOICE_USD = 5.50
+#
+# Raised 5.50 -> 8.00 after a real underpayment: a customer withdrawing from
+# Binance lost ~$1.50 of a $5 invoice to that exchange's own withdrawal fee
+# (separate from and on top of NOWPayments'/network fees), landing well under
+# even the previous floor. No fixed floor can guarantee covering an arbitrary
+# exchange's fee on an expensive network -- this is a mitigation, not a
+# guarantee. The real fix for THAT specific incident was elsewhere: NOWPayments
+# already treats an underpaid-but-still-partial payment as fulfillable (see
+# _NOWPAYMENTS_SUCCESS_STATUSES below) -- the transaction actually got stuck
+# because of a signature-verification bug rejecting the real IPN outright, not
+# because of this floor. Fixed in _nowpayments_verify_signature.
+NOWPAYMENTS_MIN_INVOICE_USD = 8.00
 
 @router.post("/crypto")
 async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get_db)):

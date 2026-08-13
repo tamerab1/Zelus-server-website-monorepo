@@ -571,15 +571,27 @@ async def _tebex_fulfill_product(db: Session, transaction_id: str, username: str
 _NOWPAYMENTS_SUCCESS_STATUSES = {"finished", "partially_paid"}
 
 
-def _nowpayments_verify_signature(parsed_body: dict, signature: str) -> bool:
+def _nowpayments_verify_signature(parsed_body: dict, signature: str) -> tuple[bool, str]:
     """
     NOWPayments' scheme: HMAC-SHA512, keyed with NOWPAYMENTS_IPN_SECRET, over a
     re-serialization of the PARSED body with every key (recursively) sorted
     alphabetically and compact separators -- matching JS's
     JSON.stringify(sortObjectDeep(body)), NOT the raw bytes as received.
+
+    ensure_ascii=False is required: Python's json.dumps defaults to escaping
+    non-ASCII characters as \\uXXXX, but JS's JSON.stringify never does -- any
+    field NOWPayments echoes back containing a non-ASCII character (e.g. our
+    own order_description's em dash, "Zelus — ...") would otherwise serialize
+    to different bytes than what NOWPayments actually signed, breaking the
+    HMAC. Confirmed live: two real IPNs for an underpaid transaction were
+    rejected here with this exact bug before it was found.
+
+    Returns (is_valid, computed_signature) -- the computed value is included
+    so a mismatch can be logged with enough detail to actually debug it,
+    rather than just "didn't match".
     """
     if not signature:
-        return False
+        return False, ""
 
     def _sort_deep(value):
         if isinstance(value, dict):
@@ -589,11 +601,11 @@ def _nowpayments_verify_signature(parsed_body: dict, signature: str) -> bool:
         return value
 
     sorted_body = _sort_deep(parsed_body)
-    serialized  = json.dumps(sorted_body, separators=(",", ":"))
+    serialized  = json.dumps(sorted_body, separators=(",", ":"), ensure_ascii=False)
     expected    = hmac.new(
         NOWPAYMENTS_IPN_SECRET.encode("utf-8"), serialized.encode("utf-8"), hashlib.sha512
     ).hexdigest()
-    return hmac.compare_digest(expected, signature)
+    return hmac.compare_digest(expected, signature), expected
 
 
 @router.post("/nowpayments")
@@ -609,8 +621,12 @@ async def nowpayments_webhook(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(400, "Malformed JSON payload.")
 
     signature = request.headers.get("x-nowpayments-sig", "")
-    if not _nowpayments_verify_signature(event, signature):
-        log.warning("[NOWPayments Webhook] Signature mismatch — possible spoofed request.")
+    is_valid, computed = _nowpayments_verify_signature(event, signature)
+    if not is_valid:
+        log.warning(
+            "[NOWPayments Webhook] Signature mismatch — received=%s computed=%s body=%s",
+            signature, computed, raw_body.decode("utf-8", errors="replace"),
+        )
         raise HTTPException(400, "Webhook signature verification failed.")
 
     payment_status = event.get("payment_status", "")
