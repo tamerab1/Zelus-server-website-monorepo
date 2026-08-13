@@ -752,6 +752,65 @@ public enum CustomShop2 {
 		14,
 		Currency.REASON,
 		new ShopItem[]{
+
+			// Equipment
+			new ShopItem(8840, 60000),    // Void knight robe
+			new ShopItem(8839, 60000),    // Void knight top
+			new ShopItem(11664, 35000),   // Void ranger helm
+			new ShopItem(11663, 35000),   // Void mage helm
+			new ShopItem(11665, 35000),   // Void melee helm
+			new ShopItem(8842, 45000),    // Void knight gloves
+			new ShopItem(21793, 250000),  // Imbued guthix cape
+			new ShopItem(21795, 250000),  // Imbued zamorak cape
+			new ShopItem(21791, 250000),  // Imbued saradomin cape
+			new ShopItem(30430, 1000000), // Ultra mystery box
+
+			new ShopItem(6924, 60000),    // Infinity bottoms
+			new ShopItem(6918, 35000),    // Infinity hat
+			new ShopItem(6916, 60000),    // Infinity top
+			new ShopItem(6920, 40000),    // Infinity boots
+			new ShopItem(6922, 30000),    // Infinity gloves
+			new ShopItem(6889, 70000),    // Mage's book
+			new ShopItem(12610, 25000),   // Book of law
+			new ShopItem(12612, 25000),   // Book of darkness
+			new ShopItem(3842, 25000),    // Unholy book
+			new ShopItem(12608, 25000),   // Book of war
+
+			new ShopItem(26854, 30000), // Robe bottoms of the eye
+			new ShopItem(26852, 30000), // Robe top of the eye
+			new ShopItem(26850, 25000), // Hat of the eye
+			new ShopItem(26856, 25000), // boots of the eye
+			new ShopItem(775, 20000),    // Cooking gauntlets
+			new ShopItem(776, 20000),    // Goldsmith gauntlets
+			new ShopItem(1580, 20000),   // Ice gloves
+			new ShopItem(10550, 35000),   // Ranger hat
+			new ShopItem(10547, 35000),   // Healer hat
+			new ShopItem(8850, 30000),    // Rune defender
+			new ShopItem(19677, 5000),    // Ancient shard
+
+			new ShopItem(13260, 30000),  // Angler waders
+			new ShopItem(13259, 30000),  // Angler top
+			new ShopItem(13258, 25000),  // Angler hat
+			new ShopItem(13261, 25000),  // Angler boots
+			new ShopItem(10588, 75000),   // Salve amulet(e)
+			new ShopItem(12018, 200000),  // Salve amulet(ei)
+			new ShopItem(20716, 250000),  // Tome of fire (empty)
+			new ShopItem(20718, 15000),   // Burnt page
+			new ShopItem(25576, 250000),  // Tome of water (empty)
+			new ShopItem(25578, 15000),   // Elemental shield / tome-adjacent item
+
+			new ShopItem(11941, 100000),  // Looting bag
+			new ShopItem(12019, 50000),   // Coal bag
+			new ShopItem(12020, 50000),   // Gem bag
+			new ShopItem(26784, 75000),    // Colossal pouch
+			new ShopItem(5514, 50000),    // Giant pouch
+			new ShopItem(5512, 25000),    // Large pouch
+			new ShopItem(5510, 17500),    // Medium pouch
+			new ShopItem(5509, 10000),    // Small pouch
+			new ShopItem(19677, 5000),    // Ancient shard
+			new ShopItem(19685, 250000),  // Dark totem
+
+
 			// Consumables
 			new ShopItem(12695, 100),   // Super combat potion(4)
 			new ShopItem(2436, 50),     // Super attack(4)
@@ -768,58 +827,17 @@ public enum CustomShop2 {
 			new ShopItem(21978, 125),   // Super antifire potion(4)
 			new ShopItem(5952, 100),    // Antidote+(4)
 			new ShopItem(12913, 175),   // Anti-venom+(4)
-			new ShopItem(385, 100),     // Shark
-			new ShopItem(7946, 75),     // Monkfish
-
-			// Equipment
-			new ShopItem(11664, 35000),   // Void ranger helm
-			new ShopItem(11663, 35000),   // Void mage helm
-			new ShopItem(11665, 35000),   // Void melee helm
-			new ShopItem(8842, 45000),    // Void knight gloves
-			new ShopItem(8839, 60000),    // Void knight top
-			new ShopItem(8840, 60000),    // Void knight robe
-			new ShopItem(10550, 35000),   // Ranger hat
-			new ShopItem(10547, 35000),   // Healer hat
-			new ShopItem(10588, 75000),   // Salve amulet(e)
-			new ShopItem(12018, 200000),  // Salve amulet(ei)
-			new ShopItem(8850, 30000),    // Rune defender
-			new ShopItem(6918, 35000),    // Infinity hat
-			new ShopItem(6916, 60000),    // Infinity top
-			new ShopItem(6924, 60000),    // Infinity bottoms
-			new ShopItem(6920, 40000),    // Infinity boots
-			new ShopItem(6922, 30000),    // Infinity gloves
-			new ShopItem(20716, 250000),  // Tome of fire (empty)
-			new ShopItem(20718, 15000),   // Burnt page
-			new ShopItem(25576, 250000),  // Tome of water (empty)
-			new ShopItem(25578, 15000),   // Elemental shield / tome-adjacent item
-			new ShopItem(6889, 70000),    // Mage's book
 			new ShopItem(6914, 120000),   // Master wand
-			new ShopItem(21793, 250000),  // Imbued guthix cape
-			new ShopItem(21795, 250000),  // Imbued zamorak cape
-			new ShopItem(21791, 250000),  // Imbued saradomin cape
 			new ShopItem(7462, 50000),    // Barrows gloves
 			new ShopItem(19675, 100000),  // Arclight
 			new ShopItem(1409, 35000),    // Iban's staff
-			new ShopItem(12610, 25000),   // Book of law
-			new ShopItem(12612, 25000),   // Book of darkness
-			new ShopItem(3842, 25000),    // Unholy book
-			new ShopItem(12608, 25000),   // Book of war
+			new ShopItem(385, 100),     // Shark
+			new ShopItem(7946, 75),     // Monkfish
 
 			// Skilling
 			new ShopItem(22875, 10000),  // Hespori seed
 			new ShopItem(7409, 20000),   // Magic secateurs
 			new ShopItem(9625, 20000),   // Crystal saw
-			new ShopItem(775, 20000),    // Cooking gauntlets
-			new ShopItem(776, 20000),    // Goldsmith gauntlets
-			new ShopItem(1580, 20000),   // Ice gloves
-			new ShopItem(26850, 25000),
-			new ShopItem(26852, 30000),
-			new ShopItem(26854, 30000),
-			new ShopItem(26856, 25000),
-			new ShopItem(13258, 25000),  // Angler hat
-			new ShopItem(13259, 30000),  // Angler top
-			new ShopItem(13260, 30000),  // Angler waders
-			new ShopItem(13261, 25000),  // Angler boots
 			new ShopItem(1585, 5000),    // Oily fishing rod
 
 			// Utility
@@ -828,19 +846,11 @@ public enum CustomShop2 {
 			new ShopItem(21726, 50),      // Granite dust
 			new ShopItem(4, 30000),       // Ammo mould
 			new ShopItem(27012, 100000),
-			new ShopItem(19677, 5000),    // Ancient shard
-			new ShopItem(19685, 250000),  // Dark totem
-			new ShopItem(12019, 50000),   // Coal bag
-			new ShopItem(12020, 50000),   // Gem bag
-			new ShopItem(30430, 1000000),
-			new ShopItem(11941, 100000),  // Looting bag
 			new ShopItem(19564, 50000),
 			new ShopItem(26706, 100000),
-			new ShopItem(5509, 10000),    // Small pouch
-			new ShopItem(5510, 17500),    // Medium pouch
-			new ShopItem(5512, 25000),    // Large pouch
-			new ShopItem(5514, 50000),    // Giant pouch
-			new ShopItem(26784, 75000)    // Colossal pouch
+
+
+
 		}
 	),
 	// Mirrors the old, separate Achievement Point Store's item list/prices exactly -- see
