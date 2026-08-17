@@ -158,7 +158,10 @@ public class GroupIronmanTeam {
 	public void sendInvitation(Player inviter, Player target) {
 		invitation = Optional.of(target.getName());
 		target.sendMessage(inviter.getName() + ":invite:");
-		target.getPacketSender().sendMessage(inviter.getName() + " wishes to Invite you to suck dick with you.", target.getName(), 101);
+		// The clickable-name field must be the INVITER (who the target should be able to
+		// click on), not the target's own name, and must match the avatar's registered
+		// getNameWithRanks() (rank/donator/title tags) or the client can't resolve the click.
+		target.getPacketSender().sendMessage(inviter.getNameWithRanks() + " wishes to invite you to their Group Ironman team.", inviter.getNameWithRanks(), 101);
 		inviter.sendMessage("Request sent to " + target.getName());
 
 	}

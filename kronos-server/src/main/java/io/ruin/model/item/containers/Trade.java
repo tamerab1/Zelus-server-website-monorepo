@@ -201,7 +201,12 @@ public class Trade extends ItemContainer {
 		requestEnd.delay(25);
 		requestUserId = target.getUserId();
 
-		target.getPacketSender().sendMessage(player.getName() + " wishes to trade with you.", player.getName(), 101);
+		// The clickable-name lookup on the client matches against the name the player's avatar
+		// is actually registered under (getNameWithRanks(), which includes rank/donator/PvP-mode/
+		// title tags -- see Appearance.java's avatar.setName call). Sending the plain getName()
+		// here works only for players with no tags at all; for anyone with a tag the client can't
+		// resolve the name and the trade request becomes unclickable ("unable to find [name]").
+		target.getPacketSender().sendMessage(player.getNameWithRanks() + " wishes to trade with you.", player.getNameWithRanks(), 101);
 		sendMessage("Sending trade offer...");
 		if (player.wildernessLevel > 0)
 			sendMessage("Trading in the Wilderness is dangerous - you might get killed!");

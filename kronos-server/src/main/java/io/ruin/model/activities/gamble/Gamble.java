@@ -300,7 +300,7 @@ public class Gamble extends ItemContainer {
 			return;
 		}
 		requestUserId = target.getUserId();
-		target.getPacketSender().sendMessage(player.getName() + " wishes to gamble with you.", player.getName(), 103);
+		target.getPacketSender().sendMessage(player.getNameWithRanks() + " wishes to gamble with you.", player.getNameWithRanks(), 103);
 		player.getPacketSender().sendMessage("Sending gamble request to " + target.getName() + "...", null, 102);
 	}
 
