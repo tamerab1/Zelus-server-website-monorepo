@@ -3397,7 +3397,7 @@ public class Player extends PlayerAttributes {
 		}
 
 		// HOTFIX: deadlock prevention
-		if (this.isLocked() && !player.inTutorial && this.lockTimeoutTicks-- <= 0) {
+		if (this.isLocked() && this.lockTimeoutTicks-- <= 0) {
 			this.unlock();
 		}
 

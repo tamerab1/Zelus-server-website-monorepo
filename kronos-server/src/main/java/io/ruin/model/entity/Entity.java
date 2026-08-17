@@ -73,6 +73,10 @@ public abstract class Entity {
 
 	private static final int MAX_EVENTS_PER_ENTITY = 50;
 	public static final long MAX_LOCK_TIME_TICKS = 30;
+	// Tutorial keeps players locked across dialogue the player paces themselves through,
+	// so it needs a much longer leash than the standard deadlock net -- but still a finite
+	// one, so a hung interface wait can't strand a new account locked forever.
+	public static final long TUTORIAL_MAX_LOCK_TIME_TICKS = 1000;
 
 	private transient boolean backgroundEventsErrored = false;
 	public transient HooksV2<Hook> selfHooks = new HooksV2<>(Hook.class);
@@ -553,7 +557,7 @@ public abstract class Entity {
 
 	public void lock(LockType type) {
 		lock = type;
-		lockTimeoutTicks = MAX_LOCK_TIME_TICKS;
+		lockTimeoutTicks = (player != null && player.inTutorial) ? TUTORIAL_MAX_LOCK_TIME_TICKS : MAX_LOCK_TIME_TICKS;
 	}
 
 	public boolean isLocked() {

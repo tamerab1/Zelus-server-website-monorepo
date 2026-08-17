@@ -120,6 +120,11 @@ public class StarterGuide {
 						})));
 	}
 
+	// Generous cap on how long we'll wait for the player to close the makeover/mode-select
+	// interfaces (100 ticks = 60s) -- long enough for genuine customization, but bounded so
+	// a stuck/unresponsive client can't leave the new account locked indefinitely.
+	private static final int MAX_INTERFACE_WAIT_TICKS = 100;
+
 	@SneakyThrows
 	public static void ecoTutorial(Player player) {
 		boolean actuallyNew = player.newPlayer;
@@ -131,8 +136,12 @@ public class StarterGuide {
 			if (actuallyNew) {
 				player.openInterface(ToplevelComponent.MAINMODAL, Interface.MAKE_OVER_MAGE);
 				player.getPacketSender().sendIfEvents(679, 78, 0, 4, new int[] { 1 << 1 });
-				while (player.isVisibleInterface(Interface.MAKE_OVER_MAGE)) {
+				int waitTicks = 0;
+				while (player.isVisibleInterface(Interface.MAKE_OVER_MAGE) && waitTicks++ < MAX_INTERFACE_WAIT_TICKS) {
 					event.delay(1);
+				}
+				if (player.isVisibleInterface(Interface.MAKE_OVER_MAGE)) {
+					player.closeInterfaces();
 				}
 			}
 
@@ -143,8 +152,12 @@ public class StarterGuide {
 
 			if (actuallyNew) {
 				player.getGameModeInterface().openIronmanSettingsInterface(player);
-				while (player.isVisibleInterface(1100)) {
+				int waitTicks = 0;
+				while (player.isVisibleInterface(1100) && waitTicks++ < MAX_INTERFACE_WAIT_TICKS) {
 					event.delay(1);
+				}
+				if (player.isVisibleInterface(1100)) {
+					player.closeInterfaces();
 				}
 			}
 
@@ -636,7 +649,7 @@ public class StarterGuide {
 		player.getInventory().add(ItemID.FIRE_CAPE, 1);
 		player.getInventory().add(ItemID.DHAROKS_GREATAXE, 1);
 		player.getInventory().add(3145, 100); // Cooked karambwan (noted) -- 3144's own def points noted_id here
-		player.getInventory().add(ItemID.SUPER_COMBAT_POTION4, 20);
+		player.getInventory().add(12696, 20); // Super combat potion(4), noted -- 12695's own def points noted_id here
 		player.getInventory().add(ItemID.BERSERKER_RING, 1);
 		player.getInventory().add(ItemID.KARILS_LEATHERSKIRT, 1);
 		player.getInventory().add(ItemID.KARILS_LEATHERTOP, 1);
