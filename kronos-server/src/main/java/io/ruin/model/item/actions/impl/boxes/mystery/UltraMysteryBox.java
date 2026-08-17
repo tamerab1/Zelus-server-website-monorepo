@@ -14,7 +14,7 @@ public class UltraMysteryBox extends ItemContainer {
 
 	private static final int EASTER_EGG = 21227;
 
-	private static final LootTable ECO_MYSTERY_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable ECO_MYSTERY_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(COINS_995, 25000000, 50000000, 20),
 
 		new LootItem(12821, 1, 12).broadcast(Broadcast.WORLD),

@@ -512,20 +512,24 @@ public class PlayerPerkHandler {
 
 
 	public int getExperienceToNextLevel(Player player) {
-		return 5000 * (player.perkTreeLevel);
+		return calculateExperienceForLevel(player.perkTreeLevel);
 	}
 
+	// Cumulative total XP required to complete the given level (each level costs 5000 more
+	// than the last, so this is a triangular sum -- not flat 5000*level, which let a single
+	// big lamp skip ~20 levels at once regardless of how deep into the tree the player was).
 	public int calculateExperienceForLevel(int level) {
-		return 5000 * (level);
+		return 5000 * level * (level + 1) / 2;
 	}
 
 	public float calculateNextPerkLevelPercentage(Player player) {
 		int currentLevel = player.perkTreeLevel;
 		int currentXP = player.perkTreeExperience;
 
+		int xpForCurrentLevel = currentLevel <= 1 ? 0 : calculateExperienceForLevel(currentLevel - 1);
 		int xpForNextLevel = calculateExperienceForLevel(currentLevel);
 
-		float xpProgress = (float) currentXP / xpForNextLevel;
+		float xpProgress = (float) (currentXP - xpForCurrentLevel) / (xpForNextLevel - xpForCurrentLevel);
 		return xpProgress;
 	}
 

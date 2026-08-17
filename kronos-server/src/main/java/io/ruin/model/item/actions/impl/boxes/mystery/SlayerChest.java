@@ -267,7 +267,7 @@ public class SlayerChest {
 		new Item(1776, 325), // Molten glass
 	};
 
-	private static final LootTable BOSS_LOOT = new LootTable()
+	public static final LootTable BOSS_LOOT = new LootTable()
 		.addTable(1,
 			new LootItem(11841, 3, 20),  // Dragon boots
 			new LootItem(6739, 1, 20),    // Dragon axe
@@ -325,7 +325,7 @@ public class SlayerChest {
 			new LootItem(21270, 1, 10).broadcast(Broadcast.GLOBAL)    // Eternal gem
 		);
 
-	private static final LootTable VERY_RARE_LOOT = new LootTable()
+	public static final LootTable VERY_RARE_LOOT = new LootTable()
 		.addTable(1,
 			new LootItem(20724, 1, 3).broadcast(Broadcast.GLOBAL),   // Imbued heart magic
 			new LootItem(30503, 1, 3).broadcast(Broadcast.GLOBAL),   // Imbued heart melee

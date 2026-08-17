@@ -102,9 +102,8 @@ public enum AchievementLamp {
 				int experience = 25000;
 				player.closeInterface(ToplevelComponent.MAINMODAL);
 				lamp.remove();
-				player.getStats().addXp(player.selectedSkillLampSkill, experience, true);
-				long experienceNumber = (long) (experience * player.getDifficulty().GetExperienceBoost());
-				player.sendMessage(Color.DARK_GREEN.wrap("You have been rewarded " + NumberUtils.formatNumber(experienceNumber) + " " + player.selectedSkillLampSkill.name() + " experience."));
+				player.getStats().addXp(player.selectedSkillLampSkill, experience, false);
+				player.sendMessage(Color.DARK_GREEN.wrap("You have been rewarded " + NumberUtils.formatNumber(experience) + " " + player.selectedSkillLampSkill.name() + " experience."));
 			};
 		});
 

@@ -10,7 +10,7 @@ import io.ruin.utility.Broadcast;
 
 public class ThirdAgeMysteryBox {
 
-	private static final LootTable THIRD_AGE_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable THIRD_AGE_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(12422, 1, 1), // 3rd age wand
 		new LootItem(12424, 1, 1), // 3rd age bow
 		new LootItem(12426, 1, 1), // 3rd age sword

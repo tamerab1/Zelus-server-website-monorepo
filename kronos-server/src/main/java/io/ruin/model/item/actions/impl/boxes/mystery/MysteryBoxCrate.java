@@ -13,7 +13,7 @@ import io.ruin.utility.Broadcast;
 
 public class MysteryBoxCrate {
 
-	private static final LootTable MYSTERY_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable MYSTERY_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(4708, 1, 50), //Ahrim's hood
 		new LootItem(4712, 1, 50), //Ahrim's robetop
 		new LootItem(4714, 1, 50), //Ahrim's robeskirt

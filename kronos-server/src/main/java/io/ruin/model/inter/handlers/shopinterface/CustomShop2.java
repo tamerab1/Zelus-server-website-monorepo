@@ -763,7 +763,7 @@ public enum CustomShop2 {
 			new ShopItem(21793, 250000),  // Imbued guthix cape
 			new ShopItem(21795, 250000),  // Imbued zamorak cape
 			new ShopItem(21791, 250000),  // Imbued saradomin cape
-			new ShopItem(30430, 1000000), // Ultra mystery box
+			new ShopItem(30430, 4000000), // Ultra mystery box
 
 			new ShopItem(6924, 60000),    // Infinity bottoms
 			new ShopItem(6918, 35000),    // Infinity hat

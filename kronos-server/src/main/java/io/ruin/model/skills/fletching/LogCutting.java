@@ -29,7 +29,7 @@ public enum LogCutting {
 	//Oak log
 	OAK_SHAFT(1521, 15, 10.0, new Item(52, 30), "30 arrow shafts", "make shafts from oak logs"),
 	OAK_SHORTBOW(1521, 20, 16.5, new Item(54, 1), "a shorbow", "make an Oak Shortbow"),
-	OAK_LONGBOW(1521, 25, 16.5, new Item(56, 1), "a longbow", "make an Oak Longbow"),
+	OAK_LONGBOW(1521, 25, 25.0, new Item(56, 1), "a longbow", "make an Oak Longbow"),
 	OAK_STOCK(1521, 24, 16.0, new Item(9442, 1), "a crossbow stock", "make an Oak Stock"),
 	OAK_SHIELD(1521, 27, 50, new Item(22251, 1), "a shield", "make a shield from willow logs"),
 
@@ -48,7 +48,7 @@ public enum LogCutting {
 	//Maple log
 	MAPLE_SHAFT(1517, 45, 20.0, new Item(52, 60), "60 arrow shafts", "make shafts from maple logs"),
 	MAPLE_SHORTBOW(1517, 50, 50.0, new Item(64, 1), "a shortbow", "make a Maple Shortbow"),
-	MAPLE_LONGBOW(1517, 55, 55.0, new Item(62, 1), "a longbow", "make a Maple Longbow"),
+	MAPLE_LONGBOW(1517, 55, 58.3, new Item(62, 1), "a longbow", "make a Maple Longbow"),
 	MAPLE_STOCK(1517, 54, 32.0, new Item(9448, 1), "a crossbow stock", "make a Maple Stock"),
 	MAPLE_SHIELD(1517, 57, 116.5, new Item(22257, 1), "a shield", "make a shield from maple logs"),
 

@@ -656,7 +656,11 @@ public enum SlayerUnlock {
 			new Pair<>(72, VarPlayerRepository.WYVER_NOTHER_ONE),
 			new Pair<>(46, VarPlayerRepository.GET_SMASHED),
 			new Pair<>(52, VarPlayerRepository.NECHS_PLEASE),
-			new Pair<>(92, VarPlayerRepository.KRACK_ON));
+			new Pair<>(92, VarPlayerRepository.KRACK_ON),
+			new Pair<>(49, VarPlayerRepository.TO_DUST_YOU_SHALL_RETURN),
+			new Pair<>(85, VarPlayerRepository.GET_SCABARIGHT_ON_IT),
+			new Pair<>(106, VarPlayerRepository.WYVER_NOTHER_TWO),
+			new Pair<>(43, VarPlayerRepository.BASILONGER));
 
 	private enum ShopItem {
 		//@formatter:off

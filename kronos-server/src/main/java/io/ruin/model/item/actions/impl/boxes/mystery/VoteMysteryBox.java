@@ -24,7 +24,7 @@ import static io.ruin.cache.ItemID.COINS_995;
 
 public class VoteMysteryBox {
 
-	private static final LootTable PVP_VOTING_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable PVP_VOTING_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(BLOOD_MONEY, 500, 2000, 2000),                  // 2000 Blood money
 		new LootItem(6914, 1, 40),                             // Masters wand
 		new LootItem(4151, 1, 40),                             // Abyssal whip
@@ -65,7 +65,7 @@ public class VoteMysteryBox {
 		new LootItem(12399, 1, 1).broadcast(Broadcast.GLOBAL)  // Partyhat & specs
 	);
 
-	private static final LootTable ECO_VOTING_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable ECO_VOTING_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(COINS_995, 50_000, 300_000, 500),                  // Gold
 		new LootItem(6914, 1, 80),      // Masters wand
 		new LootItem(4151, 1, 80),      // Abyssal whip

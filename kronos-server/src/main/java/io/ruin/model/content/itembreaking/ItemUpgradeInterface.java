@@ -118,8 +118,8 @@ public class ItemUpgradeInterface {
 	}
 
 	static String calculateBaseLevelChances(ItemBreakPerks perk) {
-		int level5Range = perk.tier - 1 + 1;
-		int level4Range = perk.level4Chance - (perk.tier + 1) + 1;
+		int level5Range = perk.level5Chance - 1 + 1;
+		int level4Range = perk.level4Chance - (perk.level5Chance + 1) + 1;
 		int level3Range = perk.level3Chance - (perk.level4Chance + 1) + 1;
 		int level2Range = perk.level2Chance - (perk.level3Chance + 1) + 1;
 		int level1Range = 100 - perk.level2Chance;
@@ -224,8 +224,8 @@ public class ItemUpgradeInterface {
 	}
 
 	static String calculateBaseLevelChance(ItemBreakPerks perk) {
-		int level5Range = perk.tier - 1 + 1;
-		int level4Range = perk.level4Chance - (perk.tier + 1) + 1;
+		int level5Range = perk.level5Chance - 1 + 1;
+		int level4Range = perk.level4Chance - (perk.level5Chance + 1) + 1;
 		int level3Range = perk.level3Chance - (perk.level4Chance + 1) + 1;
 		int level2Range = perk.level2Chance - (perk.level3Chance + 1) + 1;
 		int level1Range = 100 - perk.level2Chance;
