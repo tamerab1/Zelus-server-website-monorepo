@@ -117,20 +117,21 @@ public class PvpPresetManager {
      * {@code preset} across their inventory and bank (quantity-aware).
      */
     public static boolean canLoadFromBank(Player player, PvpPreset preset) {
-        // Check equipment items
+        // Aggregate needed quantity per item id across equipment AND inventory first --
+        // checking each slot independently against the same inv+bank total let two slots
+        // sharing an id (e.g. one equipped, one carried) both "pass" against a single copy,
+        // which the pull step would then top up with a freshly manufactured item (a real dupe).
+        Map<Integer, Integer> needed = new java.util.HashMap<>();
         for (Item item : preset.buildEquipment().values()) {
-            int needed = item.getAmount();
-            int have   = player.getInventory().getAmount(item.getId())
-                       + player.getBank().getAmount(item.getId());
-            if (have < needed) return false;
+            needed.merge(item.getId(), item.getAmount(), Integer::sum);
         }
-        // Check inventory items
         for (Item item : preset.buildInventory()) {
             if (item == null) continue;
-            int needed = item.getAmount();
-            int have   = player.getInventory().getAmount(item.getId())
-                       + player.getBank().getAmount(item.getId());
-            if (have < needed) return false;
+            needed.merge(item.getId(), item.getAmount(), Integer::sum);
+        }
+        for (var entry : needed.entrySet()) {
+            int have = player.getInventory().getAmount(entry.getKey()) + player.getBank().getAmount(entry.getKey());
+            if (have < entry.getValue()) return false;
         }
         return true;
     }
@@ -163,15 +164,10 @@ public class PvpPresetManager {
             int itemId = entry.getValue().getId();
             int amount = entry.getValue().getAmount();
 
-            int fromInv = Math.min(player.getInventory().getAmount(itemId), amount);
-            if (fromInv > 0) {
-                player.getInventory().remove(itemId, fromInv);
-                amount -= fromInv;
+            int pulled = pullFromBankOrInv(player, itemId, amount);
+            if (pulled > 0) {
+                player.getEquipment().set(entry.getKey(), new Item(itemId, pulled));
             }
-            if (amount > 0) {
-                player.getBank().remove(itemId, amount);
-            }
-            player.getEquipment().set(entry.getKey(), new Item(entry.getValue().getId(), entry.getValue().getAmount()));
         }
         player.getEquipment().sendUpdates();
 
@@ -183,15 +179,10 @@ public class PvpPresetManager {
             int itemId = item.getId();
             int amount = item.getAmount();
 
-            int fromInv = Math.min(player.getInventory().getAmount(itemId), amount);
-            if (fromInv > 0) {
-                player.getInventory().remove(itemId, fromInv);
-                amount -= fromInv;
+            int pulled = pullFromBankOrInv(player, itemId, amount);
+            if (pulled > 0) {
+                player.getInventory().set(slot, new Item(itemId, pulled));
             }
-            if (amount > 0) {
-                player.getBank().remove(itemId, amount);
-            }
-            player.getInventory().set(slot, new Item(item.getId(), item.getAmount()));
         }
         player.getInventory().sendUpdates();
 
@@ -208,6 +199,22 @@ public class PvpPresetManager {
         player.pvpPresetBankMode = true;
 
         player.sendMessage("[PvP Preset] " + preset.getDisplayName() + " loaded from your bank (free). Type ::pvpmode off to restore your gear.");
+    }
+
+    // Returns the amount actually removed from inv+bank combined -- callers must grant only
+    // this much, never the originally-requested amount, or a shortfall (e.g. from two slots
+    // needing more of an id than the player actually owns) manufactures free items.
+    private static int pullFromBankOrInv(Player player, int id, int amount) {
+        int fromInv = Math.min(player.getInventory().getAmount(id), amount);
+        int removed = 0;
+        if (fromInv > 0) {
+            removed += player.getInventory().remove(id, fromInv);
+            amount -= fromInv;
+        }
+        if (amount > 0) {
+            removed += player.getBank().remove(id, amount);
+        }
+        return removed;
     }
 
     // -----------------------------------------------------------------------

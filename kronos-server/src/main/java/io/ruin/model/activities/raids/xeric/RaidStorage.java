@@ -179,10 +179,16 @@ public class RaidStorage extends ItemContainer {
 		if (item == null)
 			return false;
 		int moved = item.move(item.getId(), amount, p.getInventory());
-		int newAmount = p.raidPrivateStorageItems.get(item.getId()) - amount;
-		p.raidPrivateStorageItems.replace(item.getId(), newAmount);
-		if (p.raidPrivateStorageItems.get(item.getId()) == 0)
-			p.raidPrivateStorageItems.remove(item.getId());
+		// Track the ACTUAL amount moved, not the requested amount -- crediting the requested
+		// amount on a partial/failed move (e.g. inventory full) desyncs the tracking map from
+		// what's really in storage, manifesting as a phantom duplicate (or corrupted negative
+		// count on "withdraw all") the next time the storage is opened and rebuilt from this map.
+		if (moved > 0) {
+			int newAmount = p.raidPrivateStorageItems.get(item.getId()) - moved;
+			p.raidPrivateStorageItems.replace(item.getId(), newAmount);
+			if (p.raidPrivateStorageItems.get(item.getId()) <= 0)
+				p.raidPrivateStorageItems.remove(item.getId());
+		}
 		//TODO: dictonary instead of list as will be working will amounts
 		p.getPrivateRaidStorage().sendUpdates();
 		if (moved == 0) {
@@ -289,11 +295,17 @@ public class RaidStorage extends ItemContainer {
 		if (item == null)
 			return false;
 		int moved = item.move(item.getId(), amount, p.getPrivateRaidStorage());
-		if (p.raidPrivateStorageItems.get(item.getId()) == null)
-			p.raidPrivateStorageItems.put(item.getId(), amount);
-		else {
-			int newAmount = p.raidPrivateStorageItems.get(item.getId()) + amount;
-			p.raidPrivateStorageItems.replace(item.getId(), newAmount);
+		// Track the ACTUAL amount moved, not the requested amount -- crediting the requested
+		// amount on a partial/failed move (storage full) desyncs the map from what's really in
+		// storage, manifesting as a phantom item next time storage is opened and rebuilt from
+		// this map while the real item is still sitting in the player's inventory.
+		if (moved > 0) {
+			if (p.raidPrivateStorageItems.get(item.getId()) == null)
+				p.raidPrivateStorageItems.put(item.getId(), moved);
+			else {
+				int newAmount = p.raidPrivateStorageItems.get(item.getId()) + moved;
+				p.raidPrivateStorageItems.replace(item.getId(), newAmount);
+			}
 		}
 
 		p.getPrivateRaidStorage().sendUpdates();

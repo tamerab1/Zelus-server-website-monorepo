@@ -321,19 +321,24 @@ public class ZelusLoadoutManager {
      * Returns true if the player owns every required item (in inventory + bank).
      */
     public static boolean canLoadFromBank(Player player, ZelusLoadout loadout) {
+        // Aggregate needed quantity per item id across ALL slots first -- checking each slot
+        // independently against the same inv+bank total let two slots sharing an id (e.g. one
+        // equipped, one carried) both "pass" against a single copy, which the pull step below
+        // would then top up with a freshly manufactured item (a real dupe).
+        java.util.Map<Integer, Integer> needed = new java.util.HashMap<>();
         for (int s = 0; s < ZelusLoadout.EQUIP_SLOTS; s++) {
             int id = loadout.equipment[s];
             if (id == -1) continue;
-            int need = loadout.equipAmounts[s];
-            int have = player.getInventory().getAmount(id) + player.getBank().getAmount(id);
-            if (have < need) return false;
+            needed.merge(id, loadout.equipAmounts[s], Integer::sum);
         }
         for (int s = 0; s < ZelusLoadout.INV_SLOTS; s++) {
             int id = loadout.inventory[s];
             if (id == -1) continue;
-            int need = loadout.invAmounts[s];
-            int have = player.getInventory().getAmount(id) + player.getBank().getAmount(id);
-            if (have < need) return false;
+            needed.merge(id, loadout.invAmounts[s], Integer::sum);
+        }
+        for (var entry : needed.entrySet()) {
+            int have = player.getInventory().getAmount(entry.getKey()) + player.getBank().getAmount(entry.getKey());
+            if (have < entry.getValue()) return false;
         }
         return true;
     }
@@ -350,8 +355,10 @@ public class ZelusLoadoutManager {
             int id = loadout.equipment[s];
             if (id == -1) continue;
             int amount = loadout.equipAmounts[s];
-            pullFromBankOrInv(player, id, amount);
-            player.getEquipment().set(s, new Item(id, amount));
+            int pulled = pullFromBankOrInv(player, id, amount);
+            if (pulled > 0) {
+                player.getEquipment().set(s, new Item(id, pulled));
+            }
         }
         player.getEquipment().sendUpdates();
 
@@ -360,8 +367,10 @@ public class ZelusLoadoutManager {
             int id = loadout.inventory[s];
             if (id == -1) continue;
             int amount = loadout.invAmounts[s];
-            pullFromBankOrInv(player, id, amount);
-            player.getInventory().set(s, new Item(id, amount));
+            int pulled = pullFromBankOrInv(player, id, amount);
+            if (pulled > 0) {
+                player.getInventory().set(s, new Item(id, pulled));
+            }
         }
         player.getInventory().sendUpdates();
 
@@ -374,15 +383,20 @@ public class ZelusLoadoutManager {
             + " <col=00ff00>" + loadout.name + "</col> loaded from your bank (free).");
     }
 
-    private static void pullFromBankOrInv(Player player, int id, int amount) {
+    // Returns the amount actually removed from inv+bank combined -- callers must grant only
+    // this much, never the originally-requested amount, or a shortfall (e.g. from two slots
+    // needing more of an id than the player actually owns) manufactures free items.
+    private static int pullFromBankOrInv(Player player, int id, int amount) {
         int fromInv = Math.min(player.getInventory().getAmount(id), amount);
+        int removed = 0;
         if (fromInv > 0) {
-            player.getInventory().remove(id, fromInv);
+            removed += player.getInventory().remove(id, fromInv);
             amount -= fromInv;
         }
         if (amount > 0) {
-            player.getBank().remove(id, amount);
+            removed += player.getBank().remove(id, amount);
         }
+        return removed;
     }
 
     // -----------------------------------------------------------------------
