@@ -1,0 +1,578 @@
+[
+  {
+    "basePet": "ABYSSAL_ORPHAN",
+    "baseItemId": 13262,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60025, "npcId": 30069, "name": "Shadow abyssal orphan", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60026, "npcId": 30070, "name": "Golden abyssal orphan", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60027, "npcId": 30071, "name": "Blood abyssal orphan", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BABY_MOLE",
+    "baseItemId": 12646,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60028, "npcId": 30072, "name": "Shadow baby mole", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60029, "npcId": 30073, "name": "Golden baby mole", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60030, "npcId": 30074, "name": "Blood baby mole", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "CALLISTO_CUB",
+    "baseItemId": 13178,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60031, "npcId": 30075, "name": "Shadow callisto cub", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60032, "npcId": 30076, "name": "Golden callisto cub", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60033, "npcId": 30077, "name": "Blood callisto cub", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "HELLPUPPY",
+    "baseItemId": 13247,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60034, "npcId": 30078, "name": "Shadow hellpuppy", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60035, "npcId": 30079, "name": "Golden hellpuppy", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60036, "npcId": 30080, "name": "Blood hellpuppy", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "KALPHITE_PRINCESS",
+    "baseItemId": 12647,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60037, "npcId": 30081, "name": "Shadow kalphite princess", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60038, "npcId": 30082, "name": "Golden kalphite princess", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60039, "npcId": 30083, "name": "Blood kalphite princess", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "DAGANNOTH_PRIME",
+    "baseItemId": 12644,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60040, "npcId": 30084, "name": "Shadow dagannoth prime", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60041, "npcId": 30085, "name": "Golden dagannoth prime", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60042, "npcId": 30086, "name": "Blood dagannoth prime", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "DAGANNOTH_REX",
+    "baseItemId": 12645,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60043, "npcId": 30087, "name": "Shadow dagannoth rex", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60044, "npcId": 30088, "name": "Golden dagannoth rex", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60045, "npcId": 30089, "name": "Blood dagannoth rex", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "DAGGANOTH_SUPREME",
+    "baseItemId": 12643,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60046, "npcId": 30090, "name": "Shadow dagannoth supreme", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60047, "npcId": 30091, "name": "Golden dagannoth supreme", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60048, "npcId": 30092, "name": "Blood dagannoth supreme", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "GUARDIAN_MUMMY_PET",
+    "baseItemId": 30138,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60049, "npcId": 30093, "name": "Shadow guardian mummy pet", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60050, "npcId": 30094, "name": "Golden guardian mummy pet", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60051, "npcId": 30095, "name": "Blood guardian mummy pet", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "MIMIC_JR",
+    "baseItemId": 30425,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60052, "npcId": 30096, "name": "Shadow mimic jr pet", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60053, "npcId": 30097, "name": "Golden mimic jr pet", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60054, "npcId": 30098, "name": "Blood mimic jr pet", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_CRYSTAL",
+    "baseItemId": 59989,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60055, "npcId": 30099, "name": "Shadow lil' crystal", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60056, "npcId": 30100, "name": "Golden lil' crystal", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60057, "npcId": 30101, "name": "Blood lil' crystal", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "GAUNTLET_MINION",
+    "baseItemId": 30194,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60058, "npcId": 30102, "name": "Shadow gauntlet minion", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60059, "npcId": 30103, "name": "Golden gauntlet minion", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60060, "npcId": 30104, "name": "Blood gauntlet minion", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "VOIDFANG",
+    "baseItemId": 59991,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60061, "npcId": 30105, "name": "Shadow voidfang", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60062, "npcId": 30106, "name": "Golden voidfang", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60063, "npcId": 30107, "name": "Blood voidfang", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_WYVERN",
+    "baseItemId": 60008,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60064, "npcId": 30108, "name": "Shadow lil' wyvern", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60065, "npcId": 30109, "name": "Golden lil' wyvern", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60066, "npcId": 30110, "name": "Blood lil' wyvern", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_FROSTWYRM",
+    "baseItemId": 60009,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60067, "npcId": 30111, "name": "Shadow lil' frostwyrm", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60068, "npcId": 30112, "name": "Golden lil' frostwyrm", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60069, "npcId": 30113, "name": "Blood lil' frostwyrm", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "JAL_NIB_REK",
+    "baseItemId": 21291,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60070, "npcId": 30114, "name": "Shadow jal-nib-rek", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60071, "npcId": 30115, "name": "Golden jal-nib-rek", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60072, "npcId": 30116, "name": "Blood jal-nib-rek", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "KRAKEN",
+    "baseItemId": 12655,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60073, "npcId": 30117, "name": "Shadow kraken", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60074, "npcId": 30118, "name": "Golden kraken", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60075, "npcId": 30119, "name": "Blood kraken", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SMOKE_DEVIL",
+    "baseItemId": 12648,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60076, "npcId": 30120, "name": "Shadow smoke devil", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60077, "npcId": 30121, "name": "Golden smoke devil", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60078, "npcId": 30122, "name": "Blood smoke devil", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SNAKELING_GREEN",
+    "baseItemId": 12921,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60079, "npcId": 30123, "name": "Shadow snakeling", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60080, "npcId": 30124, "name": "Golden snakeling", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60081, "npcId": 30125, "name": "Blood snakeling", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "ZILYANA",
+    "baseItemId": 12651,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60082, "npcId": 30126, "name": "Shadow zilyana", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60083, "npcId": 30127, "name": "Golden zilyana", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60084, "npcId": 30128, "name": "Blood zilyana", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TZREK_JAD",
+    "baseItemId": 13225,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60085, "npcId": 30129, "name": "Shadow tzrek-jad", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60086, "npcId": 30130, "name": "Golden tzrek-jad", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60087, "npcId": 30131, "name": "Blood tzrek-jad", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "VETION_JR_PURPLE",
+    "baseItemId": 13179,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60088, "npcId": 30132, "name": "Shadow vet'ion jr.", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60089, "npcId": 30133, "name": "Golden vet'ion jr.", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60090, "npcId": 30134, "name": "Blood vet'ion jr.", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SKOTOS",
+    "baseItemId": 21273,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60091, "npcId": 30135, "name": "Shadow skotos", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60092, "npcId": 30136, "name": "Golden skotos", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60093, "npcId": 30137, "name": "Blood skotos", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_ZIK",
+    "baseItemId": 22473,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60094, "npcId": 30138, "name": "Shadow lil' zik", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60095, "npcId": 30139, "name": "Golden lil' zik", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60096, "npcId": 30140, "name": "Blood lil' zik", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_MAIDEN",
+    "baseItemId": 25748,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60097, "npcId": 30141, "name": "Shadow lil' maiden", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60098, "npcId": 30142, "name": "Golden lil' maiden", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60099, "npcId": 30143, "name": "Blood lil' maiden", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_BLOAT",
+    "baseItemId": 25749,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60100, "npcId": 30144, "name": "Shadow lil' bloat", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60101, "npcId": 30145, "name": "Golden lil' bloat", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60102, "npcId": 30146, "name": "Blood lil' bloat", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LIL_NYLO",
+    "baseItemId": 25750,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60103, "npcId": 30147, "name": "Shadow lil' nylo", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60104, "npcId": 30148, "name": "Golden lil' nylo", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60105, "npcId": 30149, "name": "Blood lil' nylo", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TZREK_ZUK",
+    "baseItemId": 22319,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60106, "npcId": 30150, "name": "Shadow tzrek-zuk", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60107, "npcId": 30151, "name": "Golden tzrek-zuk", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60108, "npcId": 30152, "name": "Blood tzrek-zuk", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "CORPOREAL_CRITTER",
+    "baseItemId": 22318,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60109, "npcId": 30153, "name": "Shadow corporeal critter", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60110, "npcId": 30154, "name": "Golden corporeal critter", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60111, "npcId": 30155, "name": "Blood corporeal critter", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "IKKLE_HYDRA_GREEN",
+    "baseItemId": 22746,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60112, "npcId": 30156, "name": "Shadow ikkle hydra", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60113, "npcId": 30157, "name": "Golden ikkle hydra", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60114, "npcId": 30158, "name": "Blood ikkle hydra", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BALANCE_ELEMENTAL_RANGED",
+    "baseItemId": 33005,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60115, "npcId": 30159, "name": "Shadow baby elemental", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60116, "npcId": 30160, "name": "Golden baby elemental", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60117, "npcId": 30161, "name": "Blood baby elemental", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BALANCE_ELEMENTAL_MAGE",
+    "baseItemId": 33004,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60118, "npcId": 30162, "name": "Shadow baby elemental", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60119, "npcId": 30163, "name": "Golden baby elemental", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60120, "npcId": 30164, "name": "Blood baby elemental", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BALANCE_ELEMENTAL_MELEE",
+    "baseItemId": 33006,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60121, "npcId": 30165, "name": "Shadow baby elemental", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60122, "npcId": 30166, "name": "Golden baby elemental", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60123, "npcId": 30167, "name": "Blood baby elemental", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SRARACHA",
+    "baseItemId": 23495,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60124, "npcId": 30168, "name": "Shadow sraracha", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60125, "npcId": 30169, "name": "Golden sraracha", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60126, "npcId": 30170, "name": "Blood sraracha", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TINY_TEMPOR",
+    "baseItemId": 25602,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60127, "npcId": 30171, "name": "Shadow tiny tempor", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60128, "npcId": 30172, "name": "Golden tiny tempor", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60129, "npcId": 30173, "name": "Blood tiny tempor", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "NEXLING",
+    "baseItemId": 26348,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60130, "npcId": 30174, "name": "Shadow nexling", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60131, "npcId": 30175, "name": "Golden nexling", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60132, "npcId": 30176, "name": "Blood nexling", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BABY_GALVEK",
+    "baseItemId": 30417,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60133, "npcId": 30177, "name": "Shadow baby galvek", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60134, "npcId": 30178, "name": "Golden baby galvek", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60135, "npcId": 30179, "name": "Blood baby galvek", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LEVIATHAN",
+    "baseItemId": 28252,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60136, "npcId": 30180, "name": "Shadow lil'viathan", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60137, "npcId": 30181, "name": "Golden lil'viathan", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60138, "npcId": 30182, "name": "Blood lil'viathan", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "DUKE",
+    "baseItemId": 28250,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60139, "npcId": 30183, "name": "Shadow baron", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60140, "npcId": 30184, "name": "Golden baron", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60141, "npcId": 30185, "name": "Blood baron", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SMOL_HEREDIT",
+    "baseItemId": 28960,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60142, "npcId": 30186, "name": "Shadow smol heredit", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60143, "npcId": 30187, "name": "Golden smol heredit", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60144, "npcId": 30188, "name": "Blood smol heredit", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "NID",
+    "baseItemId": 29836,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60145, "npcId": 30189, "name": "Shadow nid", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60146, "npcId": 30190, "name": "Golden nid", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60147, "npcId": 30191, "name": "Blood nid", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SCURRY",
+    "baseItemId": 28801,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60148, "npcId": 30192, "name": "Shadow scurry", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60149, "npcId": 30193, "name": "Golden scurry", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60150, "npcId": 30194, "name": "Blood scurry", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "BUTCH",
+    "baseItemId": 28248,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60151, "npcId": 30195, "name": "Shadow butch", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60152, "npcId": 30196, "name": "Golden butch", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60153, "npcId": 30197, "name": "Blood butch", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "WISP",
+    "baseItemId": 28246,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60154, "npcId": 30198, "name": "Shadow wisp", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60155, "npcId": 30199, "name": "Golden wisp", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60156, "npcId": 30200, "name": "Blood wisp", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "PHANTOM_MUSPAH",
+    "baseItemId": 27590,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60157, "npcId": 30201, "name": "Shadow muphin", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60158, "npcId": 30202, "name": "Golden muphin", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60159, "npcId": 30203, "name": "Blood muphin", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TUMEKENS_GUARDIAN",
+    "baseItemId": 27352,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60160, "npcId": 30204, "name": "Shadow tumeken's guardian", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60161, "npcId": 30205, "name": "Golden tumeken's guardian", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60162, "npcId": 30206, "name": "Blood tumeken's guardian", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "ELIDINIS_GUARDIAN",
+    "baseItemId": 27354,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60163, "npcId": 30207, "name": "Shadow elidinis' guardian", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60164, "npcId": 30208, "name": "Golden elidinis' guardian", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60165, "npcId": 30209, "name": "Blood elidinis' guardian", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "DOM",
+    "baseItemId": 31130,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60166, "npcId": 30210, "name": "Shadow dom", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60167, "npcId": 30211, "name": "Golden dom", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60168, "npcId": 30212, "name": "Blood dom", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "YAMI_SHINY",
+    "baseItemId": 33030,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60169, "npcId": 30213, "name": "Shadow yami (shiny)", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60170, "npcId": 30214, "name": "Golden yami (shiny)", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60171, "npcId": 30215, "name": "Blood yami (shiny)", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "YAMI",
+    "baseItemId": 30888,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60172, "npcId": 30216, "name": "Shadow yami", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60173, "npcId": 30217, "name": "Golden yami", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60174, "npcId": 30218, "name": "Blood yami", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TINY_TORMENTED",
+    "baseItemId": 33031,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60175, "npcId": 30219, "name": "Shadow tiny tormented", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60176, "npcId": 30220, "name": "Golden tiny tormented", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60177, "npcId": 30221, "name": "Blood tiny tormented", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "AKKHITO",
+    "baseItemId": 27382,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60178, "npcId": 30222, "name": "Shadow akkhito", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60179, "npcId": 30223, "name": "Golden akkhito", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60180, "npcId": 30224, "name": "Blood akkhito", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "KEPHRITI",
+    "baseItemId": 27384,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60181, "npcId": 30225, "name": "Shadow kephriti", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60182, "npcId": 30226, "name": "Golden kephriti", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60183, "npcId": 30227, "name": "Blood kephriti", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "ZEBO",
+    "baseItemId": 27385,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60184, "npcId": 30228, "name": "Shadow zebo", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60185, "npcId": 30229, "name": "Golden zebo", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60186, "npcId": 30230, "name": "Blood zebo", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "TUMEKEN_DAMAGED",
+    "baseItemId": 27386,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60187, "npcId": 30231, "name": "Shadow tumeken's damaged guardian", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60188, "npcId": 30232, "name": "Golden tumeken's damaged guardian", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60189, "npcId": 30233, "name": "Blood tumeken's damaged guardian", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "OPHI_THE_HEALER",
+    "baseItemId": 30615,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60190, "npcId": 30234, "name": "Shadow ophi the healer", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60191, "npcId": 30235, "name": "Golden ophi the healer", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60192, "npcId": 30236, "name": "Blood ophi the healer", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "OPHI_THE_SOLDIER",
+    "baseItemId": 30616,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60193, "npcId": 30237, "name": "Shadow ophi the soldier", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60194, "npcId": 30238, "name": "Golden ophi the soldier", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60195, "npcId": 30239, "name": "Blood ophi the soldier", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "OPHI_THE_BRUTE",
+    "baseItemId": 30617,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60196, "npcId": 30240, "name": "Shadow ophi the brute", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60197, "npcId": 30241, "name": "Golden ophi the brute", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60198, "npcId": 30242, "name": "Blood ophi the brute", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SUMMER_DRAGON",
+    "baseItemId": 33009,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60199, "npcId": 30243, "name": "Shadow summer dragon", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60200, "npcId": 30244, "name": "Golden summer dragon", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60201, "npcId": 30245, "name": "Blood summer dragon", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "SUMMER_SPIRIT",
+    "baseItemId": 33008,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60202, "npcId": 30246, "name": "Shadow summer spirit", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60203, "npcId": 30247, "name": "Golden summer spirit", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60204, "npcId": 30248, "name": "Blood summer spirit", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "LITTLE_NIGHTMARE",
+    "baseItemId": 24491,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60205, "npcId": 30249, "name": "Shadow little nightmare", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60206, "npcId": 30250, "name": "Golden little nightmare", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60207, "npcId": 30251, "name": "Blood little nightmare", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "PHOENIX",
+    "baseItemId": 20693,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60208, "npcId": 30252, "name": "Shadow phoenix", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60209, "npcId": 30253, "name": "Golden phoenix", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60210, "npcId": 30254, "name": "Blood phoenix", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "PENANCE_QUEEN",
+    "baseItemId": 12703,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60211, "npcId": 30255, "name": "Shadow penance queen", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60212, "npcId": 30256, "name": "Golden penance queen", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60213, "npcId": 30257, "name": "Blood penance queen", "dpCost": 350, "vpCost": 25 }
+    ]
+  },
+  {
+    "basePet": "PRINCE_BLACK_DRAGON",
+    "baseItemId": 12653,
+    "variants": [
+      { "theme": "Shadow", "itemId": 60214, "npcId": 30258, "name": "Shadow prince black dragon", "dpCost": 100, "vpCost": 10 },
+      { "theme": "Golden", "itemId": 60215, "npcId": 30259, "name": "Golden prince black dragon", "dpCost": 500, "vpCost": 40 },
+      { "theme": "Blood", "itemId": 60216, "npcId": 30260, "name": "Blood prince black dragon", "dpCost": 350, "vpCost": 25 }
+    ]
+  }
+]

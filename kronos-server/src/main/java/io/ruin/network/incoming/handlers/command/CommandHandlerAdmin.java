@@ -1582,6 +1582,20 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "givedp": {
+				int amount = args.length > 0 ? NumberUtils.intValue(args[0]) : 1000;
+				io.ruin.model.shop.Currency.DONATOR.currencyHandler.addCurrency(player, amount);
+				player.sendMessage("Gave yourself " + amount + " donator points.");
+				return true;
+			}
+
+			case "givevp": {
+				int amount = args.length > 0 ? NumberUtils.intValue(args[0]) : 1000;
+				io.ruin.model.shop.Currency.VOTE.currencyHandler.addCurrency(player, amount);
+				player.sendMessage("Gave yourself " + amount + " vote points.");
+				return true;
+			}
+
 			case "item":
 			case "pickup": {
 				int[] ids = NumberUtils.toIntArray(args[0]);
@@ -2544,6 +2558,15 @@ public class CommandHandlerAdmin {
 					DataFile.reload(player, shield_types.class);
 					DataFile.reload(player, weapon_types.class);
 					DataFile.reload(player, item_info.class);
+					player.sendMessage("Done!");
+				});
+				return true;
+			}
+
+			case "reloadpetexchange": {
+				Server.executeAsync(() -> {
+					player.sendMessage("Reloading pet recolor exchange config...");
+					DataFile.reload(player, io.ruin.data.impl.pets.pet_recolor_exchange.class);
 					player.sendMessage("Done!");
 				});
 				return true;

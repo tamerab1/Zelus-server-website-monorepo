@@ -552,6 +552,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.jewellery.SkillsNecklace.register();
 		io.ruin.model.item.actions.impl.jewellery.SlayerRing.register();
 		io.ruin.model.item.actions.impl.pet.Pet.register();
+		io.ruin.model.content.petexchange.PetRecolorExchange.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCard.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCardManager.register();
 		io.ruin.model.item.actions.impl.scrolls.BountyScroll.register();

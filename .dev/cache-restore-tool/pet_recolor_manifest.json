@@ -1,0 +1,288 @@
+{
+  "nextItemId": 60217,
+  "nextNpcId": 30261,
+  "brokerNpcId": 30068,
+  "brokerClonedFrom": 5214,
+  "excludedBases": [
+    "AWWGENTAVIS",
+    "VORKI",
+    "LIL_XARP",
+    "LIL_SOT",
+    "ABYSSAL_PROTECTOR",
+    "BABI",
+    "NULL",
+    "MIDNIGHT",
+    "NOON",
+    "LIL_CREATOR",
+    "LIL_DESTRUCTOR",
+    "KRIL_TSUTSAROTH",
+    "LIL_DONKERS",
+    "DARK_CORE"
+  ],
+  "excludedVanillaSiblings": [
+    "KALPHITE_PRINCESS_2",
+    "SNAKELING_RED",
+    "SNAKELING_BLUE",
+    "VETION_JR_ORANGE",
+    "IKKLE_HYDRA_BLUE",
+    "IKKLE_HYDRA_RED",
+    "IKKLE_HYDRA_BLACK",
+    "SRARACHA_BLUE",
+    "SRARACHA_ORANGE"
+  ],
+  "completedBases": [
+    "CHAOS_ELEMENTAL",
+    "KREEARRA",
+    "GENERAL_GRAARDOR",
+    "VENENATIS_SPIDERLING",
+    "SCORPIAS_OFFSPRING"
+  ],
+  "knownIssues": [
+    "SCORPIAS_OFFSPRING base item (13181) already had a pre-existing colorFind opcode with values disjoint from the raw mesh colors GenPaletteShift found -- the new variants' colorFind was built purely from raw mesh colors and does not carry over whatever the original opcode was doing. Functionally spliced fine and self-verified, but flagged for an in-game visual check before trusting it looks right.",
+    "Bank placeholders (opcode 148/149) were NOT added for the 15 new pilot items -- AddPlaceholders.java from a prior session's memory doesn't exist in this checkout; would need to be rewritten. Items work fully otherwise, just can't show a greyed placeholder in the bank yet."
+  ],
+  "pilotBatch": [
+    {
+      "basePet": "CHAOS_ELEMENTAL",
+      "baseItemId": 11995,
+      "baseNpcId": 2055,
+      "variants": [
+        {
+          "theme": "Shadow",
+          "itemId": 60010,
+          "npcId": 30053,
+          "itemName": "Shadow chaos elemental",
+          "npcName": "Shadow chaos elemental jr.",
+          "pairs": "-17879,-18160,466,289,-17875,-18158,0,0,-18261,-18287"
+        },
+        {
+          "theme": "Golden",
+          "itemId": 60011,
+          "npcId": 30054,
+          "itemName": "Golden chaos elemental",
+          "npcName": "Golden chaos elemental jr.",
+          "pairs": "-17879,9012,466,9049,-17875,9016,0,8580,-18261,9014"
+        },
+        {
+          "theme": "Infernal",
+          "itemId": 60012,
+          "npcId": 30055,
+          "itemName": "Infernal chaos elemental",
+          "npcName": "Infernal chaos elemental jr.",
+          "pairs": "-17879,931,466,951,-17875,933,0,898,-18261,932"
+        }
+      ]
+    },
+    {
+      "basePet": "KREEARRA",
+      "baseItemId": 12649,
+      "baseNpcId": 6631,
+      "variants": [
+        {
+          "theme": "Shadow",
+          "itemId": 60013,
+          "npcId": 30056,
+          "itemName": "Shadow kree'arra",
+          "npcName": "Shadow kree'arra jr.",
+          "itemPairs": "47,19,39,16,5584,5408,594,289,43,17,9145,8471,9152,8474,6554,6410,26,10,30,12,6430,6412,6550,6409",
+          "npcPairs": "47,19,6554,6410,6435,6414,55,22,64,26,39,16,6430,6412,26,10,6550,6409,5584,5408,594,289,43,17,9145,8471,9152,8474,30,12,5592,5411,5588,5410,898,258"
+        },
+        {
+          "theme": "Golden",
+          "itemId": 60014,
+          "npcId": 30057,
+          "itemName": "Golden kree'arra",
+          "npcName": "Golden kree'arra jr.",
+          "itemPairs": "47,9017,39,9010,5584,9047,594,9049,43,9014,9145,9026,9152,9033,6554,8998,26,8998,30,9002,6430,9002,6550,8995",
+          "npcPairs": "47,9017,6554,8998,6435,9007,55,9025,64,9033,39,9010,6430,9002,26,8998,6550,8995,5584,9047,594,9049,43,9014,9145,9026,9152,9033,30,9002,5592,9054,5588,9051,898,8581"
+        },
+        {
+          "theme": "Infernal",
+          "itemId": 60015,
+          "npcId": 30058,
+          "itemName": "Infernal kree'arra",
+          "npcName": "Infernal kree'arra jr.",
+          "itemPairs": "47,934,39,929,5584,951,594,951,43,932,9145,940,9152,944,6554,922,26,922,30,924,6430,924,6550,919",
+          "npcPairs": "47,934,6554,922,6435,927,55,939,64,944,39,929,6430,924,26,922,6550,919,5584,951,594,951,43,932,9145,940,9152,944,30,924,5592,951,5588,951,898,900"
+        }
+      ]
+    },
+    {
+      "basePet": "GENERAL_GRAARDOR",
+      "baseItemId": 12650,
+      "baseNpcId": 6632,
+      "variants": [
+        {
+          "theme": "Shadow",
+          "itemId": 60016,
+          "npcId": 30059,
+          "itemName": "Shadow general graardor",
+          "npcName": "Shadow general graardor jr.",
+          "itemPairs": "9523,9492,9403,9368,10287,10259,10266,10250,-21573,-22248,21662,21644,21782,21769,21658,21642,10291,10260,21667,21646,9152,8474,9147,8472,17566,17548,7378,7329,21772,21765,22,9,142,134,8367,8339,8384,8346,8375,8342,-21628,-22269,9515,9489,26,10,274,263,163,142,8379,8344,8076,7429,21902,21766,10283,10257,10285,10258",
+          "npcPairs": "898,258,8367,8339,8384,8346,8375,8342,10266,10250,9523,9492,10502,10499,9515,9489,22,9,21662,21644,26,10,10275,10254,21782,21769,17566,17548,8076,7429,9403,9368,21902,21766,274,263,10291,10260,163,142,142,134,21772,21765,8379,8344,8390,8348,39,16,-10292,-10978,10283,10257,10287,10259,21658,21642,21667,21646,9152,8474,9147,8472,7378,7329"
+        },
+        {
+          "theme": "Golden",
+          "itemId": 60017,
+          "npcId": 30060,
+          "itemName": "Golden general graardor",
+          "npcName": "Golden general graardor jr.",
+          "itemPairs": "9523,9021,9403,9028,10287,9017,10266,8998,-21573,9028,21662,9002,21782,8995,21658,8998,10291,9021,21667,9007,9152,9033,9147,9028,17566,9002,7378,9049,21772,8986,22,8995,142,8988,8367,9017,8384,9033,8375,9025,-21628,8980,9515,9014,26,8998,274,8991,163,9007,8379,9028,8076,8986,21902,8988,10283,9014,10285,9016",
+          "npcPairs": "898,8581,8367,9017,8384,9033,8375,9025,10266,8998,9523,9021,10502,8980,9515,9014,22,8995,21662,9002,26,8998,10275,9007,21782,8995,17566,9002,8076,8986,9403,9028,21902,8988,274,8991,10291,9021,163,9007,142,8988,21772,8986,8379,9028,8390,9038,39,9010,-10292,9043,10283,9014,10287,9017,21658,8998,21667,9007,9152,9033,9147,9028,7378,9049"
+        },
+        {
+          "theme": "Infernal",
+          "itemId": 60018,
+          "npcId": 30061,
+          "itemName": "Infernal general graardor",
+          "npcName": "Infernal general graardor jr.",
+          "itemPairs": "9523,937,9403,941,10287,934,10266,922,-21573,941,21662,924,21782,919,21658,922,10291,937,21667,927,9152,944,9147,941,17566,924,7378,951,21772,913,22,919,142,914,8367,934,8384,944,8375,939,-21628,911,9515,932,26,922,274,917,163,927,8379,941,8076,913,21902,914,10283,932,10285,933",
+          "npcPairs": "898,900,8367,934,8384,944,8375,939,10266,922,9523,937,10502,911,9515,932,22,919,21662,924,26,922,10275,927,21782,919,17566,924,8076,913,9403,941,21902,914,274,917,10291,937,163,927,142,914,21772,913,8379,941,8390,948,39,929,-10292,951,10283,932,10287,934,21658,922,21667,927,9152,944,9147,941,7378,951"
+        }
+      ]
+    },
+    {
+      "basePet": "VENENATIS_SPIDERLING",
+      "baseItemId": 13177,
+      "baseNpcId": 5557,
+      "variants": [
+        {
+          "theme": "Shadow",
+          "itemId": 60019,
+          "npcId": 30062,
+          "itemName": "Shadow venenatis spiderling",
+          "npcName": "Shadow venenatis spiderling",
+          "itemPairs": "794,266,918,265,908,261,142,134,148,136,914,263,138,132,152,138,8309,8239,0,0,6327,6294",
+          "npcPairs": "-32610,-32628,138,132,3270,3228,3268,3227,142,134,148,136,794,266,914,263,908,261,918,265,152,138,8309,8239,0,0,6327,6294,31680,31002,-31808,-32486,-32420,-32475"
+        },
+        {
+          "theme": "Golden",
+          "itemId": 60020,
+          "npcId": 30063,
+          "itemName": "Golden venenatis spiderling",
+          "npcName": "Golden venenatis spiderling",
+          "itemPairs": "794,8998,918,8995,908,8986,142,8988,148,8993,914,8991,138,8984,152,8997,8309,9060,0,8580,6327,9025",
+          "npcPairs": "-32610,9002,138,8984,3270,9038,3268,9036,142,8988,148,8993,794,8998,914,8991,908,8986,918,8995,152,8997,8309,9060,0,8580,6327,9025,31680,9033,-31808,9033,-32420,9058"
+        },
+        {
+          "theme": "Infernal",
+          "itemId": 60021,
+          "npcId": 30064,
+          "itemName": "Infernal venenatis spiderling",
+          "npcName": "Infernal venenatis spiderling",
+          "itemPairs": "794,922,918,919,908,913,142,914,148,918,914,917,138,912,152,920,8309,951,0,898,6327,939",
+          "npcPairs": "-32610,924,138,912,3270,948,3268,947,142,914,148,918,794,922,914,917,908,913,918,919,152,920,8309,951,0,898,6327,939,31680,944,-31808,944,-32420,951"
+        }
+      ]
+    },
+    {
+      "basePet": "SCORPIAS_OFFSPRING",
+      "baseItemId": 13181,
+      "baseNpcId": 5561,
+      "variants": [
+        {
+          "theme": "Shadow",
+          "itemId": 60022,
+          "npcId": 30065,
+          "itemName": "Shadow scorpia's offspring",
+          "npcName": "Shadow scorpia's offspring",
+          "pairs": "24,10,16,6,916,264,33,13,12,5,53,21,127,51,21793,21773,22439,21776,22451,21780"
+        },
+        {
+          "theme": "Golden",
+          "itemId": 60023,
+          "npcId": 30066,
+          "itemName": "Golden scorpia's offspring",
+          "npcName": "Golden scorpia's offspring",
+          "pairs": "24,8997,16,8989,916,8993,33,9005,12,8986,53,9023,127,9060,21793,9005,22439,9010,22451,9021"
+        },
+        {
+          "theme": "Infernal",
+          "itemId": 60024,
+          "npcId": 30067,
+          "itemName": "Infernal scorpia's offspring",
+          "npcName": "Infernal scorpia's offspring",
+          "pairs": "24,920,16,916,916,918,33,926,12,913,53,938,127,951,21793,926,22439,929,22451,937"
+        }
+      ]
+    }
+  ],
+  "tierNames": [
+    "Shadow",
+    "Golden",
+    "Blood"
+  ],
+  "costFormula": "flat per tier: Shadow=100dp/10vp, Golden=500dp/40vp, Blood=350dp/25vp (Blood intentionally cheaper than Golden per user instruction)",
+  "brokerCoords": [
+    3078,
+    3488,
+    0
+  ],
+  "batchAllCompletedBases": [
+    "ABYSSAL_ORPHAN",
+    "BABY_MOLE",
+    "CALLISTO_CUB",
+    "HELLPUPPY",
+    "KALPHITE_PRINCESS",
+    "DAGANNOTH_PRIME",
+    "DAGANNOTH_REX",
+    "DAGGANOTH_SUPREME",
+    "GUARDIAN_MUMMY_PET",
+    "MIMIC_JR",
+    "LIL_CRYSTAL",
+    "GAUNTLET_MINION",
+    "VOIDFANG",
+    "LIL_WYVERN",
+    "LIL_FROSTWYRM",
+    "JAL_NIB_REK",
+    "KRAKEN",
+    "SMOKE_DEVIL",
+    "SNAKELING_GREEN",
+    "ZILYANA",
+    "TZREK_JAD",
+    "VETION_JR_PURPLE",
+    "SKOTOS",
+    "LIL_ZIK",
+    "LIL_MAIDEN",
+    "LIL_BLOAT",
+    "LIL_NYLO",
+    "TZREK_ZUK",
+    "CORPOREAL_CRITTER",
+    "IKKLE_HYDRA_GREEN",
+    "BALANCE_ELEMENTAL_RANGED",
+    "BALANCE_ELEMENTAL_MAGE",
+    "BALANCE_ELEMENTAL_MELEE",
+    "SRARACHA",
+    "TINY_TEMPOR",
+    "NEXLING",
+    "BABY_GALVEK",
+    "LEVIATHAN",
+    "DUKE",
+    "SMOL_HEREDIT",
+    "NID",
+    "SCURRY",
+    "BUTCH",
+    "WISP",
+    "PHANTOM_MUSPAH",
+    "TUMEKENS_GUARDIAN",
+    "ELIDINIS_GUARDIAN",
+    "DOM",
+    "YAMI_SHINY",
+    "YAMI",
+    "TINY_TORMENTED",
+    "AKKHITO",
+    "KEPHRITI",
+    "ZEBO",
+    "TUMEKEN_DAMAGED",
+    "OPHI_THE_HEALER",
+    "OPHI_THE_SOLDIER",
+    "OPHI_THE_BRUTE",
+    "SUMMER_DRAGON",
+    "SUMMER_SPIRIT",
+    "LITTLE_NIGHTMARE",
+    "PHOENIX",
+    "PENANCE_QUEEN",
+    "PRINCE_BLACK_DRAGON"
+  ],
+  "allBossPetsComplete": true
+}
