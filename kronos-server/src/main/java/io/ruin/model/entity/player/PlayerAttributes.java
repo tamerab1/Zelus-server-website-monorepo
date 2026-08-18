@@ -954,6 +954,11 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public boolean canEnterMorUlRek;
 	public boolean edgevilleLeverWarning = true;
 	public boolean newPlayer = true;
+	// True once giveEcoStarter/givePvpModeStarter has actually run for this account. Lets the
+	// login flow tell "finished tutorial normally" apart from "newPlayer got cleared but the
+	// item grant never happened" (e.g. player disconnected mid-tutorial-dialogue) -- see
+	// StarterGuide.register()'s LoginListener.
+	public boolean starterKitGranted = false;
 	public boolean allowedAccess = false;
 	public boolean krakenWarning = true;
 	public boolean smokeBossWarning = true;

@@ -59,6 +59,11 @@ public class StarterGuide {
 	public static final int MAX_STARTER_CLAIMS_PER_IP = 5;
 	public static java.util.Map<String, Integer> ipClaimCounts = new java.util.HashMap<>();
 
+	// Accounts under this playtime are still plausibly "just registered" -- used only to gate
+	// the one-time login heal below so it can't retroactively fire for a long-established
+	// account that legitimately has starterKitGranted=false just because that field is new.
+	private static final long HEAL_ELIGIBLE_PLAYTIME_SECONDS = 3600;
+
 	public static void register() {
 		loadIps();
 		LoginListener.register(player -> {
@@ -66,6 +71,19 @@ public class StarterGuide {
 				player.hasFreePerkUnlock = true;
 				XpCounter.select(player, 1);
 				tutorial(player);
+			} else if (!player.starterKitGranted) {
+				// starterKitGranted is a new field -- every pre-existing account reads false for
+				// it once, regardless of whether they're a day-one veteran or someone who hit the
+				// interrupted-mid-tutorial bug this guards against. Recently-created accounts get
+				// healed (their missed kit granted for real); anything older is just marked so
+				// this branch never re-checks it, no assumptions made about what an old account
+				// "should" have.
+				if (player.playTime < HEAL_ELIGIBLE_PLAYTIME_SECONDS) {
+					grantStarterKitIfNeeded(player);
+					player.sendMessage("<col=FF0000>Looks like your account setup got interrupted last time -- here's the starter kit you missed!");
+				} else {
+					player.starterKitGranted = true;
+				}
 			}
 		});
 	}
@@ -164,8 +182,33 @@ public class StarterGuide {
 		});
 	}
 
+	// Grants the appropriate starter kit and finalizes the account. Split out of continueTutorial
+	// and called synchronously, BEFORE any dialogue is shown -- previously this only happened
+	// deep inside a dialogue-continuation callback, so a disconnect anywhere in that dialogue
+	// chain (client crash, closed window, bad connection) left the account permanently in a
+	// "mode picked, no kit, newPlayer still true forever" state with no recovery path. Idempotent
+	// via starterKitGranted so a caller can't accidentally double-grant.
+	public static void grantStarterKitIfNeeded(Player player) {
+		if (player.starterKitGranted)
+			return;
+		if (player.getGameMode().isIronMan()) {
+			giveEcoStarter(player);
+		} else if (claimLimitReached(player)) {
+			player.sendMessage("This IP has already claimed the starter pack on "
+					+ MAX_STARTER_CLAIMS_PER_IP + " accounts, so you won't receive it again.");
+		} else if (player.getPlayMode() == PlayMode.PVP_MODE) {
+			givePvpModeStarter(player);
+			recordClaim(player.getIp());
+		} else {
+			giveEcoStarter(player);
+		}
+		player.starterKitGranted = true;
+		player.newPlayer = false;
+	}
+
 	@SneakyThrows
 	public static void continueTutorial(Player player) {
+		grantStarterKitIfNeeded(player);
 		AtomicBoolean startTutorial = new AtomicBoolean(false);
 		player.startEvent(event -> {
 			String text = "You've chosen to play an account with no restrictions, good luck!";
@@ -184,36 +227,11 @@ public class StarterGuide {
 			if (player.getGameMode().isIronMan()) {
 				player.dialogue(new NPCDialogue(3525, text),
 						new NPCDialogue(3525, "Before you start, I'll give you items to start your ironman adventure."),
-						new NPCDialogue(3525, "And you're all set, good luck on your journey!") {
-							@Override
-							public void open(Player player) {
-								giveEcoStarter(player);
-								player.newPlayer = false;
-								super.open(player);
-							}
-						});
+						new NPCDialogue(3525, "And you're all set, good luck on your journey!"));
 			} else {
 				player.dialogue(new NPCDialogue(3525, text),
 						new NPCDialogue(3525, "Before you start, I'll give you some items to start your adventure."),
-						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!") {
-							@Override
-							public void open(Player player) {
-								// Both STANDARD-mode starter kits (PVP_MODE and PVM_MODE) are
-								// freely tradeable, so they share one per-IP cap -- otherwise an
-								// alt-farmer could just alternate playmodes to double their claims.
-								if (claimLimitReached(player)) {
-									player.sendMessage("This IP has already claimed the starter pack on "
-											+ MAX_STARTER_CLAIMS_PER_IP + " accounts, so you won't receive it again.");
-								} else if (player.getPlayMode() == PlayMode.PVP_MODE) {
-									givePvpModeStarter(player);
-									recordClaim(player.getIp());
-								} else {
-									giveEcoStarter(player);
-								}
-								player.newPlayer = false;
-								super.open(player);
-							}
-						});
+						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!"));
 			}
 
 			event.waitForDialogue(player);
