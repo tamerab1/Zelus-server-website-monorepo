@@ -56,7 +56,7 @@ public enum LootsTables {
 	GWD_MYSTERY_BOX("GWD Mystery Box", MysteryBox.GWD_MYSTERY_BOX_TABLE),
 	GALVEK_MYSTERY_BOX("Galvek Mystery Box", MysteryBox.GALVEK_MYSTERY_BOX_TABLE),
 	ENHANCED_SUPERIOR_SLAYER_BOX("Enhanced Superior Box", MysteryBox.ENHANCED_SUPERIOR_SLAYER_BOX),
-	REASON_ULTRA_POINT_BOX("Zelus Ultra Point Box", MysteryBox.ULTRA_MYSTERY_BOX),
+	REASON_ULTRA_POINT_BOX("Ultra Mystery Box", MysteryBox.ULTRA_MYSTERY_BOX),
 
 	CRYSTAL_CHEST("Crystal Chest", CrystalChestBox.CRYSTAL_TABLE),
 	PVP_VOTING_BOX("PvP Voting Box", VoteMysteryBox.PVP_VOTING_BOX_TABLE),
