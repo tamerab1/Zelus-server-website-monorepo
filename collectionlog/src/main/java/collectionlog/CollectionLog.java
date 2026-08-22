@@ -19,7 +19,9 @@ import io.ruin.model.inter.notify.NotificationInterface;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.ItemAction;
+import io.ruin.model.item.actions.impl.pet.Pet;
 import io.ruin.model.var.VarPlayerRepository;
+import io.ruin.utility.DiscordAnnounceThresholds;
 import io.ruin.utility.FormatMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,15 +101,23 @@ public class CollectionLog {
 				notifyNewItemAddedPopup(player, item);
 			}
 
-			CollectionLogHook.sendDiscordMessage(() -> {
-				var jsonObject = new JSONObject();
-				// Strip any OSRS chat markup (<col=>, <shad=>, <img=>) -- Discord doesn't
-				// understand it and would otherwise show the raw tags as literal text.
-				jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
-				jsonObject.put("item_id", item.getId());
-				jsonObject.put("item_name", item.getDef().name);
-				return jsonObject;
-			});
+			// Every collection log slot fires this, including common minigame/clue rewards --
+			// gate the public Discord embed to pets and items above a configurable value so the
+			// rare-drops channel isn't spammed on practically every unlock.
+			long value = (long) item.getDef().highAlchValue * item.getAmount();
+			boolean notable = Pet.getByItemId(item.getId()) != null
+					|| value >= DiscordAnnounceThresholds.collectionLogMinValue();
+			if (notable) {
+				CollectionLogHook.sendDiscordMessage(() -> {
+					var jsonObject = new JSONObject();
+					// Strip any OSRS chat markup (<col=>, <shad=>, <img=>) -- Discord doesn't
+					// understand it and would otherwise show the raw tags as literal text.
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
+					jsonObject.put("item_id", item.getId());
+					jsonObject.put("item_name", item.getDef().name);
+					return jsonObject;
+				});
+			}
 		}
 
 		player.collectionLog().collect(player, item.getId(), item.getAmount());
