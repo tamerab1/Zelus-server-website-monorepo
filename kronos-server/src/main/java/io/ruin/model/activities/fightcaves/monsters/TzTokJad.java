@@ -36,10 +36,13 @@ public class TzTokJad extends NPCCombat {
 	@Override
 	public boolean attack() {
 		if (withinDistance(1)) {
-			if (Random.rollDie(3)) {
-				basicAttack(info.attack_animation, info.attack_style, info.max_damage);
-				return true;
-			}
+			// Real Jad always melees when adjacent -- that's what makes the prayer-flick
+			// mechanic fair (mage/range only need to be anticipated at range). This used to
+			// only melee on a 1-in-3 roll and otherwise fall through to the mage/range logic
+			// below while still adjacent, meaning players standing next to Jad could still eat
+			// an unprotected mage/range hit with no way to have seen it coming.
+			basicAttack(info.attack_animation, info.attack_style, info.max_damage);
+			return true;
 		} else if (!withinDistance(MAX_DISTANCE)) {
 			/**
 			 * Not in ranged distance
