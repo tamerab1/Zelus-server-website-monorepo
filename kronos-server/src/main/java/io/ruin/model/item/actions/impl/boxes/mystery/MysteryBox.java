@@ -1416,10 +1416,10 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String formattedAmount = NumberUtils.formatNumber(reward.getAmount());
 				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
-					" received a <shad=D80808>" + formattedAmount + "x " + reward.getDef().name.toLowerCase() + "</shad> reward from a Zelus Point Ultra Mystery Box!");
+					" received a <shad=D80808>" + formattedAmount + "x " + reward.getDef().name.toLowerCase() + "</shad> reward from an Ultra Mystery Box!");
 			}
 			player.unlock();
-			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Zelus Point Ultra Mystery Box!");
+			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Ultra Mystery Box!");
 		});
 		ItemAction.registerInventory(30582, "open", (player, item) -> {
 			player.lock();
