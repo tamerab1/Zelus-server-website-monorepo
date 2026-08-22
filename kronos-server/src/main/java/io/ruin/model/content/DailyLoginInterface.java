@@ -49,7 +49,9 @@ public class DailyLoginInterface {
 	// claimReward() before the normal item-granting path
 	private static final Map<Integer, Integer> DONATOR_POINTS_DAYS = Map.of(
 			6, 100,
-			25, 500);
+			15, 350,
+			25, 500,
+			28, 1000);
 
 	private static final List<Item> loginRewards = Arrays.asList(
 			new Item(ItemID.PRAYER_POTION4, 5),
@@ -66,7 +68,7 @@ public class DailyLoginInterface {
 			new Item(ItemID.BANDOS_TASSETS, 1),
 			new Item(30452, 1),                              // Slayer mystery box
 			new Item(33020, 1),                              // Perk Exp Lamp
-			new Item(30464, 1),                              // $5 Donator Bond
+			new Item(DONATOR_POINTS_ICON, 350),              // Day 15: 350 Donator Points (see DONATOR_POINTS_DAYS)
 			new Item(ItemID.COINS_995, 10000000),
 			new Item(ItemID.ABYSSAL_WHIP, 1),
 			new Item(6199, 1),                               // Mystery box
@@ -79,7 +81,7 @@ public class DailyLoginInterface {
 			new Item(DONATOR_POINTS_ICON, 500),              // Day 25: 500 Donator Points (see DONATOR_POINTS_DAYS)
 			new Item(ItemID.DEVOUT_BOOTS, 1),
 			new Item(ItemID.RED_PARTYHAT, 1),
-			new Item(30464, 2));                             // $5 Donator Bond x2
+			new Item(DONATOR_POINTS_ICON, 1000));            // Day 28: 1000 Donator Points (see DONATOR_POINTS_DAYS)
 
 	public static void register() {
 		// Interface action 468 is registered once, in DailyVoteInterface,
@@ -190,31 +192,34 @@ public class DailyLoginInterface {
 				? null
 				: Instant.ofEpochSecond(player.lastLoginRewardInEpoch).atZone(ZoneId.systemDefault()).toLocalDate();
 
-		if (lastRewardDate != null && lastRewardDate.isEqual(today)) {
-			// Already logged in today -- nothing changes.
-			return;
+		if (lastRewardDate == null || !lastRewardDate.isEqual(today)) {
+			if (lastRewardDate == null || lastRewardDate.isEqual(today.minusDays(1))) {
+				player.loginStreak++;
+				if (lastRewardDate != null)
+					player.sendMessage("You now have a daily login streak of " + player.loginStreak + ".");
+			} else {
+				player.loginStreak = 1;
+				player.sendMessage("Your daily login streak has been reset as you missed a day.");
+			}
+
+			if (player.loginStreak > loginRewards.size()) {
+				player.loginStreak = 1;
+				entries.clear();
+				rewardsLogged.clear();
+			}
+
+			player.canClaimLoginReward = true;
+			player.claimedLoginToday = false;
+			player.lastLoginRewardInEpoch = Instant.now().getEpochSecond();
+			player.todaysLoginReward = new DailyReward(false, loginRewards.get(player.loginStreak - 1));
+			entries.put(player.loginStreak, player.todaysLoginReward);
 		}
 
-		if (lastRewardDate == null || lastRewardDate.isEqual(today.minusDays(1))) {
-			player.loginStreak++;
-			if (lastRewardDate != null)
-				player.sendMessage("You now have a daily login streak of " + player.loginStreak + ".");
-		} else {
-			player.loginStreak = 1;
-			player.sendMessage("Your daily login streak has been reset as you missed a day.");
+		// Auto-open so the player is shown they have a reward waiting -- fires on every
+		// login while today's reward sits unclaimed, not just the first login of the day.
+		if (player.canClaimLoginReward && !player.claimedLoginToday) {
+			open();
 		}
-
-		if (player.loginStreak > loginRewards.size()) {
-			player.loginStreak = 1;
-			entries.clear();
-			rewardsLogged.clear();
-		}
-
-		player.canClaimLoginReward = true;
-		player.claimedLoginToday = false;
-		player.lastLoginRewardInEpoch = Instant.now().getEpochSecond();
-		player.todaysLoginReward = new DailyReward(false, loginRewards.get(player.loginStreak - 1));
-		entries.put(player.loginStreak, player.todaysLoginReward);
 	}
 
 	public void claimReward(Player player) {
