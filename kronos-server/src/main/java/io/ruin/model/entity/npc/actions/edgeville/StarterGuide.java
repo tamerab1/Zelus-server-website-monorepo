@@ -236,7 +236,7 @@ public class StarterGuide {
 
 			event.waitForDialogue(player);
 			Broadcast.WORLD.sendNews(player.getName() + " has just joined " + World.type.getWorldName()
-					+ ". For an early boost, use code ::winter!");
+					+ ". For an early boost, use code ::zelus!");
 			startTutorial.set(true);
 //			PlayerCreationWebhook.sendAccountCreationHook(player);
 

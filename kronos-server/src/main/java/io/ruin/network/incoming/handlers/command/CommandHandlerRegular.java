@@ -629,7 +629,7 @@ public class CommandHandlerRegular {
 					"spring",
 					"summer",
 					"fall",
-					"winter": {
+					"zelus": {
 				String code;
 				if (player.playTime / (24 * 3600) < 1)
 					code = "newplayer";
