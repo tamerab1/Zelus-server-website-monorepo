@@ -82,6 +82,18 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 
 	private static final Pattern NAME_PATTERN = Pattern.compile("[A-Za-z0-9_ ]+");
 
+	// Names that collide with a system identity rather than a player one -- e.g. "Help" is
+	// the name players are told to join as a clan chat for support, which (since clans here
+	// are just the vanilla owner-named channel mechanic) means whoever registers this exact
+	// name becomes the owner of that channel. Compared against the same normalized form OSRS
+	// uses for clan/name uniqueness (lowercase, spaces collapsed to underscores) so "Help",
+	// "help", and "Help " can't sneak past as distinct accounts.
+	private static final java.util.Set<String> RESERVED_NAMES = java.util.Set.of("help");
+
+	private static boolean isReservedName(String name) {
+		return RESERVED_NAMES.contains(name.trim().toLowerCase().replace(' ', '_'));
+	}
+
 	private final GameMessageConsumerRepositoryBuilder<Player> externalHandlers;
 	private final int[] crcTable = new int[24];
 
@@ -390,7 +402,8 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 				|| name.length() > 12
 				|| name.length() < 2
 				|| (name = name.trim()).isEmpty()
-				|| !NAME_PATTERN.matcher(name).matches()) {
+				|| !NAME_PATTERN.matcher(name).matches()
+				|| isReservedName(name)) {
 			return false;
 		}
 		return true;

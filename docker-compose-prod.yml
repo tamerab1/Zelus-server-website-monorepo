@@ -8,7 +8,21 @@ services:
         # before being force-killed. 30s gives it comfortable headroom.
         stop_grace_period: 30s
         ports:
-            - "43594:43594"
+            # Long-form + mode: host, same reasoning as reverse_proxy's 80/443 below --
+            # the short "43594:43594" syntax defaults to Swarm's ingress routing mesh,
+            # which SNATs every connection's source IP to an internal 10.0.0.0/24
+            # address before RSProtServiceFactory's channel.remoteAddress() ever sees
+            # it. That silently broke every per-IP check keyed on Player.getIp() --
+            # StarterGuide's MAX_STARTER_CLAIMS_PER_IP counted ALL players on the box
+            # as one shared IP, so after 5 genuine new accounts claimed a starter kit,
+            # every subsequent new player got wrongly told their IP had already used
+            # up its 5 claims, no matter their real origin. "host" mode is safe here
+            # for the same reason as reverse_proxy: single-node Swarm, no multi-node
+            # load-balancing to lose.
+            - target: 43594
+              published: 43594
+              protocol: tcp
+              mode: host
             # 9292 is NOT a profiler/debug port -- that assumption was wrong.
             # It's world-list/src/main/kotlin/.../WorldListServer.kt, a real
             # Ktor HTTP server serving GET /worlds.ws, which the client's
