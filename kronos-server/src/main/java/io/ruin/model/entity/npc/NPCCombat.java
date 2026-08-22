@@ -528,45 +528,49 @@ public abstract class NPCCombat extends Combat {
 				player.gauntlet.rollDemiBossDrop(player, npc);
 				break;
 		}
-		int baseBeginnerClueReward = 40;
-		int baseEasyClueReward = 40;
-		int baseMediumClueReward = 50;
-		int baseHardClueReward = 60;
-		int baseEliteClueReward = 150;
-		int baseMasterClueReward = 250;
+		// Clue rates x8 across the board -- these rolled on every single kill in the combat-level
+		// bracket (not per-monster), so the old denominators (as low as 1/41 for trash mobs) were
+		// flooding inventories with clues. The combat-achievement-tier discount structure below
+		// is unchanged, just scaled onto the new, meaningfully rarer base.
+		int baseBeginnerClueReward = 320;
+		int baseEasyClueReward = 320;
+		int baseMediumClueReward = 400;
+		int baseHardClueReward = 480;
+		int baseEliteClueReward = 1200;
+		int baseMasterClueReward = 2000;
 
 		if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.GRANDMASTER) {
-			baseBeginnerClueReward = 25;
-			baseEasyClueReward = 25;
-			baseMediumClueReward = 30;
-			baseHardClueReward = 35;
-			baseEliteClueReward = 100;
-			baseMasterClueReward = 150;
+			baseBeginnerClueReward = 200;
+			baseEasyClueReward = 200;
+			baseMediumClueReward = 240;
+			baseHardClueReward = 280;
+			baseEliteClueReward = 800;
+			baseMasterClueReward = 1200;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.MASTER) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
-			baseEliteClueReward = 120;
-			baseMasterClueReward = 200;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
+			baseEliteClueReward = 960;
+			baseMasterClueReward = 1600;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.ELITE) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
-			baseEliteClueReward = 120;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
+			baseEliteClueReward = 960;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.HARD) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.MEDIUM) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.EASY) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
 		}
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
 				&& AttributeExtensions.hasAttribute(player.getEquipment().get(Equipment.SLOT_RING),
