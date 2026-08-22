@@ -172,15 +172,23 @@ public enum ItemBreakPerks {
 			.sum();
 
 		double mineralContribution = (double) paidMinerals / minimumMinerals;
-		int chance = baseChance *= mineralContribution;
+		int scaledChance = (int) (baseChance * mineralContribution);
 
-		int finalChance = Math.min(baseChance * 3, (int) chance);
+		// Cap against the ORIGINAL base chance, not the already-scaled value -- baseChance used to
+		// get overwritten by the line above (`baseChance *= mineralContribution`) before this cap
+		// ran, so it was comparing scaledChance*3 against itself and never actually capped
+		// anything. That let overpaying minerals (which players naturally do, since nothing stops
+		// them adding more than the minimum) push a tier's threshold past 100, making `roll <=
+		// threshold` in ItemBreakPerks#upgradeItem unconditionally true for level 5 -- guaranteed
+		// top-tier rolls instead of a genuine chance.
+		int finalChance = Math.min(baseChance * 3, scaledChance);
 		finalChance *= 0.9;
 
 		finalChance *= donatorBoost(player);
 
-
-		return finalChance;
+		// Chances feed directly into a 1-100 roll threshold -- must never exceed 100 regardless of
+		// how much mineral/donator scaling stacks on top.
+		return Math.min(finalChance, 100);
 	}
 
 	private static double donatorBoost(Player player) {
