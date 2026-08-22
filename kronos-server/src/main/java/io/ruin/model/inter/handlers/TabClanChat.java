@@ -29,6 +29,16 @@ public class TabClanChat {
 				VarPlayerRepository.CLAN_ACTIVE_TAB.set(p.player, 2);
 			};
 			h.actions[6] = (SimpleAction) p -> {
+				// Clan Settings has no real backing implementation -- no clan ownership/rank
+				// model exists server-side, and neither interface 76's buttons nor the
+				// CLANCHANNEL_KICKUSER/AFFINEDCLANSETTINGS_* protocol messages have a
+				// registered handler anywhere, so every action in it is currently a silent
+				// no-op. Gated to staff only so regular players aren't shown a dead interface
+				// that looks functional but does nothing.
+				if (!p.player.isStaff()) {
+					p.player.sendMessage("Clan settings aren't available yet.");
+					return;
+				}
 				boolean iron = p.getGameMode().isGroupIronman();
 				p.getPacketSender().sendClientScript(828, "i", 1);
 				p.getPacketSender().sendToplevelSubInterface(76, 7, iron ? ToplevelComponent.GROUP_CLAN_TAB_AREA : ToplevelComponent.CLAN_TAB_AREA);
@@ -54,6 +64,12 @@ public class TabClanChat {
 				VarPlayerRepository.CLAN_ACTIVE_TAB.set(p.player, 2);
 			};
 			h.actions[6] = (SimpleAction) p -> {
+				// See the identical check above (interface 707's action[6]) for why this is
+				// staff-gated: no real backing implementation exists for it yet.
+				if (!p.player.isStaff()) {
+					p.player.sendMessage("Clan settings aren't available yet.");
+					return;
+				}
 				boolean iron = p.getGameMode().isGroupIronman();
 				p.getPacketSender().sendClientScript(828, "i", 1);
 				p.getPacketSender().sendToplevelSubInterface(76, 7, iron ? ToplevelComponent.GROUP_CLAN_TAB_AREA : ToplevelComponent.CLAN_TAB_AREA);
