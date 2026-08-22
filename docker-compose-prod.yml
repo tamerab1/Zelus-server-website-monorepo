@@ -142,7 +142,15 @@ services:
             # /api/vote/callback/* are wide open until these are actually set
             # in the DOCKER_COMPOSE_ENV secret for this environment.
             GAME_EVENTS_SECRET: ${GAME_EVENTS_SECRET}
+            # Fallback shared secret, used only for a site with no dedicated secret of its own
+            # below (main.py's _VOTE_CALLBACK_SECRETS_BY_SITE) -- see RUNELOCUS_/RSPSLIST_ below
+            # for why this isn't actually shared across topsites in practice.
             VOTE_CALLBACK_SECRET: ${VOTE_CALLBACK_SECRET}
+            # Each topsite's dashboard was configured with its own distinct callback secret when
+            # we registered the URL there -- RuneLocus's and RSPS-List's differ, so a single
+            # shared VOTE_CALLBACK_SECRET can't validate both at once.
+            RUNELOCUS_VOTE_CALLBACK_SECRET: ${RUNELOCUS_VOTE_CALLBACK_SECRET}
+            RSPSLIST_VOTE_CALLBACK_SECRET: ${RSPSLIST_VOTE_CALLBACK_SECRET}
             # Shared boot-time password for HttpClient.authenticate() (must match
             # server.properties' api_password on the game_server side). Empty
             # here means /authenticate/login always 503s and every ::claim*

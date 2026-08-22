@@ -45,7 +45,16 @@ log = logging.getLogger("zelus.main")
 # ── Environment config ────────────────────────────────────────────────────────
 _GAME_EVENTS_SECRET  = os.getenv("GAME_EVENTS_SECRET", "")   # shared secret for /events/push
 _GAME_API_PASSWORD   = os.getenv("GAME_API_PASSWORD", "")    # World.apiPassword from server properties
-_VOTE_CALLBACK_SECRET = os.getenv("VOTE_CALLBACK_SECRET", "")  # shared secret for /api/vote/callback/{site}
+# /api/vote/callback/{site} secrets -- NOT actually shared across topsites: each site's own
+# dashboard is configured with its own value we chose when registering the callback URL there
+# (RuneLocus's and RSPS-List's differ), so validating both against one VOTE_CALLBACK_SECRET meant
+# fixing one would silently break the other. VOTE_CALLBACK_SECRET is kept as a fallback for
+# whichever site doesn't have its own *_VOTE_CALLBACK_SECRET set, for back-compat/dev use.
+_VOTE_CALLBACK_SECRET = os.getenv("VOTE_CALLBACK_SECRET", "")
+_VOTE_CALLBACK_SECRETS_BY_SITE = {
+    "RUNELOCUS":  os.getenv("RUNELOCUS_VOTE_CALLBACK_SECRET")  or _VOTE_CALLBACK_SECRET,
+    "RSPS_LIST":  os.getenv("RSPSLIST_VOTE_CALLBACK_SECRET")   or _VOTE_CALLBACK_SECRET,
+}
 _SITE_URL           = os.getenv("SITE_URL", "http://localhost:5173")
 _CORS_ORIGINS_RAW   = os.getenv(
     "CORS_ORIGINS",
@@ -1059,7 +1068,8 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
     if not site_name:
         raise HTTPException(status_code=404, detail=f"Unknown vote callback site: {site}")
 
-    if _VOTE_CALLBACK_SECRET and provided_secret != _VOTE_CALLBACK_SECRET:
+    expected_secret = _VOTE_CALLBACK_SECRETS_BY_SITE.get(site_name, "")
+    if expected_secret and provided_secret != expected_secret:
         log.warning("vote_callback: rejected %s ping with bad/missing secret from %s",
                     site_name, _get_real_client_ip(request))
         raise HTTPException(status_code=403, detail="Invalid callback secret.")

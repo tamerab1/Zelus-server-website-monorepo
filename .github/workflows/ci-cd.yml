@@ -427,15 +427,18 @@ jobs:
         run: |
           export $(cat docker-compose.env | xargs)
           export IMAGE_TAG=${{ github.ref_name }}
-          # Overrides the stale VOTE_CALLBACK_SECRET baked into the DOCKER_COMPOSE_ENV blob above
-          # -- RSPS-List's postback pings send a different secret than what's stored there, so
-          # every callback was rejected and votes only ever got confirmed via the 30-min
-          # stale-vote fallback (see main.py's _promote_stale_unverified_votes), not the live
-          # callback. Must come AFTER the docker-compose.env export above, or that blob's stale
-          # value would clobber this. DOCKER_COMPOSE_ENV is write-only in the GitHub UI (no way to
-          # view/edit the existing blob to fix just that one line), so this is a standalone secret
-          # layered on top instead of touching that blob. Remove this line (and the
-          # VOTE_CALLBACK_SECRET_OVERRIDE secret) once DOCKER_COMPOSE_ENV itself is corrected.
-          export VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
+          # Each topsite's vote-confirmation callback is authenticated with its OWN secret (the
+          # value we entered into that site's own dashboard when registering the callback URL),
+          # NOT one value shared across sites -- RuneLocus and RSPS-List turned out to have two
+          # different secrets configured on their end, so validating both against a single
+          # VOTE_CALLBACK_SECRET meant fixing one broke the other. These override whatever's baked
+          # into the DOCKER_COMPOSE_ENV blob above. Must come AFTER that export, or the blob's
+          # stale value would clobber these. DOCKER_COMPOSE_ENV is write-only in the GitHub UI (no
+          # way to view/edit the existing blob to fix a line in place), so these are standalone
+          # secrets layered on top instead of touching that blob. Fold back into DOCKER_COMPOSE_ENV
+          # (as RUNELOCUS_VOTE_CALLBACK_SECRET / RSPSLIST_VOTE_CALLBACK_SECRET) and drop these
+          # overrides once that blob is next rebuilt from scratch.
+          export RUNELOCUS_VOTE_CALLBACK_SECRET=${{ secrets.RUNELOCUS_VOTE_CALLBACK_SECRET_OVERRIDE }}
+          export RSPSLIST_VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod
