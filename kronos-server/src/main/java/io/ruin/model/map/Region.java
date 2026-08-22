@@ -50,20 +50,11 @@ public class Region {
 	 * Updating
 	 */
 
-	/**
-	 * A full region rebuild (login or teleport) forces the client to discard its local zone
-	 * state, so every active tile across up to 9 revealed regions must be resent -- unlike a
-	 * normal walked step, which only reveals 1-3 new regions. Sending all of that synchronously
-	 * in a single tick is what caused the multi-second client freeze on teleport (see
-	 * PlayerUpdater#drainTileUpdates): instead we hand the tiles off to be drip-fed over several
-	 * ticks.
-	 */
 	public static void update(Player player) {
-		ObjectArrayList<Tile> tiles = new ObjectArrayList<>();
 		for (Region region : player.getRegions()) {
-			tiles.addAll(region.activeTiles);
+			for (Tile tile : region.activeTiles)
+				tile.update(player);
 		}
-		player.getUpdater().queueRegionTiles(tiles);
 	}
 
 	public final int id;
