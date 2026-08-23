@@ -402,8 +402,18 @@ jobs:
         run: |
           export $(cat docker-compose.env | xargs)
           export IMAGE_TAG=latest-dev
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_dev
+          # NOT --with-registry-auth -- that flag propagates THIS RUNNER's own docker-login
+          # (using the ephemeral per-run GITHUB_TOKEN) into the swarm service's stored
+          # registry-auth, which Swarm then prefers over the node's own local login for every
+          # future pull, including auto-restarts long after this job (and its token) has
+          # expired. That caused a real production outage 2026-08-23: game_server crashed
+          # days after a deploy, Swarm tried to re-pull using the long-expired baked-in auth,
+          # got "denied" every time, and looped forever -- fixed only by manually `docker pull`
+          # on the VPS using ITS OWN separately-configured, durable login. Omitting
+          # --with-registry-auth here means Swarm always falls back to that same durable
+          # node-level login (already present on the VPS, confirmed working) for every pull,
+          # deploy-triggered or not -- so this doesn't need `docker login` on the runner either.
+          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy -c - zelus_dev
 
   deploy-production:
     needs: [setup, release-production]
@@ -440,5 +450,6 @@ jobs:
           # overrides once that blob is next rebuilt from scratch.
           export RUNELOCUS_VOTE_CALLBACK_SECRET=${{ secrets.RUNELOCUS_VOTE_CALLBACK_SECRET_OVERRIDE }}
           export RSPSLIST_VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod
+          # NOT --with-registry-auth -- see the identical comment on deploy-development above.
+          # Same reasoning, same real incident (2026-08-23 production outage).
+          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy -c - zelus_prod
