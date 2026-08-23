@@ -51,9 +51,30 @@ public class Region {
 	 */
 
 	public static void update(Player player) {
+		// Temporary diagnostic for the teleport-freeze investigation (see the "spread tile
+		// updates" fix that was reverted in 83009e1 -- it broke the client's region-load
+		// handshake instead of fixing anything, because we never actually confirmed whether
+		// THIS loop is a real server-side stall or the delay is purely client-side rendering
+		// cost once the burst arrives). Logs tile/packet count and wall-clock time for any
+		// region rebuild that takes long enough to matter, with zero behavior change -- pure
+		// instrumentation. Remove once we have a real answer.
+		long startNanos = System.nanoTime();
+		int tileCount = 0;
+		int activeTileCount = 0;
 		for (Region region : player.getRegions()) {
-			for (Tile tile : region.activeTiles)
+			tileCount += region.activeTiles.size();
+			for (Tile tile : region.activeTiles) {
+				if ((tile.gameObjects != null && !tile.gameObjects.isEmpty())
+						|| (tile.groundItems != null && !tile.groundItems.isEmpty())) {
+					activeTileCount++;
+				}
 				tile.update(player);
+			}
+		}
+		long elapsedMs = (System.nanoTime() - startNanos) / 1_000_000;
+		if (elapsedMs >= 20) {
+			log.info("Region.update took {}ms for {} ({} regions, {} tiles scanned, {} with content)",
+					elapsedMs, player.getName(), player.getRegions().size(), tileCount, activeTileCount);
 		}
 	}
 
