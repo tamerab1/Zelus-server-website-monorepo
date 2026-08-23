@@ -402,7 +402,18 @@ jobs:
         run: |
           export $(cat docker-compose.env | xargs)
           export IMAGE_TAG=latest-dev
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          # GHCR_PULL_TOKEN (classic PAT, read:packages, no expiration) -- NOT GITHUB_TOKEN.
+          # --with-registry-auth bakes whatever credential is used here directly into the
+          # swarm service, and Swarm reuses that SAME credential for every future pull tied
+          # to this service, including auto-restarts long after this job ends -- GITHUB_TOKEN
+          # is invalidated once the job completes, which caused a real production outage
+          # (2026-08-23): a later crash-triggered restart tried to re-pull with the by-then-
+          # expired token and got "denied" forever. A non-expiring PAT keeps every future pull
+          # working, not just this deploy's. (Dropping --with-registry-auth entirely was tried
+          # and made it worse -- Swarm doesn't fall back to the node's own local docker login
+          # the way a plain `docker pull` does, so nothing pulled at all without a credential
+          # attached here, even on a fresh deploy.)
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
           docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_dev
 
   deploy-production:
@@ -440,5 +451,7 @@ jobs:
           # overrides once that blob is next rebuilt from scratch.
           export RUNELOCUS_VOTE_CALLBACK_SECRET=${{ secrets.RUNELOCUS_VOTE_CALLBACK_SECRET_OVERRIDE }}
           export RSPSLIST_VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
-          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
+          # above. Same reasoning, same real incident (2026-08-23 production outage).
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
           docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod
