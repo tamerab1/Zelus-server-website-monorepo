@@ -206,9 +206,16 @@ export default function VoteView() {
             <button
               onClick={() => { setGameUsername(''); setGameUsernameInput(''); }}
               className="font-fantasy text-xs tracking-widest"
-              style={{ color: '#555', marginLeft: 'auto' }}
-              onMouseOver={e => e.currentTarget.style.color = '#d4af37'}
-              onMouseOut={e  => e.currentTarget.style.color = '#555'}
+              style={{
+                color: '#9a8f80',
+                marginLeft: 'auto',
+                background: 'rgba(0,0,0,0.55)',
+                border: '1px solid #2e2820',
+                borderRadius: 2,
+                padding: '0.35rem 0.75rem',
+              }}
+              onMouseOver={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = '#d4af37'; }}
+              onMouseOut={e  => { e.currentTarget.style.color = '#9a8f80'; e.currentTarget.style.borderColor = '#2e2820'; }}
             >
               Change
             </button>
@@ -231,8 +238,8 @@ export default function VoteView() {
             <>
               {/* Daily total bar */}
               <div
-                className="max-w-2xl mx-auto mb-6 p-5 flex flex-col sm:flex-row items-center justify-between gap-4"
-                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid #2e2820', borderRadius: 2 }}
+                className="max-w-2xl mx-auto mb-6 p-5 flex flex-col sm:flex-row items-center justify-between gap-4 stone-panel"
+                style={{ borderRadius: 2 }}
               >
                 <div>
                   <p className="font-fantasy text-xs tracking-widest" style={{ color: '#d4af37' }}>
