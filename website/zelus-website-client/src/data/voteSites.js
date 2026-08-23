@@ -23,11 +23,20 @@ const VOTE_SITES = [
     icon:     '👑',
     /**
      * Zelus's actual RuneLocus listing slug/vote link (confirmed live 2026-08-11):
-     * https://www.runelocus.com/top-rsps-list/zelus/vote/?id={username}
-     * The id= param passes the in-game username through as the callback identifier.
+     * https://www.runelocus.com/top-rsps-list/zelus/vote/
+     *
+     * RuneLocus (now rebranded RuLocus) never once sent a postback to our
+     * callback endpoint despite the URL/secret being configured correctly on
+     * their dashboard -- traced to this URL passing the username under `id=`,
+     * which isn't a field their callback mechanism recognizes at all. Per
+     * their current documented spec (rulocus.com/tutorials/callback-documentation),
+     * the vote URL must carry the identifier as `callback=`, which is the
+     * exact value they echo back verbatim on the postback ping. Sending both
+     * `callback=` and `username=` (their docs show both together) plus
+     * keeping `id=` for compatibility, in case anything still reads it.
      */
     buildUrl: (username) =>
-      `https://www.runelocus.com/top-rsps-list/zelus/vote/?id=${encodeURIComponent(username)}`,
+      `https://www.runelocus.com/top-rsps-list/zelus/vote/?callback=${encodeURIComponent(username)}&username=${encodeURIComponent(username)}&id=${encodeURIComponent(username)}`,
     // Matches CommandHandlerRegular.java's ::claimvote reward logic exactly.
     votePoints: 2,
     rewards: [

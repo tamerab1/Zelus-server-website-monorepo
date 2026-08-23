@@ -1039,9 +1039,15 @@ def submit_vote(request: Request, req: VoteSubmitRequest, db: Session = Depends(
 #   secret                = their copy of our API secret
 #   userip                = the voter's IP, stored on the Vote row if present
 #
-# RuneLocus's exact postback format is unconfirmed (only visible in their own
-# dashboard) -- the username-param list below is deliberately tolerant of
-# both formats so either site's ping works without further changes.
+# RuneLocus's (now rebranded RuLocus) confirmed postback format, per their
+# own docs (rulocus.com/tutorials/callback-documentation): the vote URL is
+# opened with a `callback=` param carrying whatever identifier we chose (see
+# voteSites.js -- we pass the in-game username), and their postback later
+# echoes that exact value straight back under a field literally named
+# `callback`, alongside `ip` and `secret`. "callback" was missing from this
+# list entirely -- our old vote URL sent the username under `id=` instead
+# (a field their callback mechanism never reads), which is the real reason
+# zero RuneLocus pings ever arrived, not a secret/config problem on our side.
 #
 # If VOTE_CALLBACK_SECRET is unset, the secret check is skipped entirely (dev
 # only -- this makes the endpoint open to anyone, so it MUST be set before
@@ -1052,7 +1058,7 @@ _CALLBACK_SITE_SLUGS = {
     "rsps-list":  "RSPS_LIST",
     "rsps_list":  "RSPS_LIST",
 }
-_CALLBACK_USERNAME_PARAMS = ("userid", "postback", "id", "username", "user", "u", "pingUsername", "name")
+_CALLBACK_USERNAME_PARAMS = ("callback", "userid", "postback", "id", "username", "user", "u", "pingUsername", "name")
 
 def _handle_vote_callback(site: str, provided_secret: str | None, request: Request, db: Session):
     from sqlalchemy import func as sa_func
