@@ -69,13 +69,11 @@ public class Bank extends ItemContainerG<BankItem> {
 	transient boolean sortSkip, sortRequired;
 
 	public void open() {
-		boolean presetsLocked = true;
 		asNote = false;
-		if (presetsLocked)
-			player.getPacketSender().setHidden(12, 120, true);
-		else {
-			player.getPacketSender().setHidden(12, 120, false);
-		}
+		/* Component 79 is the sidebar strip that contains the Presets button (120); both are
+		 * hidden by default in the cache and must be explicitly shown. */
+		player.getPacketSender().setHidden(12, 79, false);
+		player.getPacketSender().setHidden(12, 120, false);
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");
 			return;

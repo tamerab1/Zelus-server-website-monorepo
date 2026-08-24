@@ -427,7 +427,8 @@ public class Player extends PlayerAttributes {
 		if (getPlayerPerkHandler().getActivePerkSets(this).contains(PerkSets.GOLD_DIGGER)) {
 			int perkIndex = getPlayerPerkHandler().getActivePerkSetIndex(this, PerkSets.GOLD_DIGGER);
 			GoldDigger c = (GoldDigger) getPlayerPerkHandler().getActivePerkSets(this).get(perkIndex).perkSet();
-			dropAddition += c.getDropRateBoost();
+			int level = getPlayerPerkHandler().getActivePerkSetLevel(this, PerkSets.GOLD_DIGGER);
+			dropAddition += c.getDropRateBoost(level);
 		}
 		if (getEquipment().get(Equipment.SLOT_RING) != null && getEquipment().get(Equipment.SLOT_RING).getId() == 30592) {
 			dropAddition += 5;

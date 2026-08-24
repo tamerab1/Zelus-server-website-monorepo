@@ -434,6 +434,10 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient List<PerkSets> activePerkSetsList = new ArrayList<>();
 	public transient List<Perks> ownedPerksList = new ArrayList<>();
 	public transient List<Perks> activePerksList = new ArrayList<>();
+	/** Per-player active-perk-set levels (PerkSets ordinal -> level). Perk set level used to live
+	 * on the shared PerkSets enum's PlayerPerkSet instance, meaning every player on the server
+	 * shared one level per set -- rebuilt per-player in PlayerPerkHandler.updateActivePerkSets. */
+	public transient Map<Integer, Integer> activePerkSetLevels = new HashMap<>();
 	public transient PlayerPerkInterface playerPerkInterface;
 	public transient PlayerPerkHandler playerPerkHandler;
 	public transient Map<Integer, PlayerPerk> ownedPlayerPerks = new HashMap<>();

@@ -502,6 +502,22 @@ public enum Pet {
 	SHADOW_PRINCE_BLACK_DRAGON(60214, 30258, false),
 	GOLDEN_PRINCE_BLACK_DRAGON(60215, 30259, false),
 	BLOOD_PRINCE_BLACK_DRAGON(60216, 30260, false),
+
+	/**
+	 * drag-drop-for-other-server batch (2026-08-19) -- item ids remapped from the source pack's
+	 * 60019/60025/60048/60076/60083/60133 (which collided with the Pet Recolor Exchange range
+	 * above) to 60229-60234; npc ids 30326-30535 were free and used as-is.
+	 */
+	MAD_HATTER_PET(60229, 30326, false),
+	PSYCHOTIC_MAD_HATTER_PET(60230, 30332, false),
+	DEMONIC_BUNNY_PET(60231, 30355, false),
+	INFERNAL_DEATH_PET(60232, 30383, false),
+	EVIL_SNOWMAN_PET(60233, 30390, false),
+	BLOOD_REAPER_PET(60234, 30440, false),
+	CURSED_LION_PET(60224, 30531, false),
+	CURSED_TITAN_PET(60225, 30532, false),
+	SOLAR_BEHEMOTH_PET(60226, 30533, false),
+	DRAGON_SNOWMAN_PET(60228, 30535, false),
 	;
 
 	public final int itemId, npcId, metaId;

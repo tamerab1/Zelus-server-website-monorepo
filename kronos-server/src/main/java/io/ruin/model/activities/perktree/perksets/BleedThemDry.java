@@ -21,31 +21,31 @@ public class BleedThemDry extends PlayerPerkSet {
 	@Override
 	public String getPerkSetEffect() {
 		return "When this perk set is active you will have a chance to activate a bleed effect on your opponent, the damage of the bleed will be based on the perk set level.<br><br>" +
-			"At level 1 you will have a " + getBleedChance(1) + "% chance to activate a bleed effect on your opponent.<br><br>" +
-			"At level 2 you will have a " + getBleedChance(2) + "% chance to activate a bleed effect on your opponent.<br><br>" +
-			"At level 3 you will have a " + getBleedChance(3) + "% chance to activate a bleed effect on your opponent.<br><br>" +
-			"At level 4 you will have a " + getBleedChance(4) + "% chance to activate a bleed effect on your opponent.<br><br>" +
-			"At level 5 you will have a " + getBleedChance(5) + "% chance to activate a bleed effect on your opponent.<br><br>"
+			"At level 1 you will have a " + getBleedChancePercent(1) + "% chance to activate a bleed effect on your opponent.<br><br>" +
+			"At level 2 you will have a " + getBleedChancePercent(2) + "% chance to activate a bleed effect on your opponent.<br><br>" +
+			"At level 3 you will have a " + getBleedChancePercent(3) + "% chance to activate a bleed effect on your opponent.<br><br>" +
+			"At level 4 you will have a " + getBleedChancePercent(4) + "% chance to activate a bleed effect on your opponent.<br><br>" +
+			"At level 5 you will have a " + getBleedChancePercent(5) + "% chance to activate a bleed effect on your opponent.<br><br>"
 			;
 	}
 
-	private double getBleedChance(int level) {
+	private double getBleedChancePercent(int level) {
 		return 2.5 + (1.5 * level);
 	}
 
-	public double getBleedChance() {
-		return (2.5 + (1.5 * getLevel())) / 100;
+	public double getBleedChance(int level) {
+		return getBleedChancePercent(level) / 100;
 	}
 
-	public void bleedEffect(Player attacker, NPC target) {
+	public void bleedEffect(Player attacker, NPC target, int level) {
 		if (!attacker.isPlayer() || attacker.player.bleedActive)
 			return;
 		World.startEvent(e -> {
-			int totalBleedHits = Random.get(5, 10 + (getLevel() * 2));
+			int totalBleedHits = Random.get(5, 10 + (level * 2));
 			attacker.player.bleedActive = true;
 			e.delay(3);
 			for (int i = 0; i < totalBleedHits; i++) {
-				target.hit(new Hit().randDamage(getLevel(), getLevel() * 3));
+				target.hit(new Hit().randDamage(level, level * 3));
 				e.delay(2);
 				if (i == totalBleedHits - 1)
 					attacker.player.bleedActive = false;

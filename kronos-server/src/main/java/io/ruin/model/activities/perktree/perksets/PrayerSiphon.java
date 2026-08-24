@@ -4,14 +4,6 @@ import io.ruin.model.activities.perktree.PlayerPerkSet;
 
 public class PrayerSiphon extends PlayerPerkSet {
 
-	public double getSiphonMultiplier() {
-		return (2.5 + (18.5 * getLevel())) / 100;
-	}
-
-	public int getPrayerDrainChance() {
-		return 5 + (getLevel() * 5);
-	}
-
 	@Override
 	public String getPerkSetName() {
 		return "Prayer Siphon";
@@ -22,11 +14,11 @@ public class PrayerSiphon extends PlayerPerkSet {
 		return "Prayer Points Siphon";
 	}
 
-	private double getSiphonMultiplier(int level) {
+	public double getSiphonMultiplier(int level) {
 		return (2.5 + (18.5 * level)) / 100;
 	}
 
-	private int getPrayerDrainChance(int level) {
+	public int getPrayerDrainChance(int level) {
 		return 5 + (level * 5);
 	}
 

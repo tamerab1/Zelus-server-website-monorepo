@@ -607,6 +607,7 @@ public final class StaticInit {
 		io.ruin.model.content.combatachievements.CombatAchievementInterface.register();
 		io.ruin.model.item.containers.Trade.register();
 		io.ruin.model.item.containers.bank.BankInterface.register();
+		io.ruin.model.content.equipmentpresets.GearPresetInterface.register();
 		io.ruin.model.item.containers.bank.BankActions.register();
 		io.ruin.model.item.containers.bank.BankPin.register();
 		// io.ruin.model.map.object.ClientObj.register();

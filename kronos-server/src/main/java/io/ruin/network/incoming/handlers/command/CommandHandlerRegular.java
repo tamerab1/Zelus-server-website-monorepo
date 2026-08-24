@@ -473,12 +473,20 @@ public class CommandHandlerRegular {
 						"<col=800000>Misc Commands:</col>",
 						"::online/players", "::staff", "::clog", "::yell", "::donated/::claim",
 						"::vote/::claimvote/::claimed", "::clear/::empty", "::upgrade",
-						"::points/::pointshops",
+						"::points/::pointshops", "::presets",
 						"::reclaimcannon", "::breakvials", "::newcomer", "::dailies",
 						"::char", "::skull", "::changepass", "::changesecuritypin", "::task/slayertask", "::bosstask",
 						"::scrolls/timers", "::raffle/votelottery",
 						"<col=800000>Website Commands:</col>",
 						"::donate", "::vote", "::discord", "::hiscores");
+				return true;
+			}
+
+			case "presets": {
+				/* Opens the bank first so GearPresetInterface's real entry point (which requires
+				 * isVisibleInterface(BANK)) initializes and refreshes properly. */
+				player.getBank().open();
+				player.getGearPresetInterface().open(player);
 				return true;
 			}
 

@@ -4723,7 +4723,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.RANGE_RESISTANCE);
 					RangeResistance c = (RangeResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getRangeDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.RANGE_RESISTANCE);
+					hit.damage *= c.getRangeDamageReduction(level);
 				}
 			}
 			if (hit.attackStyle != null && hit.attackStyle.isMagic()) {
@@ -4732,7 +4733,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.MAGIC_RESISTANCE);
 					MagicResistance c = (MagicResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getMagicDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.MAGIC_RESISTANCE);
+					hit.damage *= c.getMagicDamageReduction(level);
 				}
 			}
 			if (hit.attackStyle != null && hit.attackStyle.isMelee()) {
@@ -4741,7 +4743,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.MELEE_RESISTANCE);
 					MeleeResistance c = (MeleeResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getMeleeDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.MELEE_RESISTANCE);
+					hit.damage *= c.getMeleeDamageReduction(level);
 				}
 			}
 		}
@@ -5474,17 +5477,19 @@ public class PlayerCombat extends Combat {
 		if (player.getPlayerPerkHandler().getActivePerkSets(player).contains(PerkSets.PRAYER_SIPHON) && target.isNpc()) {
 			int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.PRAYER_SIPHON);
 			PrayerSiphon c = (PrayerSiphon) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex).perkSet();
-			if (Random.rollPercent(c.getPrayerDrainChance())) {
+			int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.PRAYER_SIPHON);
+			if (Random.rollPercent(c.getPrayerDrainChance(level))) {
 				player.getStats().get(StatType.Prayer).alter(
-						(int) (player.getStats().get(StatType.Prayer).currentLevel + (hit.damage * c.getSiphonMultiplier())));
+						(int) (player.getStats().get(StatType.Prayer).currentLevel + (hit.damage * c.getSiphonMultiplier(level))));
 			}
 		}
 		if (player.getPlayerPerkHandler().getActivePerkSets(player).contains(PerkSets.BLEED_THEM_DRY) && target.isNpc()) {
 			int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.BLEED_THEM_DRY);
 			BleedThemDry c = (BleedThemDry) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex).perkSet();
-			if (Random.rollPercent(c.getBleedChance()) && hit.damage > 0)
+			int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.BLEED_THEM_DRY);
+			if (Random.rollPercent(c.getBleedChance(level)) && hit.damage > 0)
 				if (target.isNpc())
-					c.bleedEffect(player, target.npc);
+					c.bleedEffect(player, target.npc, level);
 		}
 
 		SetEffect.GUTHAN.checkAndApply(player, target, hit);
