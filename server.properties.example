@@ -51,6 +51,8 @@ trade_post_tax=2
 
 # Webhooks
 trade_post_discord_hook=
+# World boss / timed event spawn warnings + announcements (#in-game-events).
+discord_hook_events=
 account_creation_discord_hook=
 item_perk_discord_hook=
 vote_discord_hook=

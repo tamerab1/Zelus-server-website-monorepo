@@ -9,7 +9,6 @@ import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.Bounds;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.dynamic.DynamicMap;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -135,11 +134,7 @@ public class DonationBossHandler {
 					e.delay(DELAY_100);
 				}
 				broadcastEvent("The Donation boss will spawn in 1 minute, type ::db to teleport to it!");
-				// TODO: Discord message, that the boss will spawn in 60 seconds
-				var dto = new JSONObject()
-					.put("boss", "The Donation boss")
-					.put("description", "will spawn in 60 seconds.");
-				GlobalBroadcastHook.sendGlobalSpawnedMessage(dto);
+				GlobalBroadcastHook.sendEventSpawnWarning("The Donation boss", null);
 				// Final minute wait
 				e.delay(DELAY_100);
 				boss = new NPC(1787).spawn(new Position(map.convertX(2912), map.convertY(3616)));
@@ -148,12 +143,7 @@ public class DonationBossHandler {
 					overflowDonations += DONATION_FOR_BOSS;
 					broadcastEvent("Boss spawn failed! Donations have been preserved for next spawn.");
 				} else {
-//					RareDropEmbedMessage.sendGlobalSpawnedMessage(boss);
-
-					var dto2 = new JSONObject()
-						.put("boss", boss.getName())
-						.put("description", "has just spawned!");
-					GlobalBroadcastHook.sendGlobalSpawnedMessage(dto2);
+					GlobalBroadcastHook.sendEventSpawnAnnouncement(boss.getName(), null);
 				}
 			} catch (Exception ex) {
 				overflowDonations += DONATION_FOR_BOSS;
