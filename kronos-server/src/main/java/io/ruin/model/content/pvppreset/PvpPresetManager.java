@@ -91,17 +91,10 @@ public class PvpPresetManager {
         if (canLoadFromBank(player, preset)) {
             activateFromBank(player, preset);
         } else {
-            // PVM Mode accounts (regular PVM + all ironman tiers) are blocked from renting
-            // system PvP presets — they may only load a preset they already own in their bank.
-            if (player.isPvmMode()) {
-                player.sendMessage("[PvP Preset] PVM Mode accounts can only load presets they already own in their bank.");
-                return;
-            }
-            if (player.getInventory().isNotEmpty()) {
-                player.sendMessage("You must have an empty inventory before loading a preset.");
-                return;
-            }
-            activateRental(player, preset);
+            // Rental (paid, phantom-gear) mode is disabled -- players may only load a preset
+            // they already own the items for.
+            player.sendMessage("[PvP Preset] You do not own all of the items required by this preset.");
+            return;
         }
 
         SpellBook book = (spellbookOverride != null) ? spellbookOverride : preset.defaultSpellbook();

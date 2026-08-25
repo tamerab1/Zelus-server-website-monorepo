@@ -182,6 +182,24 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "clearphantom": {
+				// Strips a stuck PvP-preset "phantom" rental flag (see PvpPresetManager.PHANTOM_KEY)
+				// from every item in equipment/inventory/bank -- for items left over from a rental
+				// preset that never got cleared, blocking them from being banked/traded/dropped.
+				int cleared = 0;
+				for (var container : java.util.List.of(
+						player.getEquipment(), player.getInventory(), player.getBank())) {
+					for (var item : container.getItems()) {
+						if (item != null && item.attributes != null
+								&& item.attributes.remove(io.ruin.model.content.pvppreset.PvpPresetManager.PHANTOM_KEY) != null) {
+							cleared++;
+						}
+					}
+				}
+				player.sendMessage("Cleared the phantom rental flag from " + cleared + " item(s).");
+				return true;
+			}
+
 			case "hp": {
 				int amount = Integer.parseInt(args[0]);
 				player.setHp(amount);
