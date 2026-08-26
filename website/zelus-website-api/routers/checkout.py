@@ -1,13 +1,18 @@
 """
-Checkout endpoints — Stripe, PayPal, OSRS GP (manual ticket), Crypto (NOWPayments).
+Checkout endpoints — Stripe, PayPal, OSRS GP (manual ticket), Crypto (NOWPayments),
+Tebex (Headless).
 
 Security contract:
   - Package price is ALWAYS looked up from store_catalog, never taken from the request.
-  - A Transaction row is created BEFORE the player is redirected, so we can reconcile
-    webhook callbacks even if the browser never returns to our success URL.
+  - Stripe/PayPal/Crypto: a Transaction row is created BEFORE the player is redirected,
+    so we can reconcile webhook callbacks even if the browser never returns to our
+    success URL.
   - OSRS GP: a Discord webhook notifies staff; fulfillment is manual until confirmed.
   - Crypto: NOWPayments hosted invoice; fulfillment happens off the IPN webhook
     in routers/webhooks.py (see that file for the signature verification contract).
+  - Tebex: creates a Headless basket, no Transaction row up front -- fulfillment is
+    entirely driven off the payment.completed webhook, same as the old external-link
+    flow (see the create_tebex_checkout docstring/comment for why).
 """
 import logging
 import math
@@ -15,12 +20,14 @@ import os
 
 import httpx
 import stripe
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 import models
 from database import get_db
+from net_utils import get_real_client_ip
+from routers.webhooks import TEBEX_PACKAGE_MAP
 from store_catalog import get_item
 
 log = logging.getLogger("zelus.checkout")
@@ -43,6 +50,18 @@ DISCORD_STORE_WEBHOOK_URL = os.getenv("DISCORD_STORE_WEBHOOK_URL", "")
 # ── NOWPayments (crypto) ─────────────────────────────────────────────────────────
 NOWPAYMENTS_API_KEY = os.getenv("NOWPAYMENTS_API_KEY", "")
 NOWPAYMENTS_BASE_URL = "https://api.nowpayments.io"
+
+# ── Tebex Headless (card/PayPal/etc, stays on our site) ──────────────────────────
+# Public token only -- Headless basket/package creation doesn't need the private
+# key (that's only for reading a customer's own purchase history, which we don't
+# do). From the Tebex creator panel: Developers > API Keys.
+TEBEX_PUBLIC_TOKEN = os.getenv("TEBEX_PUBLIC_TOKEN", "")
+TEBEX_HEADLESS_BASE_URL = "https://headless.tebex.io/api"
+
+# Reuses webhooks.py's TEBEX_PACKAGE_MAP (Tebex package id -> our slug) as the
+# single source of truth, inverted for this outbound direction -- avoids
+# hand-maintaining a second mapping that can silently drift out of sync.
+_SLUG_TO_TEBEX_PACKAGE_ID = {slug: tebex_id for tebex_id, slug in TEBEX_PACKAGE_MAP.items()}
 
 # ── Shared ─────────────────────────────────────────────────────────────────────
 SITE_URL = os.getenv("SITE_URL", "http://localhost:5173")
@@ -435,3 +454,88 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
     log.info("[Crypto] Invoice created: %s  txn_id=%d  user='%s'",
              invoice.get("id"), txn.id, req.username)
     return {"checkout_url": invoice_url, "invoice_id": invoice.get("id")}
+
+
+# ── Tebex Headless checkout ────────────────────────────────────────────────────
+# Creates a Tebex basket via the Headless API so the player stays on our site
+# instead of following the old external link to the hosted storefront.
+#
+# Deliberately does NOT create a Transaction row here, unlike Stripe/PayPal/
+# Crypto above. Fulfillment for Tebex is entirely driven off payment.completed
+# (see routers/webhooks.py's _tebex_payment_completed), which resolves the
+# order purely from the product id plus the customer-username field Tebex's
+# own checkout page collects -- and a headless basket's links.checkout points
+# at that exact same page, so the existing webhook needs no changes. Creating
+# a pending row here too would just leave an orphaned duplicate once the
+# webhook creates its own (this mirrors why the current hosted-storefront
+# flow has never created one either -- see the module docstring above).
+#
+# NOT YET LIVE-VERIFIED: whether the Tebex checkout page reached via a
+# headless-created basket still prompts for the same custom "username" field
+# the hosted storefront does -- that's what _tebex_payment_completed depends
+# on to resolve who to deliver to. Test with one real low-tier purchase before
+# trusting this path; if the field is missing, the webhook logs
+# "missing customer username -- cannot fulfill" and nothing is delivered
+# (payment still succeeds on Tebex's side, so this would need a manual
+# refund/fulfil, not a silent loss either way).
+@router.post("/tebex")
+async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Session = Depends(get_db)):
+    log.info("[Tebex] Checkout — user='%s' pkg='%s'", req.username, req.package_id)
+
+    if not TEBEX_PUBLIC_TOKEN:
+        raise HTTPException(503, "Card payments are not configured.")
+
+    # ── Price validation (never trust the frontend) ────────────────────────────
+    item = get_item(req.package_id)
+    if not item:
+        log.warning("[Tebex] Unknown package_id='%s' from user='%s'", req.package_id, req.username)
+        raise HTTPException(400, f"Unknown package: '{req.package_id}'")
+
+    tebex_package_id = _SLUG_TO_TEBEX_PACKAGE_ID.get(item.slug)
+    if not tebex_package_id:
+        log.error("[Tebex] No Tebex package id mapped for slug='%s' -- add it to TEBEX_PACKAGE_MAP.", item.slug)
+        raise HTTPException(400, f"'{item.name}' is not available via card checkout yet.")
+
+    client_ip = get_real_client_ip(request) or "0.0.0.0"
+
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            basket_resp = await client.post(
+                f"{TEBEX_HEADLESS_BASE_URL}/accounts/{TEBEX_PUBLIC_TOKEN}/baskets",
+                json={
+                    "complete_url":           f"{SITE_URL}/?payment=success",
+                    "cancel_url":             f"{SITE_URL}/?payment=cancelled",
+                    "complete_auto_redirect": True,
+                    "ip_address":             client_ip,
+                    # Not read by our webhook (see note above) -- purely for
+                    # visibility in Tebex's own dashboard if a purchase needs
+                    # manual support lookup.
+                    "custom": {"username": req.username},
+                },
+            )
+            basket_resp.raise_for_status()
+            basket = basket_resp.json()["data"]
+
+            add_resp = await client.post(
+                f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}/packages",
+                json={"package_id": int(tebex_package_id), "quantity": 1},
+            )
+            add_resp.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        log.error("[Tebex] HTTP %d for user='%s': %s",
+                  exc.response.status_code, req.username, exc.response.text)
+        raise HTTPException(502, "Card payment could not be initiated. Please try again.")
+    except httpx.TimeoutException:
+        log.error("[Tebex] Timeout creating basket for user='%s'", req.username)
+        raise HTTPException(504, "Tebex is taking too long to respond. Please try again.")
+    except Exception as exc:
+        log.error("[Tebex] Unexpected error for user='%s': %s", req.username, exc)
+        raise HTTPException(502, "Card payment could not be initiated.")
+
+    checkout_url = basket.get("links", {}).get("checkout")
+    if not checkout_url:
+        log.error("[Tebex] No checkout link in basket response for user='%s': %s", req.username, basket)
+        raise HTTPException(502, "Tebex did not return a payment URL.")
+
+    log.info("[Tebex] Basket created: %s  user='%s'", basket["ident"], req.username)
+    return {"checkout_url": checkout_url, "basket_ident": basket["ident"]}

@@ -6,15 +6,17 @@
  *   2. "confirm"  — OSRS GP only: show GP total & confirm
  *   3. "done"     — show success / error result for non-redirect providers
  *
- * PayPal and Crypto (NOWPayments) both redirect immediately (no extra
- * confirm step) — fulfillment happens off each provider's webhook.
+ * Tebex (card/PayPal) and Crypto (NOWPayments) both redirect immediately (no
+ * extra confirm step) — fulfillment happens off each provider's webhook.
  * OSRS GP opens a Discord ticket and stays on-page with a success message.
- * Card payments are handled entirely through Tebex (see the storefront's
- * "Shop with Tebex" link), not through this modal.
+ * Tebex's checkout page itself is still Tebex-hosted (that part can't move
+ * on-site — Tebex, not us, handles the actual card/PayPal payment form), but
+ * the basket is created from our own site now instead of the old external
+ * "Shop with Tebex" storefront link.
  */
 import { useState } from 'react';
 import {
-  createPayPalCheckout,
+  createTebexCheckout,
   createCryptoCheckout,
   initiateOsrsGpCheckout,
   calcGpMillions,
@@ -22,13 +24,12 @@ import {
 } from '../../services/paymentService.js';
 
 // ── Brand colours ──────────────────────────────────────────────────────────────
-const PAYPAL_GOLD   = '#ffc439';
-const PAYPAL_NAVY   = '#003087';
+const TEBEX_BLUE    = '#4c86ff';
 const GP_GREEN      = '#22c55e';
 const CRYPTO_PURPLE = '#8b5cf6';
 
 const REDIRECT_CHECKOUT_FNS = {
-  paypal: createPayPalCheckout,
+  tebex:  createTebexCheckout,
   crypto: createCryptoCheckout,
 };
 
@@ -103,7 +104,7 @@ function UsernameField({ value, onChange, disabled }) {
 export default function CheckoutModal({ pkg, onClose }) {
   const [username, setUsername] = useState('');
   const [step,     setStep]     = useState('method');   // 'method' | 'confirm' | 'done'
-  const [method,   setMethod]   = useState(null);       // 'paypal' | 'crypto' | 'osrs-gp'
+  const [method,   setMethod]   = useState(null);       // 'tebex' | 'crypto' | 'osrs-gp'
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [result,   setResult]   = useState(null);       // {message, gp_millions?} on done
@@ -205,24 +206,20 @@ export default function CheckoutModal({ pkg, onClose }) {
 
       <div className="flex flex-col gap-3">
 
-        {/* PayPal */}
+        {/* Tebex — card / PayPal / etc, Tebex-hosted payment form */}
         <button
-          onClick={() => handleRedirectPayment('paypal')}
+          onClick={() => handleRedirectPayment('tebex')}
           disabled={loading}
           className="w-full py-3.5 font-bold text-sm tracking-wide rounded-sm transition-all duration-200 flex items-center justify-center gap-2.5"
           style={{
-            background: PAYPAL_GOLD,
-            color: PAYPAL_NAVY,
+            background: TEBEX_BLUE,
+            color: '#fff',
             opacity: loading ? 0.5 : 1,
             cursor: loading ? 'not-allowed' : 'pointer',
           }}
         >
-          {loading ? <Spinner color={PAYPAL_NAVY} /> : (
-            <span style={{ fontStyle: 'italic', fontWeight: 900, fontSize: '1rem' }}>
-              Pay<span style={{ color: '#001f6b' }}>Pal</span>
-            </span>
-          )}
-          <span className="font-sans font-bold">Pay with PayPal</span>
+          {loading ? <Spinner color="#fff" /> : <span className="text-xl">💳</span>}
+          <span className="font-sans font-bold">Pay with Card / PayPal</span>
         </button>
 
         {/* Divider */}

@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
 import models
@@ -31,6 +31,7 @@ from game_database import (
     HiscoreUser,
     get_game_db,
 )
+from net_utils import get_real_client_ip
 from routers import checkout as checkout_router_module
 from routers import webhooks as webhooks_router_module
 
@@ -45,6 +46,7 @@ log = logging.getLogger("zelus.main")
 # ── Environment config ────────────────────────────────────────────────────────
 _GAME_EVENTS_SECRET  = os.getenv("GAME_EVENTS_SECRET", "")   # shared secret for /events/push
 _GAME_API_PASSWORD   = os.getenv("GAME_API_PASSWORD", "")    # World.apiPassword from server properties
+_ADMIN_API_SECRET    = os.getenv("ADMIN_API_SECRET", "")     # shared secret for write-capable /admin/* routes
 # /api/vote/callback/{site} secrets -- NOT actually shared across topsites: each site's own
 # dashboard is configured with its own value we chose when registering the callback URL there
 # (RuneLocus's and RSPS-List's differ), so validating both against one VOTE_CALLBACK_SECRET meant
@@ -372,25 +374,11 @@ class PushEventsRequest(BaseModel):
     secret: str = Field(default="")
     events: list[PushEventItem] = Field(..., max_items=50)
 
-# ── Real client IP (Cloudflare / reverse proxy aware) ──────────────────────────
-# The API sits behind Cloudflare (and possibly an nginx hop) on the VPS, so
-# request.client.host / slowapi's get_remote_address() resolve to the proxy's
-# IP, not the voter's -- that's what was causing unrelated players to collide
-# on the same IP-based vote cooldown. Cloudflare sets CF-Connecting-IP itself
-# at the edge (not spoofable as long as the origin firewall only accepts
-# connections from Cloudflare's IP ranges, which is how this box is deployed),
-# so it's preferred; X-Forwarded-For's left-most entry is the fallback for any
-# hop that isn't behind Cloudflare (e.g. local/dev).
-def _get_real_client_ip(request: Request) -> str | None:
-    cf_ip = request.headers.get("CF-Connecting-IP")
-    if cf_ip:
-        return cf_ip.strip()
-    xff = request.headers.get("X-Forwarded-For")
-    if xff:
-        first = xff.split(",")[0].strip()
-        if first:
-            return first
-    return get_remote_address(request)
+# Real client IP (Cloudflare/proxy-aware) — moved to net_utils.py so
+# routers/checkout.py can also use it (needed for Tebex basket creation's
+# required ip_address field). See net_utils.get_real_client_ip for the
+# Cloudflare-header reasoning.
+_get_real_client_ip = get_real_client_ip
 
 # ── Vote cooldown ─────────────────────────────────────────────────────────────
 VOTE_COOLDOWN_HOURS = 12
@@ -1636,9 +1624,31 @@ async def store_claim_confirm(
 
 
 # ── Admin endpoints ────────────────────────────────────────────────────────────
-# Note: these endpoints are protected at the frontend via privilege checks
-# (ranks.js ADMIN_GROUPS).  The backend exposes them without a token for now —
-# add an Authorization header check here if you want server-side enforcement.
+# Note: the two read-only GETs below are protected at the frontend only, via
+# privilege checks (ranks.js ADMIN_GROUPS) — the backend exposes them without a
+# token, an accepted (if not ideal) gap for a read-only user/donation list.
+#
+# /admin/transactions/fulfill below is NOT in that category: it credits real
+# bonds/items to a player. Reusing the no-auth pattern here would mean anyone
+# who can reach this API could grant themselves free items by guessing/brute-
+# forcing a transaction id, so it requires a shared-secret bearer token
+# (ADMIN_API_SECRET) instead — same idiom this codebase already uses for the
+# game-server trust boundary (see _GAME_API_PASSWORD/_require_game_session
+# above), just not yet wired to a real per-staff session. Whoever builds the
+# Admin CP UI for this needs to prompt for/store that secret client-side (or
+# this becomes the first thing to swap out once a real staff-session system
+# exists — this is a stopgap, not the end state, precisely BECAUSE the other
+# two /admin/* routes above still have no enforcement of their own).
+
+def _require_admin_secret(request: Request) -> None:
+    if not _ADMIN_API_SECRET:
+        log.error("ADMIN_API_SECRET is not configured — rejecting admin write request.")
+        raise HTTPException(status_code=503, detail="Admin actions are not configured.")
+    auth = request.headers.get("authorization", "")
+    token = auth[7:] if auth.lower().startswith("bearer ") else ""
+    if not token or not secrets.compare_digest(token, _ADMIN_API_SECRET):
+        raise HTTPException(status_code=403, detail="Invalid admin credentials.")
+
 
 @app.get("/admin/users")
 def get_all_users(db: Session = Depends(get_db)):
@@ -1665,3 +1675,57 @@ def get_all_donations(db: Session = Depends(get_db)):
         }
         for d in donations
     ]
+
+
+class AdminFulfillRequest(BaseModel):
+    transaction_id: int
+    note: str | None = None   # optional staff note, logged only — not persisted on the row
+
+
+@app.post("/admin/transactions/fulfill")
+def admin_fulfill_transaction(
+    req: AdminFulfillRequest,
+    db:  Session = Depends(get_db),
+    _:   None    = Depends(_require_admin_secret),
+):
+    """
+    Manual fulfillment for provider='osrs_gp' transactions (and, in principle,
+    any transaction stuck PENDING for a legitimate manual reason) — staff
+    confirm the trade actually happened, then this writes the same PendingClaim
+    row every other provider's webhook writes via routers.webhooks._fulfill,
+    so ::claim in-game delivers it identically regardless of payment method.
+
+    Reuses _fulfill's own idempotency: a transaction already COMPLETED (or one
+    whose PendingClaim row already exists) is a no-op, not an error — safe to
+    call twice on the same id (e.g. a staff double-click).
+    """
+    from routers.webhooks import _fulfill  # deferred: avoids a circular import with routers.webhooks
+
+    txn = (
+        db.query(models.Transaction)
+        .filter(models.Transaction.id == req.transaction_id)
+        .with_for_update()
+        .first()
+    )
+    if not txn:
+        raise HTTPException(status_code=404, detail=f"Transaction #{req.transaction_id} not found.")
+
+    if txn.status == models.TransactionStatus.COMPLETED.value:
+        log.info("[Admin Fulfill] Transaction #%d already completed — no-op.", txn.id)
+        return {"status": "already_fulfilled", "transaction_id": txn.id}
+
+    log.info(
+        "[Admin Fulfill] Transaction #%d (provider=%s, user='%s') manually fulfilled.%s",
+        txn.id, txn.provider, txn.username,
+        f" Note: {req.note}" if req.note else "",
+    )
+
+    try:
+        _fulfill(db, txn)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        log.warning("[Admin Fulfill] Transaction #%d — PendingClaim already existed.", txn.id)
+        return {"status": "already_fulfilled", "transaction_id": txn.id}
+
+    return {"status": "fulfilled", "transaction_id": txn.id, "username": txn.username}

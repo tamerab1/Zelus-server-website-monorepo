@@ -50,3 +50,16 @@ export const createCryptoCheckout = (packageId, username) =>
     method: 'POST',
     body: JSON.stringify({ package_id: packageId, username }),
   });
+
+/**
+ * Card/PayPal checkout via Tebex Headless — creates a basket and redirects to
+ * Tebex's checkout page (still Tebex-hosted for the actual payment form, but
+ * initiated from our own site instead of the old external storefront link).
+ * Fulfillment happens off Tebex's payment.completed webhook, same as before.
+ * @returns {Promise<{checkout_url: string, basket_ident: string}>}
+ */
+export const createTebexCheckout = (packageId, username) =>
+  apiFetch('/api/checkout/tebex', {
+    method: 'POST',
+    body: JSON.stringify({ package_id: packageId, username }),
+  });
