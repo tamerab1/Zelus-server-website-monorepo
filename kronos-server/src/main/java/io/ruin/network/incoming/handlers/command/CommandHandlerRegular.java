@@ -1461,7 +1461,7 @@ public class CommandHandlerRegular {
 				boolean canYell = player.isDonator() || player.isSuperDonator() || player.isEliteDonator()
 						|| player.isNobleDonator() || player.isGoldDonator() || player.isPlatinumDonator()
 						|| player.isLegendaryDonator() || player.isSupremeDonator() || player.isAdmin() || player.isSupport()
-						|| player.isManager() || player.isModerator();
+						|| player.isManager() || player.isModerator() || player.hasCommunityManagerTag;
 				if (!canYell) {
 					player.sendMessage("You must be a donator to yell!");
 					return true;
@@ -1476,7 +1476,7 @@ public class CommandHandlerRegular {
 				}
 				boolean bypassFilter = false;
 				int delaySeconds = 60;
-				if (player.isAdmin() || player.isSupport() || player.isManager() || player.isModerator()) {
+				if (player.isAdmin() || player.isSupport() || player.isManager() || player.isModerator() || player.hasCommunityManagerTag) {
 					bypassFilter = true;
 					delaySeconds = 0;
 				} else if (player.isDonator()) {
@@ -1484,7 +1484,28 @@ public class CommandHandlerRegular {
 					delaySeconds = 0;
 
 				}
-				if (player.isGroup(PlayerGroup.OWNER)) {
+				if (player.hasCommunityManagerTag) {
+					message = Color.CYAN.wrap(("<shad=000000>") + "<img=1>[CM] " + ("<shad=000000>")
+							+ Color.CYAN.wrap(title) + ("<shad=000000>") + Color.CYAN.wrap(player.getName() + ":") + " "
+							+ ("<shad=000000>") + Color.CYAN.wrap(message));
+					if (player.isSecondaryGroup(SecondaryGroup.SUPREME_DONATOR)) {
+						message = "<img=97>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.LEGENDARY_DONATOR)) {
+						message = "<img=94>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.PLATINUM_DONATOR)) {
+						message = "<img=102>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.GOLD_DONATOR)) {
+						message = "<img=95>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.NOBLE_DONATOR)) {
+						message = "<img=96>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.ELITE_DONATOR)) {
+						message = "<img=91>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.SUPER_DONATOR)) {
+						message = "<img=98>" + message;
+					} else if (player.isSecondaryGroup(SecondaryGroup.DONATOR)) {
+						message = "<img=90>" + message;
+					}
+				} else if (player.isGroup(PlayerGroup.OWNER)) {
 					message = Color.BLACK.wrap("<shad><img=1>[Owner] ") + Color.VIOLET.wrap(title) + "<shad>"
 							+ Color.BLACK.wrap(player.getName() + ":") + " " + Color.BLACK.wrap(message);
 					if (player.isSecondaryGroup(SecondaryGroup.SUPREME_DONATOR)) {

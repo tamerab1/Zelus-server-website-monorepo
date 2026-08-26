@@ -327,5 +327,8 @@ public class LoyaltyTitle {
 		pPk(30215, Category.PVP, "<col=000000>KILLER </col>", 5000);
 		sPk(30216, Category.PVP, "<col=800000> the Feared</col>", 2500);
 		pPk(30217, Category.PVP, "<col=A9A9A9>Edgevillian </col>", 1500);
+		// Staff-only, non-purchasable -- granted manually via ::givetitle. Cyan to
+		// match the ZLUS donator title's color (30208).
+		p(30220, Category.GENERAL, "<col=00FFFF>CM </col>", "Awarded to the Zelus Community Manager", 0);
 	}
 }

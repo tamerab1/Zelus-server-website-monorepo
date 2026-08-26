@@ -1625,6 +1625,18 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "togglecmtag": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				forPlayer(player, query, "::togglecmtag playerName", p2 -> {
+					p2.hasCommunityManagerTag = !p2.hasCommunityManagerTag;
+					p2.sendMessage("You have " + (p2.hasCommunityManagerTag ? "been granted" : "lost") + " the Community Manager yell tag.");
+					player.sendMessage(p2.getName() + "'s Community Manager yell tag is now " + (p2.hasCommunityManagerTag ? "ON" : "OFF") + ".");
+				});
+				return true;
+			}
+
 			case "searchi":
 			case "searchitem":
 			case "finditem":
