@@ -925,7 +925,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "mining": {
-				teleport(player, 3089, 3468, 0);
+				teleport(player, 3043, 9740, 0);
 				return true;
 			}
 
