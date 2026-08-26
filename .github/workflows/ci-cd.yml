@@ -476,6 +476,7 @@ jobs:
           # never a stale blob value for these to override in the first place --
           # fold into DOCKER_COMPOSE_ENV next time that blob is rebuilt.
           export TEBEX_PUBLIC_TOKEN="${{ secrets.TEBEX_PUBLIC_TOKEN }}"
+          export TEBEX_PRIVATE_KEY="${{ secrets.TEBEX_PRIVATE_KEY }}"
           export ADMIN_API_SECRET="${{ secrets.ADMIN_API_SECRET }}"
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).

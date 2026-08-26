@@ -52,10 +52,13 @@ NOWPAYMENTS_API_KEY = os.getenv("NOWPAYMENTS_API_KEY", "")
 NOWPAYMENTS_BASE_URL = "https://api.nowpayments.io"
 
 # ── Tebex Headless (card/PayPal/etc, stays on our site) ──────────────────────────
-# Public token only -- Headless basket/package creation doesn't need the private
-# key (that's only for reading a customer's own purchase history, which we don't
-# do). From the Tebex creator panel: Developers > API Keys.
-TEBEX_PUBLIC_TOKEN = os.getenv("TEBEX_PUBLIC_TOKEN", "")
+# 2026-08-26: contrary to Tebex's own docs ("most endpoints don't require
+# credentials"), basket creation live-rejects with 422 "Basic auth credentials
+# are required" without both. Both required -- HTTP Basic, public token as the
+# username, private key as the password. From the Tebex creator panel:
+# Developers > API Keys.
+TEBEX_PUBLIC_TOKEN  = os.getenv("TEBEX_PUBLIC_TOKEN", "")
+TEBEX_PRIVATE_KEY   = os.getenv("TEBEX_PRIVATE_KEY", "")
 TEBEX_HEADLESS_BASE_URL = "https://headless.tebex.io/api"
 
 # Reuses webhooks.py's TEBEX_PACKAGE_MAP (Tebex package id -> our slug) as the
@@ -482,7 +485,7 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
 async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Session = Depends(get_db)):
     log.info("[Tebex] Checkout — user='%s' pkg='%s'", req.username, req.package_id)
 
-    if not TEBEX_PUBLIC_TOKEN:
+    if not TEBEX_PUBLIC_TOKEN or not TEBEX_PRIVATE_KEY:
         raise HTTPException(503, "Card payments are not configured.")
 
     # ── Price validation (never trust the frontend) ────────────────────────────
@@ -497,11 +500,13 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
         raise HTTPException(400, f"'{item.name}' is not available via card checkout yet.")
 
     client_ip = get_real_client_ip(request) or "0.0.0.0"
+    tebex_auth = (TEBEX_PUBLIC_TOKEN, TEBEX_PRIVATE_KEY)
 
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             basket_resp = await client.post(
                 f"{TEBEX_HEADLESS_BASE_URL}/accounts/{TEBEX_PUBLIC_TOKEN}/baskets",
+                auth=tebex_auth,
                 json={
                     "complete_url":           f"{SITE_URL}/?payment=success",
                     "cancel_url":             f"{SITE_URL}/?payment=cancelled",
@@ -518,6 +523,7 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
 
             add_resp = await client.post(
                 f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}/packages",
+                auth=tebex_auth,
                 json={"package_id": int(tebex_package_id), "quantity": 1},
             )
             add_resp.raise_for_status()

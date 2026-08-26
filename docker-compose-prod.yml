@@ -139,11 +139,14 @@ services:
             # Tebex webstore webhook -- verifies the authenticity of their
             # POST /api/webhooks/tebex pings.
             TEBEX_SECRET: ${TEBEX_SECRET}
-            # Tebex Headless API public token (Developers > API Keys on the Tebex
+            # Tebex Headless API credentials (Developers > API Keys on the Tebex
             # creator panel) -- lets checkout.py create a basket so players pay
-            # without leaving our site. No private key needed for this; that's
-            # only for reading a customer's own purchase history, which we don't do.
+            # without leaving our site. Both required: 2026-08-26, basket
+            # creation live-rejected with 422 "Basic auth credentials are
+            # required" using only the public token, despite Tebex's own docs
+            # implying the private key is optional for this.
             TEBEX_PUBLIC_TOKEN: ${TEBEX_PUBLIC_TOKEN}
+            TEBEX_PRIVATE_KEY: ${TEBEX_PRIVATE_KEY}
             # NOWPayments (crypto) -- API_KEY authorizes our POST /v1/invoice calls;
             # IPN_SECRET verifies their POST /api/webhooks/nowpayments callbacks.
             NOWPAYMENTS_API_KEY: ${NOWPAYMENTS_API_KEY}
