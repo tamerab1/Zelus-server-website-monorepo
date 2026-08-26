@@ -62,7 +62,7 @@ public final class LaunchWipe {
 	private static List<String> discoverTargetTables() {
 		List<String> tables = new ArrayList<>();
 		tables.add("hs_users");
-		Server.gameDb.execute(con -> {
+		Server.gameDb.executeAwait(con -> {
 			try (PreparedStatement stmt = con.prepareStatement("SHOW TABLES LIKE ?")) {
 				stmt.setString(1, LOG_TABLE_PREFIX_LIKE[0]);
 				try (ResultSet rs = stmt.executeQuery()) {
@@ -140,7 +140,7 @@ public final class LaunchWipe {
 
 	private static int dumpTableToJson(String table, Path dest) {
 		List<Map<String, Object>> rows = new ArrayList<>();
-		Server.gameDb.execute(con -> {
+		Server.gameDb.executeAwait(con -> {
 			try (PreparedStatement stmt = con.prepareStatement("SELECT * FROM `" + table + "`");
 				 ResultSet rs = stmt.executeQuery()) {
 				ResultSetMetaData meta = rs.getMetaData();
@@ -234,7 +234,7 @@ public final class LaunchWipe {
 
 	private static int countRows(String table) {
 		int[] result = {0};
-		Server.gameDb.execute(con -> {
+		Server.gameDb.executeAwait(con -> {
 			try (PreparedStatement stmt = con.prepareStatement("SELECT COUNT(*) FROM `" + table + "`");
 				 ResultSet rs = stmt.executeQuery()) {
 				if (rs.next()) {
@@ -296,7 +296,7 @@ public final class LaunchWipe {
 
 	private static int wipeTable(String table) {
 		int[] result = {0};
-		Server.gameDb.execute(con -> {
+		Server.gameDb.executeAwait(con -> {
 			try (PreparedStatement stmt = con.prepareStatement("DELETE FROM `" + table + "`")) {
 				result[0] = stmt.executeUpdate();
 			} catch (Exception e) {
