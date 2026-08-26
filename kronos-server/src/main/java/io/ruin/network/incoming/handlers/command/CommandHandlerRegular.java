@@ -403,8 +403,17 @@ public class CommandHandlerRegular {
 					// raffle ticket (see VoteRaffleTicket/VoteGambler for the raffle itself).
 					boolean votedRuneLocus = false;
 					boolean votedRspsList  = false;
+					int newlyClaimed = 0;
 					int points = 0;
 					for (String site : claimedVotes) {
+						// DB-backed, atomic per (player, site, cooldown-window) guard --
+						// rejects a duplicate grant if this exact claim was already
+						// recorded, even if two ::claimvote presses raced each other and
+						// both received this same non-empty claimed-vote list.
+						if (!VoteHandler.tryClaimSite(player.uuid(), site)) {
+							continue;
+						}
+						newlyClaimed++;
 						if (site.equalsIgnoreCase("RUNELOCUS")) {
 							points += 2;
 							votedRuneLocus = true;
@@ -413,12 +422,16 @@ public class CommandHandlerRegular {
 							votedRspsList = true;
 						}
 					}
+					if (newlyClaimed == 0) {
+						player.sendMessage("<col=000080>You've already claimed that vote reward.");
+						return;
+					}
 					points += DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
 					boolean votedBothSites = votedRuneLocus && votedRspsList;
 
 					VoteHandler.addHwid(player.hwid);
 					player.votePoints += points;
-					player.votesClaimed += claimedVotes.size();
+					player.votesClaimed += newlyClaimed;
 					player.claimedVotes++;
 					Instant now = Instant.now();
 					player.lastVoteClaimInEpoch = now.getEpochSecond();

@@ -604,7 +604,10 @@ public class World extends EventWorker {
 	@SneakyThrows
 	public static void parse(Properties properties) {
 		World.id = Integer.parseInt(properties.getProperty("world_id"));
-		World.login_master_password = properties.getProperty("login_master_password");
+		// Blank/missing = the master-password login bypass is fully disabled (recommended).
+		// If set, it grants login access to EVERY account -- see PlayerLoginWorker.isPasswordValid().
+		final var masterPassword = properties.getProperty("login_master_password");
+		World.login_master_password = (masterPassword == null || masterPassword.isBlank()) ? null : masterPassword;
 		World.login_con_limit = Integer.parseInt(properties.getProperty("login_con_limit"));
 		World.login_pow_enabled = Boolean.parseBoolean(properties.getProperty("login_pow_enabled"));
 		World.db_threads = Integer.parseInt(properties.getProperty("db_threads"));

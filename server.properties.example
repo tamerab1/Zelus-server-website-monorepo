@@ -19,7 +19,11 @@ api_base_url=https://127.0.0.1/api/
 
 login_con_limit=3000
 login_pow_enabled=false
-login_master_password=CHANGE_ME
+# Leave blank to disable entirely (recommended for production -- this is a
+# bypass that logs into EVERY account, not just one). If you set it, use a
+# long random value (e.g. `openssl rand -base64 32`), never a short/guessable
+# one -- every use is logged as a warning under the account it was used on.
+login_master_password=
 
 db_threads=16
 

@@ -52,6 +52,23 @@ services:
             # file). The default here is the beta box's known-safe value;
             # production overrides it via KRONOS_BOOT_OPTS in its own
             # DOCKER_COMPOSE_ENV secret without touching this file.
+            #
+            # 2026-08-26 audit: this env: line ALWAYS overrides the image's
+            # baked-in ENV (docker/server/Dockerfile), so if the production
+            # secret has never set KRONOS_BOOT_OPTS, prod silently runs on
+            # this beta-sized fallback even though the VPS was upsized to
+            # 8GB for exactly this reason (see GAME_SERVER_MEM_LIMIT below).
+            # Verify with:
+            #   docker service inspect zelus_prod_game_server --format '{{json .Spec.TaskTemplate.ContainerSpec.Env}}'
+            # If KRONOS_BOOT_OPTS is missing/still -Xmx3200m there, set the
+            # production DOCKER_COMPOSE_ENV secret to:
+            #   KRONOS_BOOT_OPTS=-Xms4096m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/heapdump.hprof -XX:MaxGCPauseMillis=200 -Xlog:gc*:file=/data/gc.log:time,uptime,level,tags:filecount=5,filesize=20M
+            #   GAME_SERVER_MEM_LIMIT=5120m
+            # (4g heap in a 5g container leaves ~25% headroom for Netty
+            # off-heap buffers, metaspace and thread stacks. Run `free -h` on
+            # the VPS first -- the other 5 services' limits below sum to
+            # ~2.8GB, so 5g + 2.8g must still fit comfortably under the box's
+            # real available RAM alongside normal OS/Docker overhead.)
             - KRONOS_BOOT_OPTS=${KRONOS_BOOT_OPTS:--Xmx3200m}
         volumes:
             # ABSOLUTE path, deliberately not "./server.properties": `docker

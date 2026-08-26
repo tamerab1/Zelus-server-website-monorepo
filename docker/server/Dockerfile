@@ -34,14 +34,26 @@ COPY --chown=zelus:zelus kronos-boot/build/install/kronos-boot /app
 COPY --chown=zelus:zelus docker/server/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# 7. Default environment variables - memory limits are deferred to compose
+# 7. Default environment variables - memory limits are deferred to compose.
+# This ENV is only what actually runs when NO environment: override is present
+# at all (e.g. a bare `docker run`) -- both docker-compose.yml and
+# docker-compose-prod.yml set KRONOS_BOOT_OPTS explicitly and always win over
+# this, per normal Docker ENV-vs-environment: precedence. Do not treat this
+# value as "what's live in prod" -- check the actual deployed stack instead:
+#   docker service inspect zelus_prod_game_server --format '{{json .Spec.TaskTemplate.ContainerSpec.Env}}'
+#
+# -Xms == -Xmx: avoids heap-resize pauses as the process ramps up to steady
+# state (a real G1 pause source, not just a tuning nicety).
+# -XX:+HeapDumpOnOutOfMemoryError: previously missing entirely -- an OOM died
+# with no artifact to diagnose it afterwards. Written to /data (survives
+# container restart) same as the gc log below.
 # GC pause logging: written into the /data bind mount (docker-compose-prod.yml maps
 # /opt/zelus/data:/data) so it survives container restarts and is inspectable via SSH
 # without needing `docker service logs`. Rotates at 20M x5 files (~100M cap) so it can't
 # grow unbounded. Added to investigate a suspected periodic GC-pause stall (see
 # CoreWorker.savePlayers()) -- correlate any multi-second pause here against player
 # reports of ground items/inventory/equipped-appearance going briefly invisible.
-ENV KRONOS_BOOT_OPTS="-Xmx8g -Xlog:gc*:file=/data/gc.log:time,uptime,level,tags:filecount=5,filesize=20M"
+ENV KRONOS_BOOT_OPTS="-Xms3200m -Xmx3200m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/heapdump.hprof -XX:MaxGCPauseMillis=200 -Xlog:gc*:file=/data/gc.log:time,uptime,level,tags:filecount=5,filesize=20M"
 
 # Switch to the non-root user for execution
 USER zelus
