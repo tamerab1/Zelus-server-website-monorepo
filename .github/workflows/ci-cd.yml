@@ -6,6 +6,15 @@ on:
     tags: ["v*.*.*"]
   pull_request:
     branches: [develop, main]
+  # Manual bypass for when tag-push dispatch stalls on GitHub's side (2026-08-26).
+  # NOTE: this only becomes available at all once this trigger exists in the
+  # workflow file as it is on the repo's DEFAULT branch (main, not develop) --
+  # GitHub won't offer manual dispatch otherwise, regardless of what any other
+  # branch's copy of this file says. Dispatch against a v* TAG ref specifically
+  # (not a branch) if the goal is a production deploy -- release-production/
+  # deploy-production below are gated on `startsWith(github.ref, 'refs/tags/v')`,
+  # so dispatching against develop/main would build but skip the actual deploy.
+  workflow_dispatch:
 
 concurrency:
 
