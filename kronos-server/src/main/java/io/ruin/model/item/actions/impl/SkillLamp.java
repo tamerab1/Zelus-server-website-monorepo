@@ -60,6 +60,13 @@ public enum SkillLamp {
 	private static int baseXp;
 	private static int lampId;
 
+	// Shared by the preview text and the actual grant, so the amount shown on the
+	// dialog can never drift from the amount actually given -- see the identical
+	// bug already fixed in AchievementLamp.getExperienceReward().
+	private static long boostedXp(Player player) {
+		return (long) (baseXp * player.getDifficulty().GetExperienceBoost());
+	}
+
 	private static void handleSkill(Player player, StatType skill, Item lamp) {
 		lamp.remove();
 		player.getStats().addXp(skill, 5000, true);
@@ -143,7 +150,7 @@ public enum SkillLamp {
 						player.getPacketSender().setHidden(1111, skills.hiddenChildId, true);
 					}
 					player.getPacketSender().setHidden(1111, skill.hiddenChildId, false);
-					player.getPacketSender().sendString(1111, 75, "You will receive " + baseXp + " experience in " + skillName + ".");
+					player.getPacketSender().sendString(1111, 75, "You will receive " + NumberUtils.formatNumber(boostedXp(player)) + " experience in " + skillName + ".");
 					player.getPacketSender().setHidden(1111, 75, false);
 					player.openInterface(ToplevelComponent.MAINMODAL, 1111);
 					player.selectedSkillLampSkill = skill.statType;
@@ -159,12 +166,11 @@ public enum SkillLamp {
 					return;
 				}
 
-				int experience = baseXp;
+				long experience = boostedXp(player);
 				player.closeInterface(ToplevelComponent.MAINMODAL);
 				player.getInventory().remove(lampId, 1);
 				player.getStats().addXp(player.selectedSkillLampSkill, experience, false);
-				long experienceNumber = (long) (experience * player.getDifficulty().GetExperienceBoost());
-				player.sendMessage(Color.DARK_GREEN.wrap("You have been rewarded " + baseXp + " " + player.selectedSkillLampSkill.name() + " experience."));
+				player.sendMessage(Color.DARK_GREEN.wrap("You have been rewarded " + NumberUtils.formatNumber(experience) + " " + player.selectedSkillLampSkill.name() + " experience."));
 			};
 		});
 

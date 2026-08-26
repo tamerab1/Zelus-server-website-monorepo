@@ -93,6 +93,9 @@ public enum DonatorLamp {
 						case EXTREME:
 							experience = 1000000;
 							break;
+						case OSRS:
+							experience = 333333;
+							break;
 						default:
 							experience = 0;
 							break;
@@ -132,6 +135,9 @@ public enum DonatorLamp {
 						break;
 					case EXTREME:
 						experience = 1000000;
+						break;
+					case OSRS:
+						experience = 333333;
 						break;
 					default:
 						experience = 0;

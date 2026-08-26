@@ -130,7 +130,12 @@ public class LoyaltyChest {
 	}
 
 	private static void giveReward(Player player) {
-
+		int index = player.loyaltyChestReward - 1;
+		if (index < 0 || index >= ECO_REWARDS.length)
+			return;
+		Item reward = ECO_REWARDS[index];
+		player.getInventory().addOrDrop(reward.getId(), reward.getAmount());
+		player.sendFilteredMessage(Color.COOL_BLUE.wrap("You have received " + reward.getAmount() + " coins from the Loyalty Chest!"));
 	}
 
 }
