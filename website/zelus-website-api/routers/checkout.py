@@ -512,9 +512,15 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
                     "cancel_url":             f"{SITE_URL}/?payment=cancelled",
                     "complete_auto_redirect": True,
                     "ip_address":             client_ip,
-                    # Not read by our webhook (see note above) -- purely for
-                    # visibility in Tebex's own dashboard if a purchase needs
-                    # manual support lookup.
+                    # Top-level `username` (Tebex's own player-identity field for
+                    # Minecraft/Overwolf-type stores) -- was previously only sent
+                    # nested under `custom`, which Tebex treats as opaque metadata,
+                    # not an identity field. Without this, package-add 422s with
+                    # "User must login before adding packages to basket", since
+                    # Tebex falls back to requiring a full Steam/Minecraft/Discord
+                    # OAuth basket-authorization flow when it has no other way to
+                    # identify the player.
+                    "username": req.username,
                     "custom": {"username": req.username},
                 },
             )
@@ -612,6 +618,10 @@ async def create_tebex_cart_checkout(
                     "cancel_url":             f"{SITE_URL}/?payment=cancelled",
                     "complete_auto_redirect": True,
                     "ip_address":             client_ip,
+                    # See the identical comment in create_tebex_checkout above --
+                    # top-level `username` is the actual identity field Tebex
+                    # reads; `custom` alone leaves the basket unauthorized.
+                    "username": req.username,
                     "custom": {"username": req.username},
                 },
             )
