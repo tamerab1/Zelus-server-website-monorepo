@@ -467,6 +467,16 @@ jobs:
           # that blob is rebuilt from scratch.
           export KRONOS_BOOT_OPTS="${{ secrets.KRONOS_BOOT_OPTS_OVERRIDE }}"
           export GAME_SERVER_MEM_LIMIT="${{ secrets.GAME_SERVER_MEM_LIMIT_OVERRIDE }}"
+          # 2026-08-26: TEBEX_PUBLIC_TOKEN/ADMIN_API_SECRET are brand new -- never
+          # existed in the DOCKER_COMPOSE_ENV blob at all, so setting the GitHub
+          # secret alone doesn't reach the container without an explicit export
+          # here too, same reasoning as KRONOS_BOOT_OPTS above. Confirmed via
+          # `docker exec ... printenv` showing both empty despite the secrets
+          # being set. Referenced directly (no _OVERRIDE suffix) since there was
+          # never a stale blob value for these to override in the first place --
+          # fold into DOCKER_COMPOSE_ENV next time that blob is rebuilt.
+          export TEBEX_PUBLIC_TOKEN="${{ secrets.TEBEX_PUBLIC_TOKEN }}"
+          export ADMIN_API_SECRET="${{ secrets.ADMIN_API_SECRET }}"
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
