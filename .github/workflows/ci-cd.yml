@@ -451,6 +451,13 @@ jobs:
           # overrides once that blob is next rebuilt from scratch.
           export RUNELOCUS_VOTE_CALLBACK_SECRET=${{ secrets.RUNELOCUS_VOTE_CALLBACK_SECRET_OVERRIDE }}
           export RSPSLIST_VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
+          # 2026-08-26: KRONOS_BOOT_OPTS in the DOCKER_COMPOSE_ENV blob was still
+          # -Xmx3200m (the beta default) despite the VPS being upsized to 8GB for
+          # more heap headroom -- same override pattern as the vote-callback
+          # secrets above. Fold into DOCKER_COMPOSE_ENV and drop this next time
+          # that blob is rebuilt from scratch.
+          export KRONOS_BOOT_OPTS=${{ secrets.KRONOS_BOOT_OPTS_OVERRIDE }}
+          export GAME_SERVER_MEM_LIMIT=${{ secrets.GAME_SERVER_MEM_LIMIT_OVERRIDE }}
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
