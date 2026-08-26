@@ -459,6 +459,30 @@ async def create_crypto_checkout(req: CheckoutRequest, db: Session = Depends(get
     return {"checkout_url": invoice_url, "invoice_id": invoice.get("id")}
 
 
+def _extract_tebex_checkout_url(basket: dict) -> str | None:
+    """
+    2026-08-26: Tebex's docs describe `links` as a flat dict
+    ({"checkout": "url"}), but the live API returned a LIST for this project,
+    which crashed the flat-dict `.get()` call with an unhandled 500
+    ("'list' object has no attribute 'get'"). Handles both shapes rather than
+    assume either is stable. If a live basket ever hits neither branch, the
+    caller's existing "no checkout link" log includes the full basket dict --
+    check that log for the exact shape before guessing again.
+    """
+    links = basket.get("links")
+    if isinstance(links, dict):
+        return links.get("checkout")
+    if isinstance(links, list):
+        for link in links:
+            if not isinstance(link, dict):
+                continue
+            rel = str(link.get("rel") or link.get("name") or "").lower()
+            if rel == "checkout":
+                return link.get("href") or link.get("url")
+        log.error("[Tebex] links was a list but no 'checkout' entry matched: %s", links)
+    return None
+
+
 # ── Tebex Headless checkout ────────────────────────────────────────────────────
 # Creates a Tebex basket via the Headless API so the player stays on our site
 # instead of following the old external link to the hosted storefront.
@@ -544,7 +568,7 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
         log.error("[Tebex] Unexpected error for user='%s': %s", req.username, exc)
         raise HTTPException(502, "Card payment could not be initiated.")
 
-    checkout_url = basket.get("links", {}).get("checkout")
+    checkout_url = _extract_tebex_checkout_url(basket)
     if not checkout_url:
         log.error("[Tebex] No checkout link in basket response for user='%s': %s", req.username, basket)
         raise HTTPException(502, "Tebex did not return a payment URL.")
@@ -647,7 +671,7 @@ async def create_tebex_cart_checkout(
         log.error("[Tebex] Cart unexpected error for user='%s': %s", req.username, exc)
         raise HTTPException(502, "Card payment could not be initiated.")
 
-    checkout_url = basket.get("links", {}).get("checkout")
+    checkout_url = _extract_tebex_checkout_url(basket)
     if not checkout_url:
         log.error("[Tebex] No checkout link in cart basket response for user='%s': %s", req.username, basket)
         raise HTTPException(502, "Tebex did not return a payment URL.")
