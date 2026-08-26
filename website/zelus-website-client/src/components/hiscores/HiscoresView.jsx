@@ -13,6 +13,16 @@ const PVP_CATS = [
 
 const SKILL_CAT = { id: 'overall', label: 'Overall', sortKey: 'total_level', icon: 'https://oldschool.runescape.wiki/images/Stats_icon.png' };
 
+const GAME_MODES = [
+  { id: null,                       label: 'All Modes' },
+  { id: 'STANDARD',                 label: 'Regular' },
+  { id: 'IRONMAN',                  label: 'Ironman' },
+  { id: 'HARDCORE_IRONMAN',         label: 'Hardcore Ironman' },
+  { id: 'ULTIMATE_IRONMAN',         label: 'Ultimate Ironman' },
+  { id: 'GROUP_IRONMAN',            label: 'Group Ironman' },
+  { id: 'HARDCORE_GROUP_IRONMAN',   label: 'Hardcore Group Ironman' },
+];
+
 const RANK_COLORS = { 1: '#ffd700', 2: '#c0c0c0', 3: '#cd7f32' };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -120,19 +130,20 @@ export default function HiscoresView() {
   const [pvpCat,   setPvpCat]   = useState(PVP_CATS[0]);
   const [skillCat, setSkillCat] = useState(SKILL_CAT);
   const [search,   setSearch]   = useState('');
+  const [mode,     setMode]     = useState(GAME_MODES[0]);
 
-  const load = useCallback((sortKey) => {
+  const load = useCallback((sortKey, modeId) => {
     setLoading(true);
     setError(null);
-    fetchHiscores(sortKey, 100)
+    fetchHiscores(sortKey, 100, modeId)
       .then(d  => { setData(d); setLoading(false); })
       .catch(e => { setError(e.message); setLoading(false); });
   }, []);
 
   useEffect(() => {
     const key = section === 'pvp' ? pvpCat.sortKey : skillCat.sortKey;
-    load(key);
-  }, [section, pvpCat, skillCat, load]);
+    load(key, mode.id);
+  }, [section, pvpCat, skillCat, mode, load]);
 
   const ranked = useMemo(() => {
     let list = [...data];
@@ -307,7 +318,19 @@ export default function HiscoresView() {
                   {activeCat.label.toUpperCase()} HISCORES
                 </span>
               </div>
-              <SearchBar value={search} onChange={setSearch} onClear={() => setSearch('')} />
+              <div className="flex items-center gap-3">
+                <select
+                  value={mode.id ?? ''}
+                  onChange={e => setMode(GAME_MODES.find(m => (m.id ?? '') === e.target.value) ?? GAME_MODES[0])}
+                  className="rpg-input font-fantasy text-xs tracking-wide px-2 py-1.5"
+                  style={{ fontSize: '11px' }}
+                >
+                  {GAME_MODES.map(m => (
+                    <option key={m.id ?? 'all'} value={m.id ?? ''}>{m.label}</option>
+                  ))}
+                </select>
+                <SearchBar value={search} onChange={setSearch} onClear={() => setSearch('')} />
+              </div>
             </div>
 
             {/* States */}
