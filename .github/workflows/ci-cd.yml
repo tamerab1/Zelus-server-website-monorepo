@@ -478,6 +478,16 @@ jobs:
           export TEBEX_PUBLIC_TOKEN="${{ secrets.TEBEX_PUBLIC_TOKEN }}"
           export TEBEX_PRIVATE_KEY="${{ secrets.TEBEX_PRIVATE_KEY }}"
           export ADMIN_API_SECRET="${{ secrets.ADMIN_API_SECRET }}"
+          # 2026-08-26: unlike the two above, TEBEX_SECRET WAS already baked into
+          # the DOCKER_COMPOSE_ENV blob (the original Tebex project's webhook
+          # secret) -- so when the Tebex project changed and this GitHub secret
+          # was updated to the new project's value, the blob's stale copy kept
+          # winning silently, since nothing overrode it. Confirmed live via
+          # `docker exec website_api printenv` showing the old value after a
+          # deploy that should have picked up the new one. Same override pattern
+          # as the vote-callback secrets -- fold into DOCKER_COMPOSE_ENV next
+          # time that blob is rebuilt from scratch.
+          export TEBEX_SECRET="${{ secrets.TEBEX_SECRET }}"
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
