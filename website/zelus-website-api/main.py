@@ -164,27 +164,44 @@ def _count_online_players() -> int | None:
             continue
     return count
 
+# Real per-skill xp cap (matches OSRS) -- guards against admin/dev accounts saved
+# with Double.MAX_VALUE experience, which would otherwise overflow float sum() to
+# inf (and int(inf) raises OverflowError).
+_MAX_SKILL_XP = 200_000_000
+
 # ── Character file reader (fallback hiscores) ─────────────────────────────────
 def _read_character_files(limit: int = 200) -> list[dict] | None:
+    """
+    Parses kronos-server's actual save format: a flat Gson dump of PlayerAttributes
+    (plus a nested "stats" object), NOT the "playerInformation"/"skills"/"attributes"
+    shape this used to assume -- that shape matched no real save file, so every file
+    was silently skipped and every caller of this function always saw an empty list.
+    Real shape: top-level "name" (display name) and "stats": {"stats": [24 x
+    {"currentLevel", "experience", ...}]} in StatType ordinal order (matches
+    _SKILL_ORDER). There's no aggregate PvP kills/deaths field in this save format
+    (only per-monster kill counters) -- kills/deaths stay 0 so callers that filter on
+    them degrade gracefully, same as before. killstreak uses the real
+    currentKillSpree field.
+    """
     if not _CHARACTERS_DIR.exists():
         return None
     rows = []
     for path in _CHARACTERS_DIR.rglob("*.json"):
         try:
-            data    = json.loads(path.read_text(encoding='utf-8'))
-            info    = data.get('playerInformation', {})
-            skills  = data.get('skills', {})
-            xp_arr  = skills.get('experience', [])
-            attrs   = data.get('attributes', {})
-            if not xp_arr:
+            data       = json.loads(path.read_text(encoding='utf-8'))
+            stat_array = data.get('stats', {}).get('stats', [])
+            if not stat_array:
                 continue
-            username    = info.get('displayname') or info.get('username') or path.stem
-            skill_xp    = {_SKILL_ORDER[i]: int(xp_arr[i]) for i in range(min(len(xp_arr), 23))}
+            username    = data.get('name') or path.stem
+            skill_xp    = {
+                _SKILL_ORDER[i]: int(min(float(stat_array[i].get('experience', 0)), _MAX_SKILL_XP))
+                for i in range(min(len(stat_array), len(_SKILL_ORDER)))
+            }
+            total_level = sum(int(s.get('currentLevel', 0)) for s in stat_array[:len(_SKILL_ORDER)])
             total_xp    = sum(skill_xp.values())
-            total_level = sum(_xp_to_level(v) for v in skill_xp.values())
-            kills       = int(attrs.get('pvp-kills', 0))
-            deaths      = int(attrs.get('pvp-deaths', 0))
-            killstreak  = int(attrs.get('current-killstreak', 0))
+            kills       = 0
+            deaths      = 0
+            killstreak  = int(data.get('currentKillSpree', 0))
             kdr         = round(kills / deaths, 2) if deaths > 0 else float(kills)
             rows.append({
                 "username":         username,
