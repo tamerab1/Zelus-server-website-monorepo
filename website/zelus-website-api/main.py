@@ -495,54 +495,20 @@ def _promote_stale_unverified_votes(db: Session, username: str) -> None:
 # other sources.  Format: list of event objects, or {"events": [...]}
 _LIVEFEED_FILE = Path(__file__).parent / "livefeed.json"
 
-# Curated rare-drop pool for the synthetic generator.
-# Items are chosen deterministically per player so results are stable across
-# poll cycles (same player always drops the same item in synthetic mode).
-_RARE_DROPS = [
-    ("Twisted bow",            "Chambers of Xeric"),
-    ("Scythe of vitur",        "Theatre of Blood"),
-    ("Tumeken's shadow",       "Tombs of Amascut"),
-    ("Serpentine visage",      "Zulrah"),
-    ("Tanzanite fang",         "Zulrah"),
-    ("Ancestral robe top",     "Chambers of Xeric"),
-    ("Dragon claws",           "Chambers of Xeric"),
-    ("Avernic defender hilt",  "Theatre of Blood"),
-    ("Justiciar faceguard",    "Theatre of Blood"),
-    ("Elder maul",             "Chambers of Xeric"),
-    ("Kodai insignia",         "Chambers of Xeric"),
-    ("Osmumten's fang",        "Tombs of Amascut"),
-    ("Lightbearer",            "Tombs of Amascut"),
-    ("Masori mask",            "Tombs of Amascut"),
-    ("Magma mutagen",          "Zulrah"),
-]
-
-
 def _generate_synthetic_feed(rows: list[dict], limit: int) -> list[dict]:
     """
-    Builds a plausible live-feed from character-file stats when the game DB
-    log tables are unavailable.  Results are deterministic per username so the
-    same events appear stable across poll cycles rather than shuffling.
+    Builds a live-feed from character-file stats when the game DB log tables are
+    unavailable. Only emits events backed by a real field (total_level,
+    killstreak) -- this used to also fabricate specific "X received <item> from
+    <boss>" rare-drop events for real player names from a hardcoded item list
+    keyed by a hash of their username, which is not something that actually
+    happened and was reported live as a lie (a player who's never done CoX
+    "receiving" Dragon claws from it). Don't reintroduce invented per-item drop
+    events here -- real drop events belong in tier 2/3 (game_events / drop_log),
+    not fabricated client-side.
     """
     events = []
     now    = datetime.now(timezone.utc)
-
-    # ── PvP kills ────────────────────────────────────────────────────────────
-    killers = sorted(rows, key=lambda r: r.get('kills', 0), reverse=True)
-    victims = sorted(rows, key=lambda r: r.get('deaths', 0), reverse=True)
-    for i, k in enumerate(killers[:5]):
-        if k.get('kills', 0) == 0:
-            break
-        victim = victims[i % len(victims)] if victims else {'username': 'an adventurer'}
-        if victim['username'] == k['username']:
-            continue
-        seed = int(hashlib.md5(f"{k['username']}{i}".encode()).hexdigest(), 16) % 3600
-        ts   = (now - timedelta(seconds=seed)).isoformat()
-        events.append({
-            "id":        f"kill_{k['username']}_{i}",
-            "type":      "pvp_kill",
-            "timestamp": ts,
-            "message":   f"{k['username']} slew {victim['username']} in the Wilderness.",
-        })
 
     # ── Killstreaks ───────────────────────────────────────────────────────────
     streakers = sorted(rows, key=lambda r: r.get('killstreak', 0), reverse=True)
@@ -572,22 +538,6 @@ def _generate_synthetic_feed(rows: list[dict], limit: int) -> list[dict]:
             "type":      "level_up",
             "timestamp": ts,
             "message":   f"{p['username']} reached total level {lvl}.",
-        })
-
-    # ── Rare drops (inferred from top-XP players — implies high boss KC) ─────
-    top_xp = sorted(rows, key=lambda r: r.get('total_experience', 0), reverse=True)
-    for i, p in enumerate(top_xp[:4]):
-        if p.get('total_experience', 0) == 0:
-            break
-        drop_idx  = int(hashlib.md5(f"drop_{p['username']}_{i}".encode()).hexdigest(), 16) % len(_RARE_DROPS)
-        item_name, source = _RARE_DROPS[drop_idx]
-        seed = int(hashlib.md5(f"d_{p['username']}".encode()).hexdigest(), 16) % 5400
-        ts   = (now - timedelta(seconds=seed)).isoformat()
-        events.append({
-            "id":        f"drop_{p['username']}_{i}",
-            "type":      "rare_drop",
-            "timestamp": ts,
-            "message":   f"{p['username']} received a {item_name} from {source}!",
         })
 
     events.sort(key=lambda e: e['timestamp'], reverse=True)
