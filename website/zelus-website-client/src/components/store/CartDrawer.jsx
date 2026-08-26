@@ -259,7 +259,7 @@ export default function CartDrawer({
 
             {/* Trust note */}
             <p className="text-center text-xs mt-3" style={{ color: '#3a3428' }}>
-              🔒 Secure checkout via Stripe &amp; PayPal
+              🔒 Secure checkout via Tebex — Card &amp; PayPal
             </p>
           </div>
         )}

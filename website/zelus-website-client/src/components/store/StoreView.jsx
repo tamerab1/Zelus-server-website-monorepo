@@ -153,19 +153,27 @@ export default function StoreView() {
   const cartCount = cartItems.reduce((s, ci) => s + ci.qty, 0);
 
   // ─── Cart checkout ───
-  // Builds a synthetic package for the existing CheckoutModal.
-  // TODO: replace with a dedicated multi-item cart API call when backend is ready.
+  // Opens the existing CheckoutModal in "cart mode": `cartLines` carries the
+  // REAL package_id/quantity pairs sent to the backend (createTebexCartCheckout),
+  // while the rest of this object is display-only for the modal's order summary.
+  // Previously sent a synthetic id/slug='cart' through the single-item endpoint,
+  // which every provider's price validation correctly rejected as an unknown
+  // package ("Unknown package: 'cart'") -- not Tebex-specific, every checkout
+  // endpoint validates package_id against store_catalog.
   const handleCartCheckout = () => {
     if (!cartItems.length) return;
-    const syntheticPkg = {
-      slug:   'cart',
-      id:     'cart',
-      name:   `Cart — ${cartCount} item${cartCount !== 1 ? 's' : ''}`,
-      price:  cartTotal,
-      badge:  '#d4af37',
-      tokens: null,
+    const cartSummary = {
+      id:        'cart-summary',
+      name:      `Cart — ${cartCount} item${cartCount !== 1 ? 's' : ''}`,
+      price:     cartTotal,
+      badge:     '#d4af37',
+      tokens:    null,
+      cartLines: cartItems.map(ci => ({
+        package_id: ci.item.slug ?? ci.item.id,
+        quantity:   ci.qty,
+      })),
     };
-    handleCheckout(syntheticPkg);
+    handleCheckout(cartSummary);
     setCartOpen(false);
   };
 

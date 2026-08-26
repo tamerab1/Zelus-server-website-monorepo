@@ -13,10 +13,17 @@
  * on-site — Tebex, not us, handles the actual card/PayPal payment form), but
  * the basket is created from our own site now instead of the old external
  * "Shop with Tebex" storefront link.
+ *
+ * Cart mode: when `pkg.cartLines` is present (StoreView's cart checkout), this
+ * is a multi-item purchase. Only Tebex supports that today — its basket model
+ * natively holds multiple packages, Stripe/PayPal/NOWPayments' single-amount-
+ * per-session model doesn't — so Crypto and OSRS GP are hidden in that case
+ * rather than silently failing.
  */
 import { useState } from 'react';
 import {
   createTebexCheckout,
+  createTebexCartCheckout,
   createCryptoCheckout,
   initiateOsrsGpCheckout,
   calcGpMillions,
@@ -111,6 +118,7 @@ export default function CheckoutModal({ pkg, onClose }) {
 
   if (!pkg) return null;
 
+  const isCartMode = Boolean(pkg.cartLines?.length);
   const packageId  = pkg.slug ?? pkg.id;
   const gpMillions = calcGpMillions(pkg.price);
 
@@ -123,14 +131,16 @@ export default function CheckoutModal({ pkg, onClose }) {
     return t;
   };
 
-  // ── PayPal / Crypto — redirect immediately ───────────────────────────────────
+  // ── Tebex / Crypto — redirect immediately ────────────────────────────────────
   const handleRedirectPayment = async (provider) => {
     const name = validateUsername();
     if (!name) return;
     setLoading(true);
     setError('');
     try {
-      const data = await REDIRECT_CHECKOUT_FNS[provider](packageId, name);
+      const data = isCartMode
+        ? await createTebexCartCheckout(pkg.cartLines, name)
+        : await REDIRECT_CHECKOUT_FNS[provider](packageId, name);
       window.location.href = data.checkout_url;
       // (no setLoading(false) — page is navigating away)
     } catch (err) {
@@ -222,89 +232,95 @@ export default function CheckoutModal({ pkg, onClose }) {
           <span className="font-sans font-bold">Pay with Card / PayPal</span>
         </button>
 
-        {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
-          <span className="font-fantasy text-xs tracking-widest" style={{ color: '#3a3530' }}>OR</span>
-          <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
-        </div>
-
-        {/* OSRS GP */}
-        <button
-          onClick={handleSelectOsrsGp}
-          disabled={loading}
-          className="w-full py-3.5 rounded-sm transition-all duration-200 flex items-center justify-between px-5 group"
-          style={{
-            background: 'rgba(34,197,94,0.08)',
-            border: '1px solid rgba(34,197,94,0.3)',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.5 : 1,
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.background = 'rgba(34,197,94,0.15)';
-            e.currentTarget.style.borderColor = 'rgba(34,197,94,0.6)';
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.background = 'rgba(34,197,94,0.08)';
-            e.currentTarget.style.borderColor = 'rgba(34,197,94,0.3)';
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-xl">🪙</span>
-            <div className="text-left">
-              <p className="font-fantasy text-xs tracking-widest" style={{ color: GP_GREEN }}>
-                PAY WITH OSRS GP
-              </p>
-              <p className="font-sans text-xs mt-0.5" style={{ color: '#6a6058' }}>
-                via Discord Staff Ticket
-              </p>
+        {!isCartMode && (
+          <>
+            {/* Divider */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
+              <span className="font-fantasy text-xs tracking-widest" style={{ color: '#3a3530' }}>OR</span>
+              <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
             </div>
-          </div>
-          <div className="text-right">
-            <p className="font-fantasy text-base font-bold" style={{ color: GP_GREEN }}>
-              {gpMillions.toLocaleString()}M
-            </p>
-            <p className="font-sans text-xs" style={{ color: '#4a4038' }}>OSRS GP</p>
-          </div>
-        </button>
 
-        {/* Crypto — via NOWPayments */}
-        <button
-          onClick={() => handleRedirectPayment('crypto')}
-          disabled={loading}
-          className="w-full py-3.5 rounded-sm transition-all duration-200 flex items-center justify-between px-5"
-          style={{
-            background: 'rgba(139,92,246,0.06)',
-            border: '1px solid rgba(139,92,246,0.2)',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.5 : 1,
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.background = 'rgba(139,92,246,0.12)';
-            e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)';
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.background = 'rgba(139,92,246,0.06)';
-            e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)';
-          }}
-        >
-          <div className="flex items-center gap-3">
-            {loading ? <Spinner color={CRYPTO_PURPLE} /> : <span className="text-xl">₿</span>}
-            <div className="text-left">
-              <p className="font-fantasy text-xs tracking-widest" style={{ color: CRYPTO_PURPLE }}>
-                PAY WITH CRYPTO
-              </p>
-              <p className="font-sans text-xs mt-0.5" style={{ color: '#6a6058' }}>
-                BTC, ETH, USDT & more — via NOWPayments
-              </p>
-            </div>
-          </div>
-        </button>
+            {/* OSRS GP */}
+            <button
+              onClick={handleSelectOsrsGp}
+              disabled={loading}
+              className="w-full py-3.5 rounded-sm transition-all duration-200 flex items-center justify-between px-5 group"
+              style={{
+                background: 'rgba(34,197,94,0.08)',
+                border: '1px solid rgba(34,197,94,0.3)',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = 'rgba(34,197,94,0.15)';
+                e.currentTarget.style.borderColor = 'rgba(34,197,94,0.6)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = 'rgba(34,197,94,0.08)';
+                e.currentTarget.style.borderColor = 'rgba(34,197,94,0.3)';
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl">🪙</span>
+                <div className="text-left">
+                  <p className="font-fantasy text-xs tracking-widest" style={{ color: GP_GREEN }}>
+                    PAY WITH OSRS GP
+                  </p>
+                  <p className="font-sans text-xs mt-0.5" style={{ color: '#6a6058' }}>
+                    via Discord Staff Ticket
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-fantasy text-base font-bold" style={{ color: GP_GREEN }}>
+                  {gpMillions.toLocaleString()}M
+                </p>
+                <p className="font-sans text-xs" style={{ color: '#4a4038' }}>OSRS GP</p>
+              </div>
+            </button>
+
+            {/* Crypto — via NOWPayments */}
+            <button
+              onClick={() => handleRedirectPayment('crypto')}
+              disabled={loading}
+              className="w-full py-3.5 rounded-sm transition-all duration-200 flex items-center justify-between px-5"
+              style={{
+                background: 'rgba(139,92,246,0.06)',
+                border: '1px solid rgba(139,92,246,0.2)',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = 'rgba(139,92,246,0.12)';
+                e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = 'rgba(139,92,246,0.06)';
+                e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)';
+              }}
+            >
+              <div className="flex items-center gap-3">
+                {loading ? <Spinner color={CRYPTO_PURPLE} /> : <span className="text-xl">₿</span>}
+                <div className="text-left">
+                  <p className="font-fantasy text-xs tracking-widest" style={{ color: CRYPTO_PURPLE }}>
+                    PAY WITH CRYPTO
+                  </p>
+                  <p className="font-sans text-xs mt-0.5" style={{ color: '#6a6058' }}>
+                    BTC, ETH, USDT & more — via NOWPayments
+                  </p>
+                </div>
+              </div>
+            </button>
+          </>
+        )}
 
       </div>
 
       <p className="text-center text-xs" style={{ color: '#3a3530' }}>
-        🔒 Card & PayPal payments processed securely. We never store card details.
+        {isCartMode
+          ? '🔒 Card & PayPal processed securely via Tebex. Crypto and OSRS GP checkout aren’t available for multi-item carts yet — check those out individually.'
+          : '🔒 Card & PayPal payments processed securely. We never store card details.'}
       </p>
     </div>
   );

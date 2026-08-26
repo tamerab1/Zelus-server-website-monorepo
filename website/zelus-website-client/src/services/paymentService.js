@@ -63,3 +63,15 @@ export const createTebexCheckout = (packageId, username) =>
     method: 'POST',
     body: JSON.stringify({ package_id: packageId, username }),
   });
+
+/**
+ * Multi-item cart checkout via Tebex Headless — adds every cart line to one
+ * basket (Tebex is the only provider here that natively supports this).
+ * @param {{package_id: string, quantity: number}[]} items
+ * @returns {Promise<{checkout_url: string, basket_ident: string}>}
+ */
+export const createTebexCartCheckout = (items, username) =>
+  apiFetch('/api/checkout/tebex/cart', {
+    method: 'POST',
+    body: JSON.stringify({ username, items }),
+  });

@@ -545,3 +545,103 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
 
     log.info("[Tebex] Basket created: %s  user='%s'", basket["ident"], req.username)
     return {"checkout_url": checkout_url, "basket_ident": basket["ident"]}
+
+
+# ── Tebex cart checkout (multi-item) ────────────────────────────────────────────
+# The cart drawer previously synthesized a fake package (id/slug='cart') and sent
+# it through the single-item endpoint above, which every provider's price
+# validation correctly rejected as an unknown package_id ("Unknown package:
+# 'cart'"). That was never Tebex-specific -- every checkout endpoint here
+# validates package_id against store_catalog, so the cart was broken against all
+# of them identically; it just surfaced now because Tebex is the one path
+# actually wired to a UI button. Tebex's basket model natively supports multiple
+# packages per basket (unlike Stripe/PayPal/NOWPayments' single-amount-per-
+# session model above), so this is the one provider that can genuinely support a
+# real multi-item cart today -- Crypto/OSRS-GP cart checkout stays unsupported.
+#
+# NOT YET LIVE-VERIFIED: whether Tebex's add-package endpoint actually honours
+# a `quantity` in the request body vs. defaulting to 1 and requiring a separate
+# update-quantity call. Test with a real >1-quantity cart before trusting this.
+
+class CartLineItem(BaseModel):
+    package_id: str = Field(..., min_length=1, max_length=50)
+    quantity:   int = Field(..., ge=1, le=99)
+
+
+class CartCheckoutRequest(BaseModel):
+    username: str = Field(..., min_length=1, max_length=12)
+    items:    list[CartLineItem] = Field(..., min_length=1, max_length=20)
+
+
+@router.post("/tebex/cart")
+async def create_tebex_cart_checkout(
+    req: CartCheckoutRequest, request: Request, db: Session = Depends(get_db),
+):
+    log.info("[Tebex] Cart checkout — user='%s' items=%d", req.username, len(req.items))
+
+    if not TEBEX_PUBLIC_TOKEN or not TEBEX_PRIVATE_KEY:
+        raise HTTPException(503, "Card payments are not configured.")
+
+    # ── Resolve + validate every line BEFORE contacting Tebex at all — same
+    # "never trust the frontend" price/existence validation as every single-item
+    # endpoint above, just looped across the cart.
+    resolved: list[tuple[str, int]] = []
+    for line in req.items:
+        item = get_item(line.package_id)
+        if not item:
+            log.warning("[Tebex] Cart contains unknown package_id='%s' from user='%s'",
+                        line.package_id, req.username)
+            raise HTTPException(400, f"Unknown package: '{line.package_id}'")
+        tebex_package_id = _SLUG_TO_TEBEX_PACKAGE_ID.get(item.slug)
+        if not tebex_package_id:
+            log.error("[Tebex] No Tebex package id mapped for slug='%s' -- add it to TEBEX_PACKAGE_MAP.",
+                      item.slug)
+            raise HTTPException(400, f"'{item.name}' is not available via card checkout yet.")
+        resolved.append((tebex_package_id, line.quantity))
+
+    client_ip = get_real_client_ip(request) or "0.0.0.0"
+    tebex_auth = (TEBEX_PUBLIC_TOKEN, TEBEX_PRIVATE_KEY)
+
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            basket_resp = await client.post(
+                f"{TEBEX_HEADLESS_BASE_URL}/accounts/{TEBEX_PUBLIC_TOKEN}/baskets",
+                auth=tebex_auth,
+                json={
+                    "complete_url":           f"{SITE_URL}/?payment=success",
+                    "cancel_url":             f"{SITE_URL}/?payment=cancelled",
+                    "complete_auto_redirect": True,
+                    "ip_address":             client_ip,
+                    "custom": {"username": req.username},
+                },
+            )
+            basket_resp.raise_for_status()
+            basket = basket_resp.json()["data"]
+
+            # One add-package call per line item onto the same basket.
+            for tebex_package_id, quantity in resolved:
+                add_resp = await client.post(
+                    f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}/packages",
+                    auth=tebex_auth,
+                    json={"package_id": int(tebex_package_id), "quantity": quantity},
+                )
+                add_resp.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        log.error("[Tebex] Cart HTTP %d for user='%s': %s",
+                  exc.response.status_code, req.username, exc.response.text)
+        raise HTTPException(502, "Card payment could not be initiated. Please try again.")
+    except httpx.TimeoutException:
+        log.error("[Tebex] Cart timeout for user='%s'", req.username)
+        raise HTTPException(504, "Tebex is taking too long to respond. Please try again.")
+    except Exception as exc:
+        log.error("[Tebex] Cart unexpected error for user='%s': %s", req.username, exc)
+        raise HTTPException(502, "Card payment could not be initiated.")
+
+    checkout_url = basket.get("links", {}).get("checkout")
+    if not checkout_url:
+        log.error("[Tebex] No checkout link in cart basket response for user='%s': %s", req.username, basket)
+        raise HTTPException(502, "Tebex did not return a payment URL.")
+
+    log.info("[Tebex] Cart basket created: %s  user='%s'  items=%d",
+             basket["ident"], req.username, len(resolved))
+    return {"checkout_url": checkout_url, "basket_ident": basket["ident"]}
