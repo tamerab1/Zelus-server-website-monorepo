@@ -456,8 +456,8 @@ jobs:
           # more heap headroom -- same override pattern as the vote-callback
           # secrets above. Fold into DOCKER_COMPOSE_ENV and drop this next time
           # that blob is rebuilt from scratch.
-          export KRONOS_BOOT_OPTS=${{ secrets.KRONOS_BOOT_OPTS_OVERRIDE }}
-          export GAME_SERVER_MEM_LIMIT=${{ secrets.GAME_SERVER_MEM_LIMIT_OVERRIDE }}
+          export KRONOS_BOOT_OPTS="${{ secrets.KRONOS_BOOT_OPTS_OVERRIDE }}"
+          export GAME_SERVER_MEM_LIMIT="${{ secrets.GAME_SERVER_MEM_LIMIT_OVERRIDE }}"
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
