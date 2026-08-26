@@ -565,7 +565,7 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
             # actually has contents. Re-fetch the current state rather than
             # reuse the stale one.
             refetch_resp = await client.get(
-                f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}",
+                f"{TEBEX_HEADLESS_BASE_URL}/accounts/{TEBEX_PUBLIC_TOKEN}/baskets/{basket['ident']}",
                 auth=tebex_auth,
             )
             refetch_resp.raise_for_status()
@@ -678,7 +678,7 @@ async def create_tebex_cart_checkout(
             # the creation-time basket snapshot has empty links/packages
             # until re-fetched after packages actually exist on it.
             refetch_resp = await client.get(
-                f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}",
+                f"{TEBEX_HEADLESS_BASE_URL}/accounts/{TEBEX_PUBLIC_TOKEN}/baskets/{basket['ident']}",
                 auth=tebex_auth,
             )
             refetch_resp.raise_for_status()
