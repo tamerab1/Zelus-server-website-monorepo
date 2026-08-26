@@ -557,6 +557,19 @@ async def create_tebex_checkout(req: CheckoutRequest, request: Request, db: Sess
                 json={"package_id": int(tebex_package_id), "quantity": 1},
             )
             add_resp.raise_for_status()
+
+            # The basket object captured at creation time is a snapshot from
+            # BEFORE any package existed -- confirmed live: it comes back with
+            # `links: []` and `packages: []` even after a 200 OK add-package
+            # call, because links.checkout only gets populated once the basket
+            # actually has contents. Re-fetch the current state rather than
+            # reuse the stale one.
+            refetch_resp = await client.get(
+                f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}",
+                auth=tebex_auth,
+            )
+            refetch_resp.raise_for_status()
+            basket = refetch_resp.json()["data"]
     except httpx.HTTPStatusError as exc:
         log.error("[Tebex] HTTP %d for user='%s': %s",
                   exc.response.status_code, req.username, exc.response.text)
@@ -660,6 +673,16 @@ async def create_tebex_cart_checkout(
                     json={"package_id": int(tebex_package_id), "quantity": quantity},
                 )
                 add_resp.raise_for_status()
+
+            # See the identical comment in create_tebex_checkout above --
+            # the creation-time basket snapshot has empty links/packages
+            # until re-fetched after packages actually exist on it.
+            refetch_resp = await client.get(
+                f"{TEBEX_HEADLESS_BASE_URL}/baskets/{basket['ident']}",
+                auth=tebex_auth,
+            )
+            refetch_resp.raise_for_status()
+            basket = refetch_resp.json()["data"]
     except httpx.HTTPStatusError as exc:
         log.error("[Tebex] Cart HTTP %d for user='%s': %s",
                   exc.response.status_code, req.username, exc.response.text)
