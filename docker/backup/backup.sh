@@ -57,8 +57,11 @@ fi
 
 echo "[$(date -Iseconds)] Dumping MariaDB (${sql_container})..."
 mysql_out="${BACKUP_DIR}/mysql_${TIMESTAMP}.sql.gz"
+# Newer MariaDB images ship mariadb-dump instead of the legacy mysqldump
+# symlink (same image where `mariadb` replaced `mysql` as the client name) --
+# prefer mariadb-dump, fall back to mysqldump for older images.
 docker exec "${sql_container}" sh -c \
-    'exec mysqldump -uroot -p"$MARIADB_ROOT_PASSWORD" --all-databases --single-transaction --quick --routines --triggers' \
+    'exec "$(command -v mariadb-dump || command -v mysqldump)" -uroot -p"$MARIADB_ROOT_PASSWORD" --all-databases --single-transaction --quick --routines --triggers' \
     | gzip -9 > "${mysql_out}.tmp"
 mv "${mysql_out}.tmp" "${mysql_out}"
 
@@ -104,5 +107,5 @@ echo "[$(date -Iseconds)] Backup complete."
 #   15 3 * * * STACK_NAME=zelus_prod /opt/zelus/backup.sh >> /opt/zelus/backups/backup.log 2>&1
 #
 # Test restore periodically (a backup nobody has restored isn't proven):
-#   gunzip -c /opt/zelus/backups/mysql_<ts>.sql.gz | docker exec -i <sql_container> sh -c 'mysql -uroot -p"$MARIADB_ROOT_PASSWORD"'
+#   gunzip -c /opt/zelus/backups/mysql_<ts>.sql.gz | docker exec -i <sql_container> sh -c '"$(command -v mariadb || command -v mysql)" -uroot -p"$MARIADB_ROOT_PASSWORD"'
 #   docker exec -i <mongo_container> sh -c 'mongorestore --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --archive --gzip' < /opt/zelus/backups/mongo_<ts>.archive.gz
