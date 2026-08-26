@@ -86,12 +86,16 @@ NOWPAYMENTS_IPN_SECRET = os.getenv("NOWPAYMENTS_IPN_SECRET", "")
 # name matching a catalog item, see _tebex_resolve_item's fallback) is mapped
 # here, payments for it are logged and NOT fulfilled -- money taken with no
 # item/rank granted is worse than a webhook that no-ops until configured.
+# 2026-08-26: replaced with the new project's package ids -- the original
+# project (7618xxx ids) was locked to a Garry's Mod plugin profile that forced
+# Steam OAuth on every basket. New project is configured Minecraft (Offline /
+# Username-only), matching how this store actually identifies players.
 TEBEX_PACKAGE_MAP: dict[str, str] = {
-    "7618121": "dp_350",   # $5 Donator Bond
-    "7618124": "dp_770",   # $10 Donator Bond
-    "7618131": "dp_2180",  # $25 Donator Bond
-    "7618132": "dp_4350",  # $50 Donator Bond
-    "7618134": "dp_9450",  # $100 Donator Bond
+    "7641162": "dp_350",   # $5 Donator Bond
+    "7641164": "dp_770",   # $10 Donator Bond
+    "7641166": "dp_2180",  # $25 Donator Bond
+    "7641168": "dp_4350",  # $50 Donator Bond
+    "7641170": "dp_9450",  # $100 Donator Bond
 }
 
 
