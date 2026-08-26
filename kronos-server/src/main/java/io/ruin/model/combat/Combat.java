@@ -117,8 +117,10 @@ public abstract class Combat {
 			killers = new HashMap<>();
 		int userId = attacker.player.getUserId();
 		Killer k = killers.get(userId);
-		if (k == null)
+		if (k == null) {
 			k = new Killer();
+			k.firstDamageMs = System.currentTimeMillis();
+		}
 		k.player = attacker.player;
 		k.damage += damage;
 		killers.put(userId, k);

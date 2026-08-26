@@ -5,6 +5,7 @@ import io.ruin.cache.ItemID;
 import io.ruin.model.World;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.shared.StepType;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.ItemContainer;
@@ -89,11 +90,13 @@ public class GambleGameHandler extends ItemContainer {
 			switch (mode) {
 				case 1:
 					HandleDice55x2(getGambleData().playerTwo, getGambleData().playerOne);
+					break;
 				case 2:
 					HandleDice55x2(getGambleData().playerOne, getGambleData().playerTwo);
 					break;
 				case 3:
 					HandleBlackJack(getGambleData().playerTwo, getGambleData().playerOne);
+					break;
 				case 4:
 					HandleBlackJack(getGambleData().playerOne, getGambleData().playerTwo);
 					break;
@@ -214,7 +217,7 @@ public class GambleGameHandler extends ItemContainer {
 	public void refreshBlackJackInterface(Player player) {
 		PacketSender ps = player.getPacketSender();
 		ps.sendString(887, 24, "Turn: " + getGambleData().blackJackTurn.getName());
-		ps.sendString(887, 12, "Black Jack (Host: " + getGambleData().host.getName() + ")");
+		ps.sendString(887, 12, "Black Jack 100 (Host: " + getGambleData().host.getName() + ")");
 		ps.sendString(887, 30,
 			getGambleData().blackJackPlayerOneRolls == null ? "0" : getGambleData().blackJackPlayerOneRolls);
 		ps.sendString(887, 36,
@@ -243,8 +246,8 @@ public class GambleGameHandler extends ItemContainer {
 			playerTwo.openInterface(ToplevelComponent.MAINMODAL, 887);
 			ps1.sendString(887, 24, "Turn: " + participant.getName());
 			ps2.sendString(887, 24, "Turn: " + participant.getName());
-			ps1.sendString(887, 12, "Black Jack (Host: " + host.getName() + ")");
-			ps2.sendString(887, 12, "Black Jack (Host: " + host.getName() + ")");
+			ps1.sendString(887, 12, "Black Jack 100 (Host: " + host.getName() + ")");
+			ps2.sendString(887, 12, "Black Jack 100 (Host: " + host.getName() + ")");
 			ps2.sendString(887, 30, "");
 			ps1.sendString(887, 30, "");
 			ps2.sendString(887, 36, "");
@@ -335,8 +338,8 @@ public class GambleGameHandler extends ItemContainer {
 				World.startEvent(e -> {
 					ps1.setHidden(887, 23, false);
 					ps2.setHidden(887, 23, false);
-					ps2.sendString(887, 23, getGambleData().host.getName() + " has won<br>the gamble!");
-					ps1.sendString(887, 23, getGambleData().host.getName() + " has won<br>the gamble!");
+					ps2.sendString(887, 23, getGambleData().participant.getName() + " has won<br>the gamble!");
+					ps1.sendString(887, 23, getGambleData().participant.getName() + " has won<br>the gamble!");
 					e.delay(5);
 					Winner(getGambleData().participant, getGambleData().host);
 				});
@@ -375,8 +378,8 @@ public class GambleGameHandler extends ItemContainer {
 				World.startEvent(e -> {
 					ps1.setHidden(887, 23, false);
 					ps2.setHidden(887, 23, false);
-					ps2.sendString(887, 23, getGambleData().host.getName() + " has won<br>the gamble!");
-					ps1.sendString(887, 23, getGambleData().host.getName() + " has won<br>the gamble!");
+					ps2.sendString(887, 23, getGambleData().participant.getName() + " has won<br>the gamble!");
+					ps1.sendString(887, 23, getGambleData().participant.getName() + " has won<br>the gamble!");
 					e.delay(5);
 					Winner(getGambleData().participant, getGambleData().host);
 				});
@@ -417,22 +420,26 @@ public class GambleGameHandler extends ItemContainer {
 				e.delay(2);
 				Flowers playerOneFlower = roll();
 				Flowers playerTwoFlower = roll();
+				// stepAbs() forces a single walk step without route finding — see the same
+				// fix/comment in HandleFlowerPokerGame above; RouteFinder was silently no-opping
+				// against this zone's tiles, leaving players frozen on the start tile. Unlike
+				// teleport(), this still plays a normal walk animation.
+				playerOne.stepAbs(
+					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
+					playerOne.getPosition().getY(), StepType.WALK);
+				npc.stepAbs(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
+					npc.getPosition().getY(), StepType.WALK);
+				e.waitForMovement(playerOne);
 				playerOneFlowers.add(0, GameObject.spawn(playerOneFlower.objId, playerOne.getAbsX(), playerOne.getAbsY(),
 					playerOne.getHeight(), 10, 0));
-				playerOne.getRouteFinder().routeAbsolute(
-					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
-					playerOne.getPosition().getY());
-				npc.getRouteFinder().routeAbsolute(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
-					npc.getPosition().getY());
-				e.waitForMovement(playerOne);
 				playerOne.face(playerOneFlowers.get(0));
 				e.delay(3);
+				playerTwo.stepAbs(
+					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
+					playerTwo.getPosition().getY(), StepType.WALK);
+				e.waitForMovement(playerTwo);
 				playerTwoFlowers.add(0, GameObject.spawn(playerTwoFlower.objId, playerTwo.getAbsX(), playerTwo.getAbsY(),
 					playerTwo.getHeight(), 10, 0));
-				playerTwo.getRouteFinder().routeAbsolute(
-					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
-					playerTwo.getPosition().getY());
-				e.waitForMovement(playerTwo);
 				playerTwo.face(playerTwoFlowers.get(0));
 				npc.face(playerOne);
 
@@ -471,12 +478,12 @@ public class GambleGameHandler extends ItemContainer {
 				playerTwoFlowers.clear();
 				playerTwo.getMovement().teleport(
 					plantLeft ? playerTwo.getPosition().getX() + 1 : playerTwo.getPosition().getX() - 1,
-					playerTwo.getPosition().getY(), 1);
+					playerTwo.getPosition().getY(), 0);
 				playerOne.getMovement().teleport(
 					plantLeft ? playerOne.getPosition().getX() + 1 : playerOne.getPosition().getX() - 1,
-					playerOne.getPosition().getY(), 1);
+					playerOne.getPosition().getY(), 0);
 				npc.getMovement().teleport(plantLeft ? npc.getPosition().getX() + 1 : npc.getPosition().getX() - 1,
-					npc.getPosition().getY(), 1);
+					npc.getPosition().getY(), 0);
 				npc.face(playerOne);
 				if (playerOneScore.get() != 3 && playerTwoScore.get() != 3) {
 					GamblerText(npc,
@@ -517,6 +524,21 @@ public class GambleGameHandler extends ItemContainer {
 			e.delay(1);
 			npc.forceText("GO!");
 			for (int i = 0; i < 5; i++) {
+				// stepAbs() forces a single walk step without route finding: this is a fixed,
+				// always-exactly-1-tile scripted step (not organic player pathing), and
+				// RouteFinder was silently no-opping against this zone's tiles — leaving the
+				// entity exactly where it stood, with no error — instead of computing the route.
+				// Unlike teleport(), stepAbs() still plays a normal walk animation.
+				playerOne.stepAbs(
+					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
+					playerOne.getPosition().getY(), StepType.WALK);
+				playerTwo.stepAbs(
+					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
+					playerTwo.getPosition().getY(), StepType.WALK);
+				npc.stepAbs(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
+					npc.getPosition().getY(), StepType.WALK);
+				e.waitForMovement(playerOne);
+
 				Flowers playerOneFlower = roll();
 				Flowers playerTwoFlower = roll();
 				playerOneFlowers.add(GameObject.spawn(playerOneFlower.objId, playerOne.getAbsX(), playerOne.getAbsY(),
@@ -527,20 +549,24 @@ public class GambleGameHandler extends ItemContainer {
 					playerOneHand.get(playerOneFlower.objId) == null ? 1 : playerOneHand.get(playerOneFlower.objId) + 1);
 				playerTwoHand.put(playerTwoFlower.objId,
 					playerTwoHand.get(playerTwoFlower.objId) == null ? 1 : playerTwoHand.get(playerTwoFlower.objId) + 1);
-				playerOne.getRouteFinder().routeAbsolute(
-					plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
-					playerOne.getPosition().getY());
-				playerTwo.getRouteFinder().routeAbsolute(
-					plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
-					playerTwo.getPosition().getY());
-				npc.getRouteFinder().routeAbsolute(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
-					npc.getPosition().getY());
-				e.waitForMovement(playerOne);
 				npc.face(playerOne);
 				playerOne.face(playerOneFlowers.get(i));
 				playerTwo.face(playerTwoFlowers.get(i));
 				e.delay(2);
 			}
+
+			// After planting the 5th (last) flower, take one more step off the flower tiles
+			// before the hand is revealed, instead of standing on the last flower's tile.
+			playerOne.stepAbs(
+				plantLeft ? playerOne.getPosition().getX() - 1 : playerOne.getPosition().getX() + 1,
+				playerOne.getPosition().getY(), StepType.WALK);
+			playerTwo.stepAbs(
+				plantLeft ? playerTwo.getPosition().getX() - 1 : playerTwo.getPosition().getX() + 1,
+				playerTwo.getPosition().getY(), StepType.WALK);
+			npc.stepAbs(plantLeft ? npc.getPosition().getX() - 1 : npc.getPosition().getX() + 1,
+				npc.getPosition().getY(), StepType.WALK);
+			e.waitForMovement(playerOne);
+			e.delay(1);
 
 			playerOneHand.forEach((k, v) -> {
 				if (v == 2)
@@ -663,14 +689,16 @@ public class GambleGameHandler extends ItemContainer {
 				playerTwo.unlock();
 				playerOne.unlock();
 				e.delay(2);
-				npc.getMovement().teleport(plantLeft ? npc.getPosition().getX() + 5 : npc.getPosition().getX() - 5,
-					npc.getPosition().getY(), 1);
+				// 6 tiles to undo: 5 flower-planting steps + the 1 extra "exit the tiles" step
+				// taken after the last flower.
+				npc.getMovement().teleport(plantLeft ? npc.getPosition().getX() + 6 : npc.getPosition().getX() - 6,
+					npc.getPosition().getY(), 0);
 				playerTwo.getMovement().teleport(
-					plantLeft ? playerTwo.getPosition().getX() + 5 : playerTwo.getPosition().getX() - 5,
-					playerTwo.getPosition().getY(), 1);
+					plantLeft ? playerTwo.getPosition().getX() + 6 : playerTwo.getPosition().getX() - 6,
+					playerTwo.getPosition().getY(), 0);
 				playerOne.getMovement().teleport(
-					plantLeft ? playerOne.getPosition().getX() + 5 : playerOne.getPosition().getX() - 5,
-					playerOne.getPosition().getY(), 1);
+					plantLeft ? playerOne.getPosition().getX() + 6 : playerOne.getPosition().getX() - 6,
+					playerOne.getPosition().getY(), 0);
 				HandleFlowerPokerGame(npc, plantLeft);
 			} else {
 				playerTwo.unlock();
@@ -681,15 +709,18 @@ public class GambleGameHandler extends ItemContainer {
 	}
 
 	public void startFlowerGame(int flowerGame) {
-		Bounds spawnBounds = Gamble.GAMBLEZONE_BOUNDS[Random.get(Gamble.GAMBLEZONE_BOUNDS.length - 1)];
-		Position spawnPos = spawnBounds.randomPosition();
-		;
+		int areaIndex = Random.get(Gamble.GAMBLEZONE_BOUNDS.length - 1);
+		Bounds spawnBounds = Gamble.GAMBLEZONE_BOUNDS[areaIndex];
+
+		// areas 0-2 (1-3) start at their east edge (neX) and shift west;
+		// areas 3-5 (4-6) start at their west edge (swX) and shift east.
+		boolean areas1to3 = areaIndex < 3;
+		int startX = areas1to3 ? spawnBounds.neX : spawnBounds.swX;
+		boolean plantLeft = areas1to3;
+		int startY = Random.get(spawnBounds.swY, spawnBounds.neY);
+		Position spawnPos = new Position(startX, startY, spawnBounds.z);
 
 		playerOne.getGamble().getGambleData().spawnPosition = spawnPos;
-
-		// spawnPos.set(Random.get(0, 1) == 0 ? spawnBounds.bottomLeftX :
-		// spawnBounds.topRightX, spawnPos.getY(), 1);
-		boolean plantLeft = false;
 
 		int y;
 		int npcY;
@@ -702,17 +733,10 @@ public class GambleGameHandler extends ItemContainer {
 			npcY = spawnPos.getY() - 1;
 		}
 
-		Position playerTwoSpawnPos = new Position(spawnPos.getX(), y, 1);
+		Position playerTwoSpawnPos = new Position(spawnPos.getX(), y, 0);
 
-		if (spawnPos.getX() - 5 < spawnBounds.swX)
-			plantLeft = false;
-		else if (spawnPos.getX() + 5 > spawnBounds.neX)
-			plantLeft = true;
-		else
-			System.out.println("AN UNEXPECTED ERROR OCCURRED!");
-
-		playerOne.getMovement().teleport(spawnPos.getX(), spawnPos.getY(), 1);
-		playerTwo.getMovement().teleport(playerTwoSpawnPos.getX(), playerTwoSpawnPos.getY(), 1);
+		playerOne.getMovement().teleport(spawnPos.getX(), spawnPos.getY(), 0);
+		playerTwo.getMovement().teleport(playerTwoSpawnPos.getX(), playerTwoSpawnPos.getY(), 0);
 		NPC npc = new NPC(3105).spawn(spawnPos.getX(), npcY, spawnPos.getZ());
 		npc.face(playerOne);
 		switch (flowerGame) {

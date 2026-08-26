@@ -72,9 +72,7 @@ public class WantedManager {
             new OptionsDialogue("Bounty Hunter Chest",
                 new Option("Open BH Shop", () -> {
                     player.closeDialogue();
-                    // TODO: open the BH / PK-points shop once it is built.
-                    // ShopManager.openIfExists(player, "PkStore");
-                    player.sendMessage("<col=cc0000>[WANTED]</col> The BH Shop is not yet open — check back soon!");
+                    io.ruin.model.inter.handlers.shopinterface.CustomShop2.openBhPointsShop(player);
                 }),
                 new Option("Place a WANTED bounty", () -> {
                     player.closeDialogue();

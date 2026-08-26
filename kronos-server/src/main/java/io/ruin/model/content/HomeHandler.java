@@ -4,6 +4,7 @@ import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
+import io.ruin.cache.ObjectID;
 import io.ruin.content.maps.*;
 import io.ruin.model.activities.bosses.instancetoken.InstanceMaps;
 import io.ruin.model.activities.newshop.NewShopHandler;
@@ -48,10 +49,10 @@ import static io.ruin.cache.ItemID.COINS_995;
 
 public class HomeHandler {
 
-	static Bounds homeArea = new Bounds(1344, 3200, 1407, 3263, -1);
+	static Bounds homeArea = new Bounds(3073, 3462, 3123, 3520, -1);
 
 	private static void openTeleportInterface(Player player) {
-		if (player.getPosition().regionId() == 5426) {
+		if (player.getPosition().regionId() == 12342) {
 			player.teleportInterface.open(player);
 		}
 	}
@@ -69,25 +70,72 @@ public class HomeHandler {
 	}
 
 	public static void init() {
-		var devouringForge = GameObject.spawn(60003, 1386, 3241, 0, 10, 0);
-		ObjectAction.register(devouringForge, 1, (player, obj) -> io.ruin.model.content.pvppreset.PvpPresetInterface.open(player));
-		var bhChest = GameObject.spawn(60010, 1390, 3241, 0, 10, 0);
+		ObjectAction devouringForgeAction = (player, obj) -> {
+			if (!player.isPvpMode() && !player.isOwner()) {
+				player.sendMessage("You must be in PvP mode to use the devouring forge.");
+				return;
+			}
+			io.ruin.model.content.gearloadouts.GearLoadoutInterface.open(player);
+		};
+		var devouringForge = GameObject.spawn(60003, 3081, 3516, 0, 10, 0);
+		ObjectAction.register(devouringForge, 1, devouringForgeAction);
+		// Second devouring forge instance in the FunPK zone, spawned from data/objects/spawns/custom_objects.json.
+		// Actions are per-instance, not per-object-id (see ObjectAction.register javadoc), so it needs its own
+		// registration even though it shares the same object id (60003) as the home one.
+		ObjectAction.register(60003, 3322, 4754, 0, 1, devouringForgeAction);
+		var bhChest = GameObject.spawn(60001, 3094, 3516, 0, 10, 0);
 		ObjectAction.register(bhChest, 1, (player, obj) -> io.ruin.model.activities.wilderness.WantedManager.openMenu(player));
-		var tradingPost = GameObject.spawn(46240, 1377, 3223, 0, 10, 2);
-		var elvenChest = GameObject.spawn(36582, 1389, 3244, 0, 10, 5);
-		var slayerChest = GameObject.spawn(46243, 1389, 3245, 0, 10, 1);
-		var singingBowl = GameObject.spawn(36552, 1380, 3246, 0, 10, 5);
-		var pohPortal = GameObject.spawn(15478, 1374, 3247, 0, 10, 2);
-		var altar = GameObject.spawn(411, 1384, 3242, 0, 10, 0);
-		var upgradeStation = GameObject.spawn(46241, 1377, 3225, 0, 10, 2);
-		var upgradeStation2 = GameObject.spawn(53226, 1377, 3227, 0, 10, 1);
-		var panda = GameObject.spawn(60011, 1373, 3241, 0, 10, 0);
-		ObjectAction.register(panda, 1, (player, obj) -> NewShopHandler.openShop(player, NewShopHandler.pvmPointStore));
+		//var tradingPost = GameObject.spawn(46240, 3094, 3495, 0, 10, 1);
+		//var tradingPost2 = GameObject.spawn(46240, 3098, 3499, 0, 10, 2);
+		var elvenChest = GameObject.spawn(36582, 3093, 3506, 0, 10, 0);
+		var slayerChest = GameObject.spawn(46243, 3109, 3486, 0, 10, 1);
+		//var singingBowl = GameObject.spawn(36552, 3091, 3510, 0, 10, 5);
+		//var pohPortal = GameObject.spawn(15478, 3085, 3511, 0, 10, 2);
+		var upgradeStation = GameObject.spawn(60015, 3116, 3485, 0, 10, 3); // Zelus Upgrader (was 46241)
+		var upgradeStation2 = GameObject.spawn(60016, 3114, 3482, 0, 10, 3); // Zelus Workbench (was 53226)
+		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
+		ObjectAction.register(panda, 1, (player, obj) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openPvmShop(player));
+		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
+		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> {
+			if (player.getPosition().inBounds(io.ruin.model.activities.gamble.Gamble.GAMBLE_ZONE)) {
+				// already inside -- just let them walk back out, no risk warning needed
+				player.getMovement().teleport(3123, 3479, 0);
+			} else {
+				player.dialogue(
+					new OptionsDialogue("Gambling carries the risk of losing whatever you stake. Continue?",
+						new Option("Yes, I understand the risk.", () -> player.getMovement().teleport(3123, 3476, 0)),
+						new Option("No, take me back.", player::closeDialogue)
+					)
+				);
+			}
+		});
 		var gauntletBankChest = GameObject.spawn(4483, 3037, 6129, 1, 10, 2);
+		// Fountain (879) baked into the RSPSi home map export, unwanted --
+		// spawning id -1 at the same tile/type/rotation overrides and
+		// removes a cache-placed object (same convention as
+		// EchoTreasureRoom.java). Covering both candidate tiles since the
+		// exact one wasn't certain, then replacing it with the Camel
+		// Statue. Rotation 3 is a guess at "east" (no prior spawn of this
+		// object elsewhere in the codebase to confirm against) -- check
+		// in-game and give the correct rotation number if it's off.
+		GameObject.spawn(-1, 3094, 3464, 0, 10, 0);
+		GameObject.spawn(-1, 3095, 3464, 0, 10, 0);
+		GameObject.spawn(ObjectID.CAMELS_STATUE, 3094, 3464, 0, 10, 3);
 		if(!SummerEvent.disabled) {
-			var summerNPC = new NPC(1805).spawn(new Position(1391, 3229, 0), Direction.NORTH);
+			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();
 		}
+		// Tournament registration board ("Scoreboard", 44930). RSPSi-placed
+		// copies of this object showed as null in-game -- spawning it
+		// server-side instead as a fallback. Type/rotation are a guess
+		// (matching the Camel Statue's spawn convention above); check
+		// in-game and adjust if it renders wrong.
+		GameObject.spawn(44930, 3072, 3473, 0, 10, 0);
+		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
+		new NPC(5840).spawn(new Position(3125, 3464, 0), Direction.NORTH);
+		new NPC(5840).spawn(new Position(3121, 3464, 0), Direction.NORTH);
+		new NPC(1867).spawn(new Position(3114, 3504, 0), Direction.SOUTH);
+		NPCAction.register(1867, 1, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player));
 	}
 
 	public static void switchBook(Player player, SpellBook book, boolean altar) {
@@ -250,7 +298,7 @@ public class HomeHandler {
 					player.graphics(1039);
 					player.privateSound(200, 0, 10);
 					e.delay(2);
-					player.getMovement().teleport(1376, 3232, 0);
+					player.getMovement().teleport(3087, 3496, 0);
 					player.sendMessage("A guard catches you stealing and sends you home!");
 				});
 			} else {
@@ -293,10 +341,11 @@ public class HomeHandler {
 		NPCAction.register(2817, 2, (player, npc) -> ShopManager.openIfExists(player, "GeneralStore"));
 		NPCAction.register(2817, 1, (player, npc) -> ShopManager.openIfExists(player, "GeneralStore"));
 		NPCAction.register(9053, "Trade", (player, npc) -> ShopManager.openIfExists(player, "347ca8b3-dd43-4a46-bf05-3a452e5e1f3c"));
-		NPCAction.register(5523, 1, (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.donatorPointStore));
-		NPCAction.register(2989, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.reasonPointStore));
-		NPCAction.register(4058, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.votePointStore));
-		NPCAction.register(5527, "trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.achievementPointStore));
+		NPCAction.register(5523, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openDonatorStoreShop(player));
+		NPCAction.register(5523, 2, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.openDonatorTab(player));
+		NPCAction.register(2989, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openZelusPointsShop(player));
+		NPCAction.register(4058, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openVoteStoreShop(player));
+		NPCAction.register(5527, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openAchievementPointsShop(player));
 		NPCAction.register(7456, 1, (player, npc) -> {
 			player.dialogue(new NPCDialogue(7456, "Use your broken items on me to get them repaired."));
 		});
@@ -445,7 +494,7 @@ public class HomeHandler {
 
 		ObjType.forEach(itemDef -> {
 			if (itemDef != null) {
-				ItemObjectAction.register(itemDef.id, 53226, (player, item, obj) -> {
+				ItemObjectAction.register(itemDef.id, 60016, (player, item, obj) -> {
 					if (ItemBreakingHandler.getTotalAttachments(item).isEmpty()) {
 						player.sendMessage("This item does not have any perks to break.");
 						return;
@@ -461,8 +510,8 @@ public class HomeHandler {
 		ObjectAction.register(31681, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 2, (player, obj) -> enterGrotesqueGuardians(player));
-		ObjectAction.register(53226, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
-		ObjectAction.register(53226, 3, (player, obj) -> player.getItemBreakInterface().open(player));
+		ObjectAction.register(60016, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
+		ObjectAction.register(60016, 3, (player, obj) -> player.getItemBreakInterface().open(player));
 		ObjectAction.register(33410, 3, (player, obj) -> openTeleportInterface(player));
 		ObjectAction.register(31861, actions -> {
 			actions[1] = (player, obj) -> {

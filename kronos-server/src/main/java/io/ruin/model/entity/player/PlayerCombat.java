@@ -2307,158 +2307,49 @@ public class PlayerCombat extends Combat {
 			player.publicSound(weaponType.attackSound, 1, 1);
 	}
 
-	private void ScytheOfVitur() {
-		AttackStyle style = attackSet.style;
-		AttackType type = attackSet.type;
-		int maxDamage = CombatUtils.getMaxDamage(player, style, type);
-
-		if (player.getEquipment().contains(22325)) {
-			if (target.isPlayer()) {
-				player.graphics(1231, 100, 16);
-			} else {
-				player.graphics(1231, 100, 16);
-				target.hit(
-						new Hit(player, style, type).randDamage(maxDamage / 2)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)),
-						new Hit(player, style, type).randDamage(maxDamage / 3)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-			}
+	/**
+	 * Scythe of Vitur and its variants (Osmumten's, Holy, Sanguinesti): in addition to the
+	 * primary target's own multi-hit cleave (handled separately, based on that target's size),
+	 * splash reduced-free full-damage hits onto up to 3 other attackable entities within 1 tile
+	 * of the target. Restricted to multi-combat areas, matching this server's existing
+	 * multi-check convention for AoE weapons -- and to NPC targets only, since scythe splash
+	 * isn't a PvP mechanic.
+	 */
+	private void splashScytheDamage(Entity target, AttackStyle style, AttackType type, int maxDamage, double attackBoost) {
+		if (!target.isNpc() || !target.inMulti())
+			return;
+		int entityIndex = player.getClientIndex();
+		int targetIndex = target.getClientIndex();
+		int hitCount = 0;
+		for (Player plr : target.localPlayers()) {
+			if (hitCount >= 3)
+				break;
+			int playerIndex = plr.getClientIndex();
+			if (playerIndex == entityIndex || playerIndex == targetIndex)
+				continue;
+			if (!plr.getPosition().isWithinDistance(target.getPosition(), 1))
+				continue;
+			if (!player.getCombat().canAttack(plr, false))
+				continue;
+			plr.hit(new Hit(player, style, type).boostAttack(attackBoost).randDamage(maxDamage)
+					.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
+			hitCount++;
 		}
-	}
-
-	private void HolyscytheofVitur() {
-		AttackStyle style = attackSet.style;
-		AttackType type = attackSet.type;
-		int maxDamage = CombatUtils.getMaxDamage(player, style, type);
-
-		if (player.getEquipment().contains(25971)) {
-			if (target.isPlayer()) {
-				player.graphics(1232, 100, 16);
-			} else {
-				player.graphics(1232, 100, 16);
-				target.hit(
-						new Hit(player, style, type).randDamage(maxDamage / 2)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)),
-						new Hit(player, style, type).randDamage(maxDamage / 3)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-			}
-		}
-	}
-
-	private void SanguinescytheofVitur() {
-		AttackStyle style = attackSet.style;
-		AttackType type = attackSet.type;
-		int maxDamage = CombatUtils.getMaxDamage(player, style, type);
-
-		if (player.getEquipment().contains(25967)) {
-			if (target.isPlayer()) {
-				player.graphics(1231, 100, 16);
-			} else {
-				player.graphics(1231, 100, 16);
-				target.hit(
-						new Hit(player, style, type).randDamage(maxDamage / 2)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)),
-						new Hit(player, style, type).randDamage(maxDamage / 3)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-			}
-		}
-	}
-
-	private void ScytheOfViturr() {
-		AttackStyle style = attackSet.style;
-		AttackType type = attackSet.type;
-		int maxDamage = CombatUtils.getMaxDamage(player, style, type);
-
-		if (player.getEquipment().contains(22325)) {
-			if (target.isPlayer()) {
-				player.graphics(1231, 100, 16);
-			} else if (target.getSize() >= 2) {
-				player.graphics(1231, 100, 16);
-				target.hit(
-						new Hit(player, style, type).randDamage(maxDamage / 2)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)),
-						new Hit(player, style, type).randDamage(maxDamage / 3)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-			} else if (target.getSize() >= 3) {
-				ScytheOfViturMulti();
-			}
-		}
-	}
-
-	private void ScytheOfViturMulti() {
-		AttackStyle style = attackSet.style;
-		AttackType type = attackSet.type;
-		int maxDamage = CombatUtils.getMaxDamage(player, style, type);
-		double attackBoost = 0;
-		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.TAKE_YOUR_TIME)) {
-			if (target.isNpc()) {
-				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.TAKE_YOUR_TIME);
-				TakeYourTime c = (TakeYourTime) player.getPlayerPerkHandler().getActivePerks(player).get(perkIndex)
-						.getPerk(player);
-				attackBoost += c.getAccuracyBoost();
-			}
-		}
-		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_SLASHER)) {
-			if (target.isNpc()) {
-				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_SLASHER);
-				TheSlasher c = (TheSlasher) player.getPlayerPerkHandler().getActivePerks(player).get(perkIndex).getPerk(player);
-				if (style == AttackStyle.SLASH)
-					attackBoost += c.getAccuracyBoost();
-			}
-		}
-		player.graphics(1231, 100, 16);
-		if (target.inMulti()) {
-			int entityIndex = player.getClientIndex();
-			int targetIndex = target.getClientIndex();
-			int targetCount = 0;
-			for (Player plr : target.localPlayers()) {
-				int playerIndex = plr.getClientIndex();
-				if (playerIndex == entityIndex || playerIndex == targetIndex)
-					continue;
-				if (!plr.getPosition().isWithinDistance(target.getPosition(), 1))
-					continue;
-				if (!player.getCombat().canAttack(plr, false))
-					continue;
-				plr.hit(new Hit(player, style, type).randDamage(maxDamage)
-						.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-				if (player.hit() >= 3)
-					break;
-			}
-			for (NPC npc : target.localNpcs()) {
-				int npcIndex = npc.getClientIndex();
-				if (npcIndex == entityIndex || npcIndex == targetIndex)
-					continue;
-				if (!npc.getPosition().isWithinDistance(target.getPosition(), 1))
-					continue;
-				if (npc.getDef().ignoreMultiCheck)
-					continue;
-				if (!player.getCombat().canAttack(npc, false))
-					continue;
-				npc.hit(new Hit(player, style, type).boostAttack(attackBoost).randDamage(maxDamage)
-						.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-				if (++targetCount >= 3)
-					break;
-			}
-		}
-
-		player.graphics(1231, 100, 16);
-		if (target.getSize() == 1) {
-			if (target.inMulti()) {
-				double finalAttackBoost = attackBoost;
-				target.forLocalEntity(entity -> {
-					int targetCount = 0;
-					for (NPC npc : target.localNpcs()) {
-						if (Misc.getDistance(entity.getPosition(), target.getPosition()) > 1)
-							return;
-						if (!player.getCombat().canAttack(entity, false))
-							return;
-						npc.hit(new Hit(player, style, type).boostAttack(finalAttackBoost).randDamage(maxDamage)
-								.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
-						if (++targetCount >= 3)
-							break;
-					}
-				});
-			}
+		for (NPC npc : target.localNpcs()) {
+			if (hitCount >= 3)
+				break;
+			int npcIndex = npc.getClientIndex();
+			if (npcIndex == entityIndex || npcIndex == targetIndex)
+				continue;
+			if (npc.getDef().ignoreMultiCheck)
+				continue;
+			if (!npc.getPosition().isWithinDistance(target.getPosition(), 1))
+				continue;
+			if (!player.getCombat().canAttack(npc, false))
+				continue;
+			npc.hit(new Hit(player, style, type).boostAttack(attackBoost).randDamage(maxDamage)
+					.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
+			hitCount++;
 		}
 	}
 
@@ -2573,6 +2464,7 @@ public class PlayerCombat extends Combat {
 		} else {
 			target.hit(firstHit);
 		}
+		splashScytheDamage(target, style, type, maxDamage, attackBoost);
 	}
 
 	private void attackWithOsmumtensScythe(Player player, Entity target) {
@@ -2693,6 +2585,7 @@ public class PlayerCombat extends Combat {
 		} else {
 			target.hit(firstHit, secondHit);
 		}
+		splashScytheDamage(target, style, type, maxDamage, attackBoost);
 	}
 
 	//@formatter:off
@@ -2942,6 +2835,7 @@ public class PlayerCombat extends Combat {
 		} else {
 			target.hit(firstHit);
 		}
+		splashScytheDamage(target, style, type, maxDamage, attackBoost);
 	}
 
 	private void attackWithSanguineScythe(Player player, Entity target) {
@@ -3052,6 +2946,7 @@ public class PlayerCombat extends Combat {
 		} else {
 			target.hit(firstHit);
 		}
+		splashScytheDamage(target, style, type, maxDamage, attackBoost);
 	}
 
 	private void attackWithMelee() {
@@ -3397,6 +3292,7 @@ public class PlayerCombat extends Combat {
 			 * Crystal bow, Knifes, Darts, etc
 			 */
 			if (rangedWep != RangedWeapon.CRYSTAL_BOW
+					&& rangedWep != RangedWeapon.COMP_BOW
 					&& rangedWep != RangedWeapon.CRAWS_BOW
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_BLUE
@@ -4827,7 +4723,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.RANGE_RESISTANCE);
 					RangeResistance c = (RangeResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getRangeDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.RANGE_RESISTANCE);
+					hit.damage *= c.getRangeDamageReduction(level);
 				}
 			}
 			if (hit.attackStyle != null && hit.attackStyle.isMagic()) {
@@ -4836,7 +4733,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.MAGIC_RESISTANCE);
 					MagicResistance c = (MagicResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getMagicDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.MAGIC_RESISTANCE);
+					hit.damage *= c.getMagicDamageReduction(level);
 				}
 			}
 			if (hit.attackStyle != null && hit.attackStyle.isMelee()) {
@@ -4845,7 +4743,8 @@ public class PlayerCombat extends Combat {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.MELEE_RESISTANCE);
 					MeleeResistance c = (MeleeResistance) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex)
 							.perkSet();
-					hit.damage *= c.getMeleeDamageReduction();
+					int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.MELEE_RESISTANCE);
+					hit.damage *= c.getMeleeDamageReduction(level);
 				}
 			}
 		}
@@ -5316,7 +5215,7 @@ public class PlayerCombat extends Combat {
 		}
 
 		/* twisted bow */
-		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515);
+		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626);
 		if (hit.attackStyle != null && hit.attackStyle.isRanged() && hasTwistedBow) {
 			double magicLevel = target.getCombat().getLevel(StatType.Magic);
 			// if we're fighting the Combat Dummy
@@ -5578,17 +5477,19 @@ public class PlayerCombat extends Combat {
 		if (player.getPlayerPerkHandler().getActivePerkSets(player).contains(PerkSets.PRAYER_SIPHON) && target.isNpc()) {
 			int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.PRAYER_SIPHON);
 			PrayerSiphon c = (PrayerSiphon) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex).perkSet();
-			if (Random.rollPercent(c.getPrayerDrainChance())) {
+			int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.PRAYER_SIPHON);
+			if (Random.rollPercent(c.getPrayerDrainChance(level))) {
 				player.getStats().get(StatType.Prayer).alter(
-						(int) (player.getStats().get(StatType.Prayer).currentLevel + (hit.damage * c.getSiphonMultiplier())));
+						(int) (player.getStats().get(StatType.Prayer).currentLevel + (hit.damage * c.getSiphonMultiplier(level))));
 			}
 		}
 		if (player.getPlayerPerkHandler().getActivePerkSets(player).contains(PerkSets.BLEED_THEM_DRY) && target.isNpc()) {
 			int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.BLEED_THEM_DRY);
 			BleedThemDry c = (BleedThemDry) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex).perkSet();
-			if (Random.rollPercent(c.getBleedChance()) && hit.damage > 0)
+			int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.BLEED_THEM_DRY);
+			if (Random.rollPercent(c.getBleedChance(level)) && hit.damage > 0)
 				if (target.isNpc())
-					c.bleedEffect(player, target.npc);
+					c.bleedEffect(player, target.npc, level);
 		}
 
 		SetEffect.GUTHAN.checkAndApply(player, target, hit);

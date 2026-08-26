@@ -44,6 +44,11 @@ public enum Icon {
 	DEVELOPER(80),
 	MODERATOR(0),
 	SUPPORT(74),
+	// Same id as WILDERNESS(76) above -- kept as a separate constant for call-site clarity.
+	// 46 and 36 were tried first and rendered as a donator rank icon / orange star respectively,
+	// not a skull -- confirmed wrong in-game. 76 is the id already live in WantedManager's
+	// WANTED bounty broadcasts and other wilderness news messages.
+	PVP_MODE_SKULL(76),
 	;
 
 	public final int imgId;

@@ -57,8 +57,15 @@ public class SummerEventHandler {
 		double scalingFactor = 0.05;
 		double d = 1 + scalingFactor * npcCombatLevel + scalingFactor * npcHitpoints;
 		int chance = (int) (baseRate / d);
-		if(chance < 50)
-			chance = 50;
+		// Any NPC with combat level + hitpoints summing above ~380 hit the old floor of 50 and
+		// sat at a flat 1/50 (2%) chance per kill no matter how much tougher the content got --
+		// exactly the mid-to-endgame content players kill fastest at (cannons/AoE/high DPS),
+		// which is what made the event feel constant rather than occasional. Raised to 150
+		// (~0.67%, roughly a 3x cut in that plateau) for the same reason the floor exists in
+		// the first place (a kill rate should never fully zero out the event), just less
+		// aggressively -- content below this floor is unaffected, it was already rarer.
+		if(chance < 150)
+			chance = 150;
 		if(Random.get(chance) == 0) {
 			NPC boss = new NPC(Random.get(1) == 0 ? 17021 : 17022);
 			boss.spawn(npc.getPosition(), 3);
@@ -74,7 +81,7 @@ public class SummerEventHandler {
 			});
 			boss.deathEndListener = (e, killer, hit) -> {
 				int reasonPointReward = Random.get(1500, 5000);
-				int summerPointReward = Random.get(25, 50);
+				int summerPointReward = Random.get(25, 50) / 4;
 				int perkPointReward = Random.get(1, 3);
 				player.summerPoints += summerPointReward;
 				player.perkPoints += perkPointReward;

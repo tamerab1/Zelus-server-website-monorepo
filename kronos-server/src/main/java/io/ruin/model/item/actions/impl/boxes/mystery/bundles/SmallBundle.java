@@ -9,7 +9,7 @@ public class SmallBundle extends ItemContainer {
 		int slotsRequired = 6;
 		ItemAction.registerInventory(30434, "search", (player, item) -> {
 			if (player.getInventory().getFreeSlots() < slotsRequired) {
-				player.sendMessage("You need atleast 6 free inventory slots free to open the ultra budnle.");
+				player.sendMessage("You need at least 6 free inventory slots free to open the small bundle.");
 				return;
 			}
 			player.lock();

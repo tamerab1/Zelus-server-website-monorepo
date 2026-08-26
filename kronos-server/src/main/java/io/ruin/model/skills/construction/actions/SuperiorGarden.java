@@ -25,7 +25,7 @@ import static io.ruin.model.skills.construction.Buildable.*;
 public class SuperiorGarden {
 
 	private static void drinkFromPool(Player player, int poolLevel) {
-		if (player.getPosition().getRegion().id == 5426) {
+		if (player.getPosition().getRegion().id == 12342) {
 			HomeHandler.drinkFromPool(player);
 			return;
 		}

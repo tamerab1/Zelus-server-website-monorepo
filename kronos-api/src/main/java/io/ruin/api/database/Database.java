@@ -74,9 +74,13 @@ public class Database {
 	public void connect() {
 		HikariConfig config = new HikariConfig();
 		config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		// autoReconnect=true deliberately removed: HikariCP's own docs warn
+		// against it -- the pool already manages reconnection/validation
+		// itself (see setMaxLifetime/setConnectionTestQuery below), and the
+		// two mechanisms fighting over the same connection can mask real
+		// connectivity problems instead of surfacing them cleanly.
 		config.setJdbcUrl("jdbc:mysql://" + host + "/" + database +
-				"?useSSL=false&serverTimezone=UTC&autoReconnect=true" +
-				"&maxReconnects=3&connectTimeout=10000");
+				"?useSSL=false&serverTimezone=UTC&connectTimeout=10000");
 		config.setUsername(username);
 		config.setPassword(password);
 		config.setPoolName(database + "-pool");

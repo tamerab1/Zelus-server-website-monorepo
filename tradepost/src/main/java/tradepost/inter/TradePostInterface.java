@@ -5,6 +5,7 @@ import io.ruin.api.utils.MathUtils;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
+import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.InterfaceAction;
 import io.ruin.model.inter.InterfaceHandler;
@@ -81,6 +82,24 @@ public class TradePostInterface {
 			player.stringInput("Enter the name of the item you wish to search for.", s -> {
 				pTradePostInter.sendPageFromSearch(player, s);
 			});
+		});
+
+		NPCAction.register("Grand Exchange Clerk", "Exchange", (player, npc) -> {
+			var pTradePost = player.tradePost();
+			var pTradePostInter = pTradePost.inter;
+
+			if (!Module.ENABLED) {
+				player.sendMessage(
+						"The trade post workers are currently out for lunch and will be back later.");
+				return;
+			}
+
+			if (player.getGameMode().isIronMan()) {
+				player.sendMessage("Your gamemode prevents you from accessing the trading post!");
+				return;
+			}
+
+			pTradePostInter.openTradePost(player);
 		});
 
 		ObjectAction.register(46240, "Collect Items", (player, obj) -> {

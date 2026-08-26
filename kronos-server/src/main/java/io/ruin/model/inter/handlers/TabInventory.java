@@ -114,6 +114,12 @@ public class TabInventory {
 		Bounds TourneyBounds = new Bounds(3627, 9067, 3669, 9109, 0);
 		Bounds TourneyFinal = new Bounds(3610, 8986, 3621, 8997, 0);
 		if (option == def.dropOption) {
+			String dropOptionLabel = def.inventoryOptions != null && def.dropOption - 1 < def.inventoryOptions.length
+					? def.inventoryOptions[def.dropOption - 1] : null;
+			if ("Destroy".equalsIgnoreCase(dropOptionLabel)) {
+				destroyItem(player, item);
+				return;
+			}
 			Tile tile = player.getPosition().getTile();
 			if (tile != null /* && !tile.allowDrop */ && player.getPosition().inBounds(tournamentLobby)) {
 				player.sendMessage("You can't drop items here.");
@@ -230,6 +236,14 @@ public class TabInventory {
 			drop(player, item, def);
 		};
 		player.dialogue(dialogue, onDialogueContinued);
+	}
+
+	private static void destroyItem(Player player, Item item) {
+		player.dialogue(new YesNoDialogue("Destroy " + item.getDef().name + "?",
+				"This action is permanent and cannot be undone. No ground item will be created.", item, () -> {
+			item.remove();
+			player.resetActions(true, false, true);
+		}));
 	}
 
 	private static void drop(Player player, Item item, ObjType def) {

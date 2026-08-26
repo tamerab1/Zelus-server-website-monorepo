@@ -1,7 +1,9 @@
 package collectionlog;
 
 import com.google.gson.annotations.Expose;
+import discord.webhooks.notifications.CollectionLogHook;
 import io.ruin.cache.ItemID;
+import org.json.JSONObject;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
@@ -17,7 +19,9 @@ import io.ruin.model.inter.notify.NotificationInterface;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.ItemAction;
+import io.ruin.model.item.actions.impl.pet.Pet;
 import io.ruin.model.var.VarPlayerRepository;
+import io.ruin.utility.DiscordAnnounceThresholds;
 import io.ruin.utility.FormatMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,12 +76,17 @@ public class CollectionLog {
 	}
 
 	public void add(Player player, Item item) {
-		boolean unique = false;
-		if (player.uniqueDrops.get(item.getId()) == null) {
+		// Viewing a collection log category pre-seeds every unobtained item's entry to 0
+		// (see CollectionLogUpdated.updateCollectionLog()) so it has something to render --
+		// that 0 is not null, so a plain null-check here would treat an item the player has
+		// simply looked at (but never received) as "not their first time" the moment they
+		// actually get it, silently skipping the new-item notification below.
+		Integer existing = player.uniqueDrops.get(item.getId());
+		boolean unique = existing == null || existing <= 0;
+		if (existing == null) {
 			player.uniqueDrops.put(item.getId(), item.getAmount());
-			unique = true;
 		} else {
-			player.uniqueDrops.replace(item.getId(), player.uniqueDrops.get(item.getId()) + item.getAmount());
+			player.uniqueDrops.replace(item.getId(), existing + item.getAmount());
 		}
 
 		if (unique && CollectionLogData.isCollectionLogSlotItem(item)) {
@@ -90,6 +99,24 @@ public class CollectionLog {
 
 			if ((notifySetting & 0b10) != 0) {
 				notifyNewItemAddedPopup(player, item);
+			}
+
+			// Every collection log slot fires this, including common minigame/clue rewards --
+			// gate the public Discord embed to pets and items above a configurable value so the
+			// rare-drops channel isn't spammed on practically every unlock.
+			long value = (long) item.getDef().highAlchValue * item.getAmount();
+			boolean notable = Pet.getByItemId(item.getId()) != null
+					|| value >= DiscordAnnounceThresholds.collectionLogMinValue();
+			if (notable) {
+				CollectionLogHook.sendDiscordMessage(() -> {
+					var jsonObject = new JSONObject();
+					// Strip any OSRS chat markup (<col=>, <shad=>, <img=>) -- Discord doesn't
+					// understand it and would otherwise show the raw tags as literal text.
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
+					jsonObject.put("item_id", item.getId());
+					jsonObject.put("item_name", item.getDef().name);
+					return jsonObject;
+				});
 			}
 		}
 

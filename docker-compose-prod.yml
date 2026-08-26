@@ -1,20 +1,325 @@
 services:
-  game_server:
-    image: "${CI_REGISTRY_IMAGE}/server:${CI_COMMIT_SHORT_SHA}"
-    ports:
-      - "43594:43594"
-      - "10001:10001"
-      - "9292:9292"
-    volumes:
-      - data:/app/data/runtime/
-  db_mongo:
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
-  adminer:
-    image: adminer
-    ports:
-      - "8080:8080"
+    # Game Server Service Architecture
+    game_server:
+        image: "${IMAGE_REGISTRY}/server:${IMAGE_TAG}"
+        restart: unless-stopped
+        # Docker's default is 10s between SIGTERM and SIGKILL -- too tight a margin
+        # for the shutdown hook (Server.java) to reliably save every online player
+        # before being force-killed. 30s gives it comfortable headroom.
+        stop_grace_period: 30s
+        ports:
+            # Long-form + mode: host, same reasoning as reverse_proxy's 80/443 below --
+            # the short "43594:43594" syntax defaults to Swarm's ingress routing mesh,
+            # which SNATs every connection's source IP to an internal 10.0.0.0/24
+            # address before RSProtServiceFactory's channel.remoteAddress() ever sees
+            # it. That silently broke every per-IP check keyed on Player.getIp() --
+            # StarterGuide's MAX_STARTER_CLAIMS_PER_IP counted ALL players on the box
+            # as one shared IP, so after 5 genuine new accounts claimed a starter kit,
+            # every subsequent new player got wrongly told their IP had already used
+            # up its 5 claims, no matter their real origin. "host" mode is safe here
+            # for the same reason as reverse_proxy: single-node Swarm, no multi-node
+            # load-balancing to lose.
+            - target: 43594
+              published: 43594
+              protocol: tcp
+              mode: host
+            # 9292 is NOT a profiler/debug port -- that assumption was wrong.
+            # It's world-list/src/main/kotlin/.../WorldListServer.kt, a real
+            # Ktor HTTP server serving GET /worlds.ws, which the client's
+            # jav_config.ws param=17 depends on for its actual login/world
+            # connection target. Confirmed by tracing a real "Error
+            # connecting to server. Please try using a different world."
+            # client-side failure back to this exact port being unreachable.
+            # Port 10001 (YourKit) is the one still deliberately excluded --
+            # for that, use an SSH tunnel: ssh -L 10001:10001 user@vps-ip
+            - "9292:9292"
+        environment:
+            # History: -Xmx1536m and then -Xmx1800m both hit a real
+            # OutOfMemoryError loading the actual cache on the original 4GB
+            # box (59,599 objects + 30,006 NPCs + many large data files,
+            # including a JSON parse of item_info.json that alone triggered
+            # the second OOM well into startup — this is a full modern OSRS
+            # revision, genuinely memory-hungry). Squeezing the other
+            # services further wasn't the right call, since MariaDB/the API
+            # would then risk failing under real player load instead. The
+            # VPS was upsized to 8GB specifically to give this real headroom
+            # rather than keep tuning around a box that was too small for
+            # the workload.
+            #
+            # This file is shared between the development (beta) and
+            # production stacks (see ci-cd.yml's deploy-development /
+            # deploy-production jobs, both of which use this same compose
+            # file). The default here is the beta box's known-safe value;
+            # production overrides it via KRONOS_BOOT_OPTS in its own
+            # DOCKER_COMPOSE_ENV secret without touching this file.
+            #
+            # 2026-08-26 audit: this env: line ALWAYS overrides the image's
+            # baked-in ENV (docker/server/Dockerfile), so if the production
+            # secret has never set KRONOS_BOOT_OPTS, prod silently runs on
+            # this beta-sized fallback even though the VPS was upsized to
+            # 8GB for exactly this reason (see GAME_SERVER_MEM_LIMIT below).
+            # Verify with:
+            #   docker service inspect zelus_prod_game_server --format '{{json .Spec.TaskTemplate.ContainerSpec.Env}}'
+            # If KRONOS_BOOT_OPTS is missing/still -Xmx3200m there, set the
+            # production DOCKER_COMPOSE_ENV secret to:
+            #   KRONOS_BOOT_OPTS=-Xms4096m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/heapdump.hprof -XX:MaxGCPauseMillis=200 -Xlog:gc*:file=/data/gc.log:time,uptime,level,tags:filecount=5,filesize=20M
+            #   GAME_SERVER_MEM_LIMIT=5120m
+            # (4g heap in a 5g container leaves ~25% headroom for Netty
+            # off-heap buffers, metaspace and thread stacks. Run `free -h` on
+            # the VPS first -- the other 5 services' limits below sum to
+            # ~2.8GB, so 5g + 2.8g must still fit comfortably under the box's
+            # real available RAM alongside normal OS/Docker overhead.)
+            - KRONOS_BOOT_OPTS=${KRONOS_BOOT_OPTS:--Xmx3200m}
+        volumes:
+            # ABSOLUTE path, deliberately not "./server.properties": `docker
+            # stack deploy` resolves relative bind sources on whichever
+            # machine issues the command, not the Swarm node the container
+            # actually lands on. Deploys run with DOCKER_HOST=ssh://... from
+            # a GitHub Actions runner (see ci-cd.yml), so a relative path
+            # here would resolve to a runner-local path that doesn't exist
+            # on the VPS — Docker's fallback for a missing bind source is to
+            # silently mount an empty directory, which would boot the game
+            # server with no real config and no error. This absolute path
+            # must be created once on the VPS itself — see README-beta.md.
+            - /opt/zelus/server.properties:/app/server.properties:ro
+            # OSRS cache + TOML source tree — lives outside this repo
+            # entirely (the sibling `data zelus/` folder), never built into
+            # the image (CI's :kronos-boot:build_cache step is deliberately
+            # excluded — it shells out to a native tool against that folder,
+            # which no CI runner has). Must be staged on the VPS itself at
+            # this absolute path — see README-beta.md. server.properties'
+            # data_path/cache_path must point at /data and /data/cache
+            # respectively to match this mount.
+            - /opt/zelus/data:/data
+            # NOTE: there is deliberately no separate runtime-data volume
+            # here. Player saves, IP bans, custom presets, referral data,
+            # etc. are all written under ${data_path}/runtime/... (see
+            # CentralSaves.java, IPBans.java, PresetManager.java) — i.e.
+            # under the /opt/zelus/data mount above, not a separate path.
+            # A prior data_server:/app/data/runtime/ volume here didn't
+            # match that and was dead weight (nothing ever wrote there).
+        depends_on:
+            - db_sql
+            - db_mongo
+        deploy:
+            resources:
+                limits:
+                    # Same shared-file reasoning as KRONOS_BOOT_OPTS above:
+                    # default matches beta's current limit, production
+                    # overrides via GAME_SERVER_MEM_LIMIT in its own secret.
+                    memory: ${GAME_SERVER_MEM_LIMIT:-4g}
 
+    # Website API (FastAPI) — talks to db_sql over the internal Swarm overlay
+    # network (service name resolves automatically), never publishes a host
+    # port directly. Only reachable through reverse_proxy.
+    website_api:
+        image: "${IMAGE_REGISTRY}/website-api:${IMAGE_TAG}"
+        restart: unless-stopped
+        environment:
+            DB_HOST: db_sql
+            DB_PORT: 3306
+            DB_USER: website_api
+            DB_PASS: ${WEBSITE_DB_PASSWORD}
+            DB_NAME: zelusrsps_db
+            GAME_DB_HOST: db_sql
+            GAME_DB_NAME: reason
+            GAME_DB_USERNAME: website_api
+            GAME_DB_PASSWORD: ${WEBSITE_DB_PASSWORD}
+            SITE_URL: https://${BETA_DOMAIN}
+            CORS_ORIGINS: https://${BETA_DOMAIN}
+            TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
+            SMTP_HOST: ${SMTP_HOST}
+            SMTP_PORT: ${SMTP_PORT}
+            SMTP_USER: ${SMTP_USER}
+            SMTP_PASS: ${SMTP_PASS}
+            STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+            STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+            PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
+            PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
+            # Tebex webstore webhook -- verifies the authenticity of their
+            # POST /api/webhooks/tebex pings.
+            TEBEX_SECRET: ${TEBEX_SECRET}
+            # Tebex Headless API public token (Developers > API Keys on the Tebex
+            # creator panel) -- lets checkout.py create a basket so players pay
+            # without leaving our site. No private key needed for this; that's
+            # only for reading a customer's own purchase history, which we don't do.
+            TEBEX_PUBLIC_TOKEN: ${TEBEX_PUBLIC_TOKEN}
+            # NOWPayments (crypto) -- API_KEY authorizes our POST /v1/invoice calls;
+            # IPN_SECRET verifies their POST /api/webhooks/nowpayments callbacks.
+            NOWPAYMENTS_API_KEY: ${NOWPAYMENTS_API_KEY}
+            NOWPAYMENTS_IPN_SECRET: ${NOWPAYMENTS_IPN_SECRET}
+            # This service's OWN public URL -- embedded in each NOWPayments invoice's
+            # ipn_callback_url so NOWPayments knows where to send its webhook. Not the
+            # same as SITE_URL (that's the frontend, a different subdomain).
+            API_BASE_URL: https://${BETA_API_DOMAIN}
+            # Default is beta's sandbox value; production overrides via
+            # PAYPAL_BASE_URL in its own DOCKER_COMPOSE_ENV secret (see
+            # the KRONOS_BOOT_OPTS comment on game_server for why this
+            # pattern instead of hardcoding here).
+            PAYPAL_BASE_URL: ${PAYPAL_BASE_URL:-https://api-m.sandbox.paypal.com}
+            PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
+            # Both default to empty in the app (os.getenv(..., "")), which
+            # skips their respective auth checks entirely -- /events/push and
+            # /api/vote/callback/* are wide open until these are actually set
+            # in the DOCKER_COMPOSE_ENV secret for this environment.
+            GAME_EVENTS_SECRET: ${GAME_EVENTS_SECRET}
+            # Fallback shared secret, used only for a site with no dedicated secret of its own
+            # below (main.py's _VOTE_CALLBACK_SECRETS_BY_SITE) -- see RUNELOCUS_/RSPSLIST_ below
+            # for why this isn't actually shared across topsites in practice.
+            VOTE_CALLBACK_SECRET: ${VOTE_CALLBACK_SECRET}
+            # Each topsite's dashboard was configured with its own distinct callback secret when
+            # we registered the URL there -- RuneLocus's and RSPS-List's differ, so a single
+            # shared VOTE_CALLBACK_SECRET can't validate both at once.
+            RUNELOCUS_VOTE_CALLBACK_SECRET: ${RUNELOCUS_VOTE_CALLBACK_SECRET}
+            RSPSLIST_VOTE_CALLBACK_SECRET: ${RSPSLIST_VOTE_CALLBACK_SECRET}
+            # Shared boot-time password for HttpClient.authenticate() (must match
+            # server.properties' api_password on the game_server side). Empty
+            # here means /authenticate/login always 503s and every ::claim*
+            # command silently no-ops -- must be set in DOCKER_COMPOSE_ENV.
+            GAME_API_PASSWORD: ${GAME_API_PASSWORD}
+            # Shared bearer secret for write-capable /admin/* routes (currently
+            # just POST /admin/transactions/fulfill). Empty means that endpoint
+            # 503s -- see main.py's _require_admin_secret for why this isn't yet
+            # a real per-staff session.
+            ADMIN_API_SECRET: ${ADMIN_API_SECRET}
+            # Fallback data source for hiscores/username-existence checks when
+            # hs_users is unavailable/empty (see main.py's _game_username_exists
+            # and /hiscores) -- must match the mount below.
+            CHARACTERS_DIR: /player-saves
+        volumes:
+            # Read-only, and only the saves subtree (not all of game_server's
+            # /opt/zelus/data, which also holds the multi-GB cache this
+            # service has no reason to touch). Same absolute-path reasoning as
+            # game_server's mounts above -- see the comment there.
+            - /opt/zelus/data/runtime/saves/players:/player-saves:ro
+        depends_on:
+            - db_sql
+        deploy:
+            resources:
+                limits:
+                    memory: 512m
+
+    # React dashboard — VITE_API_URL/VITE_TURNSTILE_SITE_KEY are baked in at
+    # image build time (see .github/workflows/ci-cd.yml build-args), not
+    # configurable here at runtime. Only reachable through reverse_proxy.
+    website_client:
+        image: "${IMAGE_REGISTRY}/website-client:${IMAGE_TAG}"
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    memory: 128m
+
+    # Public HTTPS entrypoint — the ONLY service exposing 80/443. Terminates
+    # TLS (automatic Let's Encrypt via Caddy) and reverse-proxies to
+    # website_client / website_api by domain. See ./Caddyfile.
+    reverse_proxy:
+        image: caddy:2-alpine
+        restart: unless-stopped
+        ports:
+            # Long-form + mode: host, deliberately NOT the short "80:80" syntax --
+            # Swarm's default publish mode is "ingress" (the routing mesh), which
+            # SNATs every connection's source IP to an internal 10.0.0.0/24 address
+            # before Caddy ever sees it. That's why CF-Connecting-IP/X-Forwarded-For
+            # downstream were carrying Docker-internal IPs instead of real client
+            # IPs (traced via a live vote-callback test showing ip=10.0.0.2, a
+            # Swarm ingress-network address, not a real requester). "host" mode
+            # binds directly to this node's network interface, bypassing the mesh
+            # and preserving the real source IP -- safe here since this is a
+            # single-node Swarm (only ever the one VPS), so there's no multi-node
+            # load-balancing to lose.
+            - target: 80
+              published: 80
+              protocol: tcp
+              mode: host
+            - target: 443
+              published: 443
+              protocol: tcp
+              mode: host
+        environment:
+            BETA_DOMAIN: ${BETA_DOMAIN}
+            BETA_API_DOMAIN: ${BETA_API_DOMAIN}
+        volumes:
+            # Same absolute-path reasoning as game_server's server.properties
+            # mount above — see the comment there.
+            - /opt/zelus/Caddyfile:/etc/caddy/Caddyfile:ro
+            - data_caddy:/data
+            - data_caddy_config:/config
+        depends_on:
+            - website_client
+            - website_api
+        deploy:
+            resources:
+                limits:
+                    memory: 256m
+
+    # Relational Database Layer
+    db_sql:
+        image: "${IMAGE_REGISTRY}/db_sql:${IMAGE_TAG}"
+        restart: unless-stopped
+        environment:
+            MARIADB_ROOT_PASSWORD: ${DB_SQL_ROOT_PASSWORD}
+            MARIADB_USER: ${DB_SQL_USER}
+            MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
+            MARIADB_DATABASE: zelus_prod
+            # WEBSITE_DB_PASSWORD is set in the base docker-compose.yml's
+            # db_sql block (merged in here by `docker stack config`) —
+            # not repeated here to avoid two sources of truth for it.
+        volumes:
+            - data_db_sql:/var/lib/mysql
+        deploy:
+            resources:
+                limits:
+                    memory: 1g
+
+    # Document Store Layer (Hardened Credentials)
+    db_mongo:
+        image: "mongo:7.0"
+        restart: unless-stopped
+        environment:
+            # Sanitized: No more hardcoded root/password text
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+        volumes:
+            - data_db_mongo:/data/db
+        deploy:
+            resources:
+                limits:
+                    memory: 768m
+
+    # Database Management Tool (Secured for Internal Network Only)
+    adminer:
+        image: adminer:latest
+        restart: unless-stopped
+        # NOT actually loopback-restricted at the Swarm level: `docker stack
+        # deploy` validates against a stricter/older schema than plain
+        # `docker compose` and rejects the long-form ports' `host_ip` field
+        # outright ("Additional property host_ip is not allowed") — Swarm
+        # has no compose-level way to bind a published port to a specific
+        # host IP. The real security boundary here is the Hetzner Cloud
+        # Firewall attached to this VPS, which only allows inbound on
+        # 22/80/443/43594 — port 8080 is unreachable from the public
+        # internet regardless of what Swarm binds it to. SSH tunneling
+        # (ssh -L 8080:localhost:8080 root@<vps-ip>) still works fine for
+        # legitimate access since the tunnel talks to the VPS's own network
+        # stack directly, upstream of that firewall. If the VPS firewall
+        # rules ever change, revisit this — it is no longer defense in depth.
+        ports:
+            - "8080:8080"
+        depends_on:
+            - db_sql
+        deploy:
+            resources:
+                limits:
+                    memory: 128m
+
+# Persistent Infrastructure Volumes Matrix
 volumes:
-  data:
+    data_db_sql:
+        driver: local
+    data_db_mongo:
+        driver: local
+    data_caddy:
+        driver: local
+    data_caddy_config:
+        driver: local

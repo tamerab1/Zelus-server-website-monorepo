@@ -7,7 +7,6 @@ import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.dynamic.DynamicMap;
-import org.json.JSONObject;
 
 public class VoteBossHandler {
 	public static NPC boss;
@@ -45,21 +44,12 @@ public class VoteBossHandler {
 		if (boss != null)
 			return;
 		broadcastEvent("The Vote boss will spawn in 60 seconds, type ::vb to teleport to it!");
-
-		// TODO: Discord message, that the boss will spawn in 60 seconds
-		var dto = new JSONObject()
-			.put("boss", "The vote boss")
-			.put("description", "will spawn in 60 seconds.");
-		GlobalBroadcastHook.sendGlobalSpawnedMessage(dto);
+		GlobalBroadcastHook.sendEventSpawnWarning("The vote boss", null);
 
 		World.startEvent(e -> {
 			e.delay(100);
 			boss = new NPC(8262).spawn(new Position(map.convertX(2912), map.convertY(3616)));
-//			RareDropEmbedMessage.sendGlobalSpawnedMessage(boss);
-			var dto2 = new JSONObject()
-				.put("boss", boss.getName())
-				.put("description", "has just spawned!");
-			GlobalBroadcastHook.sendGlobalSpawnedMessage(dto2);
+			GlobalBroadcastHook.sendEventSpawnAnnouncement(boss.getName(), null);
 		});
 	}
 

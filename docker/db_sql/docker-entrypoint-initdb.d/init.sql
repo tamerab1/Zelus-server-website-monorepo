@@ -302,6 +302,13 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 
+CREATE TABLE IF NOT EXISTS `server_config` (
+  `config_key` varchar(64) NOT NULL,
+  `config_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`config_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
 CREATE TABLE IF NOT EXISTS `tp_collect` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `player_name` varchar(12) NOT NULL,
@@ -389,3 +396,17 @@ CREATE TABLE IF NOT EXISTS `vote_links` (
   `active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
+-- Atomic double-claim guard for ::claimvote (see VoteHandler.tryClaimSite()).
+-- claim_window = epochSeconds / 84000, the same cooldown window
+-- VoteHandler.playerVotedRecently() already uses -- the PK collision is what
+-- makes a second concurrent/racing claim for the same window a no-op instead
+-- of a double grant, even across two game-server processes.
+CREATE TABLE IF NOT EXISTS `vote_claims` (
+  `player_uuid` varchar(64) NOT NULL,
+  `site` varchar(32) NOT NULL,
+  `claim_window` bigint(20) NOT NULL,
+  `claimed_at` bigint(20) NOT NULL,
+  PRIMARY KEY (`player_uuid`,`site`,`claim_window`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -175,14 +175,6 @@ public class CommandHandlerCommunityAdmin {
 				return true;
 			}
 
-			case "t": {
-				player.openInterface(ToplevelComponent.MAINMODAL, Interface.ITEM_EXCHANGE);
-				for (int i = 19; i <= 28; i++) {
-					player.getPacketSender().sendItems(Interface.ITEM_EXCHANGE, i, 0, new Item(22327));
-				}
-				return true;
-			}
-
 			case "checkclip": {
 				Tile tile = Tile.get(player.getPosition(), true);
 				int clipping = tile.clipping;
@@ -580,9 +572,11 @@ public class CommandHandlerCommunityAdmin {
 				return true;
 			}
 
-			case "tp":
-			case "tele":
-			case "teleport": {
+			case "tele": {
+				if (!player.isOwner()) {
+					player.sendMessage("This command is owner-only.");
+					return true;
+				}
 
 				if (args == null || args.length == 0) {
 					TeleInterface teleInterface = new TeleInterface();

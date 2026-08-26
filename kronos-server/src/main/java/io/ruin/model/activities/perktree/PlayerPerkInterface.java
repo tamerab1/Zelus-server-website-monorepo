@@ -430,36 +430,36 @@ public class PlayerPerkInterface {
 				player.perkPresetOne.putAll(player.activePerks);
 				player.presetNameOne = name;
 				player.sendMessage("Preset saved: " + name);
-				updatePresets(player);
 			}
 			if (slot == 1) {
 				player.perkPresetTwo.clear();
 				player.perkPresetTwo.putAll(player.activePerks);
 				player.presetNameTwo = name;
 				player.sendMessage("Preset saved: " + name);
-				updatePresets(player);
 			}
 			if (slot == 2) {
 				player.perkPresetThree.clear();
 				player.perkPresetThree.putAll(player.activePerks);
 				player.presetNameThree = name;
 				player.sendMessage("Preset saved: " + name);
-				updatePresets(player);
 			}
 			if (slot == 3) {
 				player.perkPresetFour.clear();
 				player.perkPresetFour.putAll(player.activePerks);
 				player.presetNameFour = name;
 				player.sendMessage("Preset saved: " + name);
-				updatePresets(player);
 			}
 			if (slot == 4) {
 				player.perkPresetFive.clear();
 				player.perkPresetFive.putAll(player.activePerks);
 				player.presetNameFive = name;
 				player.sendMessage("Preset saved: " + name);
-				updatePresets(player);
 			}
+			/* The slot-choice OptionsDialogue above closed the perk interface (all dialogues do,
+			 * via openDialogue's closeInterfaces(true)) -- reopen it so the save is visible
+			 * instead of leaving the player dumped back at the game screen. Mirrors loadPreset,
+			 * which already does this correctly. */
+			player.getPerkInterface().openPlayerPerkHomeSection(player);
 		});
 	}
 

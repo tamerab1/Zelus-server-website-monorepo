@@ -19,6 +19,10 @@ public class NewShopHandler {
 	public static PvmPointStore pvmPointStore = new PvmPointStore();
 
 	public static void openShop(Player player, NewShop shop) {
+		if (!shop.canOpen(player)) {
+			player.sendMessage("You don't have access to this shop.");
+			return;
+		}
 		player.getNewShopInterface().openShop(player, shop);
 		shop.openMessage(player);
 	}

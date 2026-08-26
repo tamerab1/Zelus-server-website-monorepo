@@ -9,7 +9,7 @@ import io.ruin.model.var.VarPlayerRepository;
 
 public class SlayerCasket {
 
-	private static final LootTable SLAYER_CASKET_LOOT = new LootTable().addTable(1,
+	public static final LootTable SLAYER_CASKET_LOOT = new LootTable().addTable(1,
 		new LootItem(1163, 1, 50), //Rune full helm
 		new LootItem(1127, 1, 50), //Rune platebody
 		new LootItem(1079, 1, 50), //Rune platelegs

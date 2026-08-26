@@ -40,6 +40,6 @@ public class Ghommal {
 	}
 
 	public static void register() {
-		NPCAction.register(13613, 1, Ghommal::talk);
+		NPCAction.register(30007, 1, Ghommal::talk); // Zezu (was Ghommal, npc 13613)
 	}
 }

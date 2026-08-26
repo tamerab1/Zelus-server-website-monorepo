@@ -9,7 +9,6 @@ import io.ruin.model.inter.questtab.bestiary.BestiarySearchDrop;
 import io.ruin.model.inter.questtab.bestiary.BestiarySearchMonster;
 import io.ruin.model.inter.questtab.bestiary.BestiarySearchResult;
 import io.ruin.model.inter.questtab.main.*;
-import io.ruin.model.inter.questtab.main.PvpPresetsEntry;
 import io.ruin.model.inter.questtab.main.UsefulLinks.UsefulLinks;
 import io.ruin.model.inter.questtab.presets.*;
 import io.ruin.model.inter.questtab.presets.main.*;
@@ -108,10 +107,9 @@ public enum QuestTab {
 
 	public static void register() {
 		/*
-		 * PvP Presets button (Quest Tab → MAIN)
+		 * PvP Presets button (Quest Tab → MAIN) -- retired, opened the old PresetsMenu
+		 * (DMMPVP-style fixed Zerker/Melee/Pure kits), superseded by the GearLoadouts system.
 		 */
-		MAIN.addCategory("<img=65> PvP Presets");
-		MAIN.addEntry(PvpPresetsEntry.INSTANCE);
 
 //        /*
 //         * Main

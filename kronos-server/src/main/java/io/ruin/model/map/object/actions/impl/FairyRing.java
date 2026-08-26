@@ -91,7 +91,7 @@ public enum FairyRing { //todo add favorite option
 			player.sendMessage("This area is currently not accessible.");
 			return;
 		}
-		if (player.getPosition().regionId() == 5426) {
+		if (player.getPosition().regionId() == 12342) {
 			player.fairyRingsUsed++;
 			if (player.fairyRingsUsed == Achievements.GONE_IN_THE_BLINK_OF_AN_EYE.getCompletionAmount())
 				player.sendMessage("<col=000080>You have completed the achievement: <col=800000>" + Achievements.GONE_IN_THE_BLINK_OF_AN_EYE.getAchievementName());

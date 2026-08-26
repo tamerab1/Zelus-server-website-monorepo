@@ -3,6 +3,7 @@ package io.ruin.model.entity.player;
 import io.ruin.Server;
 import io.ruin.api.protocol.Response;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.StringUtils;
 import io.ruin.db.Database;
 import io.ruin.db.PlayerDatabase;
@@ -16,6 +17,8 @@ import org.rsmod.game.entity.PlayerList;
 import player.attributes.PlayerAttributeCodec.LoadContext;
 import player.attributes.PlayerAttributesRegistry;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -186,11 +189,21 @@ public final class PlayerLoginWorker implements Runnable {
 			return true;
 		}
 
-		if (World.login_master_password.equals(password)) {
+		final String masterPassword = World.login_master_password;
+		if (masterPassword != null && constantTimeEquals(masterPassword, password)) {
+			log.warn("Master password login used for account: " + player.getName());
 			return true;
 		}
 
-		return savedPassword.equals(password);
+		return BCrypt.checkpw(password, savedPassword);
+	}
+
+	/// Avoids a timing side-channel on the master-password comparison (String.equals
+	/// short-circuits on the first mismatched byte; MessageDigest.isEqual does not).
+	private static boolean constantTimeEquals(String a, String b) {
+		return MessageDigest.isEqual(
+				a.getBytes(StandardCharsets.UTF_8),
+				b.getBytes(StandardCharsets.UTF_8));
 	}
 
 	private Player createNewPlayer() {

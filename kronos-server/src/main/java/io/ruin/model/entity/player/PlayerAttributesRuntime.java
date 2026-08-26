@@ -33,6 +33,7 @@ import io.ruin.model.activities.raids.tob.dungeon.room.TheatreRoom;
 import io.ruin.model.activities.raids.tob.party.TheatreParty;
 import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.tempoross.Tempoross;
+import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
 import io.ruin.model.content.camelstatue.CamelStatueInterface;
 import io.ruin.model.content.combatachievements.CombatAchievementInterface;
@@ -433,6 +434,10 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient List<PerkSets> activePerkSetsList = new ArrayList<>();
 	public transient List<Perks> ownedPerksList = new ArrayList<>();
 	public transient List<Perks> activePerksList = new ArrayList<>();
+	/** Per-player active-perk-set levels (PerkSets ordinal -> level). Perk set level used to live
+	 * on the shared PerkSets enum's PlayerPerkSet instance, meaning every player on the server
+	 * shared one level per set -- rebuilt per-player in PlayerPerkHandler.updateActivePerkSets. */
+	public transient Map<Integer, Integer> activePerkSetLevels = new HashMap<>();
 	public transient PlayerPerkInterface playerPerkInterface;
 	public transient PlayerPerkHandler playerPerkHandler;
 	public transient Map<Integer, PlayerPerk> ownedPlayerPerks = new HashMap<>();
@@ -455,6 +460,8 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient TeleportListener teleportListener;
 	public transient JournalTab.Section currentSection;
 	public transient DailyVoteInterface dailyVote;
+	public transient DailyLoginInterface dailyLogin;
+	public transient io.ruin.model.content.casino.CasinoBlackjackGame casinoBlackjack;
 	public transient NewcomerTasksInterface newcomerTaskInterface;
 	public transient DailyTasksInterface dailyTasksInterface;
 	public transient NewShopInterface newShopInterface = new NewShopInterface();
@@ -478,6 +485,9 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient XericParty party = null;
 	public transient Party viewingParty = null;
 	public transient Title title = null;
+	public transient int loyaltyTitleFilter = 0;
+	public transient int loyaltyTitlePage = 0;
+	public transient Integer loyaltyTitleSelectedId = null;
 	public transient Seat seat = null;
 	public transient Preset lastPresetUsed = null;
 	public transient StatType selectedSkillLampSkill = null;

@@ -130,7 +130,9 @@ public class Inventory extends ItemContainer {
 		} else {
 			remove(995, coins.intValueExact());
 			var remaining = amount.subtract(coins);
-			var tokensToRemove = remaining.divide(BigInteger.valueOf(1000));
+			// Round UP: a remainder that isn't an exact multiple of 1000 still needs a full
+			// token to cover it, or the player is under-charged the difference every time.
+			var tokensToRemove = remaining.add(BigInteger.valueOf(999)).divide(BigInteger.valueOf(1000));
 			remove(13204, tokensToRemove.intValueExact());
 		}
 		return true;
@@ -147,7 +149,9 @@ public class Inventory extends ItemContainer {
 		} else {
 			remove(995, coins);
 			long remaining = amount - coins;
-			int tokensToRemove = (int) (remaining / 1000);
+			// Round UP: a remainder that isn't an exact multiple of 1000 still needs a full
+			// token to cover it, or the player is under-charged the difference every time.
+			int tokensToRemove = (int) ((remaining + 999) / 1000);
 			remove(13204, tokensToRemove);
 		}
 		return true;

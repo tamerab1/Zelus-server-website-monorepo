@@ -14,6 +14,7 @@ import io.ruin.model.World;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.GameMode;
+import io.ruin.model.entity.player.PlayMode;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecurityPin;
 import io.ruin.model.entity.shared.LockType;
@@ -52,14 +53,37 @@ public class StarterGuide {
 	}
 
 	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
-	public static List<String> ipsClaimed = new ArrayList<>();
+	// IP -> number of accounts on that IP that have already received the tradeable STANDARD-mode
+	// starter kit (500k coins, thousands of runes, etc). Capped so alt-account farming can't be
+	// used to funnel unlimited free starter wealth into a main account via trading.
+	public static final int MAX_STARTER_CLAIMS_PER_IP = 5;
+	public static java.util.Map<String, Integer> ipClaimCounts = new java.util.HashMap<>();
+
+	// Accounts under this playtime are still plausibly "just registered" -- used only to gate
+	// the one-time login heal below so it can't retroactively fire for a long-established
+	// account that legitimately has starterKitGranted=false just because that field is new.
+	private static final long HEAL_ELIGIBLE_PLAYTIME_SECONDS = 3600;
 
 	public static void register() {
+		loadIps();
 		LoginListener.register(player -> {
 			if (player.newPlayer) {
 				player.hasFreePerkUnlock = true;
 				XpCounter.select(player, 1);
 				tutorial(player);
+			} else if (!player.starterKitGranted) {
+				// starterKitGranted is a new field -- every pre-existing account reads false for
+				// it once, regardless of whether they're a day-one veteran or someone who hit the
+				// interrupted-mid-tutorial bug this guards against. Recently-created accounts get
+				// healed (their missed kit granted for real); anything older is just marked so
+				// this branch never re-checks it, no assumptions made about what an old account
+				// "should" have.
+				if (player.playTime < HEAL_ELIGIBLE_PLAYTIME_SECONDS) {
+					grantStarterKitIfNeeded(player);
+					player.sendMessage("<col=FF0000>Looks like your account setup got interrupted last time -- here's the starter kit you missed!");
+				} else {
+					player.starterKitGranted = true;
+				}
 			}
 		});
 	}
@@ -114,6 +138,11 @@ public class StarterGuide {
 						})));
 	}
 
+	// Generous cap on how long we'll wait for the player to close the makeover/mode-select
+	// interfaces (100 ticks = 60s) -- long enough for genuine customization, but bounded so
+	// a stuck/unresponsive client can't leave the new account locked indefinitely.
+	private static final int MAX_INTERFACE_WAIT_TICKS = 100;
+
 	@SneakyThrows
 	public static void ecoTutorial(Player player) {
 		boolean actuallyNew = player.newPlayer;
@@ -125,8 +154,12 @@ public class StarterGuide {
 			if (actuallyNew) {
 				player.openInterface(ToplevelComponent.MAINMODAL, Interface.MAKE_OVER_MAGE);
 				player.getPacketSender().sendIfEvents(679, 78, 0, 4, new int[] { 1 << 1 });
-				while (player.isVisibleInterface(Interface.MAKE_OVER_MAGE)) {
+				int waitTicks = 0;
+				while (player.isVisibleInterface(Interface.MAKE_OVER_MAGE) && waitTicks++ < MAX_INTERFACE_WAIT_TICKS) {
 					event.delay(1);
+				}
+				if (player.isVisibleInterface(Interface.MAKE_OVER_MAGE)) {
+					player.closeInterfaces();
 				}
 			}
 
@@ -137,16 +170,45 @@ public class StarterGuide {
 
 			if (actuallyNew) {
 				player.getGameModeInterface().openIronmanSettingsInterface(player);
-				while (player.isVisibleInterface(1100)) {
+				int waitTicks = 0;
+				while (player.isVisibleInterface(1100) && waitTicks++ < MAX_INTERFACE_WAIT_TICKS) {
 					event.delay(1);
+				}
+				if (player.isVisibleInterface(1100)) {
+					player.closeInterfaces();
 				}
 			}
 
 		});
 	}
 
+	// Grants the appropriate starter kit and finalizes the account. Split out of continueTutorial
+	// and called synchronously, BEFORE any dialogue is shown -- previously this only happened
+	// deep inside a dialogue-continuation callback, so a disconnect anywhere in that dialogue
+	// chain (client crash, closed window, bad connection) left the account permanently in a
+	// "mode picked, no kit, newPlayer still true forever" state with no recovery path. Idempotent
+	// via starterKitGranted so a caller can't accidentally double-grant.
+	public static void grantStarterKitIfNeeded(Player player) {
+		if (player.starterKitGranted)
+			return;
+		if (player.getGameMode().isIronMan()) {
+			giveEcoStarter(player);
+		} else if (claimLimitReached(player)) {
+			player.sendMessage("This IP has already claimed the starter pack on "
+					+ MAX_STARTER_CLAIMS_PER_IP + " accounts, so you won't receive it again.");
+		} else if (player.getPlayMode() == PlayMode.PVP_MODE) {
+			givePvpModeStarter(player);
+			recordClaim(player.getIp());
+		} else {
+			giveEcoStarter(player);
+		}
+		player.starterKitGranted = true;
+		player.newPlayer = false;
+	}
+
 	@SneakyThrows
 	public static void continueTutorial(Player player) {
+		grantStarterKitIfNeeded(player);
 		AtomicBoolean startTutorial = new AtomicBoolean(false);
 		player.startEvent(event -> {
 			String text = "You've chosen to play an account with no restrictions, good luck!";
@@ -165,30 +227,16 @@ public class StarterGuide {
 			if (player.getGameMode().isIronMan()) {
 				player.dialogue(new NPCDialogue(3525, text),
 						new NPCDialogue(3525, "Before you start, I'll give you items to start your ironman adventure."),
-						new NPCDialogue(3525, "And you're all set, good luck on your journey!") {
-							@Override
-							public void open(Player player) {
-								giveEcoStarter(player);
-								player.newPlayer = false;
-								super.open(player);
-							}
-						});
+						new NPCDialogue(3525, "And you're all set, good luck on your journey!"));
 			} else {
 				player.dialogue(new NPCDialogue(3525, text),
 						new NPCDialogue(3525, "Before you start, I'll give you some items to start your adventure."),
-						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!") {
-							@Override
-							public void open(Player player) {
-								giveEcoStarter(player);
-								player.newPlayer = false;
-								super.open(player);
-							}
-						});
+						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!"));
 			}
 
 			event.waitForDialogue(player);
 			Broadcast.WORLD.sendNews(player.getName() + " has just joined " + World.type.getWorldName()
-					+ ". For an early boost, use code ::winter!");
+					+ ". For an early boost, use code ::zelus!");
 			startTutorial.set(true);
 //			PlayerCreationWebhook.sendAccountCreationHook(player);
 
@@ -227,13 +275,13 @@ public class StarterGuide {
 					"Welcome to Zelus, where you'll embark on an unforgettable journey! Expect nothing less than an unparalleled experience. Best of luck on your adventure!"));
 			e.waitForDialogue(player);
 
-			player.getMovement().teleport(3092, 3491, 0);
+			player.getMovement().teleport(3089, 3511, 0);
 			e.delay(1);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Starting off with Zelus's main bank! Here, you can take care of all your banking needs."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3087, 3488, 0);
+			player.getMovement().teleport(3115, 3486, 0);
 			e.delay(2);
 			player.dialogue(new NPCDialogue(3531,
 					"Exhibit two, the Trading Post & Upgrade Station! This bustling marketplace is where players can buy and sell all kinds of items.<br>"
@@ -245,53 +293,61 @@ public class StarterGuide {
 			e.waitForDialogue(player);
 			e.delay(2);
 			// construction portal
-			player.getMovement().teleport(3087, 3507, 0);
+			player.getMovement().teleport(3089, 3475, 0);
 			player.dialogue(new NPCDialogue(3531,
 					"Now to make you feel at home... the POH portal! This is where you can begin building your dream estate. Visit the estate agent to purchase a house..."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
-			player.getMovement().teleport(3079, 3511, 0);
+			player.getMovement().teleport(3096, 3512, 0);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Zelus's central shops! Here you'll find all the basic shops to assist your journey. Ironman players also have access to some of the shops, so be sure to explore everything this marketplace has to offer."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
-			player.getMovement().teleport(3085, 3497, 0);
+			player.getMovement().teleport(3090, 3486, 0);
 
 			player.dialogue(new NPCDialogue(3531,
 					"Here, we have the Zelus teleport nexus.<br>" +
 							"Interacting with the nexus will open the teleport menu. Once the menu is open, select one of the many options and you'll be transported there."));
 			e.waitForDialogue(player);
 			e.delay(2);
+			player.getMovement().teleport(3105, 3513, 0);
 			player.dialogue(new NPCDialogue(3531,
 					"Right behind you is the healing pool! This pool will rid you of any status conditions and heal you completely. You'll also be healed when you teleport home."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3096, 3510, 0);
+			player.getMovement().teleport(3105, 3488, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"Feeling belligerent already? Look no further than the Slayer Masters, who can assign you tasks. You can also loot the crystal, larran's, brimstone, and slayer chests here."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3094, 3502, 0);
+			player.getMovement().teleport(3116, 3487, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"This is where you will find the perk master. Talk to him for information about obtaining and equipping perks! Perks play a huge role in Zelus, so check them out."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3101, 3492, 0);
+			player.getMovement().teleport(3083, 3502, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"A little fairy magic here. Take full advantage of this resource!"));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3089, 3473, 0);
+			player.getMovement().teleport(3094, 3463, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"Here is the Camel Statue, where certain boosts can be activated by offering gold. Note: These are global boosts. There is also a thieving area to the left!"));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3078, 3501, 0);
+			player.getMovement().teleport(3078, 3484, 0);
 			e.delay(1);
 			player.dialogue(new NPCDialogue(3531,
 					"And finally, here are the point store NPCs! Spend your various points here."));
+			e.waitForDialogue(player);
+			e.delay(1);
+
+			player.getMovement().teleport(3123, 3479, 0);
+			e.delay(1);
+			player.dialogue(new NPCDialogue(3531,
+					"And here's the gambling zone! Feeling lucky? Step inside and try your hand -- just remember, gambling carries the risk of losing whatever you stake."));
 			e.waitForDialogue(player);
 			e.delay(1);
 
@@ -309,9 +365,9 @@ public class StarterGuide {
 			player.getPacketSender().resetCamera();
 			player.tutorialStage = 1;
 
-			player.getMovement().teleport(3085, 3492, 0);
-			player.getPacketSender().moveCameraToLocation(3085, 3492, 450, 0, 12);
-			player.getPacketSender().turnCameraToLocation(3085, 3492, 400, 0, 30);
+			player.getMovement().teleport(3092, 3494, 0);
+			player.getPacketSender().moveCameraToLocation(3092, 3494, 450, 0, 12);
+			player.getPacketSender().turnCameraToLocation(3092, 3494, 400, 0, 30);
 			player.dialogue(new NPCDialogue(3531,
 					"Looks like you're ready to begin your adventure, good luck!"));
 			e.waitForDialogue(player);
@@ -324,16 +380,13 @@ public class StarterGuide {
 		});
 	}
 
-	public static boolean alreadyClaimed(Player player) {
-		if (ipsClaimed.contains(player.getIp()))
-			return true;
-		return false;
+	/** True once this IP has already claimed the STANDARD-mode starter kit on MAX_STARTER_CLAIMS_PER_IP accounts. */
+	public static boolean claimLimitReached(Player player) {
+		return ipClaimCounts.getOrDefault(player.getIp(), 0) >= MAX_STARTER_CLAIMS_PER_IP;
 	}
 
-	public static void addIpsClaimed(String ip) {
-		if (ipsClaimed.contains(ip))
-			return;
-		ipsClaimed.add(ip);
+	public static void recordClaim(String ip) {
+		ipClaimCounts.merge(ip, 1, Integer::sum);
 		saveIps();
 	}
 
@@ -350,7 +403,7 @@ public class StarterGuide {
 			try {
 				FileWriter fileWriter = new FileWriter(file);
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
-				String toJson = gson.toJson(ipsClaimed);
+				String toJson = gson.toJson(ipClaimCounts);
 				fileWriter.write(toJson);
 				fileWriter.flush();
 			} catch (IOException e) {
@@ -369,21 +422,36 @@ public class StarterGuide {
 				e.printStackTrace();
 			}
 		}
-		Type type = new TypeToken<ArrayList<String>>() {
-		}.getType();
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		try {
-			ArrayList<String> temp = gson.fromJson(new FileReader(file), type);
-			if (temp != null)
-				ipsClaimed = temp;
-			log.info("Loaded " + ipsClaimed.size() + " starter pack ids.");
-		} catch (FileNotFoundException e) {
+			String json = new String(java.nio.file.Files.readAllBytes(file.toPath()));
+			if (json.isBlank())
+				return;
+			if (json.trim().startsWith("[")) {
+				// migrate the old format (a plain list of IPs that had claimed once) -- each
+				// existing entry already used up one of its two claims, not zero.
+				Type oldType = new TypeToken<ArrayList<String>>() {
+				}.getType();
+				ArrayList<String> oldIps = gson.fromJson(json, oldType);
+				if (oldIps != null)
+					for (String ip : oldIps)
+						ipClaimCounts.put(ip, 1);
+				log.info("Migrated " + ipClaimCounts.size() + " starter pack ips from the old one-claim format.");
+				saveIps();
+			} else {
+				Type type = new TypeToken<java.util.HashMap<String, Integer>>() {
+				}.getType();
+				java.util.Map<String, Integer> temp = gson.fromJson(json, type);
+				if (temp != null)
+					ipClaimCounts = temp;
+				log.info("Loaded " + ipClaimCounts.size() + " starter pack ip claim counts.");
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private static void giveEcoStarter(Player player) {
-		boolean alreadyClaimed = alreadyClaimed(player);
 		player.getInventory().add(30035);
 		player.getInventory().add(30496);
 		player.getInventory().add(30477);
@@ -532,9 +600,8 @@ public class StarterGuide {
 				player.getInventory().add(new Item(ItemID.LOBSTER + 1, 300));
 				break;
 			case STANDARD:
-				// if(alreadyClaimed){
-				// break;
-				// }
+				// Per-IP claim limit for this (and the PVP_MODE kit) is enforced by the caller
+				// in continueTutorial(), before this method is ever invoked for STANDARD mode.
 				player.getInventory().add(COINS_995, 500000);
 				player.getInventory().add(562, 500);
 				player.getInventory().add(558, 1000);
@@ -555,11 +622,9 @@ public class StarterGuide {
 				player.getInventory().add(1115, 1);
 				player.getInventory().add(1153, 1);
 				player.getInventory().add(1323, 1);
+				recordClaim(player.getIp());
 				break;
 		}
-
-		addIpsClaimed(player.getIp());
-
 	}
 
 	private static NPC find(Player player, int id) {
@@ -585,83 +650,33 @@ public class StarterGuide {
 		ecoTutorial(player);
 	}
 
-	private static void addPKModeItemToBank(Player player) {
-		player.getBank().add(19625, 5); // Home teleport
-		player.getBank().add(2550, 3); // Recoils
-		player.getBank().add(385, 125); // Sharks
-		player.getBank().add(3144, 50); // Karambwans
-		player.getBank().add(2436, 5); // attk
-		player.getBank().add(2440, 5); // str
-		player.getBank().add(2444, 5); // range
-		player.getBank().add(3024, 5); // restore
-		// Next Line
-		player.getBank().add(6685, 10); // brew
-		player.getBank().add(560, 2250); // Death runes
-		player.getBank().add(565, 1000); // Blood runes
-		player.getBank().add(561, 300); // Nature runes
-		player.getBank().add(145, 1); // atk
-		player.getBank().add(157, 1); // str
-		player.getBank().add(169, 1); // range
-		player.getBank().add(3026, 1); // restore
-		// Next Line
-		player.getBank().add(6687, 1); // brew
-		player.getBank().add(9075, 400); // Astral runes
-		player.getBank().add(555, 6000); // Water runes
-		player.getBank().add(557, 1000); // Earth runes
-		player.getBank().add(147, 1); // atk
-		player.getBank().add(159, 1); // str
-		player.getBank().add(171, 1); // range
-		player.getBank().add(3028, 1); // restore
-		// Next Line
-		player.getBank().add(6689, 1); // brew
-		player.getBank().add(7458, 100); // mithril gloves for pures
-		player.getBank().add(7462, 100); // gloves
-		player.getBank().add(3842, 100); // god book
-		player.getBank().add(149, 1); // atk
-		player.getBank().add(161, 1); // str
-		player.getBank().add(173, 1); // range
-		player.getBank().add(3030, 1); // restore
-		// Next Line
-		player.getBank().add(6691, 1); // brew
-		player.getBank().add(9144, 500); // bolts
-		player.getBank().add(2503, 5); // hides
-		player.getBank().add(4099, 5); // Mystic
-		player.getBank().add(2414, 100); // zamy god cape
-		player.getBank().add(10828, 5); // neit helm
-		player.getBank().add(4587, 5); // Scim
-		player.getBank().add(1163, 3); // rune full helm
-		// Next Line
-		player.getBank().add(562, 50); // Chaos rune
-		player.getBank().add(892, 400); // rune arrows
-		player.getBank().add(2497, 5); // hides
-		player.getBank().add(4101, 5); // Mystic
-		player.getBank().add(4675, 5); // ancient staff
-		player.getBank().add(1201, 5); // rune
-		player.getBank().add(5698, 5); // dagger
-		player.getBank().add(1127, 3); // rune pl8
-		// Next Line
-		player.getBank().add(563, 50); // law rune
-		player.getBank().add(9185, 5); // crossbow
-		player.getBank().add(10499, 100); // avas
-		player.getBank().add(4103, 5); // Mystic
-		player.getBank().add(4107, 5); // Mystic
-		player.getBank().add(3105, 5); // climbers
-		player.getBank().add(11978, 3); // glory(6)
-		player.getBank().add(1079, 3); // rune legs
-		// Next Line
-		player.getBank().add(1215, 2); // dagger unpoisoned
-		player.getBank().add(3751, 2); // zerker helm
-		player.getBank().add(1093, 2); // rune
+	/**
+	 * PVP_MODE's starter kit -- equips a PK-ready loadout immediately (whip+defender rather
+	 * than the 2h dharok's greataxe, which is carried in the inventory instead so both options
+	 * are available) plus the rest of the requested gear/supplies in the inventory.
+	 */
+	private static void givePvpModeStarter(Player player) {
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_WEAPON, new Item(ItemID.ABYSSAL_WHIP));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_SHIELD, new Item(ItemID.DRAGON_DEFENDER));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_HAT, new Item(ItemID.DHAROKS_HELM));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_CHEST, new Item(ItemID.DHAROKS_PLATEBODY));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_LEGS, new Item(ItemID.DHAROKS_PLATELEGS));
+		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_FEET, new Item(ItemID.DRAGON_BOOTS));
 
-		// Give the players PK stats
-		player.getStats().get(StatType.Attack).set(99);
-		player.getStats().get(StatType.Strength).set(99);
-		player.getStats().get(StatType.Defence).set(99);
-		player.getStats().get(StatType.Hitpoints).set(99);
-		player.getStats().get(StatType.Magic).set(99);
-		player.getStats().get(StatType.Ranged).set(99);
-		player.getStats().get(StatType.Prayer).set(99);
-		player.getCombat().updateLevel();
+		player.getInventory().add(ItemID.ARMADYL_GODSWORD, 1);
+		player.getInventory().add(ItemID.FIRE_CAPE, 1);
+		player.getInventory().add(ItemID.DHAROKS_GREATAXE, 1);
+		player.getInventory().add(3145, 100); // Cooked karambwan (noted) -- 3144's own def points noted_id here
+		player.getInventory().add(12696, 20); // Super combat potion(4), noted -- 12695's own def points noted_id here
+		player.getInventory().add(ItemID.BERSERKER_RING, 1);
+		player.getInventory().add(ItemID.KARILS_LEATHERSKIRT, 1);
+		player.getInventory().add(ItemID.KARILS_LEATHERTOP, 1);
+		player.getInventory().add(ItemID.KARILS_COIF, 1);
+		player.getInventory().add(ItemID.KARILS_CROSSBOW, 1);
+		player.getInventory().add(19625, 15); // Home teleport
+
+		player.getEquipment().sendUpdates();
+		player.getInventory().sendUpdates();
 	}
 
 }

@@ -15,7 +15,7 @@ public class LimitedMysteryBox extends ItemContainer {
 	private static final int LIMITED_MYSTERY_BOX = 30426;
 	private static final int EASTER_EGG = 21227;
 
-	private static final LootTable ECO_MYSTERY_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable ECO_MYSTERY_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(COINS_995, 50000000, 50000000, 20),
 
 		new LootItem(30448, 1, 3, 23).broadcast(Broadcast.WORLD),

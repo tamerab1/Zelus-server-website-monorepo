@@ -21,6 +21,9 @@ public class Interface {
 
 	public static final int PRESET_INTERFACE = 832;
 
+	/** Bank-sourced equipment preset interface (new design, distinct from the unused PRESET_INTERFACE above). */
+	public static final int BANK_PRESET_INTERFACE = 5900;
+
 	public static final int PRESET_MANAGER = 1711;
 
 	public static final int ITEM_EXCHANGE = 1081;

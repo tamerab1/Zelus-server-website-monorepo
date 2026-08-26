@@ -13,7 +13,7 @@ import static io.ruin.model.item.actions.impl.boxes.mystery.VoteMysteryBox.updat
 
 public class PVPArmourMysteryBox {
 
-	private static final LootTable PVP_ARMOUR_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable PVP_ARMOUR_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(22625, 1, 1), // Statius's full helm
 		new LootItem(22628, 1, 1), // Statius's platebody
 		new LootItem(22631, 1, 1), // Statius's platelegs

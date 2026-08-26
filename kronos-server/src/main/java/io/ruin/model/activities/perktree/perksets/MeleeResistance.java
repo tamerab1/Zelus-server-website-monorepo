@@ -8,8 +8,8 @@ public class MeleeResistance extends PlayerPerkSet {
 		return "Melee Resistance";
 	}
 
-	public double getMeleeDamageReduction() {
-		double calc = (7.5 + (getLevel() * 3.5)) / 100;
+	public double getMeleeDamageReduction(int level) {
+		double calc = getMeleeDamageReductionPercent(level) / 100;
 		return 1 - calc;
 	}
 
@@ -18,18 +18,18 @@ public class MeleeResistance extends PlayerPerkSet {
 		return "Melee Damage Reduction";
 	}
 
-	private double getMeleeDamageReduction(int level) {
+	private double getMeleeDamageReductionPercent(int level) {
 		return 7.5 + (level * 3.5);
 	}
 
 	@Override
 	public String getPerkSetEffect() {
 		return "When this perk set is active you will take less damage from melee attacks.<br><br>" +
-			"At level 1 you will take " + getMeleeDamageReduction(1) + "% less damage from melee attacks.<br><br>" +
-			"At level 2 you will take " + getMeleeDamageReduction(2) + "% less damage from melee attacks.<br><br>" +
-			"At level 3 you will take " + getMeleeDamageReduction(3) + "% less damage from melee attacks.<br><br>" +
-			"At level 4 you will take " + getMeleeDamageReduction(4) + "% less damage from melee attacks.<br><br>" +
-			"At level 5 you will take " + getMeleeDamageReduction(5) + "% less damage from melee attacks.<br><br>"
+			"At level 1 you will take " + getMeleeDamageReductionPercent(1) + "% less damage from melee attacks.<br><br>" +
+			"At level 2 you will take " + getMeleeDamageReductionPercent(2) + "% less damage from melee attacks.<br><br>" +
+			"At level 3 you will take " + getMeleeDamageReductionPercent(3) + "% less damage from melee attacks.<br><br>" +
+			"At level 4 you will take " + getMeleeDamageReductionPercent(4) + "% less damage from melee attacks.<br><br>" +
+			"At level 5 you will take " + getMeleeDamageReductionPercent(5) + "% less damage from melee attacks.<br><br>"
 			;
 	}
 }

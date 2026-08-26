@@ -33,24 +33,24 @@ public class DailyVoteInterface {
 
 	private static final List<Item> voteRewards = Arrays.asList(
 			new Item(30570, 1),
-			new Item(620, 1),
+			new Item(59602, 1),                              // Vote Ticket
 			new Item(7478, 2),
 			new Item(995, 2500000),
-			new Item(30596, 2),
+			new Item(30596, 1),
 			new Item(608, 1),
 			new Item(30461, 1),
-			new Item(620, 2),
+			new Item(59602, 2),                              // Vote Ticket x2
 			new Item(995, 10000000),
 			new Item(30464, 1),
 			new Item(30570, 2),
-			new Item(620, 3),
+			new Item(59602, 3),                              // Vote Ticket x3
 			new Item(7478, 3),
 			new Item(30596, 3),
 			new Item(608, 2),
 			new Item(995, 2500000),
 			new Item(30461, 1),
 			new Item(22092, 1),
-			new Item(620, 4),
+			new Item(59602, 4),                              // Vote Ticket x4
 			new Item(30464, 2),
 			new Item(30456, 2),
 			new Item(7478, 4),
@@ -63,7 +63,17 @@ public class DailyVoteInterface {
 
 	public static void register() {
 		InterfaceHandler.register(1109, h -> {
-			h.actions[468] = (SimpleAction) (p) -> p.getDailyVote().claimReward(p);
+			// Interface 1109 is shared with DailyLoginInterface (same
+			// widget, different backing data depending on which one the
+			// player last opened) -- dispatch to whichever one is active
+			// rather than always claiming the vote reward.
+			h.actions[468] = (SimpleAction) (p) -> {
+				if (p.viewingDailyLoginRewards) {
+					p.getDailyLogin().claimReward(p);
+				} else {
+					p.getDailyVote().claimReward(p);
+				}
+			};
 		});
 
 	}
@@ -80,8 +90,12 @@ public class DailyVoteInterface {
 	}
 
 	public void open() {
+		player.viewingDailyLoginRewards = false;
 
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		// Component 14 is the shared widget's title text -- reset back
+		// explicitly since DailyLoginInterface.open() overrides it.
+		player.getPacketSender().sendString(INTERFACE_ID, 14, "Daily Vote Streak");
 		player.getPacketSender().sendString(INTERFACE_ID, 22, "Current Vote Streak: " + player.voteStreak);
 		int startingLockComponent = 42;
 		int startingClaimedComponent = 40;

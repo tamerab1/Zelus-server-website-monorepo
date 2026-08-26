@@ -157,7 +157,7 @@ public class IndexFile {
 		synchronized (mainDataFile) {
 			try {
 				if (indexDataFile.length() < (long) (archiveId * 6 + 6)) {
-					System.out.println("Invalid Index Data File Length!");
+					System.out.println("Invalid Index Data File Length! index=" + this.index + " archiveId=" + archiveId);
 					return null;
 				}
 				indexDataFile.seek((long) (6 * archiveId));
@@ -165,10 +165,11 @@ public class IndexFile {
 				int archiveLength = (((readCachedBuffer[1] & 0xff) << 8) + ((readCachedBuffer[0] & 0xff) << 16) + (readCachedBuffer[2] & 0xff));
 				int sector = (((readCachedBuffer[3] & 0xff) << 16) + ((readCachedBuffer[4] & 0xff) << 8) + (readCachedBuffer[5] & 0xff));
 				if (archiveLength < 0 || archiveLength > maxLength) {
-					System.err.println("Invalid Archive Length!");
+					System.err.println("Invalid Archive Length! index=" + this.index + " archiveId=" + archiveId + " archiveLength=" + archiveLength + " maxLength=" + maxLength);
 					return null;
 				}
 				if (sector <= 0 || (long) sector > mainDataFile.length() / 520L) {
+					System.err.println("Invalid Sector! index=" + this.index + " archiveId=" + archiveId + " sector=" + sector);
 					return null;
 				}
 				byte[] archiveData = new byte[archiveLength];
@@ -176,7 +177,7 @@ public class IndexFile {
 				int part = 0;
 				while (readBytesCount < archiveLength) {
 					if (sector == 0) {
-						System.err.println("Invalid Sector 0!");
+						System.err.println("Invalid Sector 0! index=" + this.index + " archiveId=" + archiveId + " part=" + part);
 						return null;
 					}
 					mainDataFile.seek((long) sector * 520L);
@@ -206,11 +207,11 @@ public class IndexFile {
 						currentIndex = readCachedBuffer[7] & 0xff;
 					}
 					if (archiveId != currentArchive || currentPart != part || this.index != currentIndex) {
-						System.err.println("Invalid Next File!");
+						System.err.println("Invalid Next File! index=" + this.index + " archiveId=" + archiveId + " part=" + part + " currentArchive=" + currentArchive + " currentPart=" + currentPart + " currentIndex=" + currentIndex);
 						return null;
 					}
 					if (nextSector < 0 || (long) nextSector > (mainDataFile.length() / 520L)) {
-						System.err.println("Invalid Next Sector!");
+						System.err.println("Invalid Next Sector! index=" + this.index + " archiveId=" + archiveId + " nextSector=" + nextSector);
 						return null;
 					}
 					int length = dataBlockSize + headerSize;

@@ -985,12 +985,18 @@ public class ChambersOfXeric {
 		Loggers.logRaidsCompletion(playerNames, time, party.getPoints());
 		XericRewards.giveRewards(this);
 		party.forPlayers(p -> {
+			int personalPoints = VarPlayerRepository.RAIDS_PERSONAL_POINTS.get(p);
 			p.sendMessage(String.format(
 					"Total points: " + Color.RAID_PURPLE.wrap("%,d") + ", Personal points: " + Color.RAID_PURPLE.wrap("%,d")
 							+ " (" + Color.RAID_PURPLE.wrap("%.2f") + "%%)",
-					party.getPoints(), VarPlayerRepository.RAIDS_PERSONAL_POINTS.get(p),
-					(double) (VarPlayerRepository.RAIDS_PERSONAL_POINTS.get(p) / party.getPoints()) * 100));
+					party.getPoints(), personalPoints,
+					party.getPoints() == 0 ? 0.0 : ((double) personalPoints / party.getPoints()) * 100));
 			p.sendMessage(String.format(Color.RAID_PURPLE.wrap("Take your rewards from the chest or they will vanish!")));
+			// Purple-chance in XericRewards is driven directly off this counter -- it must
+			// reset per raid, or points (and unique-drop odds) ratchet upward forever across
+			// raids instead of reflecting only the raid that was just completed.
+			VarPlayerRepository.RAIDS_PERSONAL_POINTS.set(p, 0);
+			VarPlayerRepository.RAIDS_PARTY_POINTS.set(p, 0);
 		});
 	}
 

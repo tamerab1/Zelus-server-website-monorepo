@@ -66,15 +66,20 @@ public class PlayerPerkHandler {
 					if (Objects.requireNonNull(perk.getPerk(player)).perkLevel < lowestLevel)
 						lowestLevel = Objects.requireNonNull(perk.getPerk(player)).perkLevel;
 				}
-				if (!player.activePerkSetsList.contains(perkSet)) {
-					perkSet.perkSet.setLevel(lowestLevel);
+				boolean wasActive = player.activePerkSetsList.contains(perkSet);
+				// Store per-player -- keep it fresh even while already active, since one of the
+				// combo perks can be upgraded (changing the effective level) without the set
+				// itself ever deactivating.
+				player.activePerkSetLevels.put(perkSet.ordinal(), lowestLevel);
+				if (!wasActive) {
 					player.activePerkSetsList.add(perkSet);
 					player.sendMessage("The perk set: '" + perkSet.perkSet.getPerkSetName() + "' has been activated at level "
-							+ perkSet.perkSet.getLevel() + ".");
+							+ lowestLevel + ".");
 				}
 			} else {
 				if (player.activePerkSetsList.contains(perkSet)) {
 					player.activePerkSetsList.remove(perkSet);
+					player.activePerkSetLevels.remove(perkSet.ordinal());
 					player.sendMessage("The perk set: '" + perkSet.perkSet.getPerkSetName() + "' has been deactivated.");
 				}
 			}
@@ -83,6 +88,11 @@ public class PlayerPerkHandler {
 
 	public List<PerkSets> getActivePerkSets(Player player) {
 		return player.activePerkSetsList;
+	}
+
+	/** The per-player active level for a perk set, or 0 if it isn't currently active. */
+	public int getActivePerkSetLevel(Player player, PerkSets perkSet) {
+		return player.activePerkSetLevels.getOrDefault(perkSet.ordinal(), 0);
 	}
 
 
@@ -124,13 +134,14 @@ public class PlayerPerkHandler {
 		return null;
 	}
 
+	// Base of 3 matches the perk-home interface, which renders slots 1-3 with no lock overlay
+	// at all (only slots 4/5 have one) -- a base of 2 left slot 3 looking freely available while
+	// still being server-side gated behind level 50, which is what this fixes.
 	public int calculatePlayersTotalPerks(Player player) {
-		int totalPerks = 2;
+		int totalPerks = 3;
 		if (player.perkTreeLevel >= 50 && player.perkTreeLevel < 75)
-			totalPerks = 3;
-		else if (player.perkTreeLevel >= 75 && player.perkTreeLevel < 100)
 			totalPerks = 4;
-		else if (player.perkTreeLevel >= 100)
+		else if (player.perkTreeLevel >= 75)
 			totalPerks = 5;
 		return totalPerks;
 	}
@@ -423,7 +434,7 @@ public class PlayerPerkHandler {
 			return false;
 		}
 		int maxPerks = calculatePlayersTotalPerks(player);
-		if (player.activePerks.size() <= maxPerks) {
+		if (player.activePerks.size() < maxPerks) {
 			player.activePerks.put(perkToAdd.ordinal(), player.getOwnedPerks().get(perkToAdd.ordinal()));
 			player.activePerksList.add(perkToAdd);
 			player.sendFilteredMessage(
@@ -512,20 +523,24 @@ public class PlayerPerkHandler {
 
 
 	public int getExperienceToNextLevel(Player player) {
-		return 5000 * (player.perkTreeLevel);
+		return calculateExperienceForLevel(player.perkTreeLevel);
 	}
 
+	// Cumulative total XP required to complete the given level (each level costs 5000 more
+	// than the last, so this is a triangular sum -- not flat 5000*level, which let a single
+	// big lamp skip ~20 levels at once regardless of how deep into the tree the player was).
 	public int calculateExperienceForLevel(int level) {
-		return 5000 * (level);
+		return 5000 * level * (level + 1) / 2;
 	}
 
 	public float calculateNextPerkLevelPercentage(Player player) {
 		int currentLevel = player.perkTreeLevel;
 		int currentXP = player.perkTreeExperience;
 
+		int xpForCurrentLevel = currentLevel <= 1 ? 0 : calculateExperienceForLevel(currentLevel - 1);
 		int xpForNextLevel = calculateExperienceForLevel(currentLevel);
 
-		float xpProgress = (float) currentXP / xpForNextLevel;
+		float xpProgress = (float) (currentXP - xpForCurrentLevel) / (xpForNextLevel - xpForCurrentLevel);
 		return xpProgress;
 	}
 

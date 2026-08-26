@@ -16,8 +16,9 @@ Environment variables (all optional — defaults match server.properties):
 """
 
 import os
-from sqlalchemy import create_engine, Column, BigInteger, Integer, String, DateTime
-from sqlalchemy.orm import sessionmaker, declarative_base
+
+from sqlalchemy import BigInteger, Column, DateTime, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # ── Connection ────────────────────────────────────────────────────────────────
 _host     = os.getenv("GAME_DB_HOST",     "localhost")
@@ -48,40 +49,54 @@ GameBase = declarative_base()
 class HiscoreUser(GameBase):
     __tablename__ = "hs_users"
 
-    # Primary key and identity
-    user_id    = Column(Integer,     primary_key=True, name="user_id")
+    # `id` (auto-increment) is the table's actual primary key. user_id is NOT
+    # unique at the DB level (Highscores.java's own writes dedupe by username,
+    # not user_id, and backfilled rows all share a 0 placeholder since no save
+    # file exposes a real userId) — mapping user_id as the ORM primary key
+    # previously made SQLAlchemy's identity map silently collapse every row
+    # sharing a user_id into a single object, dropping the rest from query
+    # results. Must map the real `id` column instead.
+    id         = Column(Integer,     primary_key=True, name="id")
+    user_id    = Column(Integer,     name="user_id")
     username   = Column(String(50),  name="username")
-    difficulty = Column(String(20),  name="difficulty")   # experience rate label
-    mode       = Column(String(30),  name="mode")         # STANDARD | IRONMAN | …
+
+    # Plain int(11) columns on the live table, written by Highscores.java as
+    # the corresponding enum's ordinal — NOT strings:
+    #   difficulty: Difficulty.values() order -- EASY, INTERMEDIATE, HARD, EXTREME, OSRS
+    #   mode:       GameMode.values() order -- STANDARD, IRONMAN, ULTIMATE_IRONMAN,
+    #               HARDCORE_IRONMAN, GROUP_IRONMAN, HARDCORE_GROUP_IRONMAN
+    difficulty = Column(Integer,  name="difficulty")
+    mode       = Column(Integer,  name="mode")
 
     # Aggregate totals
     total_level      = Column(Integer,    name="totalLevel")
     total_experience = Column(BigInteger, name="totalXp")
 
-    # 23 individual skills (camelCase in DB, snake_case on the ORM object)
-    attack_xp        = Column(BigInteger, name="attackXp")
-    defence_xp       = Column(BigInteger, name="defenceXp")
-    strength_xp      = Column(BigInteger, name="strengthXp")
-    hitpoints_xp     = Column(BigInteger, name="hitpointsXp")
-    ranged_xp        = Column(BigInteger, name="rangedXp")
-    prayer_xp        = Column(BigInteger, name="prayerXp")
-    magic_xp         = Column(BigInteger, name="magicXp")
-    cooking_xp       = Column(BigInteger, name="cookingXp")
-    woodcutting_xp   = Column(BigInteger, name="woodcuttingXp")
-    fletching_xp     = Column(BigInteger, name="fletchingXp")
-    fishing_xp       = Column(BigInteger, name="fishingXp")
-    firemaking_xp    = Column(BigInteger, name="firemakingXp")
-    crafting_xp      = Column(BigInteger, name="craftingXp")
-    smithing_xp      = Column(BigInteger, name="smithingXp")
-    mining_xp        = Column(BigInteger, name="miningXp")
-    herblore_xp      = Column(BigInteger, name="herbloreXp")
-    agility_xp       = Column(BigInteger, name="agilityXp")
-    thieving_xp      = Column(BigInteger, name="thievingXp")
-    slayer_xp        = Column(BigInteger, name="slayerXp")
-    farming_xp       = Column(BigInteger, name="farmingXp")
-    runecrafting_xp  = Column(BigInteger, name="runecraftingXp")
-    hunter_xp        = Column(BigInteger, name="hunterXp")
-    construction_xp  = Column(BigInteger, name="constructionXp")
+    # 23 individual skills — int(11) on the live table (max skill xp fits
+    # comfortably in 32 bits), camelCase in DB, snake_case on the ORM object.
+    attack_xp        = Column(Integer, name="attackXp")
+    defence_xp       = Column(Integer, name="defenceXp")
+    strength_xp      = Column(Integer, name="strengthXp")
+    hitpoints_xp     = Column(Integer, name="hitpointsXp")
+    ranged_xp        = Column(Integer, name="rangedXp")
+    prayer_xp        = Column(Integer, name="prayerXp")
+    magic_xp         = Column(Integer, name="magicXp")
+    cooking_xp       = Column(Integer, name="cookingXp")
+    woodcutting_xp   = Column(Integer, name="woodcuttingXp")
+    fletching_xp     = Column(Integer, name="fletchingXp")
+    fishing_xp       = Column(Integer, name="fishingXp")
+    firemaking_xp    = Column(Integer, name="firemakingXp")
+    crafting_xp      = Column(Integer, name="craftingXp")
+    smithing_xp      = Column(Integer, name="smithingXp")
+    mining_xp        = Column(Integer, name="miningXp")
+    herblore_xp      = Column(Integer, name="herbloreXp")
+    agility_xp       = Column(Integer, name="agilityXp")
+    thieving_xp      = Column(Integer, name="thievingXp")
+    slayer_xp        = Column(Integer, name="slayerXp")
+    farming_xp       = Column(Integer, name="farmingXp")
+    runecrafting_xp  = Column(Integer, name="runecraftingXp")
+    hunter_xp        = Column(Integer, name="hunterXp")
+    construction_xp  = Column(Integer, name="constructionXp")
 
 
 # ── ORM model: pklog ─────────────────────────────────────────────────────────

@@ -52,6 +52,8 @@ public enum AttributeTypes {
 	RAID_UNIQUE_CHARM,
 	WEATHER_WIZARD,
 	DRAGON_WRATH,
-	WILDERNESS_KEY, AUGMENTED //Used for staff of the dead for autocasting ancients.
+	WILDERNESS_KEY, AUGMENTED, //Used for staff of the dead for autocasting ancients.
+	ASTRADOX_WAND, //Marks a Kodai wand instance as the custom Astradox Wand variant.
+	ACCURSED_BOW //Marks a Craw's bow instance as the custom Accursed Bow variant.
 
 }

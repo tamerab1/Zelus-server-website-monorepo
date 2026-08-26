@@ -9,7 +9,7 @@ public class NormalBundle extends ItemContainer {
 		int slotsRequired = 10;
 		ItemAction.registerInventory(30433, "open", (player, item) -> {
 			if (player.getInventory().getFreeSlots() < slotsRequired) {
-				player.sendMessage("You need atleast 10 free inventory slots free to open the ultra budnle.");
+				player.sendMessage("You need at least 10 free inventory slots free to open the normal bundle.");
 				return;
 			}
 			player.lock();

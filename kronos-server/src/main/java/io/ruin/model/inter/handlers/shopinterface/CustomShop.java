@@ -418,14 +418,22 @@ public enum CustomShop {
 			new ShopItem(313, 6),
 			new ShopItem(4, 10),
 			new ShopItem(2347, 2),
+			new ShopItem(1265, 1),//bronze pickaxe
 			new ShopItem(1267, 280),
 			new ShopItem(1275, 64000),
+			new ShopItem(1351, 16),//bronze axe
 			new ShopItem(1349, 112),
 			new ShopItem(1359, 25600),
 			new ShopItem(946, 12),
 			new ShopItem(1733, 2),
 			new ShopItem(1734, 2),
 			new ShopItem(314, 4),
+			new ShopItem(1755, 2),//chisel
+			new ShopItem(8794, 2),//saw
+			new ShopItem(590, 2),//tinderbox
+			new ShopItem(954, 18),//rope
+			new ShopItem(1925, 2),//bucket
+			new ShopItem(1931, 2),//pot
 			new ShopItem(11881, 400),
 			new ShopItem(7937, 8),
 			new ShopItem(228, 3),

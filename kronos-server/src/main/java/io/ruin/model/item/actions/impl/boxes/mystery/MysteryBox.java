@@ -1287,7 +1287,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30461), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1315,16 +1315,15 @@ public class MysteryBox {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
-			reward = TOB_REFUND_TABLE.rollItem();
+			reward = MYSTERY_BOX_TABLE.rollItem();
 			item.remove();
 			player.getInventory().add(reward);
-			player.theatreOfBloodKills.increment(player);
 			if (reward.lootBroadcast != null)
 				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
-					+ reward.getDef().name.toLowerCase() + "</shad> reward from a ToB chest!");
+					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Mystery box!");
 			player.addToCollectionLog(reward);
 			player.unlock();
-			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the ToB chest!");
+			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Mystery box!");
 		});
 		ItemAction.registerInventory(30530, "open", (player, item) -> {
 			player.lock();
@@ -1417,10 +1416,10 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String formattedAmount = NumberUtils.formatNumber(reward.getAmount());
 				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
-					" received a <shad=D80808>" + formattedAmount + "x " + reward.getDef().name.toLowerCase() + "</shad> reward from a Zelus Point Ultra Mystery Box!");
+					" received a <shad=D80808>" + formattedAmount + "x " + reward.getDef().name.toLowerCase() + "</shad> reward from an Ultra Mystery Box!");
 			}
 			player.unlock();
-			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Zelus Point Ultra Mystery Box!");
+			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Ultra Mystery Box!");
 		});
 		ItemAction.registerInventory(30582, "open", (player, item) -> {
 			player.lock();
@@ -1500,7 +1499,7 @@ public class MysteryBox {
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Forgotten lockbox!");
 			player.unlock();
 		});
-		ItemAction.registerInventory(59524, "open", (player, item) -> {
+		ItemAction donatorWeaponBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1539,17 +1538,21 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59524), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(59524).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
-		});
+		};
+		// Item 30628 is an unregistered cache duplicate of 59524 (identical name "Donator Weapon
+		// Box"), so it needs the same handler registered explicitly or opening it silently does nothing.
+		ItemAction.registerInventory(59524, "open", donatorWeaponBoxAction);
+		ItemAction.registerInventory(30628, "open", donatorWeaponBoxAction);
 
 		ItemAction.registerInventory(32000, "open", (player, item) -> {
 			if (!player.getInventory().hasFreeSlots(1)) {
@@ -1578,7 +1581,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1616,7 +1619,7 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
@@ -1627,7 +1630,7 @@ public class MysteryBox {
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
 		});
-		ItemAction.registerInventory(59525, "open", (player, item) -> {
+		ItemAction donatorArmourBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1660,18 +1663,22 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59525), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(59525).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
 			player.unlock();
-		});
+		};
+		// Item 30627 is an unregistered cache duplicate of 59525 (identical name "Donator Armour
+		// Box"), so it needs the same handler registered explicitly or opening it silently does nothing.
+		ItemAction.registerInventory(59525, "open", donatorArmourBoxAction);
+		ItemAction.registerInventory(30627, "open", donatorArmourBoxAction);
 		ItemAction.registerInventory(30596, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();
@@ -1790,7 +1797,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(4810), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -1839,7 +1846,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30446), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -1855,7 +1862,7 @@ public class MysteryBox {
 			}
 			player.unlock();
 		});
-		ItemAction.registerInventory(30462, "open", (player, item) -> {
+		ItemAction advancedDonatorMysteryBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1888,19 +1895,25 @@ public class MysteryBox {
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30462), reward.getId());
 
 				var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 					jsonObject.put("player_x", player.getPosition().getX());
 					jsonObject.put("player_y", player.getPosition().getY());
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(30462).getDef().name);
+					jsonObject.put("source", item.getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
 			}
 			player.unlock();
-		});
+		};
+		// Item 30447 is an unregistered cache duplicate of 30462 (identical name "Advanced donator
+		// mystery box"), so it needs the same handler registered explicitly or opening it silently
+		// does nothing. It's also a genuine reward in SummerMysteryBox's loot table, so real players
+		// can end up holding it, not just via admin item-search commands.
+		ItemAction.registerInventory(30462, "open", advancedDonatorMysteryBoxAction);
+		ItemAction.registerInventory(30447, "open", advancedDonatorMysteryBoxAction);
 		ItemAction.registerInventory(30448, "open", (player, item) -> {
 			if (player.getInventory().getFreeSlots() < 3) {
 				player.sendMessage("You need at least 3 inventory spaces to open this!");
@@ -1936,7 +1949,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30448), reward.getId());
 
 					var jsonObject = new JSONObject();
-					jsonObject.put("player", player.getName());
+					jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());
@@ -1987,7 +2000,7 @@ public class MysteryBox {
 //					RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30449), reward.getId());
 
 					var jsonObject = new JSONObject();
-						jsonObject.put("player", player.getName());
+						jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 						jsonObject.put("player_x", player.getPosition().getX());
 						jsonObject.put("player_y", player.getPosition().getY());
 						jsonObject.put("player_z", player.getPosition().getZ());

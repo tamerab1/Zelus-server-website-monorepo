@@ -1,0 +1,84 @@
+/**
+ * LoginForm — staff-only sign-in for Admin CP.
+ *
+ * Player accounts were removed; this form is reachable only at the hidden
+ * /staff-login route (not linked from the navbar). Staff accounts are
+ * created directly in the database — there is no self-service registration
+ * or password-recovery flow here.
+ */
+import { useState } from 'react';
+import { useApp } from '../../context/AppContext.jsx';
+import { login } from '../../services/authService.js';
+import { isAdmin } from '../../utils/ranks.js';
+import AlertBox from '../ui/AlertBox.jsx';
+
+export default function LoginForm() {
+  const { setCurrentUser, setCurrentView, authStatus, setAuthStatus } = useApp();
+  const [loginData,    setLoginData]    = useState({ username: '', password: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setAuthStatus({ type: 'info', message: 'Authenticating...' });
+    try {
+      const data = await login(loginData);
+      if (!isAdmin(data.user?.privilege)) {
+        setAuthStatus({ type: 'error', message: 'This account does not have staff access.' });
+        return;
+      }
+      setCurrentUser(data.user);
+      setAuthStatus({ type: '', message: '' });
+      setLoginData({ username: '', password: '' });
+      setCurrentView('admin');
+    } catch (error) {
+      setAuthStatus({ type: 'error', message: error.message });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <main className="flex justify-center items-center min-h-[80vh] px-4 py-16">
+      <div className="stone-panel w-full max-w-md" style={{ borderRadius: 2 }}>
+
+        <div className="panel-header text-center py-6">
+          <h2 className="font-fantasy text-2xl font-bold tracking-widest text-white">STAFF SIGN-IN</h2>
+          <p className="font-fantasy text-xs tracking-[0.3em] mt-2" style={{ color: '#555' }}>
+            AUTHORIZED PERSONNEL ONLY
+          </p>
+        </div>
+
+        <div className="p-8">
+          <AlertBox status={authStatus} />
+
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <input
+              type="text"
+              placeholder="Username"
+              required
+              className="rpg-input font-fantasy text-sm tracking-wide px-4 py-3"
+              value={loginData.username}
+              onChange={e => setLoginData({ ...loginData, username: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              required
+              className="rpg-input font-fantasy text-sm tracking-wide px-4 py-3"
+              value={loginData.password}
+              onChange={e => setLoginData({ ...loginData, password: e.target.value })}
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-download mt-3 py-4 w-full font-fantasy text-sm tracking-widest uppercase"
+            >
+              {isSubmitting ? 'Authenticating...' : 'Sign In'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
+}

@@ -30,6 +30,15 @@ public class GroundItem extends Position {
 	public static interface Hook {
 		record Pickup(Player player, GroundItem item) implements Hook {
 		};
+
+		/**
+		 * Fired before a ground item is placed into the world, right after the
+		 * built-in phantom-item guard. A listener that wants to silently swallow
+		 * the spawn (e.g. an economy-protection module vetoing spawnable/dissolvable
+		 * items) should return {@link io.ruin.HooksV2.Result#Return}.
+		 */
+		record PreSpawn(GroundItem item) implements Hook {
+		};
 	}
 
 	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
@@ -116,6 +125,8 @@ public class GroundItem extends Position {
 	public GroundItem spawn(int appearMinutes) {
 		// Phantom rental items must never land on the ground
 		if (isPhantom()) return this;
+		// Economy-protection: semi-spawnable/dissolvable items never land on the ground
+		if (hooks.handle(new Hook.PreSpawn(this))) return this;
 		Tile.get(getX(), getY(), getZ(), true).addItem(this);
 		if (appearMinutes != 0) {
 			boolean allowAppear = appearMinutes > 0 && activeOwner != null && !activeOwner.isEmpty()
@@ -136,6 +147,8 @@ public class GroundItem extends Position {
 	public GroundItem spawnPublic() {
 		// Phantom rental items must never land on the ground
 		if (isPhantom()) return this;
+		// Economy-protection: semi-spawnable/dissolvable items never land on the ground
+		if (hooks.handle(new Hook.PreSpawn(this))) return this;
 		Tile.get(getX(), getY(), getZ(), true).addItem(this);
 		queue(() -> {
 			queue(this::appear);

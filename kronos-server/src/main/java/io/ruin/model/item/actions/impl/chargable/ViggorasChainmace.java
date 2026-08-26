@@ -38,7 +38,8 @@ public class ViggorasChainmace {
 		// ItemItemAction.register(30563, CHARGED, (player, fangs, bow) -> addCallistoClaws(player, bow, fangs));
 
 		ObjType.get(CHARGED).addPreTargetDefendListener((player, item, hit, target) -> {
-			if (hit.attackStyle != null && hit.attackStyle.isMelee() && target.npc != null && player.wildernessLevel > 0 || player.getPosition().inBounds(KBD_BOUNDS)) {
+			if (hit.attackStyle != null && hit.attackStyle.isMelee() && target.npc != null
+					&& (player.wildernessLevel > 0 || player.getPosition().inBounds(KBD_BOUNDS))) {
 				if (consumeCharge(player, item)) {
 					hit.boostAttack(1.2); //50% accuracy increase
 					hit.boostDamage(1.2); //50% damage increase

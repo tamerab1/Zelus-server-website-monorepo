@@ -10,6 +10,7 @@ import io.ruin.api.utils.MathUtils;
 import io.ruin.cache.ObjType;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.item.Item;
 import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,16 @@ public class TradePost {
 				BigInteger totalAmountTransacted,
 				BigInteger buyerRemainder) implements Hook {
 		}
+	}
+
+	// Slots 1-3 are open to everyone; slot 4 needs Donator+, slot 5 needs Super Donator+, and
+	// slots 6-10 need Elite Donator+ (equalToOrGreaterThan so higher tiers keep the perk).
+	public static int maxOfferSlots(Player player) {
+		var group = player.getSecondaryGroup();
+		if (group.equalToOrGreaterThan(SecondaryGroup.ELITE_DONATOR)) return 10;
+		if (group.equalToOrGreaterThan(SecondaryGroup.SUPER_DONATOR)) return 5;
+		if (group.equalToOrGreaterThan(SecondaryGroup.DONATOR)) return 4;
+		return 3;
 	}
 
 	// Loads temporary slotted attributes for a player
@@ -80,7 +91,7 @@ public class TradePost {
 			}
 
 			var pTradePost = player.tradePost();
-			var slot = pTradePost.offersEmptySlot();
+			var slot = pTradePost.offersEmptySlot(maxOfferSlots(player));
 			if (slot == -1) {
 				player.sendMessage("You have the maximum amount of offers active.");
 				return null;

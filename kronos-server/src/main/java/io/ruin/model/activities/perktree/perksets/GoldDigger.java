@@ -4,10 +4,6 @@ import io.ruin.model.activities.perktree.PlayerPerkSet;
 
 public class GoldDigger extends PlayerPerkSet {
 
-	public double getDropRateBoost() {
-		return 4 + (2.5 * (1.5 * getLevel()));
-	}
-
 	@Override
 	public String getPerkSetName() {
 		return "Gold Digger";
@@ -18,7 +14,7 @@ public class GoldDigger extends PlayerPerkSet {
 		return "Boosted Drop Rates";
 	}
 
-	private double getDropRateBoost(int level) {
+	public double getDropRateBoost(int level) {
 		return 4 + (2.5 * (1.5 * level));
 	}
 

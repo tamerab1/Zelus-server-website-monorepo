@@ -206,6 +206,20 @@ public enum Altars {
 			if (player.runecraftedRunesCounter == Achievements.THE_POWER_WITHIN.getCompletionAmount())
 				player.sendMessage("<col=000080>You have completed the achievement: <col=800000>" + Achievements.THE_POWER_WITHIN.getAchievementName());
 
+			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ONE_WITH_THE_RUNES)) {
+				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.ONE_WITH_THE_RUNES);
+				OneWithTheRunes c = (OneWithTheRunes) player.getPlayerPerkHandler().
+					getActivePerks(player).get(perkIndex).getPerk(player);
+				double multiplier = 1;
+				multiplier += c.getRuneMultiplier();
+				amount *= multiplier;
+			}
+
+			// These must track the SAME post-perk-boost amount as counter.increment() below
+			// (which drives craftedAstral/craftedBlood/craftedWrath -- the fields the actual
+			// achievement claim check reads). Incrementing astralsCrafted/etc. here used to
+			// happen BEFORE the Perks.ONE_WITH_THE_RUNES boost was applied, so this "you've
+			// completed it" popup and the claim-eligible threshold could disagree.
 			if (altar.runeID == ASTRAL.runeID) {
 				player.astralsCrafted += amount;
 				if (player.astralsCrafted == Achievements.ASTRALWORLD.getCompletionAmount())
@@ -222,14 +236,6 @@ public enum Altars {
 				player.wrathsCrafted += amount;
 				if (player.wrathsCrafted == Achievements.FEEL_MY_WRATH.getCompletionAmount())
 					player.sendMessage("<col=000080>You have completed the achievement: <col=800000>" + Achievements.FEEL_MY_WRATH.getAchievementName());
-			}
-			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ONE_WITH_THE_RUNES)) {
-				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.ONE_WITH_THE_RUNES);
-				OneWithTheRunes c = (OneWithTheRunes) player.getPlayerPerkHandler().
-					getActivePerks(player).get(perkIndex).getPerk(player);
-				double multiplier = 1;
-				multiplier += c.getRuneMultiplier();
-				amount *= multiplier;
 			}
 			player.getInventory().add(altar.runeID, amount);
 			double experience = essenceCount * altar.experience;

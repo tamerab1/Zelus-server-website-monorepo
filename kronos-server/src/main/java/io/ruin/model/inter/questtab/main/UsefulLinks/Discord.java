@@ -16,6 +16,6 @@ public class Discord extends QuestTabEntry {
 
 	@Override
 	public void select(Player player) {
-		//  player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/Prifddinas");
+		//  player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/XZ3E6Nur2r");
 	}
 }

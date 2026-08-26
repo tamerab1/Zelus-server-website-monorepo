@@ -10,6 +10,7 @@ import io.ruin.model.inter.questtab.JournalTab;
 import io.ruin.model.inter.questtab.JournalTab.TabComponent;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.Item;
+import io.ruin.model.skills.prayer.Prayer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -177,7 +178,7 @@ public class RiskProtection extends JournalToggle {
 		if (hook == null) return;
 		boolean skulled = player.getCombat().isSkulled();
 		boolean ultimateIronMan = player.getGameMode().isUltimateIronman();
-		int keepCount = hook.getKeepCount(skulled, ultimateIronMan, !player.getCombat().highRiskSkull);
+		int keepCount = hook.getKeepCount(skulled, ultimateIronMan, player.getPrayer().isActive(Prayer.PROTECT_ITEM));
 
 		ArrayList<Item> items = hook.itemsSortedByProtectValue(player);
 		ArrayList<Item> keepItems = new ArrayList<>(keepCount);

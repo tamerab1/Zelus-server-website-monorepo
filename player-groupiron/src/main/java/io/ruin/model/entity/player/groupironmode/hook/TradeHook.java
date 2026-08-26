@@ -22,32 +22,22 @@ public class TradeHook implements Trade.Hook {
 			return Result.Pass;
 		}
 
-		if (pGameMode.isAnyOf(GameMode.HARDCORE_GROUP_IRONMAN, GameMode.GROUP_IRONMAN)) {
-			var pGroup = player.newGroupId;
-			var targetGroup = target.newGroupId;
-
-			if (pGroup == 0) {
-				player.sendMessage("You are not in a group.");
-				return Result.Return;
-			}
-
-			if (pGroup != targetGroup) {
-				player.sendMessage("This player is not in your group.");
-				return Result.Return;
-			}
-		}
-
-		if (player.getGameMode().isIronMan() && !target.isManager() && !player.isManager()) {
-			if (player.getGroupIron() != null && player.newGroupId != target.newGroupId) {
+		// Any ironman variant (solo/hardcore/ultimate/group) on EITHER side gates the trade.
+		// Group/Hardcore Group Ironmen may trade with their own group's members; every other
+		// combination is blocked -- this used to only check one side at a time (and only
+		// blocked solo ironmen via a getGroupIron() != null check that's never true for them),
+		// letting a plain account freely trade items into any ironman or group-ironman account.
+		boolean playerIronMan = pGameMode.isIronMan();
+		boolean targetIronMan = target.getGameMode().isIronMan();
+		if (playerIronMan || targetIronMan) {
+			boolean playerGroup = pGameMode.isAnyOf(GameMode.GROUP_IRONMAN, GameMode.HARDCORE_GROUP_IRONMAN);
+			boolean targetGroup = target.getGameMode().isAnyOf(GameMode.GROUP_IRONMAN, GameMode.HARDCORE_GROUP_IRONMAN);
+			boolean sameGroup = playerGroup && targetGroup && player.newGroupId != 0
+					&& player.newGroupId == target.newGroupId;
+			if (!sameGroup) {
 				player.sendMessage("Ironman stand alone.");
 				return Result.Return;
 			}
-		}
-
-		if (target.getGameMode().isIronMan() && !target.getGameMode().isGroupIronman()
-				&& !target.getGameMode().isHardcoreGroupIronman()) {
-			player.sendMessage(target.getName() + " is an ironman and so cannot trade.");
-			return Result.Return;
 		}
 
 		return Result.Pass;

@@ -8,15 +8,15 @@ import io.ruin.model.map.Bounds;
 
 public enum KeyTeleports {
 
-	CRYSTAL_KEY(989, new Bounds(1389, 3248, 1389, 3248, 0)),
-	SLAYER_KEY1(25426, new Bounds(1384, 3246, 1384, 3246, 0)),
-	SLAYER_KEY2(25424, new Bounds(1384, 3246, 1384, 3246, 0)),
-	SLAYER_KEY3(25432, new Bounds(1384, 3246, 1384, 3246, 0)),
-	SLAYER_KEY4(25430, new Bounds(1384, 3246, 1384, 3246, 0)),
-	ENH_CRYSTAL_KEY(23951, new Bounds(1388, 3244, 1388, 3244, 0)),
-	BRIMSTONE_KEY(23083, new Bounds(1389, 3248, 1389, 3248, 0)),
+	CRYSTAL_KEY(989, new Bounds(3100, 3512, 3100, 3512, 0)),
+	SLAYER_KEY1(25426, new Bounds(3095, 3510, 3095, 3510, 0)),
+	SLAYER_KEY2(25424, new Bounds(3095, 3510, 3095, 3510, 0)),
+	SLAYER_KEY3(25432, new Bounds(3095, 3510, 3095, 3510, 0)),
+	SLAYER_KEY4(25430, new Bounds(3095, 3510, 3095, 3510, 0)),
+	ENH_CRYSTAL_KEY(23951, new Bounds(3099, 3508, 3099, 3508, 0)),
+	BRIMSTONE_KEY(23083, new Bounds(3100, 3512, 3100, 3512, 0)),
 	DONATOR_TABLET(30611, new Bounds(1248, 2604, 1248, 2604, 2)),
-	HOME_TABLET(30612, new Bounds(1376, 3232, 1376, 3232, 0));
+	HOME_TABLET(30612, new Bounds(3087, 3496, 3087, 3496, 0));
 
 	public final int id;
 	public final Bounds bounds;

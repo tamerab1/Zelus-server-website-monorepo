@@ -130,7 +130,7 @@ public class CombatAchievementSystem {
 		player.combatAchievementsClaimed++;
 		getCompletionRewardItems(player, type);
 		player.dialogue(
-			new NPCDialogue(13613, "You have claimed your " + type.name().toLowerCase() + " achievement reward!"));
+			new NPCDialogue(30007, "You have claimed your " + type.name().toLowerCase() + " achievement reward!"));
 		return true;
 	}
 
@@ -147,10 +147,10 @@ public class CombatAchievementSystem {
 		if (!claimed) {
 			if(getPointsForNextTier(player.combatAchievementsClaimed) == 0) {
 				player.dialogue(
-					new NPCDialogue(13613, "You've already claimed all your combat achievement rewards.'"));
+					new NPCDialogue(30007, "You've already claimed all your combat achievement rewards.'"));
 			} else {
 				player.dialogue(
-					new NPCDialogue(13613, "You don't have any rewards to claim at this time. You need " +
+					new NPCDialogue(30007, "You don't have any rewards to claim at this time. You need " +
 						Color.DARK_RED.wrap("" + getPointsForNextTier(player.combatAchievementsClaimed)) + " combat achievement points to claim a reward."));
 			}
 		}

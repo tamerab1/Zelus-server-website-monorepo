@@ -4,7 +4,6 @@ import discord.webhooks.notifications.GlobalBroadcastHook;
 import io.ruin.model.World;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
-import org.json.JSONObject;
 
 public class GlobalBossHandler {
 	static NPC currentBoss;
@@ -32,18 +31,11 @@ public class GlobalBossHandler {
 	}
 
 	private static void onBossPrepared(NPC npc) {
-		var dto = new JSONObject()
-				.put("boss", npc.getName())
-				.put("description", "will spawn in 60 seconds.");
-		GlobalBroadcastHook.sendGlobalSpawnedMessage(dto);
+		GlobalBroadcastHook.sendEventSpawnWarning(npc.getName(), null);
 	}
 
 	private static void onBossSpawned(NPC npc) {
-		// RareDropEmbedMessage.sendGlobalSpawnedMessage(currentBoss);
-		var dto = new JSONObject()
-				.put("boss", npc.getName())
-				.put("description", "has just spawned!");
-		GlobalBroadcastHook.sendGlobalSpawnedMessage(dto);
+		GlobalBroadcastHook.sendEventSpawnAnnouncement(npc.getName(), null);
 	}
 
 	public static void register() {

@@ -1,13 +1,31 @@
 services:
-  db_sql:
-    image: "${CI_REGISTRY_IMAGE}/db_sql:${CI_COMMIT_SHORT_SHA}"
-    environment:
-      MARIADB_ROOT_PASSWORD: ${DB_SQL_ROOT_PASSWORD}
-      MARIADB_USER: ${DB_SQL_USER}
-      MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
-    volumes:
-      - data_db_sql:/var/lib/mysql
-  db_mongo:
-    image: "mongo:latest"
+    # Relational Database Layer
+    db_sql:
+        image: "${IMAGE_REGISTRY}/db_sql:${IMAGE_TAG}"
+        restart: unless-stopped
+        environment:
+            MARIADB_ROOT_PASSWORD: ${DB_SQL_ROOT_PASSWORD}
+            MARIADB_USER: ${DB_SQL_USER}
+            MARIADB_PASSWORD: ${DB_SQL_USER_PASSWORD}
+            # Consumed by docker-entrypoint-initdb.d/init_website.sh to create
+            # the website_api DB user + zelusrsps_db schema on first boot.
+            WEBSITE_DB_PASSWORD: ${WEBSITE_DB_PASSWORD}
+        volumes:
+            - data_db_sql:/var/lib/mysql
+
+    # Document Store Layer (Hardened Authentication)
+    db_mongo:
+        image: "mongo:7.0"
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+        volumes:
+            - data_db_mongo:/data/db
+
+# Persistent Infrastructure Volumes Matrix
 volumes:
-  data_db_sql:
+    data_db_sql:
+        driver: local
+    data_db_mongo:
+        driver: local

@@ -7,6 +7,7 @@ import io.ruin.db.PlayerDatabase;
 import io.ruin.model.entity.npc.actions.edgeville.StarterGuide;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.GameMode;
+import io.ruin.model.entity.player.PlayMode;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.entity.shared.listeners.LoginListener;
@@ -25,6 +26,14 @@ public class GameModeInterface {
 	//@formatter:off
 	enum AccountType {
 		REGULAR("Regular Account", AccountMode.REGULAR, 10545, new Item(ItemID.IRON_FULL_HELM), new Item(ItemID.IRON_PLATEBODY), new Item(ItemID.IRON_PLATELEGS)),
+		// Reuses REGULAR's client script (10545) — no new cache assets needed for that part.
+		// GameMode-wise this is still STANDARD (non-ironman); PlayMode is what actually
+		// distinguishes it, set in confirmAccountCreation(). Equipment preview shows the
+		// dharok's helm/body/legs from the real PVP_MODE starter kit (see
+		// StarterGuide.givePvpModeStarter()) -- weapon/shield/boots for this preview are set
+		// separately in updateIronModeEquipment()/updateDifficultyEquipment() since those slots
+		// aren't part of this enum's constructor.
+		PVP_MODE("PVP Mode", AccountMode.REGULAR, 10545, new Item(ItemID.DHAROKS_HELM), new Item(ItemID.DHAROKS_PLATEBODY), new Item(ItemID.DHAROKS_PLATELEGS)),
 		IRONMAN("Standard IM", AccountMode.IRONMAN, 10544, new Item(ItemID.IRONMAN_HELM), new Item(ItemID.IRONMAN_PLATEBODY), new Item(ItemID.IRONMAN_PLATELEGS)),
 		ULTIMATE_IRONMAN("Ultimate IM", AccountMode.ULTIMATE_IRONMAN, 10543, new Item(ItemID.ULTIMATE_IRONMAN_HELM), new Item(ItemID.ULTIMATE_IRONMAN_PLATEBODY), new Item(ItemID.ULTIMATE_IRONMAN_PLATELEGS)),
 		HARDCORE_IRONMAN("Hardcore IM", AccountMode.HARDCORE_IRONMAN, 10542, new Item(ItemID.HARDCORE_IRONMAN_HELM), new Item(ItemID.HARDCORE_IRONMAN_PLATEBODY), new Item(ItemID.HARDCORE_IRONMAN_PLATELEGS)),
@@ -247,7 +256,12 @@ public class GameModeInterface {
 	private static String getModeDescription(AccountType currentAccountType) {
 		switch (currentAccountType) {
 			case REGULAR:
-				return "You will have no account restrictions on this mode, and you can trade with other players.";
+				return "You will have no account restrictions on this mode, and you can trade with other players." +
+					"<br>You'll earn PVM Points from bosses and Slayer, with access to the PVM Points shop.";
+			case PVP_MODE:
+				return "Built for instant PvP: access to the ::spawn command for whitelisted basic gear" +
+					" and system PvP presets, so you can jump straight into the Wilderness." +
+					"<br>Trade-off: no PVM Points shop access, since you're not earning them through PVM Mode's economy.";
 			case IRONMAN:
 				return "Ironman Mode in Zelus is a self-sufficient game" +
 					" mode where players cannot trade with others" +
@@ -346,26 +360,36 @@ public class GameModeInterface {
 		switch (currentAccountType) {
 			case REGULAR:
 				GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
+				break;
+			case PVP_MODE:
+				GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
+				player.setPlayMode(PlayMode.PVP_MODE);
 				break;
 			case IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 1);
 				GameMode.changeForumsGroup(player, GameMode.IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case ULTIMATE_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 2);
 				GameMode.changeForumsGroup(player, GameMode.ULTIMATE_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case HARDCORE_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 3);
 				GameMode.changeForumsGroup(player, GameMode.HARDCORE_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case GROUP_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 4);
 				GameMode.changeForumsGroup(player, GameMode.GROUP_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case HARDCORE_GROUP_IRONMAN:
 				VarPlayerRepository.IRONMAN_MODE.set(player, 5);
 				GameMode.changeForumsGroup(player, GameMode.HARDCORE_GROUP_IRONMAN.groupId);
+				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 		}
 		player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.NONE.id));
@@ -455,9 +479,15 @@ public class GameModeInterface {
 		player.getEquipment().set(0, currentAccountType.helmet);
 		player.getEquipment().set(4, currentAccountType.platebody);
 		player.getEquipment().set(7, currentAccountType.platelegs);
-		player.getEquipment().set(2, new Item(1704));
-		player.getEquipment().set(3, new Item(ItemID.IRON_SCIMITAR));
-		player.getEquipment().set(10, new Item(ItemID.CLIMBING_BOOTS));
+		if (currentAccountType == AccountType.PVP_MODE) {
+			player.getEquipment().set(3, new Item(ItemID.ABYSSAL_WHIP));
+			player.getEquipment().set(5, new Item(ItemID.DRAGON_DEFENDER));
+			player.getEquipment().set(10, new Item(ItemID.DRAGON_BOOTS));
+		} else {
+			player.getEquipment().set(2, new Item(1704));
+			player.getEquipment().set(3, new Item(ItemID.IRON_SCIMITAR));
+			player.getEquipment().set(10, new Item(ItemID.CLIMBING_BOOTS));
+		}
 	}
 
 	private void openDifficultyModeInterface(Player player) {
@@ -482,6 +512,12 @@ public class GameModeInterface {
 		player.getEquipment().set(0, currentAccountType.helmet);
 		player.getEquipment().set(4, currentAccountType.platebody);
 		player.getEquipment().set(7, currentAccountType.platelegs);
+		if (currentAccountType == AccountType.PVP_MODE) {
+			player.getEquipment().set(3, new Item(ItemID.ABYSSAL_WHIP));
+			player.getEquipment().set(5, new Item(ItemID.DRAGON_DEFENDER));
+			player.getEquipment().set(10, new Item(ItemID.DRAGON_BOOTS));
+			return;
+		}
 		player.getEquipment().set(10, new Item(ItemID.CLIMBING_BOOTS));
 		switch (currentDifficultyType) {
 			case EXTREME:
@@ -517,15 +553,20 @@ public class GameModeInterface {
 			startingContainer++;
 		}
 		getModeItems();
-		items.add(new Item(30477));
-		items.add(new Item(30588));
-		items.add(new Item(30589));
-		switch (currentDifficultyType) {
-			case EXTREME:
-				items.add(new Item(30478));
-				items.add(new Item(30479));
-				items.add(new Item(30480));
-				break;
+		// These eco-mode trainer items (and the EXTREME-tier trainer weapons below) aren't part
+		// of PVP_MODE's kit -- StarterGuide.givePvpModeStarter() never grants them, so showing
+		// them here would make the preview lie about what the account will actually receive.
+		if (currentAccountType != AccountType.PVP_MODE) {
+			items.add(new Item(30477));
+			items.add(new Item(30588));
+			items.add(new Item(30589));
+			switch (currentDifficultyType) {
+				case EXTREME:
+					items.add(new Item(30478));
+					items.add(new Item(30479));
+					items.add(new Item(30480));
+					break;
+			}
 		}
 		startingComponent = 56;
 		startingContainer = 1000;
@@ -560,6 +601,30 @@ public class GameModeInterface {
 
 	private void getModeItems() {
 		items.clear();
+		if (currentAccountType == AccountType.PVP_MODE) {
+			// Preview for PVP_MODE's actual starter kit -- see
+			// StarterGuide.givePvpModeStarter(), which grants these for real once the tutorial
+			// finishes. Previously PVP_MODE fell through to the same case as REGULAR below,
+			// showing the wrong (identical) preview for both account types.
+			items.add(new Item(ItemID.ABYSSAL_WHIP, 1));
+			items.add(new Item(ItemID.DRAGON_DEFENDER, 1));
+			items.add(new Item(ItemID.DHAROKS_HELM, 1));
+			items.add(new Item(ItemID.DHAROKS_PLATEBODY, 1));
+			items.add(new Item(ItemID.DHAROKS_PLATELEGS, 1));
+			items.add(new Item(ItemID.DRAGON_BOOTS, 1));
+			items.add(new Item(ItemID.ARMADYL_GODSWORD, 1));
+			items.add(new Item(ItemID.FIRE_CAPE, 1));
+			items.add(new Item(ItemID.DHAROKS_GREATAXE, 1));
+			items.add(new Item(3145, 100)); // Cooked karambwan (noted)
+			items.add(new Item(ItemID.SUPER_COMBAT_POTION4, 20));
+			items.add(new Item(ItemID.BERSERKER_RING, 1));
+			items.add(new Item(ItemID.KARILS_LEATHERSKIRT, 1));
+			items.add(new Item(ItemID.KARILS_LEATHERTOP, 1));
+			items.add(new Item(ItemID.KARILS_COIF, 1));
+			items.add(new Item(ItemID.KARILS_CROSSBOW, 1));
+			items.add(new Item(19625, 15));
+			return;
+		}
 		items.add(new Item(995, 500000));
 		items.add(new Item(562, 500));
 		items.add(new Item(558, 1000));

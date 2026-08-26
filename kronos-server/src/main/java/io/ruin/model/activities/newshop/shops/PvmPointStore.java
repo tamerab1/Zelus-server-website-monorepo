@@ -26,15 +26,6 @@ public class PvmPointStore extends NewShop {
             new ShopItem(new Item(ItemID.ANGLERFISH), 8, ShopCategories.CONSUMABLES, null, true),
             new ShopItem(new Item(ItemID.SHARK), 5, ShopCategories.CONSUMABLES, null, true),
 
-            // Equipment / Supplies
-            new ShopItem(new Item(ItemID.RUNE_ARROW), 2, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.DRAGON_ARROW), 5, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.AMETHYST_ARROW), 3, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.DIAMOND_BOLTS_E), 4, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.RUBY_BOLTS_E), 3, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.ONYX_BOLTS_E), 8, ShopCategories.EQUIPMENT, null, true),
-            new ShopItem(new Item(ItemID.DRAGONSTONE_BOLTS_E), 6, ShopCategories.EQUIPMENT, null, true),
-
             // Keys & Rewards
             new ShopItem(new Item(ItemID.CRYSTAL_KEY), 50, ShopCategories.TREASURES, null, true),
             new ShopItem(new Item(ItemID.BRIMSTONE_KEY), 40, ShopCategories.TREASURES, null, true),
@@ -65,8 +56,18 @@ public class PvmPointStore extends NewShop {
         );
     }
 
+    /** Exclusive to PVM Mode accounts — PVP Mode accounts never earn or spend PvM Points. */
+    @Override
+    public boolean canOpen(Player player) {
+        return player.isPvmMode();
+    }
+
     @Override
     public boolean buy(Player player, ShopItem item, int amount) {
+        if (!player.isPvmMode()) {
+            player.sendMessage("The PVM Point Shop is exclusive to PVM Mode accounts.");
+            return false;
+        }
         int cost = item.getCost() * amount;
         if (player.PvmPoints < cost) {
             int canAfford = player.PvmPoints / item.getCost();

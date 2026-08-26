@@ -55,16 +55,26 @@ public class PvmPoints {
     }
 
     public static void addPoints(Player player, NPC npc) {
-        if (npc == null || npc.getDef() == null) return;
+        if (player == null || npc == null || npc.getDef() == null) return;
+        if (!player.isPvmMode()) return; // PVP Mode accounts never earn PVM Points
         String name = npc.getDef().name.toLowerCase();
         Integer points = BOSS_POINTS.get(name);
         if (points != null && points > 0) {
             player.PvmPoints += points;
+            player.sendMessage("<shad=000000><col=BA0000>[PVM Points]</col> <col=0C2AC1>You earn <col=C10CB9>(+" + points + ") pvm points <col=0C2AC1>after killing <col=0C2AC1>"
+                + npc.getDef().name + "<col=0C2AC1>! You now have <col=0C2AC1>" + player.PvmPoints + " PVM Points<col=0C2AC1>!</shad>");
         }
+    }
+
+    /** True if {@code npc} has a dedicated entry in the named-boss point table above. */
+    public static boolean hasNamedPoints(NPC npc) {
+        if (npc == null || npc.getDef() == null) return false;
+        return BOSS_POINTS.containsKey(npc.getDef().name.toLowerCase());
     }
 
     /** Award points directly for raid completions (CoX, ToB, ToA). */
     public static void addRaidPoints(Player player, int points) {
+        if (player == null || !player.isPvmMode()) return; // PVP Mode accounts never earn PVM Points
         player.PvmPoints += points;
     }
 }

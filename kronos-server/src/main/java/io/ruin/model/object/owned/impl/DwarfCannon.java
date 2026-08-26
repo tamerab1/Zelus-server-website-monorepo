@@ -546,7 +546,7 @@ public class DwarfCannon extends OwnedObject {
 			getOwner().sendMessage("This temple is ancient and would probably collapse if you started firing a cannon.");
 			return false;
 		}
-		if (getOwner().getPosition().getRegion().id == 5426) {
+		if (getOwner().getPosition().getRegion().id == 12342) {
 			getOwner().sendMessage("You can't deploy a cannon here.");
 			return false;
 		}

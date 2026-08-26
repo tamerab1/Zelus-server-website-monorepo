@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import core.task.Continuations;
 import io.ruin.Server;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.JsonUtils;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.cache.*;
@@ -32,6 +33,8 @@ import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
 import io.ruin.model.content.HomeHandler;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitle;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitleManager;
 import io.ruin.model.content.upgrade.ItemEffect;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.*;
@@ -127,12 +130,16 @@ public class CommandHandlerAdmin {
 
 			case "bank_show": {
 				var bank = player.getBank();
+				System.out.println("=== bank_show for " + player.getName() + " ===");
 				for (var item : bank.getItems()) {
 					if (item == null) {
 						continue;
 					}
-					player.sendMessage(item.getId() + " : " + item.getAmount());
+					String line = item.getSlot() + ": id=" + item.getId() + " amount=" + item.getAmount();
+					player.sendMessage(line);
+					System.out.println(line);
 				}
+				System.out.println("=== end bank_show ===");
 				return true;
 			}
 
@@ -172,6 +179,90 @@ public class CommandHandlerAdmin {
 					id += 1;
 				}
 				player.sendMessage("free_slots_after: " + bank.getFreeSlots());
+				return true;
+			}
+
+			case "clearphantom": {
+				// Strips a stuck PvP-preset "phantom" rental flag (see PvpPresetManager.PHANTOM_KEY)
+				// from every item in equipment/inventory/bank -- for items left over from a rental
+				// preset that never got cleared, blocking them from being banked/traded/dropped.
+				int cleared = 0;
+				for (var container : java.util.List.of(
+						player.getEquipment(), player.getInventory(), player.getBank())) {
+					for (var item : container.getItems()) {
+						if (item != null && item.attributes != null
+								&& item.attributes.remove(io.ruin.model.content.pvppreset.PvpPresetManager.PHANTOM_KEY) != null) {
+							cleared++;
+						}
+					}
+				}
+				player.sendMessage("Cleared the phantom rental flag from " + cleared + " item(s).");
+				return true;
+			}
+
+			case "setlaunchtime": {
+				// Sets the persistent official-launch epoch that server uptime is measured
+				// from from now on (see ServerConfig) -- survives restarts/redeploys, unlike
+				// the previous tick-count-since-boot uptime. Run this once, deliberately, at
+				// the actual launch moment.
+				long epochMs;
+				if (args.length == 0 || args[0].equalsIgnoreCase("now")) {
+					epochMs = System.currentTimeMillis();
+				} else {
+					epochMs = Long.parseLong(args[0]) * 1000L;
+				}
+				io.ruin.services.ServerConfig.setLaunchTimestamp(epochMs);
+				player.sendMessage("Launch timestamp set to " + new java.util.Date(epochMs)
+						+ " -- uptime will now be measured from this moment, permanently.");
+				return true;
+			}
+
+			case "launchtime": {
+				long epochMs = io.ruin.services.ServerConfig.getLaunchTimestamp();
+				player.sendMessage(epochMs > 0
+						? "Launch timestamp is set to " + new java.util.Date(epochMs) + "."
+						: "Launch timestamp is not set -- uptime is currently measured from server boot.");
+				return true;
+			}
+
+			case "launchbackup": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				player.sendMessage("Starting launch backup (saves + hs_users/logs_* + mongo players)... this may take a moment.");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.backup();
+					Server.worker.execute(() -> player.sendScroll("Launch Backup", report.split("\n")));
+				});
+				return true;
+			}
+
+			case "launchwipedryrun": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				player.sendMessage("Running launch wipe dry run (read-only, nothing will be deleted)...");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.dryRun();
+					Server.worker.execute(() -> player.sendScroll("Launch Wipe Dry Run", report.split("\n")));
+				});
+				return true;
+			}
+
+			case "launchwipeexecute": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				if (args.length == 0 || !args[0].equals("CONFIRM")) {
+					player.sendMessage("This PERMANENTLY deletes all player data except mr boolt/peaks. "
+							+ "Run ::launchbackup and ::launchwipedryrun first. To actually execute, use: ::launchwipeexecute CONFIRM");
+					return true;
+				}
+				player.sendMessage("EXECUTING LAUNCH WIPE...");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.execute();
+					Server.worker.execute(() -> player.sendScroll("Launch Wipe Executed", report.split("\n")));
+				});
 				return true;
 			}
 
@@ -1468,9 +1559,69 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "maxbonus": {
+				int[] bonuses = player.getEquipment().bonuses;
+				for (int i = 0; i < bonuses.length; i++)
+					bonuses[i] = 15000;
+				player.sendMessage("Your bonuses have been set to 15000.");
+				return true;
+			}
+
+			case "maxbonus2": {
+				int value = Integer.parseInt(args[0]);
+				int[] bonuses = player.getEquipment().bonuses;
+				for (int i = 0; i < bonuses.length; i++)
+					bonuses[i] = value;
+				player.sendMessage("Your bonuses have been set to " + value + ".");
+				return true;
+			}
+
+			case "astradoxwand": {
+				Item item = new Item(ItemID.KODAI_WAND, 1);
+				item.putAttribute(AttributeTypes.ASTRADOX_WAND, 1);
+				player.getInventory().add(item);
+				player.sendMessage("Spawned the Astradox Wand.");
+				return true;
+			}
+
+			case "accursedbow": {
+				Item item = new Item(ItemID.CRAWS_BOW, 1);
+				item.putAttribute(AttributeTypes.ACCURSED_BOW, 1);
+				player.getInventory().add(item);
+				player.sendMessage("Spawned the Accursed Bow.");
+				return true;
+			}
+
 			case "giveperkpoints": {
 				forPlayer(player, query, "::giveperkpoints playerName",
 						p2 -> p2.perkPoints += args[0] == null ? 10_000 : Integer.parseInt(args[0]));
+				return true;
+			}
+
+			case "givetitle": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				String usage = "Usage: ::givetitle playerName searchTerm";
+				int prefixLen = command.length() + 1;
+				if (query.length() <= prefixLen) {
+					player.sendMessage(usage);
+					return true;
+				}
+				String remainder = query.substring(prefixLen).trim();
+				int lastSpace = remainder.lastIndexOf(' ');
+				if (lastSpace <= 0) {
+					player.sendMessage(usage);
+					return true;
+				}
+				String name = remainder.substring(0, lastSpace).trim();
+				String search = remainder.substring(lastSpace).trim();
+				Player target = World.getPlayer(name);
+				if (target == null) {
+					player.sendMessage("User '" + name + "' is not online.");
+					return true;
+				}
+				givetitleSearch(player, target, search);
 				return true;
 			}
 
@@ -1512,6 +1663,20 @@ public class CommandHandlerAdmin {
 				} else {
 					OptionScroll.openKeepOpen(player, "Item Search: " + search + " (" + options.size() + " results)", options);
 				}
+				return true;
+			}
+
+			case "givedp": {
+				int amount = args.length > 0 ? NumberUtils.intValue(args[0]) : 1000;
+				io.ruin.model.shop.Currency.DONATOR.currencyHandler.addCurrency(player, amount);
+				player.sendMessage("Gave yourself " + amount + " donator points.");
+				return true;
+			}
+
+			case "givevp": {
+				int amount = args.length > 0 ? NumberUtils.intValue(args[0]) : 1000;
+				io.ruin.model.shop.Currency.VOTE.currencyHandler.addCurrency(player, amount);
+				player.sendMessage("Gave yourself " + amount + " vote points.");
 				return true;
 			}
 
@@ -1784,6 +1949,53 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "forcepass": {
+				int firstSpace = query.indexOf(" ", command.length() + 1);
+				if (firstSpace <= 0) {
+					player.sendMessage("Usage: ::forcepass playerName newpassword");
+					return true;
+				}
+				String name = query.substring(command.length() + 1, firstSpace).trim();
+				String newPassword = query.substring(firstSpace + 1).trim();
+				if (newPassword.isEmpty()) {
+					player.sendMessage("Usage: ::forcepass playerName newpassword");
+					return true;
+				}
+				if (newPassword.length() > 20) {
+					player.sendMessage("Passwords can only be a maximum of 20 characters long.");
+					return true;
+				}
+				String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+				Player target = World.getPlayer(name);
+				if (target != null) {
+					target.password = hashedPassword;
+					target.sendMessage("An admin has reset your password.");
+					player.sendMessage("Reset " + target.getName() + "'s password.");
+				} else {
+					String uuid = name.toLowerCase().trim();
+					io.ruin.db.PlayerDatabase.db().mutateAsync(uuid, (pp) -> {
+						if (pp == null) {
+							player.sendMessage("Unable to find [" + uuid + "]");
+							return;
+						}
+						pp.password = hashedPassword;
+					});
+					player.sendMessage("Reset " + name + "'s password (was offline).");
+				}
+				return true;
+			}
+
+			case "checkip": {
+				String name = query.substring(query.indexOf(" ") + 1);
+				Player p2 = World.getPlayer(name);
+				if (p2 == null) {
+					player.sendMessage(name + " could not be found.");
+					return true;
+				}
+				player.sendMessage(p2.getName() + "'s IP: " + p2.getIp());
+				return true;
+			}
+
 			case "copyinv": {
 				String name = query.substring(query.indexOf(" ") + 1);
 				Player p2 = World.getPlayer(name);
@@ -1915,6 +2127,26 @@ public class CommandHandlerAdmin {
 				GameObject.spawn(id, player.getPosition(), type, direction);
 				player.sendMessage(
 						"spawned real " + id + " " + LocType.get(id).name + " (use ::obj to add fake)");
+				return true;
+			}
+
+			case "locsat": {
+				// Same as ::locs but for an arbitrary tile, since some objects
+				// (barriers, stalls) block their own tile so you can't stand
+				// on them to run ::locs directly.
+				int lx = Integer.parseInt(args[0]);
+				int ly = Integer.parseInt(args[1]);
+				int lz = args.length > 2 ? Integer.parseInt(args[2]) : player.getHeight();
+				Tile atTile = Tile.get(lx, ly, lz, false);
+				if (atTile == null || atTile.gameObjects == null || atTile.gameObjects.isEmpty()) {
+					player.sendMessage("No locations at " + lx + "," + ly + "," + lz + ".");
+					return true;
+				}
+				for (GameObject object : atTile.gameObjects) {
+					player.sendMessage(
+							"id=" + object.getId() + "  x=" + object.x + "  y=" + object.y + "  z=" + object.z
+									+ "  type=" + object.getType() + "  dir=" + object.getDirection());
+				}
 				return true;
 			}
 
@@ -2394,10 +2626,13 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
-			case "b":
-			case "bank":
-			case "openbank": {
-				player.getBank().open();
+			// Graceful shutdown for local dev use: System.exit fires the shutdown hook
+			// registered in Server.java (force-saves every online player and blocks
+			// until it's confirmed written to disk) before the JVM actually exits --
+			// unlike killing the process externally, which skips that hook entirely.
+			case "shutdown": {
+				player.sendMessage("Shutting down server -- saving all online players...");
+				System.exit(0);
 				return true;
 			}
 
@@ -2407,6 +2642,15 @@ public class CommandHandlerAdmin {
 					DataFile.reload(player, shield_types.class);
 					DataFile.reload(player, weapon_types.class);
 					DataFile.reload(player, item_info.class);
+					player.sendMessage("Done!");
+				});
+				return true;
+			}
+
+			case "reloadpetexchange": {
+				Server.executeAsync(() -> {
+					player.sendMessage("Reloading pet recolor exchange config...");
+					DataFile.reload(player, io.ruin.data.impl.pets.pet_recolor_exchange.class);
 					player.sendMessage("Done!");
 				});
 				return true;
@@ -2427,5 +2671,40 @@ public class CommandHandlerAdmin {
 		}
 
 		return false;
+	}
+
+	private static void grantTitle(Player admin, Player target, LoyaltyTitle title) {
+		LoyaltyTitleManager.unlock(target, title);
+		LoyaltyTitleManager.equip(target, title);
+		String plain = title.preview(target.getName()).replaceAll("<[^>]*>", "");
+		target.sendMessage("You have been granted the title: " + plain);
+		admin.sendMessage("Granted title '" + plain + "' to " + target.getName() + ".");
+	}
+
+	private static void givetitleSearch(Player admin, Player target, String search) {
+		String needle = search.toLowerCase();
+		List<LoyaltyTitle> matches = new ArrayList<>();
+		for (LoyaltyTitle title : LoyaltyTitle.all()) {
+			String plainText = title.text.replaceAll("<[^>]*>", "").toLowerCase();
+			String requirement = title.requirement == null ? "" : title.requirement.toLowerCase();
+			if (plainText.contains(needle) || requirement.contains(needle)) {
+				matches.add(title);
+			}
+		}
+		if (matches.isEmpty()) {
+			admin.sendMessage("No title found matching: " + search);
+			return;
+		}
+		if (matches.size() == 1) {
+			grantTitle(admin, target, matches.get(0));
+			return;
+		}
+		List<Option> options = new ArrayList<>();
+		for (LoyaltyTitle title : matches) {
+			if (options.size() >= 128) break;
+			String label = title.id + ": " + title.preview(target.getName()).replaceAll("<[^>]*>", "");
+			options.add(new Option(label, p -> grantTitle(admin, target, title)));
+		}
+		OptionScroll.openKeepOpen(admin, "Title Search: " + search + " (" + options.size() + " results)", options);
 	}
 }

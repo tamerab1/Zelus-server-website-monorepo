@@ -22,6 +22,7 @@ public final class StaticInit {
 		io.ruin.model.activities.DonationBossHandler.init();
 		io.ruin.model.activities.VoteBossHandler.init();
 		io.ruin.model.activities.VorathHandler.init(); // fixed position, no DynamicMap
+		io.ruin.model.activities.IcyEventBossHandler.init(); // fixed position, no DynamicMap
 		io.ruin.services.http.hiscores.Hiscores.sendBossDetails();
 		io.ruin.model.content.HomeHandler.init();
 		io.ruin.network.HWIDManager.start();
@@ -160,6 +161,7 @@ public final class StaticInit {
 		io.ruin.model.activities.tempevents.hweenevent.HalloweenDeathNPC.register();
 		io.ruin.model.activities.tempoross.TemporossActions.register();
 		io.ruin.model.activities.tempoross.TemporossRewards.register();
+		io.ruin.model.activities.tournament.TournamentHandler.register();
 		io.ruin.model.activities.warriorsguild.AnimatedArmor.register();
 		io.ruin.model.activities.warriorsguild.CyclopsRoom.register();
 		io.ruin.model.activities.warriorsguild.WarriorsGuild.register();
@@ -206,6 +208,8 @@ public final class StaticInit {
 		io.ruin.model.combat.special.melee.SunlightSpear.register();
 		io.ruin.model.content.Announcements.register();
 		io.ruin.model.content.DailyVoteInterface.register();
+		io.ruin.model.content.DailyLoginInterface.register();
+		io.ruin.model.content.casino.CasinoBlackjackInterface.register();
 		io.ruin.model.content.HomeHandler.register();
 		io.ruin.model.content.HydraLeather.register();
 		io.ruin.model.content.ItemExchange.register();
@@ -217,11 +221,11 @@ public final class StaticInit {
 		io.ruin.model.content.camelstatue.CamelStatueInterface.register();
 		io.ruin.model.inter.questtab.presets.Preset.register();
 		io.ruin.model.entity.player.presets.PresetManager.register();
-		io.ruin.model.content.pvppreset.PvpPresetInterface.register();
 		io.ruin.model.content.loadouts.ZelusLoadoutInterface.register();
 		io.ruin.model.activities.gamble.Gamble.register();
 		io.ruin.model.activities.pkbots.ZelusBotManager.register();
-		io.ruin.model.activities.pkbots.WildPkBotManager.register();
+		// WildPkBotManager.register() removed -- was spawning the 3
+		// always-on wilderness PK bots (Zerker/Pure/Main); no longer wanted.
 		io.ruin.model.content.itembreaking.ItemBreakInterface.register();
 		io.ruin.model.content.itembreaking.ItemBreakPerkAttaching.register();
 		io.ruin.model.content.itembreaking.ItemUpgradeInterface.register();
@@ -232,6 +236,7 @@ public final class StaticInit {
 		io.ruin.model.entity.doors.Lighthouse.register();
 		io.ruin.model.entity.doors.MagicGuild.register();
 		io.ruin.model.entity.doors.PortPhasmatys.register();
+		io.ruin.model.entity.npc.actions.AllannasFarmingShop.register();
 		io.ruin.model.entity.npc.actions.Aubury.register();
 		io.ruin.model.entity.npc.actions.CandleShop.register();
 		io.ruin.model.entity.npc.actions.DrunkenDwarf.register();
@@ -341,7 +346,11 @@ public final class StaticInit {
 		io.ruin.model.entity.npc.actions.zeah.Tynan.register();
 		io.ruin.model.entity.player.DifficultyChanger.register();
 		io.ruin.model.entity.player.KillCounter.register();
+		io.ruin.model.entity.player.Player.registerDummyStatsFix();
 		io.ruin.model.entity.player.Title.register();
+		io.ruin.model.content.loyaltytitles.LoyaltyTitle.register();
+		io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.register();
+		io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.register();
 		io.ruin.model.entity.player.XpMode.register();
 		io.ruin.model.inter.dialogue.ItemDialogue.register();
 		io.ruin.model.inter.dialogue.LinkDialogue.register();
@@ -543,6 +552,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.jewellery.SkillsNecklace.register();
 		io.ruin.model.item.actions.impl.jewellery.SlayerRing.register();
 		io.ruin.model.item.actions.impl.pet.Pet.register();
+		io.ruin.model.content.petexchange.PetRecolorExchange.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCard.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCardManager.register();
 		io.ruin.model.item.actions.impl.scrolls.BountyScroll.register();
@@ -597,6 +607,7 @@ public final class StaticInit {
 		io.ruin.model.content.combatachievements.CombatAchievementInterface.register();
 		io.ruin.model.item.containers.Trade.register();
 		io.ruin.model.item.containers.bank.BankInterface.register();
+		io.ruin.model.content.equipmentpresets.GearPresetInterface.register();
 		io.ruin.model.item.containers.bank.BankActions.register();
 		io.ruin.model.item.containers.bank.BankPin.register();
 		// io.ruin.model.map.object.ClientObj.register();
@@ -676,6 +687,8 @@ public final class StaticInit {
 		// io.ruin.model.map.object.actions.impl.edgeville.Giveaway.register();
 		io.ruin.model.map.object.actions.impl.edgeville.PetList.register();
 		io.ruin.model.map.object.actions.impl.edgeville.RejuvenationPool.register();
+		io.ruin.model.map.object.actions.impl.ScratchMachine.register();
+		io.ruin.model.map.object.actions.impl.ZelusChest.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.HouseOnTheHillObjects.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.MushTree.register();
 		io.ruin.model.map.object.actions.impl.gnome_stronghold.MonkeyMadness.register();
@@ -856,6 +869,8 @@ public final class StaticInit {
 		io.ruin.model.tutorial.GameModeInterface.register();
 		io.ruin.model.var.VarPlayerRepository.register();
 		io.ruin.services.PlayersOnline.register();
+		io.ruin.services.Highscores.register();
+		io.ruin.services.ServerConfig.ensureTable();
 		io.ruin.model.activities.wilderness.RevCaves.register();
 		WorldList.start();
 		BadWords.loadBadWords();

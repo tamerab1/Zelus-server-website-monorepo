@@ -96,7 +96,7 @@ public enum JournalTabComponent {
 	DROP_TABLES(JournalTabTab.MISCELLANEOUS, JournalTab.t4++, player -> "View drop tables", (SimpleAction) Bestiary::open),
 	EMPTY(JournalTabTab.MISCELLANEOUS, JournalTab.t4++, player -> "View forums", (SimpleAction) player -> player.sendMessage("Disabled.")),
 	EMPTY2(JournalTabTab.MISCELLANEOUS, JournalTab.t4++, player -> "View store", (SimpleAction) player -> player.openUrl("https://zelusrsps.com/store")),
-	EMPTY3(JournalTabTab.MISCELLANEOUS, JournalTab.t4++, player -> "Join discord", (SimpleAction) player -> player.openUrl("https://discord.gg/eSgzHWaeqd")),
+	EMPTY3(JournalTabTab.MISCELLANEOUS, JournalTab.t4++, player -> "Join discord", (SimpleAction) player -> player.openUrl("https://discord.gg/XZ3E6Nur2r")),
 	//EMPTY3(Tab.MISCELLANEOUS, t4++),
 
 	COMBAT(JournalTabTab.MISCELLANEOUS, JournalTab.t4++),

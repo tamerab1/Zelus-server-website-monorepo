@@ -8,6 +8,7 @@ import io.ruin.cache.Color;
 import io.ruin.cache.Icon;
 import io.ruin.cache.ItemID;
 import io.ruin.cache.NPCType;
+import io.ruin.HooksV2;
 import io.ruin.data.impl.npcs.npc_combat;
 import io.ruin.data.impl.npcs.npc_drops_new;
 import io.ruin.model.World;
@@ -126,6 +127,36 @@ import static io.ruin.cache.ItemID.*;
 
 @Slf4j
 public abstract class NPCCombat extends Combat {
+
+	/**
+	 * External hook point fired once per player-killed NPC (after loot/PVM-points handling
+	 * below). Lets feature modules (e.g. economy-protection's PvmPointsManager) react to NPC
+	 * deaths without editing this class directly.
+	 */
+	public static interface Hook {
+		record Death(Player killer, NPC npc) implements Hook {
+		}
+	}
+
+	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
+
+	/**
+	 * High alch value (as a stand-in for GE price, which this server doesn't track) at or
+	 * above which a dropped item is announced as a "valuable drop", even if it isn't manually
+	 * flagged via {@code lootBroadcast}/{@code dropAnnounce}.
+	 */
+	public static final long VALUABLE_DROP_THRESHOLD = 1_000_000;
+
+	/**
+	 * High alch value (as a stand-in for GE price) at or above which a drop is considered a
+	 * "mega-rare" worth pinging the public Discord rare-drop webhook. Deliberately higher than
+	 * {@link #VALUABLE_DROP_THRESHOLD} -- that constant only gates the in-game world broadcast
+	 * (cheap, seen by players already online), whereas the Discord webhook posts to an external
+	 * channel everyone sees, so it needs a stricter bar or every {@code lootBroadcast}/
+	 * {@code dropAnnounce}-flagged item from ordinary monsters (many of which are only "rare" in
+	 * drop-table terms, not actually valuable) spams the channel.
+	 */
+	public static final long DISCORD_MEGA_RARE_THRESHOLD = 5_000_000;
 
 	public static final Bounds Wildywars = new Bounds(3015, 10117, 3067, 10169, 0);
 
@@ -416,13 +447,19 @@ public abstract class NPCCombat extends Combat {
 		NPCType def = npc.getDef();
 
 		/*
-		 * Gives players PVM Points
+		 * Gives players PVM Points (legacy named-boss table, PVM Mode only)
 		 */
 		PvmPoints.addPoints(player, npc);
 		/*
 		 * Gives players Boss Points
 		 */
 		// BossPoints.addPoints(pKiller, npc);
+
+		/*
+		 * External hook: economy-protection's PvmPointsManager listens here to award
+		 * combat-level/tier-based PVM Points for kills not covered by the named table above.
+		 */
+		hooks.handle(new Hook.Death(player, npc));
 
 		if (def.name.contains("Revenant") && def.id != 11246) {
 			Objects.requireNonNull(player.combatAchievementsList
@@ -491,45 +528,49 @@ public abstract class NPCCombat extends Combat {
 				player.gauntlet.rollDemiBossDrop(player, npc);
 				break;
 		}
-		int baseBeginnerClueReward = 40;
-		int baseEasyClueReward = 40;
-		int baseMediumClueReward = 50;
-		int baseHardClueReward = 60;
-		int baseEliteClueReward = 150;
-		int baseMasterClueReward = 250;
+		// Clue rates x8 across the board -- these rolled on every single kill in the combat-level
+		// bracket (not per-monster), so the old denominators (as low as 1/41 for trash mobs) were
+		// flooding inventories with clues. The combat-achievement-tier discount structure below
+		// is unchanged, just scaled onto the new, meaningfully rarer base.
+		int baseBeginnerClueReward = 320;
+		int baseEasyClueReward = 320;
+		int baseMediumClueReward = 400;
+		int baseHardClueReward = 480;
+		int baseEliteClueReward = 1200;
+		int baseMasterClueReward = 2000;
 
 		if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.GRANDMASTER) {
-			baseBeginnerClueReward = 25;
-			baseEasyClueReward = 25;
-			baseMediumClueReward = 30;
-			baseHardClueReward = 35;
-			baseEliteClueReward = 100;
-			baseMasterClueReward = 150;
+			baseBeginnerClueReward = 200;
+			baseEasyClueReward = 200;
+			baseMediumClueReward = 240;
+			baseHardClueReward = 280;
+			baseEliteClueReward = 800;
+			baseMasterClueReward = 1200;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.MASTER) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
-			baseEliteClueReward = 120;
-			baseMasterClueReward = 200;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
+			baseEliteClueReward = 960;
+			baseMasterClueReward = 1600;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.ELITE) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
-			baseEliteClueReward = 120;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
+			baseEliteClueReward = 960;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.HARD) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
-			baseHardClueReward = 40;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
+			baseHardClueReward = 320;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.MEDIUM) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
-			baseMediumClueReward = 35;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
+			baseMediumClueReward = 280;
 		} else if (CombatAchievementSystem.getTier(player.combatAchievementPoints) == CombatAchievement.Tier.EASY) {
-			baseBeginnerClueReward = 30;
-			baseEasyClueReward = 30;
+			baseBeginnerClueReward = 240;
+			baseEasyClueReward = 240;
 		}
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
 				&& AttributeExtensions.hasAttribute(player.getEquipment().get(Equipment.SLOT_RING),
@@ -743,7 +784,7 @@ public abstract class NPCCombat extends Combat {
 
 		RareDropHook.sendDiscordMessage(() -> {
 			var jsonObject = new JSONObject();
-			jsonObject.put("player", player.getName());
+			jsonObject.put("player", player.getName().replaceAll("<[^>]*>", ""));
 			jsonObject.put("game_mode", player.getGameMode());
 			jsonObject.put("item_id", item.getId());
 			jsonObject.put("item_name", item.getDef().name);
@@ -3121,7 +3162,8 @@ public abstract class NPCCombat extends Combat {
 			/*
 			 * Global Broadcast
 			 */
-			if (item.lootBroadcast != null || item.getDef().dropAnnounce
+			boolean valuableDrop = (long) item.getDef().highAlchValue * item.getAmount() >= VALUABLE_DROP_THRESHOLD;
+			if (item.lootBroadcast != null || valuableDrop || item.getDef().dropAnnounce
 					&& item.getId() != 21009 && item.getId() != 4151 && item.getId() != HOLY_ELIXIR
 					&& item.getId() != DRAGON_HARPOON && item.getId() != 21892) {
 				getRareDropAnnounce(pKillerLastHit, item, npc);
@@ -3269,14 +3311,22 @@ public abstract class NPCCombat extends Combat {
 								+ (npc.getDef().killCounter.apply(pKiller.player).getKills() + 1) + " KC<col=000000>)");
 
 		}
+		// In-game world broadcast above fires for any lootBroadcast/valuableDrop/dropAnnounce
+		// item (as before) -- but the public Discord webhook is reserved for actual mega-rares,
+		// otherwise every drop-table item merely flagged "rare" spams the Discord channel.
+		boolean megaRareForDiscord = (long) item.getDef().highAlchValue * item.getAmount() >= DISCORD_MEGA_RARE_THRESHOLD;
+		if (!megaRareForDiscord) {
+			return;
+		}
 		if (npc.getDef().killCounter == null || npc.getDef().killCounter.apply(pKiller.player) == null) {
 
 			RareDropHook.sendDiscordMessage(() -> {
 				var jsonObject = new JSONObject();
-				jsonObject.put("player", pKiller.player.getName());
+				jsonObject.put("player", pKiller.player.getName().replaceAll("<[^>]*>", ""));
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
+				jsonObject.put("value", (long) item.getDef().highAlchValue * item.getAmount());
 				jsonObject.put("source", npc.getDef().descriptiveName);
 				jsonObject.put("total_attempts", Utils.formatMoneyString(-1));
 				return jsonObject;
@@ -3286,10 +3336,11 @@ public abstract class NPCCombat extends Combat {
 
 			RareDropHook.sendDiscordMessage(() -> {
 				var jsonObject = new JSONObject();
-				jsonObject.put("player", pKiller.player.getName());
+				jsonObject.put("player", pKiller.player.getName().replaceAll("<[^>]*>", ""));
 				jsonObject.put("game_mode", pKiller.player.getGameMode());
 				jsonObject.put("item_id", item.getId());
 				jsonObject.put("item_name", item.getDef().name);
+				jsonObject.put("value", (long) item.getDef().highAlchValue * item.getAmount());
 				jsonObject.put("source", npc.getDef().descriptiveName);
 				jsonObject.put("total_attempts",
 						Utils.formatMoneyString(getNpc().getDef().killCounter.apply(pKiller.player).getKills() + 1));

@@ -451,7 +451,7 @@ public class Duel extends ItemContainer {
 			return;
 		}
 		requestUserId = target.getUserId();
-		target.getPacketSender().sendMessage(player.getName() + " wishes to duel with you.", player.getName(), 103);
+		target.getPacketSender().sendMessage(player.getNameWithRanks() + " wishes to duel with you.", player.getNameWithRanks(), 103);
 		player.getPacketSender().sendMessage("Challenging " + target.getName() + "...", null, 102);
 	}
 

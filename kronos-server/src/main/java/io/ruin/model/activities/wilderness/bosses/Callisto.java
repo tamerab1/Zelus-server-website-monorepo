@@ -37,8 +37,11 @@ public class Callisto extends NPCCombat {
 
 	@Override
 	public boolean attack() {
-		if (!withinDistance(8))
-			return false; // do i need this??
+		// Must match follow()'s distance (10) -- this used to be 8, leaving a 2-tile gap where
+		// Callisto would keep chasing (follow(10)) but could never actually attack back, letting
+		// ranged/mage players sit in that gap and hit him for free with zero retaliation risk.
+		if (!withinDistance(10))
+			return false;
 		if (withinDistance(1) && Random.rollPercent(80)) {
 			basicAttack();
 		} else if (Random.rollPercent(80)) {

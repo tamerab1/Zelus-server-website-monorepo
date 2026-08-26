@@ -69,19 +69,18 @@ public class Bank extends ItemContainerG<BankItem> {
 	transient boolean sortSkip, sortRequired;
 
 	public void open() {
-		boolean presetsLocked = true;
 		asNote = false;
-		if (presetsLocked)
-			player.getPacketSender().setHidden(12, 120, true);
-		else {
-			player.getPacketSender().setHidden(12, 120, false);
-		}
+		/* Component 79 is the sidebar strip that contains the Presets button (120); both are
+		 * hidden by default in the cache and must be explicitly shown. */
+		player.getPacketSender().setHidden(12, 79, false);
+		player.getPacketSender().setHidden(12, 120, false);
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");
 			return;
 		}
 		// if(player.getBankPin().requiresVerification(p -> open()))
 		// return;
+		removeBlankItems(); // don't rely solely on the close-triggered cleanup -- guarantee a clean, gap-free bank on every open
 		player.getPacketSender().sendClientScript(917, "ii", -1, -2);
 		player.setInterfaceUnderlay(-1, -2);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.BANK);
@@ -241,6 +240,16 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	public int deposit(Item item, int amount, boolean message, boolean forced) {
+		// PvP Preset "rental" gear is stamped phantom specifically so it can't leave the
+		// player's possession -- Trade.java and Shop.java already guard their own single-item
+		// entry points against it, but banking had no check at all, letting rental gear be
+		// unequipped and permanently deposited (surviving ::pvpmode off / death cleanup, both
+		// of which only sweep the live Equipment/Inventory containers, never the bank).
+		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
+			if (message)
+				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
+			return 0;
+		}
 		if (player.isVisibleInterface(Interface.BANK) || player.isVisibleInterface(Interface.DEPOSIT_BOX) || forced) {
 			ObjType def = item.getDef();
 			int moved = item.move(def.isNote() ? def.notedId : def.id, amount, this);
@@ -266,6 +275,14 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 
 		if (item.getId() == 26651) {
+			return 0;
+		}
+
+		// See the other deposit(Item, int, boolean, boolean) overload above -- this is an
+		// independent implementation that doesn't delegate to it, so it needs its own guard.
+		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
+			if (message)
+				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
 			return 0;
 		}
 
@@ -296,7 +313,7 @@ public class Bank extends ItemContainerG<BankItem> {
 		int removed = 0;
 		for (BankItem item : items) {
 			if (item == null)
-				break;
+				continue; // don't stop scanning -- a stray null shouldn't hide blanks that come after it
 			if (item.getId() == BLANK_ID) {
 				set(item.getSlot(), null);
 				removed++;
@@ -472,6 +489,8 @@ public class Bank extends ItemContainerG<BankItem> {
 		item.toBlank();
 		if (removed)
 			set(item.getSlot(), item);
+		else
+			update(item.getSlot()); // item stays in its slot (middle of tab) -- still needs to be marked dirty so the client actually sees the blank
 	}
 
 	private boolean allowPlaceHolder(ObjType def) {

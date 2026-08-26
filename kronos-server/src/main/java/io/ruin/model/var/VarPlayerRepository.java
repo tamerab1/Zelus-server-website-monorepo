@@ -19,6 +19,13 @@ public class VarPlayerRepository {
 
 	private static final int[] SHIFTS = new int[32];
 
+	// Raw varp (no VarBitType lookup needed), deliberately far from every other
+	// entry in this file (highest existing usage is ~16201) to avoid colliding
+	// with any real client-rendered varp for this revision. Not saved -- always
+	// recomputed fresh from the player's current group on login. Client-side:
+	// gates the Developer Tools panel to Owner only (see DevToolsPlugin.java).
+	public static final VarPlayerRepository OWNER_CLIENT_FLAG = varp(29999, false);
+
 	public static final VarPlayerRepository TEMPOROSS_REWARDS = varpbit(11936, false);
 
 	public static final VarPlayerRepository TEMPOROSS_POINTS = varpbit(11897, false);

@@ -1,7 +1,18 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, Text, UniqueConstraint, ForeignKey
+import enum
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-import enum
 
 Base = declarative_base()
 
@@ -121,20 +132,23 @@ class UserSkillStat(Base):
 
 # ---------------------------------------------------------------------------
 # Vote — tracks vote submissions through the website portal.
+# Identity is the validated in-game username (game_username) — voting no
+# longer requires a website account.  user_id is kept only for legacy rows
+# from before accounts were removed.
 # The game server reads this table (or a mirror) to award in-game rewards.
 # ---------------------------------------------------------------------------
 class Vote(Base):
     __tablename__ = "votes"
 
     id            = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id       = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    user_id       = Column(Integer, ForeignKey("users.id"), index=True, nullable=True)
     site_name     = Column(String(50), nullable=False)    # e.g. RUNELOCUS, RSPS_LIST
     vote_points   = Column(Integer, default=2)             # points awarded on claim
     status        = Column(String(20), default="pending")  # pending | claimed
     created_at    = Column(DateTime, default=func.now())
     claimed_at    = Column(DateTime, nullable=True)
     ip_address    = Column(String(45), nullable=True)      # IPv4 or IPv6
-    game_username = Column(String(12), nullable=True)      # validated in-game character name
+    game_username = Column(String(12), nullable=True, index=True)  # validated in-game character name
 
 
 # ---------------------------------------------------------------------------
@@ -170,6 +184,8 @@ class PaymentProvider(enum.Enum):
     PAYPAL  = "paypal"
     OSRS_GP = "osrs_gp"   # manual trade, fulfilled by staff after Discord ticket
     CRYPTO  = "crypto"    # placeholder — Coinbase/NowPayments (future)
+    TEBEX   = "tebex"     # webstore hosted entirely on Tebex -- no /api/checkout
+                           # session, fulfillment happens purely off the webhook
 
 
 class Transaction(Base):
@@ -185,8 +201,17 @@ class Transaction(Base):
     package_id          = Column(String(50), nullable=False)
     package_name        = Column(String(100), nullable=False)
     amount_usd          = Column(Float, nullable=False)
-    provider            = Column(String(10), nullable=False)   # "stripe" | "paypal"
+    # Stores PaymentProvider.<X>.value ("stripe"/"paypal"/"osrs_gp"/"crypto"/"tebex") --
+    # NEVER assign the raw enum member here (str(enum_member) is "PaymentProvider.X",
+    # which overflows String(10) and raises pymysql.err.DataError at flush/commit time.
+    # Every call site MUST use .value explicitly; this column is a plain String, not a
+    # SQLAlchemy Enum type, so nothing coerces it automatically).
+    provider            = Column(String(10), nullable=False)
     provider_session_id = Column(String(255), unique=True, index=True, nullable=True)
+    # Same footgun as `provider` above -- TransactionStatus is also a plain enum.Enum,
+    # so every read (`txn.status == ...`) and write must use .value on both sides.
+    # Comparing against the bare enum member silently always evaluates False once the
+    # column actually holds a string, which breaks every COMPLETED idempotency check.
     status              = Column(String(20), default=TransactionStatus.PENDING.value, nullable=False)
     created_at          = Column(DateTime, default=func.now())
     completed_at        = Column(DateTime, nullable=True)
@@ -236,26 +261,3 @@ class GameEvent(Base):
     username   = Column(String(50), nullable=False, index=True)
     message    = Column(String(500), nullable=False)
     timestamp  = Column(DateTime, default=func.now(), index=True)
-
-
-# ---------------------------------------------------------------------------
-# AuthToken — secure, single-use, expiring tokens for email verification and
-# password reset.  Only the SHA-256 hash is stored; the raw token lives only
-# in the email link so a DB dump can never be replayed.
-# ---------------------------------------------------------------------------
-
-class TokenPurpose(enum.Enum):
-    EMAIL_VERIFICATION = "email_verification"
-    PASSWORD_RESET     = "password_reset"
-
-
-class AuthToken(Base):
-    __tablename__ = "auth_tokens"
-
-    id         = Column(Integer, primary_key=True, autoincrement=True)
-    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    purpose    = Column(String(30), nullable=False)
-    token_hash = Column(String(64), nullable=False, unique=True, index=True)
-    expires_at = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=func.now())
-    used_at    = Column(DateTime, nullable=True)

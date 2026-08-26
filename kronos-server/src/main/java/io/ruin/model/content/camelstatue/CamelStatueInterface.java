@@ -24,18 +24,26 @@ public class CamelStatueInterface {
 		update(player);
 	}
 
+	public CamelStatueRewards getLastSection() {
+		if (lastSection == null)
+			lastSection = CamelStatueRewards.DOUBLE_REASON_POINTS;
+		return lastSection;
+	}
+
 	public void update(Player player) {
 		if (lastSection == null)
 			lastSection = CamelStatueRewards.DOUBLE_REASON_POINTS;
 
+		long donatedToSection = CamelStatueHandler.getDonated(lastSection);
+
 		player.getPacketSender().sendString(1113, 53, lastSection.getName());
 		player.getPacketSender().sendString(1113, 54, lastSection.getDescription());
-		player.getPacketSender().sendString(1113, 65, "<col=31ff1f>" + NumberUtils.formatNumber(CamelStatueHandler.totalDonated.get()) + "</col> Gold sacrificed");
-		player.getPacketSender().sendString(1113, 62, NumberUtils.formatNumber(CamelStatueHandler.totalDonated.get()) + "/" + NumberUtils.formatNumber(lastSection.getUnlockAmount()));
+		player.getPacketSender().sendString(1113, 65, "<col=31ff1f>" + NumberUtils.formatNumber(donatedToSection) + "</col> Gold sacrificed");
+		player.getPacketSender().sendString(1113, 62, NumberUtils.formatNumber(donatedToSection) + "/" + NumberUtils.formatNumber(lastSection.getUnlockAmount()));
 
 		int barInterfaceHash = 1113 << 16 | 60;
 		int barBackgroundInterfaceHash = 1113 << 16 | 61;
-		float percentageCompleted = (float) CamelStatueHandler.totalDonated.get() / lastSection.getUnlockAmount();
+		float percentageCompleted = (float) donatedToSection / lastSection.getUnlockAmount();
 		float barWidth = percentageCompleted * 308;
 
 		player.getPacketSender().sendClientScript(10606, "Ii", barInterfaceHash, (int) barWidth);

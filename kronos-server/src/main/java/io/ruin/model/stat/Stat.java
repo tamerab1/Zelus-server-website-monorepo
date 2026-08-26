@@ -37,6 +37,18 @@ public class Stat {
 	public transient int fixedLevel;
 	public double experience;
 
+	// Stat[] is encoded via the standard Mongo POJO codec (player.mongo.codec.ArrayCodec$Generic
+	// resolves array-element codecs through the registry, bypassing this project's lenient
+	// "public field as getter" convention that the outer Player object gets) -- these bare public
+	// fields need real getters or the codec throws "Unable to get value for property" on save.
+	public double getExperience() {
+		return experience;
+	}
+
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+
 	public Stat(int level) {
 		/* only used for npcs! */
 		this.currentLevel = level;
@@ -76,7 +88,7 @@ public class Stat {
 		return fixedLevel;
 	}
 
-	public void setExperience(int experience) {
+	public void setExperience(double experience) {
 		this.experience = experience;
 		set(levelForXp(experience));
 	}

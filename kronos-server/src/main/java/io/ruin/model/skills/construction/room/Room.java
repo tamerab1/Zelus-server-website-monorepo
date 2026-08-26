@@ -308,6 +308,14 @@ public abstract class Room {
 			PerkTaskHandler.handleCompleteAction(player, selected.ordinal());
 			player.animate(selected.getAnimation());
 			event.delay(1);
+			// Materials were only checked before this event was queued -- re-check now that a
+			// tick has actually passed, or a player who drops/banks/trades away the materials
+			// in that window gets the room object built for free.
+			if (!selected.hasAllMaterials(player) && !player.isAdmin()) {
+				player.sendMessage("You no longer have all the required materials to build that.");
+				player.unlock();
+				return;
+			}
 			setBuilt(hotspotIndex, selected);
 			renderHotspot(hotspotIndex);
 			selected.removeMaterials(player);

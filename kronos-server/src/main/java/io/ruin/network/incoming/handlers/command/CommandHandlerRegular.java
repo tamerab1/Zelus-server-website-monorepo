@@ -2,6 +2,8 @@ package io.ruin.network.incoming.handlers.command;
 
 import com.google.gson.reflect.TypeToken;
 import discord.webhooks.logs.VotingHook;
+import io.ruin.api.utils.BCrypt;
+import io.ruin.api.utils.NumberUtils;
 import io.ruin.Server;
 import io.ruin.cache.Color;
 import io.ruin.model.VoteHandler;
@@ -9,6 +11,7 @@ import io.ruin.model.World;
 import io.ruin.model.activities.DonationBossHandler;
 import io.ruin.model.activities.VoteBossHandler;
 import io.ruin.model.activities.VorathHandler;
+import io.ruin.model.activities.IcyEventBossHandler;
 import io.ruin.model.activities.bosses.instancetoken.InstanceManager;
 import io.ruin.model.activities.bosses.instancetoken.InstanceMaps;
 import io.ruin.model.activities.dailytasks.DailyTasksInterface;
@@ -43,8 +46,6 @@ import io.ruin.model.skills.events.ShootingStars;
 import io.ruin.model.skills.magic.spells.modern.ModernTeleport;
 import io.ruin.model.skills.slayer.SlayerUnlock;
 import io.ruin.model.activities.pkbots.ZelusBotManager;
-import io.ruin.model.content.loadouts.ZelusLoadoutInterface;
-import io.ruin.model.content.loadouts.ZelusLoadoutManager;
 import io.ruin.model.var.VarPlayerRepository;
 import io.ruin.process.event.EventWorker;
 import io.ruin.services.Loggers;
@@ -71,63 +72,119 @@ public class CommandHandlerRegular {
 
 		switch (command) {
 
-			// -------------------------------------------------------------------
-			// PvP Preset system (DMMPVP-style: Pure NH / Max Dharok / F2P)
-			// -------------------------------------------------------------------
-			case "presets":
-			case "preset": {
-				io.ruin.model.inter.questtab.presets.PresetsMenu.open(player);
+			// "::presets"/"::preset" (PresetsMenu, DMMPVP-style fixed Zerker/Melee/Pure kits)
+			// retired -- replaced by the new GearLoadouts system (::loadouts/::gearloadouts/::kits).
+
+			// Donator+/staff shortcut to the teleport menu (interface 851) -- no coordinate input,
+			// unlike the owner-only ::tele command in CommandHandlerManager/CommandHandlerCommunityAdmin.
+			case "tp":
+			case "t":
+			case "teleport": {
+				if (!player.isDonator() && !player.isStaff()) {
+					player.sendMessage("This command is for donators and staff only.");
+					return true;
+				}
+				// Every click handler for interface 851 (TeleInterface.register(), see
+				// h.actions[22..114]) is wired to the persistent per-player instance
+				// player.teleportInterface, not a fresh object -- constructing a new
+				// TeleInterface() here (as this did before) left that persistent
+				// instance's item container uninitialized (init() never ran on it),
+				// so every destination click threw an uncaught NPE in
+				// ItemContainerG.clear() before teleportCheck() ever ran, silently
+				// eating every selection. Confirmed live: this is why ::t/::teleport
+				// opened the interface fine but no destination could ever be selected.
+				player.teleportInterface.open(player);
 				return true;
 			}
 
-			case "movreth": {
-				player.getMovement().teleport(3018, 4391, 0);
-				player.sendMessage("<col=ff4500>You enter the Movreth dungeon. Defeat all three guards to face Movreth!</col>");
+			// Instant-open bank shortcut -- mod+ staff or legendary+ donator.
+			case "b":
+			case "bank":
+			case "openbank": {
+				if (!player.isModerator() && !player.isLegendaryDonator() && !player.isSupremeDonator()) {
+					player.sendMessage("This command is for legendary+ donators and staff only.");
+					return true;
+				}
+				player.getBank().open();
 				return true;
 			}
 
+			case "pointshops": {
+				player.getPacketSender().sendString(891, 14, "PKP Shop");
+				player.setShopIdentifier(13);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.handleEnteringShop(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.PKP_SHOP);
+				io.ruin.model.inter.handlers.shopinterface.CustomShopInterface2.open(player,
+						io.ruin.model.inter.handlers.shopinterface.CustomShop2.getItemsFromShop(player));
+				return true;
+			}
+
+			// Lists every point-type currency the player has a balance in, pulled from the
+			// Currency enum's own registry (skipping item-backed currencies like coins/tokkul,
+			// which are already visible in the player's inventory) plus the two point systems
+			// that live outside that enum (regular Slayer Points, Perk Points).
+			case "points": {
+				// Same scrollable "scroll" interface (119) ::commands uses, so any number of
+				// entries fits cleanly instead of overflowing a fixed-height dialogue/chat spam.
+				// Rows alternate red/cyan for readability, matching the shop interfaces' style.
+				// Shaded (<col=X><shad=000000>text</shad></col>) to match the chatbox/nameplate
+				// look used elsewhere (e.g. LoyaltyTitle.shadedText()) instead of flat/bright text.
+				List<String> lines = new LinkedList<>();
+				int row = 0;
+				for (io.ruin.model.shop.Currency currency : io.ruin.model.shop.Currency.values()) {
+					if (currency.currencyHandler instanceof io.ruin.model.shop.ItemCurrencyHandler)
+						continue;
+					// dead currencies -- nothing in the codebase ever awards these, always 0
+					if (currency == io.ruin.model.shop.Currency.BOSS_POINTS || currency == io.ruin.model.shop.Currency.LOYALTY
+							|| currency == io.ruin.model.shop.Currency.APPRECIATION_POINTS)
+						continue;
+					// excluded from this list per user request
+					if (currency == io.ruin.model.shop.Currency.TASK_POINTS || currency == io.ruin.model.shop.Currency.SNOWBALL_POINTS
+							|| currency == io.ruin.model.shop.Currency.WINTERTODT_POINTS || currency == io.ruin.model.shop.Currency.WILDERNESS_POINTS
+							|| currency == io.ruin.model.shop.Currency.WILDERNESS_SLAYER_POINTS || currency == io.ruin.model.shop.Currency.PEST_CONTROL_POINTS)
+						continue;
+					int amount = currency.currencyHandler.getCurrencyCount(player);
+					String color = row++ % 2 == 0 ? "ff0000" : "00ffff";
+					lines.add("<col=" + color + "><shad=000000>" + NumberUtils.formatNumber(amount) + " " + currency.currencyHandler.pluralName() + "</shad></col>");
+				}
+				String slayerColor = row++ % 2 == 0 ? "ff0000" : "00ffff";
+				lines.add("<col=" + slayerColor + "><shad=000000>" + NumberUtils.formatNumber(io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player)) + " slayer points</shad></col>");
+				String perkColor = row % 2 == 0 ? "ff0000" : "00ffff";
+				lines.add("<col=" + perkColor + "><shad=000000>" + NumberUtils.formatNumber(player.perkPoints) + " perk points</shad></col>");
+				player.sendScroll("Your Points", lines.toArray(new String[0]));
+				return true;
+			}
+
+			case "gamble":
 			case "gamblezone":
 			case "gambling": {
-				player.getMovement().teleport(1371, 2532, 1);
+				player.getMovement().teleport(3123, 3480, 0);
 				player.sendMessage("Welcome to the Gambling Zone!");
 				return true;
 			}
 
-			// -------------------------------------------------------------------
-			// Zelus Custom Loadout System
-			// -------------------------------------------------------------------
-			case "loadouts": {
-				ZelusLoadoutInterface.open(player);
-				return true;
-			}
+			// Zelus Custom Loadout System (::loadouts/::ql/::depositall) retired -- replaced by
+			// the new GearLoadouts system (see core.reason.module.GearLoadoutsModule, which
+			// already intercepts "loadouts"/"gearloadouts"/"kits" earlier in the command
+			// pipeline via CommandHandler's hooks.handle() check, so those cases here were
+			// already dead code). ZelusLoadoutInterface/ZelusLoadoutManager left in place,
+			// unreferenced, in case any saved player data needs a one-off migration later.
 
-			// Quick-load a specific slot by number: ::ql 1  (1-based)
-			case "ql": {
-				if (args.length < 1) {
-					player.sendMessage("Usage: <col=ffd700>::ql <slot></col>  (e.g. ::ql 1)");
-					return true;
-				}
-				try {
-					int slot = Integer.parseInt(args[0]) - 1; // convert 1-based to 0-based
-					ZelusLoadoutManager.quickLoad(player, slot);
-				} catch (NumberFormatException e) {
-					player.sendMessage("Usage: <col=ffd700>::ql <slot number></col>");
-				}
-				return true;
-			}
-
-			// Deposit all gear to bank
-			case "depositall": {
-				ZelusLoadoutManager.depositAll(player);
-				return true;
-			}
-
-			// PvP preset: ::pvpmode opens the interface, ::pvpmode off deactivates
+			// ::pvpmode now opens the current GearLoadouts system (same interface as
+			// ::loadouts/::gearloadouts/::kits and the devouring forge), not the old
+			// PvpPresetInterface -- that legacy preset picker was only ever reachable
+			// through this command, and GearLoadouts replaced it as the live system.
+			// ::pvpmode off is left calling the OLD PvpPresetManager deactivation path
+			// deliberately: it still tracks real state (PHANTOM_KEY rental gear, death
+			// handling) for anyone who has an active old-style preset loaded, and
+			// removing their only way to cleanly exit that would strand their gear.
 			case "pvpmode": {
 				if (args.length >= 1 && args[0].equalsIgnoreCase("off")) {
 					io.ruin.model.content.pvppreset.PvpPresetManager.deactivate(player, true);
+				} else if (!player.isPvpMode() && !player.isOwner()) {
+					player.sendMessage("You must be in PvP mode to use gear loadouts.");
 				} else {
-					io.ruin.model.content.pvppreset.PvpPresetInterface.open(player);
+					io.ruin.model.content.gearloadouts.GearLoadoutInterface.open(player);
 				}
 				return true;
 			}
@@ -158,13 +215,13 @@ public class CommandHandlerRegular {
 			}
 
 			case "discord": {
-				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/eSgzHWaeqd");
+				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 
 			case "ticket": {
 				player.openUrl(World.type.getWorldName() + " Discord",
-						"https://ptb.discord.com/channels/1150539550561681508/1199283936153571338");
+						"https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 			case "araxxor": {
@@ -177,11 +234,11 @@ public class CommandHandlerRegular {
 				player.getInstanceTokenInterface().startInstance(player, true);
 				return true;
 			}
-			case "deals": {
-				player.openUrl(World.type.getWorldName() + " Discord",
-						"https://ptb.discord.com/channels/1150539550561681508/1188203513973579836");
-				return true;
-			}
+			//case "deals": {
+			//	player.openUrl(World.type.getWorldName() + " Discord",
+			//			"https://ptb.discord.com/channels/1150539550561681508/1188203513973579836");
+			//	return true;
+			//}
 
 			case "toa": {
 				teleport(player, 3355, 9119, 0);
@@ -234,6 +291,18 @@ public class CommandHandlerRegular {
 					return true;
 				}
 				teleport(player, VorathHandler.teleportPosition);
+				if (player.pet != null && player.familiarNPC != null) {
+					Pet.pickup(player, player.familiarNPC, player.pet, true);
+				}
+				return true;
+			}
+
+			case "icy", "icyboss": {
+				if (IcyEventBossHandler.teleportPosition == null) {
+					player.sendMessage("The Icy Event Boss is currently unavailable.");
+					return true;
+				}
+				teleport(player, IcyEventBossHandler.teleportPosition);
 				if (player.pet != null && player.familiarNPC != null) {
 					Pet.pickup(player, player.familiarNPC, player.pet, true);
 				}
@@ -319,16 +388,50 @@ public class CommandHandlerRegular {
 					var type = new TypeToken<List<String>>() {
 					}.getType();
 
-					// TODO: This is a list of all the claimed votes, do what you need
+					// Each entry is one server-verified claimed vote (see the website's
+					// /api/vote/callback/{site} + /voting/claim/{username} endpoints).
 					List<String> claimedVotes = s.getResponseObject(type);
 					if (claimedVotes.isEmpty()) {
-						player.sendMessage("You have no votes to claim, please try again later.");
+						player.sendMessage("<col=000080>You haven't voted yet! Type <col=800000>::vote<col=000080> to vote for "
+								+ "Zelus and earn rewards -- come back and use <col=800000>::claimvote<col=000080> once you have.");
 						return;
 					}
-					int points = claimedVotes.size() + DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
+
+					// Points are per-site (not a flat per-vote amount), plus the usual
+					// donator bonus added once per claim (same as before).
+					// Bonus: voting on BOTH sites in the same claim also awards a Vote
+					// raffle ticket (see VoteRaffleTicket/VoteGambler for the raffle itself).
+					boolean votedRuneLocus = false;
+					boolean votedRspsList  = false;
+					int newlyClaimed = 0;
+					int points = 0;
+					for (String site : claimedVotes) {
+						// DB-backed, atomic per (player, site, cooldown-window) guard --
+						// rejects a duplicate grant if this exact claim was already
+						// recorded, even if two ::claimvote presses raced each other and
+						// both received this same non-empty claimed-vote list.
+						if (!VoteHandler.tryClaimSite(player.uuid(), site)) {
+							continue;
+						}
+						newlyClaimed++;
+						if (site.equalsIgnoreCase("RUNELOCUS")) {
+							points += 2;
+							votedRuneLocus = true;
+						} else if (site.equalsIgnoreCase("RSPS_LIST")) {
+							points += 1;
+							votedRspsList = true;
+						}
+					}
+					if (newlyClaimed == 0) {
+						player.sendMessage("<col=000080>You've already claimed that vote reward.");
+						return;
+					}
+					points += DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
+					boolean votedBothSites = votedRuneLocus && votedRspsList;
+
 					VoteHandler.addHwid(player.hwid);
 					player.votePoints += points;
-					player.votesClaimed += claimedVotes.size();
+					player.votesClaimed += newlyClaimed;
 					player.claimedVotes++;
 					Instant now = Instant.now();
 					player.lastVoteClaimInEpoch = now.getEpochSecond();
@@ -342,15 +445,22 @@ public class CommandHandlerRegular {
 						player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
 								+ NewcomerTasks.VOTE_CLAIM.getFormattedName() + "!");
 
-					// Add regular vote rewards
-					player.getInventory().addOrDrop(30596, claimedVotes.size());
-					player.getInventory().addOrDrop(30602, claimedVotes.size());
+					// Vote Points are credited directly above -- no need to also hand out
+					// Vote Tickets (59602), since redeeming those just grants more vote
+					// points again (see DonatorClaimScroll.java's "claim" action on
+					// 59602). Only the raffle ticket remains, since that's a genuinely
+					// separate reward (raffle entry), not another way to get points.
+					if (votedBothSites) {
+						player.getInventory().addOrDrop(30602, 1);
+					}
 
 					// Add single chance for presents per claim
 
 					player.sendMessage(
 							"You have received " + points + " vote points, you now have " + player.getVotePoints() + " vote points.");
-					player.sendMessage("You are rewarded with a Vote Buff Streak Box and a Vote raffle ticket for each vote.");
+					if (votedBothSites) {
+						player.sendMessage("You are also rewarded with a Vote raffle ticket for voting on both sites!");
+					}
 					player.getDailyVote().open();
 //					VotingWebhook.sendVoted(player);
 
@@ -369,18 +479,27 @@ public class CommandHandlerRegular {
 				player.sendScroll("<col=800000>Commands</col>",
 						"<col=800000>Teleport Commands:</col>",
 						"::home/::edge", "::train/sandcrabs", "::vb/::gb/::db/::malakar", "::dz",
-						"::slayer/::slay", "::shops", "::bossname", "::cityname", "::monstername", "::minigamename",
+						"::slayer/::slay", "::shops",
 						"::cox/raids/tob", "::gwd", "::mining", "::miningguild", "::mlm/motherloadmine",
 						"::wcguild", "::abyss", "::zmi", "::astrals", "::bloods", "::wraths", "::puropuro", "::fremslayer",
-						"::ancientcavern", "::brimdung", "::lumdung", "::edgedung",
+						"::ancientcavern", "::brimdung", "::lumdung", "::edgedung", "::perk/::perks",
 						"<col=800000>Misc Commands:</col>",
 						"::online/players", "::staff", "::clog", "::yell", "::donated/::claim",
 						"::vote/::claimvote/::claimed", "::clear/::empty", "::upgrade",
+						"::points/::pointshops", "::presets",
 						"::reclaimcannon", "::breakvials", "::newcomer", "::dailies",
 						"::char", "::skull", "::changepass", "::changesecuritypin", "::task/slayertask", "::bosstask",
 						"::scrolls/timers", "::raffle/votelottery",
 						"<col=800000>Website Commands:</col>",
 						"::donate", "::vote", "::discord", "::hiscores");
+				return true;
+			}
+
+			case "presets": {
+				/* Opens the bank first so GearPresetInterface's real entry point (which requires
+				 * isVisibleInterface(BANK)) initializes and refreshes properly. */
+				player.getBank().open();
+				player.getGearPresetInterface().open(player);
 				return true;
 			}
 
@@ -463,6 +582,32 @@ public class CommandHandlerRegular {
 				player.getDailyVote().open();
 				return true;
 			}
+			case "loginstreak":
+			case "dailylogin": {
+				player.getDailyLogin().open();
+				return true;
+			}
+			case "funpk": {
+				player.getMovement().teleport(3329, 4751, 0);
+				return true;
+			}
+			case "casino":
+			case "blackjack21": {
+				io.ruin.model.content.casino.CasinoBlackjackInterface.open(player);
+				return true;
+			}
+			case "titles": {
+				io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player);
+				return true;
+			}
+			case "casinoseed": {
+				if (args.length < 1) {
+					player.sendMessage("Usage: ::casinoseed <value>");
+					return true;
+				}
+				io.ruin.model.content.casino.CasinoBlackjackInterface.setClientSeed(player, args[0]);
+				return true;
+			}
 			case "globalboss":
 			case "gb": {
 				teleport(player, new Position(2900, 3616, 0));
@@ -505,7 +650,7 @@ public class CommandHandlerRegular {
 					"spring",
 					"summer",
 					"fall",
-					"winter": {
+					"zelus": {
 				String code;
 				if (player.playTime / (24 * 3600) < 1)
 					code = "newplayer";
@@ -567,7 +712,7 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "home": {
-				teleportHome(player, 1376, 3232, 0);
+				teleportHome(player, 3087, 3496, 0);
 				return true;
 			}
 
@@ -626,7 +771,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "slayer": {
-				teleport(player, new Position(3097, 3511, 0));
+				teleport(player, new Position(3104, 3490, 0));
 				return true;
 			}
 
@@ -775,7 +920,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "shops": {
-				teleport(player, 3079, 3512, 0);
+				teleport(player, 3083, 3484, 0);
 				return true;
 			}
 
@@ -785,7 +930,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "slay": {
-				teleport(player, 3095, 3512, 0);
+				teleport(player, 3104, 3489, 0);
 				return true;
 			}
 
@@ -894,11 +1039,6 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			case "pleasantpark": {
-				teleport(player, ServerTeleports.PLEASANT_PARK.getTeleportPos());
-				return true;
-			}
-
 			case "abyss": {
 				teleport(player, ServerTeleports.ABYSS.getTeleportPos());
 				return true;
@@ -906,6 +1046,12 @@ public class CommandHandlerRegular {
 
 			case "zmi": {
 				teleport(player, ServerTeleports.ZMI.getTeleportPos());
+				return true;
+			}
+
+			case "perk":
+			case "perks": {
+				teleport(player, 3116, 3487, 0);
 				return true;
 			}
 
@@ -1301,6 +1447,15 @@ public class CommandHandlerRegular {
 
 				message = BadWords.filterBadWords(message);
 
+				io.ruin.model.content.loyaltytitles.LoyaltyTitle equippedLoyaltyTitle =
+						io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.getEquipped(player);
+				if (equippedLoyaltyTitle != null && equippedLoyaltyTitle.prefix) {
+					title = equippedLoyaltyTitle.text;
+				} else if (player.titleId != -1 && player.titleId < Title.PRESET_TITLES.length
+						&& Title.PRESET_TITLES[player.titleId] != null && Title.PRESET_TITLES[player.titleId].getPrefix() != null) {
+					title = player.titleId == 22 ? player.customTitle : Title.PRESET_TITLES[player.titleId].getPrefix();
+				}
+
 				long ms = System.currentTimeMillis();
 				long delay = player.yellDelay - ms;
 				boolean canYell = player.isDonator() || player.isSuperDonator() || player.isEliteDonator()
@@ -1510,13 +1665,6 @@ public class CommandHandlerRegular {
 						message = "<img=42>" + message;
 					} else {
 						message = "<img=2>" + message;
-					}
-				}
-
-				if (player.titleId != -1 && player.titleId < Title.PRESET_TITLES.length) {
-					title = Title.PRESET_TITLES[player.titleId].getPrefix();
-					if (player.titleId == 22) {
-						title = player.customTitle;
 					}
 				}
 
@@ -1746,7 +1894,7 @@ public class CommandHandlerRegular {
 
 			case "rules": {
 				player.openUrl(World.type.getWorldName().concat(" Rules"),
-						"https://discord.com/channels/1150539550561681508/1150539551027249155");
+						"https://discord.gg/XZ3E6Nur2r");
 				return true;
 			}
 
@@ -1756,61 +1904,19 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "vote": {
-				String username = player.getName().replace(" ", "-");
-				String url = "https://zelusrsps.com/vote/" + username;
-				player.openUrl(World.type.getWorldName() + " Vote", url);
+				// The website's vote page (a client-side React route) only
+				// recognises the exact path "/vote" -- there's no "/vote/{username}"
+				// sub-route, so appending the username here (as before) silently
+				// fell through to the homepage instead. The page collects the
+				// player's username itself once they're on it.
+				player.openUrl(World.type.getWorldName() + " Vote", "https://zelusrsps.com/vote");
 				return true;
 			}
 
-			case "sipsick": {
-				player.openUrl("Sipsick", "https://www.youtube.com/@sips1ck");
-				return true;
-			}
-			case "eggy": {
-				player.openUrl("Eggy", "https://www.youtube.com/@EggyRS");
-				return true;
-			}
-			case "wizard":
-			case "wetwizard": {
-				player.openUrl("Wet Wizard", "https://www.youtube.com/@WetWizard");
-				return true;
-			}
-			case "effigy": {
-				player.openUrl("Effigy Swiper", "https://www.youtube.com/@effigyswiper");
-				return true;
-			}
-			case "smoothie": {
-				player.openUrl("Smoothie RSPS", "https://www.youtube.com/@smoothiersps7941");
-				return true;
-			}
-			case "ruben": {
-				player.openUrl("RubenRSPS", "https://www.youtube.com/@RubenRSPS");
-				return true;
-			}
-			case "rspsguy": {
-				player.openUrl("RSPSGuy", "https://www.youtube.com/@RSPSguy");
-				return true;
-			}
-			case "slapped": {
-				player.openUrl("Slapped", "https://www.youtube.com/@SLAPPEDRSPS");
-				return true;
-			}
-			case "bonkloots": {
-				player.openUrl("Bonkloots", "https://www.youtube.com/@Bonkloots");
-				return true;
-			}
-			case "didy": {
-				player.openUrl("Didyscape", "https://www.youtube.com/@DidyScape");
-				return true;
-			}
-			case "walkchaos": {
-				player.openUrl("Walkchaos", "https://www.youtube.com/@Walkchaos");
-				return true;
-			}
-			case "zig": {
-				player.openUrl("PkedByZig", "https://www.youtube.com/@pkedbyzigrsps663");
-				return true;
-			}
+			//case "zig": {
+				//player.openUrl("PkedByZig", "https://www.youtube.com/@pkedbyzigrsps663");
+				//return true;
+			//}
 
 			case "highscores":
 			case "hiscores": {
@@ -1836,8 +1942,8 @@ public class CommandHandlerRegular {
 					return true;
 				}
 
-				player.password = password;
-				player.sendMessage("You have changed your password to " + password + "!");
+				player.password = BCrypt.hashpw(password, BCrypt.gensalt());
+				player.sendMessage("You have changed your password.");
 				return true;
 			}
 

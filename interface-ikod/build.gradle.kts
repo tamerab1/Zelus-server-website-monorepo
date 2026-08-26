@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
 	implementation(projects.kronosServer)
+	implementation(projects.economyProtection)
 }

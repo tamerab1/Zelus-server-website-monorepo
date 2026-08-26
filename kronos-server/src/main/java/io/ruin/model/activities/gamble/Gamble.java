@@ -14,22 +14,18 @@ import io.ruin.model.item.ItemContainer;
 import io.ruin.model.item.ItemContainerG;
 import io.ruin.model.map.Bounds;
 import io.ruin.model.map.MapListener;
-import io.ruin.model.map.Position;
 import io.ruin.network.PacketSender;
-
-import java.util.concurrent.TimeUnit;
 
 public class Gamble extends ItemContainer {
 
-	public static Bounds GAMBLE_ZONE = new Bounds(1355, 2501, 1387, 2563, 1);
+	public static Bounds GAMBLE_ZONE = new Bounds(3112, 3464, 3134, 3477, 0);
 	public static final Bounds[] GAMBLEZONE_BOUNDS = {
-		new Bounds(new Position(1359, 2510, 1), new Position(1365, 2522, 1), 1),
-		new Bounds(new Position(1365, 2504, 1), new Position(1377, 2510, 1), 1),
-		new Bounds(new Position(1377, 2510, 1), new Position(1383, 2522, 1), 1),
-		new Bounds(new Position(1366, 2523, 1), new Position(1376, 2536, 1), 1),
-		new Bounds(new Position(1359, 2538, 1), new Position(1365, 2549, 1), 1),
-		new Bounds(new Position(1365, 2550, 1), new Position(1376, 2556, 1), 1),
-		new Bounds(new Position(1377, 2537, 1), new Position(1383, 2550, 1), 1)
+		new Bounds(3116, 3474, 3121, 3475, 0), // area 1
+		new Bounds(3116, 3470, 3121, 3471, 0), // area 2
+		new Bounds(3116, 3466, 3121, 3467, 0), // area 3
+		new Bounds(3125, 3466, 3130, 3467, 0), // area 4
+		new Bounds(3125, 3470, 3130, 3471, 0), // area 5
+		new Bounds(3125, 3474, 3130, 3475, 0)  // area 6
 	};
 
 	public static void register() {
@@ -275,12 +271,6 @@ public class Gamble extends ItemContainer {
 			player.sendMessage("Your better judgement stops you from doing this.");
 			return;
 		}
-		long playtime = player.playTime * Server.tickMs();
-		long days = TimeUnit.MILLISECONDS.toDays(playtime);
-		if (days < 7) {
-			player.sendMessage("You are not experienced enough to gamble.");
-			return;
-		}
 		if (target.getGameMode().isIronMan() && !player.isAdmin()) {
 			player.sendMessage(target.getName() + " is an ironman and so cannot gamble.");
 			return;
@@ -310,7 +300,7 @@ public class Gamble extends ItemContainer {
 			return;
 		}
 		requestUserId = target.getUserId();
-		target.getPacketSender().sendMessage(player.getName() + " wishes to gamble with you.", player.getName(), 103);
+		target.getPacketSender().sendMessage(player.getNameWithRanks() + " wishes to gamble with you.", player.getNameWithRanks(), 103);
 		player.getPacketSender().sendMessage("Sending gamble request to " + target.getName() + "...", null, 102);
 	}
 
@@ -449,7 +439,7 @@ public class Gamble extends ItemContainer {
 
 			case 3:
 			case 4:
-				gambleRules += "Black Jack and " + host.getName() + " is the host.<br>";
+				gambleRules += "Black Jack 100 and " + host.getName() + " is the host.<br>";
 				gambleRules += "Closes to 100 without going over 100 wins.<br>";
 				break;
 			case 7:
@@ -560,8 +550,8 @@ public class Gamble extends ItemContainer {
 		ps2.setHidden(876, 127, false);
 		ps2.setHidden(876, 128, false);
 
-		ps1.sendString(876, 127, "Black Jack with the host being: " + host.getName());
-		ps2.sendString(876, 127, "Black Jack with the host being: " + host.getName());
+		ps1.sendString(876, 127, "Black Jack 100 with the host being: " + host.getName());
+		ps2.sendString(876, 127, "Black Jack 100 with the host being: " + host.getName());
 
 		ps1.sendString(876, 128,
 			"Get 100, or as close to 100 as possible, without going over. If you go over, the game is automatically lost without the dealer ever having to roll."
@@ -690,8 +680,8 @@ public class Gamble extends ItemContainer {
 		}
 		ps.sendString(876, 118, "55x2 (" + getGambleData().playerOne.getName() + " host)");
 		ps.sendString(876, 119, "55x2 (" + getGambleData().playerTwo.getName() + " host)");
-		ps.sendString(876, 120, "Black Jack (" + getGambleData().playerOne.getName() + " host)");
-		ps.sendString(876, 121, "Black Jack (" + getGambleData().playerTwo.getName() + " host)");
+		ps.sendString(876, 120, "Black Jack 100 (" + getGambleData().playerOne.getName() + " host)");
+		ps.sendString(876, 121, "Black Jack 100 (" + getGambleData().playerTwo.getName() + " host)");
 	}
 
 	private void remove(Item item, int amount) {

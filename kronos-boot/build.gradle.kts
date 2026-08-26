@@ -37,6 +37,7 @@ dependencies {
 	implementation(projects.worldList)
 	implementation(projects.tradepost)
 	implementation(projects.playerMongo)
+	implementation(projects.economyProtection)
 
 	implementation(libs.hotswap.agent.core)
 }
@@ -73,7 +74,7 @@ val buildCache = tasks.register<Exec>("build_cache") {
 		commandLine(".dev/tool-cache-packer")
 	}
 	environment("RUST_LOG", "info")
-	args("--in", "../data reasonps/data/cache/toml/", "--out", "../data reasonps/data/cache/")
+	args("--in", "../data zelus/data/cache/toml/", "--out", "../data zelus/data/cache/")
 }
 
 pluginManager.withPlugin("application") {

@@ -1,0 +1,473 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [develop, main]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [develop, main]
+  # Manual bypass for when tag-push dispatch stalls on GitHub's side (2026-08-26).
+  # NOTE: this only becomes available at all once this trigger exists in the
+  # workflow file as it is on the repo's DEFAULT branch (main, not develop) --
+  # GitHub won't offer manual dispatch otherwise, regardless of what any other
+  # branch's copy of this file says. Dispatch against a v* TAG ref specifically
+  # (not a branch) if the goal is a production deploy -- release-production/
+  # deploy-production below are gated on `startsWith(github.ref, 'refs/tags/v')`,
+  # so dispatching against develop/main would build but skip the actual deploy.
+  workflow_dispatch:
+
+concurrency:
+
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ===================================================================
+  # SETUP — computes the lowercase GHCR image base (GHCR rejects any
+  # uppercase in the path, and this repo name has capitals) and detects
+  # which service(s) changed, so downstream jobs only run for what
+  # actually needs it. Mirrors the `rules: changes:` path filters from
+  # the old .gitlab-ci.yml.
+  # ===================================================================
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      image_base: ${{ steps.vars.outputs.image_base }}
+      server: ${{ steps.filter.outputs.server }}
+      website_client: ${{ steps.filter.outputs.website_client }}
+      website_api: ${{ steps.filter.outputs.website_api }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute lowercase image base
+        id: vars
+        run: echo "image_base=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            server:
+              - 'kronos-*/**'
+              - 'core-*/**'
+              - 'docker/server/**'
+              - 'docker/db_sql/**'
+              - '*.gradle.kts'
+              - 'gradle/**'
+              - 'gradle.properties'
+              - 'settings.gradle.kts'
+            website_client:
+              - 'website/zelus-website-client/**'
+            website_api:
+              - 'website/zelus-website-api/**'
+
+  # ===================================================================
+  # TEST — a change to the website never blocks or waits on the Gradle
+  # build, and vice versa.
+  # ===================================================================
+  test-server:
+    needs: setup
+    if: needs.setup.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # JDK 21 matches the project's `jvmToolchain(21)` (buildSrc/reason-kotlin.gradle.kts).
+      # Running Gradle itself on 21 means the toolchain requirement is already
+      # satisfied by the host JVM — no toolchain download/resolution needed.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      # :player-mongo:test, :tradepost:test, :economy-protection:test, and
+      # :interface-ikod:test are integration tests, not unit tests — some of
+      # their test classes call ServerTest.start(), which loads the real OSRS
+      # cache via FileStore and opens a live MariaDB + MongoDB connection. No
+      # CI runner has either, so the whole module is excluded here (matching
+      # the existing player-mongo/tradepost precedent) rather than run against
+      # infrastructure that doesn't exist. Run them locally where the cache
+      # and DBs are already set up.
+      - run: ./gradlew --console=plain test -x :player-mongo:test -x :tradepost:test -x :economy-protection:test -x :interface-ikod:test
+
+  test-website-client:
+    needs: setup
+    if: needs.setup.outputs.website_client == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - working-directory: website/zelus-website-client
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+  test-website-api:
+    needs: setup
+    if: needs.setup.outputs.website_api == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - working-directory: website/zelus-website-api
+        run: |
+          pip install --no-cache-dir -r requirements.txt
+          pip install --no-cache-dir ruff pytest
+          ruff check .
+          # Exit code 5 = "no tests collected", not a failure — this project
+          # has zero test files yet. Still fails on 1 (tests failed), 2
+          # (interrupted), etc. Once real tests exist, this gate starts
+          # enforcing them automatically with no further change needed.
+          pytest --exitfirst || test $? -eq 5
+
+  # ===================================================================
+  # BUILD — SHA-tagged images per service, only for what changed. Cheap
+  # iterative builds for review; NOT what gets deployed. RELEASE (below)
+  # always produces a complete, consistent set of all three images.
+  # ===================================================================
+  build-server:
+    needs: [setup, test-server]
+    if: needs.setup.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      # The Dockerfile COPYs this pre-built output rather than compiling inside
+      # the image — has to exist in the build context before docker build runs.
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/server/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/server:${{ github.sha }}
+          cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/server:latest-dev
+          cache-to: type=inline
+
+  # docker-compose.yml/docker-compose-prod.yml have always referenced
+  # ${IMAGE_REGISTRY}/db_sql:${IMAGE_TAG}, but no job ever actually built or
+  # pushed it -- deploy-development only surfaced this once it got far
+  # enough to actually try scheduling the container ("No such image").
+  # Shares the `server` path-filter category (docker/db_sql/** is grouped
+  # with docker/server/** in setup's filter) since it's part of the same
+  # logical "server-side" build, even though it needs no Gradle/JDK step.
+  build-db_sql:
+    needs: [setup, test-server]
+    if: needs.setup.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/db_sql:${{ github.sha }}
+          cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/db_sql:latest-dev
+          cache-to: type=inline
+
+  build-website-client:
+    needs: [setup, test-website-client]
+    if: needs.setup.outputs.website_client == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-client
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-client:${{ github.sha }}
+          # Vite bakes these into the static bundle at build time (see the
+          # client's Dockerfile ARG/ENV before `npm run build`) — there is
+          # no way to change them at container-run time afterward. Both are
+          # public-safe values (a URL and a Turnstile *site* key, not the
+          # secret key), so plain repo Variables are fine here, not Secrets.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY }}
+          cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/website-client:latest-dev
+          cache-to: type=inline
+
+  build-website-api:
+    needs: [setup, test-website-api]
+    if: needs.setup.outputs.website_api == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-api
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-api:${{ github.sha }}
+          cache-from: type=registry,ref=${{ needs.setup.outputs.image_base }}/website-api:latest-dev
+          cache-to: type=inline
+
+  # ===================================================================
+  # RELEASE — always rebuilds all three services, regardless of which
+  # paths changed. Guarantees a `develop` push or a version tag always
+  # produces a complete, matched set of images — never a missing tag
+  # for a service that didn't happen to change in this commit.
+  #
+  # `:latest-dev` = what the development environment deploys.
+  # `:latest`     = what production is currently running. Only ever
+  #                 set here, on a version tag — never on a dev build.
+  # ===================================================================
+  release-dev:
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    needs: [setup, test-server, test-website-client, test-website-api]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/server/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/server:latest-dev
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/db_sql:latest-dev
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-client
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-client:latest-dev
+          # See the identical build-args note in build-website-client above —
+          # this is the tag deploy-development (i.e. beta) actually runs.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-api
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-api:latest-dev
+
+  release-production:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [setup, test-server, test-website-client, test-website-api]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - run: chmod +x gradlew
+      # :kronos-boot:installDist depends on :kronos-boot:build_cache, which
+      # shells out to a native cache-packer tool against a sibling folder
+      # (../data zelus/) that lives outside this repo entirely — cache
+      # authoring tooling, not something installDist's own output needs (the
+      # cache is mounted into the container at runtime, never baked into the
+      # distribution). Excluded here since no CI runner has that folder.
+      - run: ./gradlew --console=plain :kronos-boot:installDist -x :kronos-boot:build_cache
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/server/Dockerfile
+          push: true
+          tags: |
+            ${{ needs.setup.outputs.image_base }}/server:${{ github.ref_name }}
+            ${{ needs.setup.outputs.image_base }}/server:latest
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/db_sql/Dockerfile
+          push: true
+          tags: |
+            ${{ needs.setup.outputs.image_base }}/db_sql:${{ github.ref_name }}
+            ${{ needs.setup.outputs.image_base }}/db_sql:latest
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-client
+          push: true
+          tags: |
+            ${{ needs.setup.outputs.image_base }}/website-client:${{ github.ref_name }}
+            ${{ needs.setup.outputs.image_base }}/website-client:latest
+          # Deliberately separate *_PROD variable names from the dev/beta
+          # build-args above — production must point at its own domain, not
+          # get silently built with the beta API URL.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL_PROD }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY_PROD }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-api
+          push: true
+          tags: |
+            ${{ needs.setup.outputs.image_base }}/website-api:${{ github.ref_name }}
+            ${{ needs.setup.outputs.image_base }}/website-api:latest
+
+  # ===================================================================
+  # DEPLOY — development auto-deploys from `develop`. Production
+  # requires manual approval: the `production` GitHub Environment must
+  # have a required-reviewer protection rule configured in the repo
+  # settings (Settings > Environments > production) — that's what
+  # actually pauses this job for a human click, YAML alone can't do it.
+  #
+  # DEPLOY_HOST / DEPLOY_HOST_USER / DEPLOY_SSH_KEY / DOCKER_COMPOSE_ENV
+  # are GitHub Environment secrets, scoped separately per environment,
+  # so the same secret name resolves to the dev box under `development`
+  # and the prod box under `production`.
+  # ===================================================================
+  deploy-development:
+    # Disabled 2026-08-11: the standalone dev/beta VPS was retired -- the
+    # team consolidated onto a single new production VPS, and running this
+    # stack alongside production there isn't safe as configured (both
+    # hardcode the same host ports and the same absolute /opt/zelus/...
+    # bind-mount paths, so a second stack would either fail to schedule or
+    # silently share production's live game data/cache). Left in place
+    # rather than deleted in case a properly-isolated dev environment comes
+    # back later. To re-enable: remove this `if`, and give this stack its
+    # own ports/data path first if it's going to run on the same box as
+    # production.
+    if: false
+    needs: [setup, release-dev]
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Trust deploy host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+      - name: Write docker-compose.env
+        run: echo "${{ secrets.DOCKER_COMPOSE_ENV }}" > docker-compose.env
+      - name: Deploy stack
+        env:
+          DOCKER_HOST: ssh://${{ secrets.DEPLOY_HOST_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          export $(cat docker-compose.env | xargs)
+          export IMAGE_TAG=latest-dev
+          # GHCR_PULL_TOKEN (classic PAT, read:packages, no expiration) -- NOT GITHUB_TOKEN.
+          # --with-registry-auth bakes whatever credential is used here directly into the
+          # swarm service, and Swarm reuses that SAME credential for every future pull tied
+          # to this service, including auto-restarts long after this job ends -- GITHUB_TOKEN
+          # is invalidated once the job completes, which caused a real production outage
+          # (2026-08-23): a later crash-triggered restart tried to re-pull with the by-then-
+          # expired token and got "denied" forever. A non-expiring PAT keeps every future pull
+          # working, not just this deploy's. (Dropping --with-registry-auth entirely was tried
+          # and made it worse -- Swarm doesn't fall back to the node's own local docker login
+          # the way a plain `docker pull` does, so nothing pulled at all without a credential
+          # attached here, even on a fresh deploy.)
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
+          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_dev
+
+  deploy-production:
+    needs: [setup, release-production]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Trust deploy host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+      - name: Write docker-compose.env
+        run: echo "${{ secrets.DOCKER_COMPOSE_ENV }}" > docker-compose.env
+      - name: Deploy stack
+        env:
+          DOCKER_HOST: ssh://${{ secrets.DEPLOY_HOST_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          export $(cat docker-compose.env | xargs)
+          export IMAGE_TAG=${{ github.ref_name }}
+          # Each topsite's vote-confirmation callback is authenticated with its OWN secret (the
+          # value we entered into that site's own dashboard when registering the callback URL),
+          # NOT one value shared across sites -- RuneLocus and RSPS-List turned out to have two
+          # different secrets configured on their end, so validating both against a single
+          # VOTE_CALLBACK_SECRET meant fixing one broke the other. These override whatever's baked
+          # into the DOCKER_COMPOSE_ENV blob above. Must come AFTER that export, or the blob's
+          # stale value would clobber these. DOCKER_COMPOSE_ENV is write-only in the GitHub UI (no
+          # way to view/edit the existing blob to fix a line in place), so these are standalone
+          # secrets layered on top instead of touching that blob. Fold back into DOCKER_COMPOSE_ENV
+          # (as RUNELOCUS_VOTE_CALLBACK_SECRET / RSPSLIST_VOTE_CALLBACK_SECRET) and drop these
+          # overrides once that blob is next rebuilt from scratch.
+          export RUNELOCUS_VOTE_CALLBACK_SECRET=${{ secrets.RUNELOCUS_VOTE_CALLBACK_SECRET_OVERRIDE }}
+          export RSPSLIST_VOTE_CALLBACK_SECRET=${{ secrets.VOTE_CALLBACK_SECRET_OVERRIDE }}
+          # 2026-08-26: KRONOS_BOOT_OPTS in the DOCKER_COMPOSE_ENV blob was still
+          # -Xmx3200m (the beta default) despite the VPS being upsized to 8GB for
+          # more heap headroom -- same override pattern as the vote-callback
+          # secrets above. Fold into DOCKER_COMPOSE_ENV and drop this next time
+          # that blob is rebuilt from scratch.
+          export KRONOS_BOOT_OPTS="${{ secrets.KRONOS_BOOT_OPTS_OVERRIDE }}"
+          export GAME_SERVER_MEM_LIMIT="${{ secrets.GAME_SERVER_MEM_LIMIT_OVERRIDE }}"
+          # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
+          # above. Same reasoning, same real incident (2026-08-23 production outage).
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
+          docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod

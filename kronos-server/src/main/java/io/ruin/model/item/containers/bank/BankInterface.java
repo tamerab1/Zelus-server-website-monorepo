@@ -42,7 +42,7 @@ public class BankInterface {
 						player.getBank().swapTabs(fromSlot, toSlot);
 				}
 			};
-			// h.actions[120] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
+			h.actions[120] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
 			h.actions[13] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {

@@ -29,10 +29,12 @@ import io.ruin.data.yaml.YamlLoader;
 import io.ruin.db.DatabaseFile;
 import io.ruin.db.PlayerDatabase;
 import io.ruin.model.World;
+import io.ruin.model.activities.pkbots.ZelusBotPlayer;
 import io.ruin.model.combat.special.Special;
 import io.ruin.model.content.XPWeekend;
 import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.entity.npc.actions.edgeville.StarterGuide;
+import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerLoginWorker;
 import io.ruin.model.item.containers.TournamentSuppliesInterface;
 import io.ruin.model.skills.slayer.Slayer;
@@ -193,7 +195,8 @@ public final class Server extends ServerWrapper {
 				"tormenteddemon.module",
 				"donationdeals.module",
 				"gemstonecrab.module",
-				"player.mongo.module");
+				"player.mongo.module",
+				"economy.protection.module");
 
 		RSProtService.create();
 
@@ -223,9 +226,27 @@ public final class Server extends ServerWrapper {
 		long startTime = System.currentTimeMillis();
 		init(Server.class);
 
-		try {
-			HttpClient.authenticate();
-		} catch (Exception ignore) {
+		// Retries with backoff: on a combined deploy, this container can boot and
+		// reach here before the website API container (also being redeployed) is
+		// ready to accept connections. A single attempt would silently leave
+		// HttpClient's auth cookie null for the rest of this process's life --
+		// every subsequent ::claim*-style request then NPEs on a null Cookie header.
+		for (int attempt = 1; attempt <= 5; attempt++) {
+			try {
+				HttpClient.authenticate();
+				break;
+			} catch (Exception e) {
+				if (attempt == 5) {
+					log.error("Failed to authenticate with the website API after 5 attempts", e);
+				} else {
+					try {
+						Thread.sleep(3000L * attempt);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
 		}
 
 		loadData();
@@ -306,6 +327,26 @@ public final class Server extends ServerWrapper {
 
 		CentralSaves.normalizeFilenamesInDirectory();
 
+		// Deploys/restarts send SIGTERM (Docker's default stop_grace_period gives the
+		// process ~10s before SIGKILL) -- without this, any progress since the last
+		// periodic autosave (every 50 ticks, ~30s -- see CoreWorker.savePlayers()) is
+		// silently lost, which is exactly what happened to a player's slayer task kill
+		// count during a deploy. This forces an immediate save of every online player
+		// and blocks until it's actually flushed to disk (not just queued) before the
+		// JVM is allowed to exit.
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			log.info("Shutdown signal received, saving all online players before exit...");
+			int count = 0;
+			for (Player player : World.players()) {
+				if (player instanceof ZelusBotPlayer)
+					continue;
+				if (PlayerDatabase.insertQueue(player))
+					count++;
+			}
+			PlayerDatabase.db().awaitNoPendingSaves();
+			log.info("Saved " + count + " player(s) before shutdown.");
+		}, "shutdown-save-hook"));
+
 		log.info("Started server in " + (System.currentTimeMillis() - startTime) + "ms.");
 	}
 
@@ -340,6 +381,10 @@ public final class Server extends ServerWrapper {
 	}
 
 	public static String getUptime() {
+		long launchTimestampMs = io.ruin.services.ServerConfig.getLaunchTimestamp();
+		if (launchTimestampMs > 0) {
+			return Utils.getDurationAsString(Duration.ofMillis(System.currentTimeMillis() - launchTimestampMs));
+		}
 		return Utils.getDurationAsString(Duration.between(bootedAt, Instant.now()));
 	}
 

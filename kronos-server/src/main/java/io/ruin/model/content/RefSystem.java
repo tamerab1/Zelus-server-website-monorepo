@@ -2,8 +2,7 @@ package io.ruin.model.content;
 
 import discord.webhooks.logs.ReferralHook;
 import io.ruin.model.entity.player.Player;
-import io.ruin.model.item.Item;
-import io.ruin.model.item.attributes.AttributeExtensions;
+import io.ruin.model.item.actions.impl.DonatorBond;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -54,9 +53,7 @@ public class RefSystem {
 				break;
 			}
 			case "newplayer": {
-				Item bond = new Item(30464, 1);
-				AttributeExtensions.addCharges(bond, 5);
-				player.getInventory().add(bond); //$5 bond
+				player.getInventory().add(DonatorBond.DONATOR_TICKET_ID, 100); //100 donator tickets
 				player.getInventory().add(30460, 2); //double exp scroll
 				player.getInventory().add(30570, 10); //10 perk point scrolls
 				addHwidToFile(player);

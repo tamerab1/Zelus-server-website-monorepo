@@ -238,7 +238,8 @@ public class StatList {
 		if (player.getPlayerPerkHandler().getActivePerkSets(player).contains(PerkSets.SKILLED_MIND) && useMultiplier) {
 			int perkIndex = player.getPlayerPerkHandler().getActivePerkSetIndex(player, PerkSets.SKILLED_MIND);
 			SkilledMind c = (SkilledMind) player.getPlayerPerkHandler().getActivePerkSets(player).get(perkIndex).perkSet();
-			if (Random.rollPercent(c.getChanceToDoubleExperience()) && useMultiplier)
+			int level = player.getPlayerPerkHandler().getActivePerkSetLevel(player, PerkSets.SKILLED_MIND);
+			if (Random.rollPercent(c.getChanceToDoubleExperience(level)) && useMultiplier)
 				amount *= 2.0;
 		}
 		/**

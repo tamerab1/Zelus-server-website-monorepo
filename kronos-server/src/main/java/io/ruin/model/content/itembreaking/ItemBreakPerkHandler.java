@@ -38,7 +38,7 @@ public class ItemBreakPerkHandler {
 	}
 
 	public static void handleSpectralGuardian(Player player, Item item) {
-		if (player.wildernessLevel > 0 || player.getPosition().getRegion().id == 5426)
+		if (player.wildernessLevel > 0 || player.getPosition().getRegion().id == 12342)
 			return;
 
 		int level = AttributeExtensions.getCharges(AttributeTypes.SPECTRAL_GUARDIAN, item);

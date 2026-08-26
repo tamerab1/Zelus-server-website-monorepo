@@ -1,6 +1,7 @@
 package clanchat.module;
 
 import clanchat.Attributes;
+import clanchat.FriendChats;
 import clanchat.hook.ChatHook;
 import clanchat.hook.FriendListHook;
 import clanchat.hook.PlayerHook;
@@ -19,6 +20,7 @@ public class Module implements IModule {
 	@Override
 	public void start() {
 		Attributes.register();
+		FriendChats.ensureHelpChannelExists();
 		FriendChatSettingsInterface.register();
 		TabFriendsChat.register();
 		PlayerHook.register();

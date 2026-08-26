@@ -39,6 +39,15 @@ public class Zygomite extends NPCCombat {
 
 	private static final int IDLE = 533;
 	private static final int ACTIVE = 537;
+	// Fossil Island's real "Ancient Fungi" -> "Ancient Zygomite" pair, added because the
+	// legacy Pick handlers below were only ever wired to ids 533/535/1023, which are
+	// unrelated leftover world NPCs -- Fossil Island's Mutated Zygomite slayer task target
+	// had no "Pick" handler at all until now. Two idle ids (8690/8691) share the one active
+	// id (7797), mirroring how the legacy pair already has two idle ids (533/535) sharing
+	// one active id (537).
+	private static final int FOSSIL_ISLAND_IDLE_1 = 8690;
+	private static final int FOSSIL_ISLAND_IDLE_2 = 8691;
+	private static final int FOSSIL_ISLAND_ACTIVE = 7797;
 	private boolean sprayed = false;
 
 	private int attackCounter = 0;
@@ -46,7 +55,7 @@ public class Zygomite extends NPCCombat {
 	private static final Projectile PROJECTILE = new Projectile(576, 31, 31, 30, 50, 8, 0, 96);
 
 	public static void register() {
-		for (int i : Arrays.asList(537, 1024))
+		for (int i : Arrays.asList(537, 1024, FOSSIL_ISLAND_ACTIVE))
 			for (FungicideSpray spray : FungicideSpray.values())
 				ItemNPCAction.register(spray.id, i, (player, item, npc) -> {
 					if (npc.getHp() <= 8) {
@@ -112,13 +121,32 @@ public class Zygomite extends NPCCombat {
 				npc.face(player);
 			});
 		});
+		for (int idleId : Arrays.asList(FOSSIL_ISLAND_IDLE_1, FOSSIL_ISLAND_IDLE_2)) {
+			NPCAction.register(idleId, "Pick", (player, npc) -> {
+				if (npc.isLocked() || npc.getId() != idleId)
+					return;
+				player.animate(3335);
+				npc.lock();
+				npc.addEvent(event -> {
+					npc.animate(3329);
+					npc.graphics(577);
+					event.delay(2);
+					npc.transform(FOSSIL_ISLAND_ACTIVE);
+					npc.face(player);
+					event.delay(2);
+					npc.unlock();
+					npc.getCombat().setTarget(player);
+					npc.face(player);
+				});
+			});
+		}
 	}
 
 
 	@Override
 	public void init() {
 		npc.deathEndListener = (entity, killer, killHit) -> {
-			npc.transform(IDLE);
+			npc.transform(npc.getId() == FOSSIL_ISLAND_ACTIVE ? FOSSIL_ISLAND_IDLE_1 : IDLE);
 			sprayed = false;
 			attackCounter = 0;
 			npc.getCombat().reset();
@@ -141,7 +169,7 @@ public class Zygomite extends NPCCombat {
 		if (!withinDistance(10)) {
 			return false;
 		}
-		if (npc.getId() == IDLE) {
+		if (npc.getId() == IDLE || npc.getId() == FOSSIL_ISLAND_IDLE_1 || npc.getId() == FOSSIL_ISLAND_IDLE_2) {
 			return true; // whirlpool, dont attack
 		}
 		if (target.getPosition().isWithinDistance(npc.getPosition(), 1)) {
@@ -191,6 +219,6 @@ public class Zygomite extends NPCCombat {
 
 	@Override
 	public boolean isAggressive() {
-		return npc.getId() != IDLE;
+		return npc.getId() != IDLE && npc.getId() != FOSSIL_ISLAND_IDLE_1 && npc.getId() != FOSSIL_ISLAND_IDLE_2;
 	}
 }

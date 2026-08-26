@@ -47,17 +47,17 @@ public class DonatorPointStore extends NewShop {
 				new ShopItem(new Item(30601), 8500, ShopCategories.RARES, null, true), //Pink_Santa_Hat
 				new ShopItem(new Item(13344), 7500, ShopCategories.RARES, null, true), //INVESTED_Santa_Hat
 				new ShopItem(new Item(21859), 7500, ShopCategories.RARES, null, true), //WISE_SANTA_PARTY
-				new ShopItem(new Item(ItemID.RAINBOW_PARTYHAT), 7500, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.BLUE_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.RED_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.WHITE_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.PURPLE_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.GREEN_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.YELLOW_PARTYHAT), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.RED_HALLOWEEN_MASK), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.BLUE_HALLOWEEN_MASK), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.GREEN_HALLOWEEN_MASK), 5000, ShopCategories.RARES, null, true),
-				new ShopItem(new Item(ItemID.SANTA_HAT), 5000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.RAINBOW_PARTYHAT), 6500, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.BLUE_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.RED_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.WHITE_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.PURPLE_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.GREEN_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.YELLOW_PARTYHAT), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.RED_HALLOWEEN_MASK), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.BLUE_HALLOWEEN_MASK), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.GREEN_HALLOWEEN_MASK), 3000, ShopCategories.RARES, null, true),
+				new ShopItem(new Item(ItemID.SANTA_HAT), 3000, ShopCategories.RARES, null, true),
 
 
 				/*
@@ -100,6 +100,10 @@ public class DonatorPointStore extends NewShop {
 				new ShopItem(new Item(59543), 1250, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(59547), 3000, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(59537), 5000, ShopCategories.EQUIPMENT, null, true),
+				new ShopItem(new Item(24391), 5000, ShopCategories.EQUIPMENT, null, true),
+				new ShopItem(new Item(24389), 5000, ShopCategories.EQUIPMENT, null, true),
+				new ShopItem(new Item(24387), 3500, ShopCategories.EQUIPMENT, null, true),
+				new ShopItem(new Item(24393), 1500, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(11670), 1950, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(ItemID.ARMADYL_HELMET), 950, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(ItemID.ARMADYL_CHESTPLATE), 1250, ShopCategories.EQUIPMENT, null, true),
@@ -121,9 +125,7 @@ public class DonatorPointStore extends NewShop {
 				new ShopItem(new Item(ItemID.VERACS_ARMOUR_SET), 950, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(ItemID.DRAGONFIRE_SHIELD), 750, ShopCategories.EQUIPMENT, null, true),
 				new ShopItem(new Item(ItemID.DRAGONFIRE_WARD), 750, ShopCategories.EQUIPMENT, null, true),
-				new ShopItem(new Item(ItemID.ANCIENT_WYVERN_SHIELD), 750, ShopCategories.EQUIPMENT, null, true),
-				new ShopItem(new Item(ItemID.FIRE_CAPE), 350, ShopCategories.EQUIPMENT, null, true),
-				new ShopItem(new Item(ItemID.INFERNAL_CAPE), 1500, ShopCategories.EQUIPMENT, null, true));
+				new ShopItem(new Item(ItemID.ANCIENT_WYVERN_SHIELD), 750, ShopCategories.EQUIPMENT, null, true));
 
 	}
 

@@ -20,7 +20,6 @@ import io.ruin.model.inter.dialogue.OptionsDialogue;
 import io.ruin.model.inter.handlers.AchievementInterface;
 import io.ruin.model.inter.handlers.LootsTables;
 import io.ruin.model.inter.questtab.bestiary.Bestiary;
-import io.ruin.model.inter.questtab.presets.PresetsMenu;
 import io.ruin.model.inter.questtab.main.Achievements;
 import io.ruin.model.inter.questtab.toggles.*;
 import io.ruin.model.inter.utils.Option;
@@ -211,7 +210,7 @@ public class JournalTab {
 		// EMPTY2(Tab.MISCELLANEOUS, t4++, player -> "View store", (SimpleAction) player
 		// -> player.openUrl("https://prifddinas.io/community/pages/Store/")),
 		// EMPTY3(Tab.MISCELLANEOUS, t4++, player -> "Join discord", (SimpleAction)
-		// player -> player.openUrl("https://discord.gg/prifddinas")),
+		// player -> player.openUrl("https://discord.gg/XZ3E6Nur2r")),
 		COMBAT(Tab.MISCELLANEOUS, t4++),
 		TARGET_OVERLAY(Tab.MISCELLANEOUS, t4++, player -> "Target Overlay",
 				(SimpleAction) player -> player.sendMessage("This feature is currently disabled.")),
@@ -236,7 +235,8 @@ public class JournalTab {
 		HIDE_ICON(Tab.MISCELLANEOUS, t4++, new HideIcon()),
 		RISK_PROTECTION(Tab.MISCELLANEOUS, t4++, RiskProtection.INSTANCE),
 		HIDE_YELLS(Tab.MISCELLANEOUS, t4++, new HideYells()),
-		PVP_PRESETS(Tab.MISCELLANEOUS, t4++, player -> "PvP Presets", (SimpleAction) p -> PresetsMenu.open(p)),
+		// PVP_PRESETS retired -- opened the old PresetsMenu (DMMPVP-style fixed Zerker/Melee/Pure
+		// kits), superseded by the GearLoadouts system.
 		;
 
 		private Tab tab;
@@ -784,7 +784,7 @@ public class JournalTab {
 				interfaceHandler.actions[30] = (SimpleAction) player -> player.openUrl("Wiki",
 						"https://zelusrsps.com/wiki");
 				interfaceHandler.actions[31] = (SimpleAction) player -> player.openUrl("Discord",
-						"https://discord.gg/eSgzHWaeqd");
+						"https://discord.gg/XZ3E6Nur2r");
 			});
 			InterfaceHandler.register(1086, interfaceHandler -> {
 				interfaceHandler.actions[11] = (SimpleAction) player -> {
@@ -886,7 +886,7 @@ public class JournalTab {
 						return;
 					}
 					if (left < 1) {
-						ModernTeleport.teleport(player, new Position(3097, 3511, 0));
+						ModernTeleport.teleport(player, new Position(3105, 3489, 0));
 						return;
 					}
 					if (player.slayerTaskPosition == null) {
@@ -913,7 +913,7 @@ public class JournalTab {
 						return;
 					}
 					if (player.bossSlayerName == null) {
-						ModernTeleport.teleport(player, new Position(3099, 3508, 0));
+						ModernTeleport.teleport(player, new Position(3104, 3489, 0));
 						return;
 					}
 					if (player.bossSlayerPosition == null) {

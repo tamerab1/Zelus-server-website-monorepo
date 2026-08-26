@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
 	implementation(projects.playerAttributesApi)
+	implementation(projects.kronosServerDiscordServices)
+	implementation(libs.json)
 }

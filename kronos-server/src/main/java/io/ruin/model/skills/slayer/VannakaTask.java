@@ -123,7 +123,7 @@ public enum VannakaTask {
 		120,
 		new Position(2906, 9813, 0)
 	),
-	BREIN_RAT(98, "Brine rat",
+	BREIN_RAT(84, "Brine rat",
 		new int[]{4501},
 		45,
 		47,

@@ -7,7 +7,18 @@ import io.ruin.model.activities.bosses.nightmare.NightmareCombat;
 import io.ruin.model.activities.moonsofperil.MoonsOfPerilRewards;
 import io.ruin.model.activities.tempevents.summerevent.SummerBoss;
 import io.ruin.model.activities.tempevents.summerevent.SummerEventHandler;
+import io.ruin.model.item.actions.impl.boxes.mystery.CrystalChestBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.LimitedMysteryBox;
 import io.ruin.model.item.actions.impl.boxes.mystery.MysteryBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.MysteryBoxCrate;
+import io.ruin.model.item.actions.impl.boxes.mystery.PVPArmourMysteryBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.Promopackage;
+import io.ruin.model.item.actions.impl.boxes.mystery.SlayerCasket;
+import io.ruin.model.item.actions.impl.boxes.mystery.SlayerChest;
+import io.ruin.model.item.actions.impl.boxes.mystery.SuperMysteryBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.ThirdAgeMysteryBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.UltraMysteryBox;
+import io.ruin.model.item.actions.impl.boxes.mystery.VoteMysteryBox;
 import io.ruin.model.item.loot.LootTable;
 import io.ruin.model.map.object.actions.impl.BrimstoneChest;
 import io.ruin.model.map.object.actions.impl.LarransChest;
@@ -45,7 +56,22 @@ public enum LootsTables {
 	GWD_MYSTERY_BOX("GWD Mystery Box", MysteryBox.GWD_MYSTERY_BOX_TABLE),
 	GALVEK_MYSTERY_BOX("Galvek Mystery Box", MysteryBox.GALVEK_MYSTERY_BOX_TABLE),
 	ENHANCED_SUPERIOR_SLAYER_BOX("Enhanced Superior Box", MysteryBox.ENHANCED_SUPERIOR_SLAYER_BOX),
-	REASON_ULTRA_POINT_BOX("Zelus Ultra Point Box", MysteryBox.ULTRA_MYSTERY_BOX),
+	REASON_ULTRA_POINT_BOX("Ultra Mystery Box", MysteryBox.ULTRA_MYSTERY_BOX),
+
+	CRYSTAL_CHEST("Crystal Chest", CrystalChestBox.CRYSTAL_TABLE),
+	PVP_VOTING_BOX("PvP Voting Box", VoteMysteryBox.PVP_VOTING_BOX_TABLE),
+	ECO_VOTING_BOX("Economy Voting Box", VoteMysteryBox.ECO_VOTING_BOX_TABLE),
+	LIMITED_MYSTERY_BOX("Limited Mystery Box", LimitedMysteryBox.ECO_MYSTERY_BOX_TABLE),
+	SLAYER_CASKET("Slayer Casket", SlayerCasket.SLAYER_CASKET_LOOT),
+	MYSTERY_BOX_CRATE("Mystery Box Crate", MysteryBoxCrate.MYSTERY_BOX_TABLE),
+	PROMO_PACKAGE("Promo Package", Promopackage.MYSTERY_BOX_TABLE),
+	PROMO_SUPER_MYSTERY_BOX("Promo Super Mystery Box", Promopackage.SUPERMBOX_TABLE),
+	SUPER_MYSTERY_BOX("Super Mystery Box", SuperMysteryBox.ECO_MYSTERY_BOX_TABLE),
+	ULTRA_MYSTERY_BOX_ECO("Ultra Mystery Box", UltraMysteryBox.ECO_MYSTERY_BOX_TABLE),
+	THIRD_AGE_MYSTERY_BOX("Third Age Mystery Box", ThirdAgeMysteryBox.THIRD_AGE_BOX_TABLE),
+	PVP_ARMOUR_MYSTERY_BOX("PvP Armour Mystery Box", PVPArmourMysteryBox.PVP_ARMOUR_BOX_TABLE),
+	SLAYER_CHEST_BOSS_LOOT("Slayer Chest (Boss Loot)", SlayerChest.BOSS_LOOT),
+	SLAYER_CHEST_VERY_RARE("Slayer Chest (Very Rare)", SlayerChest.VERY_RARE_LOOT),
 
 	;
 

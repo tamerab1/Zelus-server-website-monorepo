@@ -1,5 +1,6 @@
 package io.ruin.model.combat;
 
+import io.ruin.HooksV2;
 import io.ruin.api.utils.Random;
 import io.ruin.api.utils.TimeUtils;
 import io.ruin.cache.Color;
@@ -28,11 +29,42 @@ public class Killer {
 
 	public static int BASE_BM_REWARD = 50;
 
+	/**
+	 * Extension point for economy/anti-farm modules that need to veto a kill
+	 * reward (PKP, BH credit, killer-directed drops) before it's paid out.
+	 * A listener signals a veto by setting {@link Verdict#blocked} to true on
+	 * the context it receives.
+	 */
+	public static interface Hook {
+		record ValidateKill(Killer killer, Player pKilled, Verdict verdict) implements Hook {
+		};
+	}
+
+	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
+
+	public static final class Verdict {
+		public boolean blocked;
+		public String reason;
+	}
+
 	public Player player;
 
 	public int damage;
 
+	/** Timestamp (ms) of the first damage this attacker dealt to the current victim. */
+	public long firstDamageMs;
+
+	/** Set true when {@link #reward} was vetoed by a {@link Hook.ValidateKill} listener. */
+	public boolean rewardBlocked;
+
 	public void reward(Player pKilled, boolean bhTarget) {
+		Verdict verdict = new Verdict();
+		hooks.handle(new Hook.ValidateKill(this, pKilled, verdict));
+		if (verdict.blocked) {
+			rewardBlocked = true;
+			return;
+		}
+
 		/*
 		 * Farming checks
 		 */

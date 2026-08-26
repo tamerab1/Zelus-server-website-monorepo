@@ -134,7 +134,7 @@ public class UpgradeSystemInterface {
 	}
 
 	public static void register() {
-		ObjectAction.register(46241, "operate", (player, obj) -> {
+		ObjectAction.register(60015, "operate", (player, obj) -> { // Zelus Upgrader (was 46241)
 			player.getUpgradeSystemInterface().open(player);
 		});
 		InterfaceHandler.register(1110, h -> {

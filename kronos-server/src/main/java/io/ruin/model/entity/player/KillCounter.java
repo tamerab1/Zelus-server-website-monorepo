@@ -379,6 +379,18 @@ public class KillCounter {
 		open(player, killer, slayerList, killer.getName() + "'s Slayer Kill Log");
 	}
 
+	/**
+	 * Sums kill counts across the curated boss list (see {@link #bossList}); used by
+	 * loyalty titles that require a total boss kill count rather than any single boss.
+	 */
+	public static int getTotalBossKills(Player player) {
+		int total = 0;
+		for (Function<Player, KillCounter> boss : bossList) {
+			total += boss.apply(player).getKills();
+		}
+		return total;
+	}
+
 	public static int getKills(String name, Player player) {
 		int kills = 0;
 		for (Function<Player, KillCounter> bosses :
@@ -466,6 +478,7 @@ public class KillCounter {
 		kills++;
 		streak++;
 		combatAchievementKillCheck(player);
+		io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.checkAllUnlocks(player);
 		if (messageOnKill)
 			player.sendMessage("Your " + name + " kill count is: " + Color.RED.wrap(NumberUtils.formatNumber(kills)));
 	}

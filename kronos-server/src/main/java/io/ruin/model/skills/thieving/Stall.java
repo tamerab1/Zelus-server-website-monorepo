@@ -299,7 +299,7 @@ public enum Stall {
 	}
 
 	private static void attempt(Player player, Stall stall, GameObject object, int replacementID) {
-		if (player.getPosition().regionId() == 5426) {
+		if (player.getPosition().regionId() == 12342) {
 			HomeHandler.HandleHomeStall(player, stall, object, replacementID);
 			return;
 		}

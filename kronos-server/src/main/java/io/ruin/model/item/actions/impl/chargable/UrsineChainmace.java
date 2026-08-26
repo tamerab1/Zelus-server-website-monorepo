@@ -30,7 +30,8 @@ public class UrsineChainmace {
 		ItemItemAction.register(CHARGED, REVENANT_ETHER, UrsineChainmace::charge);
 		ItemItemAction.register(UNCHARGED, REVENANT_ETHER, UrsineChainmace::charge);
 		ObjType.get(CHARGED).addPreTargetDefendListener((player, item, hit, target) -> {
-			if (hit.attackStyle != null && hit.attackStyle.isMelee() && target.npc != null && player.wildernessLevel > 0 || player.getPosition().inBounds(KBD_BOUNDS)) {
+			if (hit.attackStyle != null && hit.attackStyle.isMelee() && target.npc != null
+					&& (player.wildernessLevel > 0 || player.getPosition().inBounds(KBD_BOUNDS))) {
 				if (consumeCharge(player, item)) {
 					hit.boostAttack(1.8); //50% accuracy increase
 					hit.boostDamage(1.8); //50% damage increase

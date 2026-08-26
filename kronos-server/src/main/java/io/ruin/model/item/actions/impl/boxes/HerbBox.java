@@ -31,12 +31,12 @@ public class HerbBox {
 			player.sendMessage("You will need up to 15 free inventory spaces to open the herb box.");
 			return;
 		} else {
+			item.remove();
 			for (int i = 0; i < 15; i++) {
 				int itemId = chanceTable.rollItem().getId();
 				player.getInventory().add(itemId, 1);
 			}
 			player.sendMessage("The herbs from your herb box(es) have been added to your inventory.");
-			item.remove();
 		}
 	}
 
@@ -44,12 +44,12 @@ public class HerbBox {
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironman accounts aren't able to have their herbs sent to the bank.");
 		} else {
+			item.remove();
 			for (int i = 0; i < 15; i++) {
 				int itemId = chanceTable.rollItem().getId();
 				player.getBank().add(itemId - 1, 1);
 			}
 			player.sendMessage("The herbs from your herb box(es) have been deposited into your bank.");
-			item.remove();
 		}
 	}
 

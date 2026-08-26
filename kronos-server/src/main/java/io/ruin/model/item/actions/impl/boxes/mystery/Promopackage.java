@@ -16,7 +16,7 @@ import static io.ruin.cache.ItemID.COINS_995;
 
 public class Promopackage extends ItemContainer {
 
-	private static final LootTable MYSTERY_BOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable MYSTERY_BOX_TABLE = new LootTable().addTable(1,
 		new LootItem(4708, 1, 50), //Ahrim's hood
 		new LootItem(4712, 1, 50), //Ahrim's robetop
 		new LootItem(4714, 1, 50), //Ahrim's robeskirt
@@ -124,7 +124,7 @@ public class Promopackage extends ItemContainer {
 		new LootItem(20032, 1, 1) // Jungle demon mask
 	);
 
-	private static final LootTable SUPERMBOX_TABLE = new LootTable().addTable(1,
+	public static final LootTable SUPERMBOX_TABLE = new LootTable().addTable(1,
 
 		new LootItem(COINS_995, 4000000, 11000000, 20), //6M coins
 		new LootItem(COINS_995, 4000000, 14000000, 20), //8M coins

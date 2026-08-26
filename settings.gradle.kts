@@ -60,6 +60,7 @@ include(
 	"player-groupiron",
 	"tradepost",
 	"royaltitans",
+	"economy-protection",
 	"npc-nex",
 	"dominion-of-echoes",
 	"doom-of-mokhaiotl",

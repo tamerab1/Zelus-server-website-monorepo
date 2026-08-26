@@ -13,7 +13,6 @@ public enum CollectionLogData {
 					new Item(ItemID.UNSIRED),
 					new Item(30580),
 					new Item(ItemID.ABYSSAL_WHIP, 2),
-					new Item(30575)
 			}),
 	ARAXXOR(CollectionLogUpdated.Categories.BOSSES, "Araxxor", new Item[] {
 		new Item(29836), new Item(29786), new Item(29790),
@@ -36,7 +35,6 @@ public enum CollectionLogData {
 					new Item(7478, 15),
 					new Item(30461, 1),
 					new Item(30525, 1),
-					new Item(30576, 1),
 			}),
 	DAGANNOTH_KINGS(CollectionLogUpdated.Categories.BOSSES, "Dagannoth Kings",
 			new Item[] { (new Item(12644)), (new Item(12643)), (new Item(12645)), (new Item(6737)),
@@ -67,7 +65,6 @@ public enum CollectionLogData {
 		// completion rewards
 		new Item[] {
 			new Item(30461),
-			new Item(30575),
 			new Item(7478, 10),
 			new Item(30541, 1)
 		}),
@@ -211,7 +208,6 @@ public enum CollectionLogData {
 					new Item(7478, 15),
 					new Item(30461, 2),
 					new Item(30527, 1),
-					new Item(30576, 1),
 			}),
 	GAUNTLET(CollectionLogUpdated.Categories.MINIGAMES, "The Gauntlet",
 			new Item[] { (new Item(23757)/* Youngllef */), (new Item(23956)/* Crystal armour seed */),
@@ -220,7 +216,6 @@ public enum CollectionLogData {
 			new Item[] {
 					new Item(30528, 1),
 					new Item(30581, 1),
-					new Item(30575, 1),
 					new Item(7478, 15),
 			}),
 	GENERAL_GRAARDOR(CollectionLogUpdated.Categories.BOSSES, "General Graardor", new Item[] { (new Item(12650)/*
@@ -283,7 +278,6 @@ public enum CollectionLogData {
 					new Item(ItemID.TOKKUL, 2500000),
 					new Item(30581, 3),
 					new Item(4810, 2),
-					new Item(30576, 1),
 			}),
 	PEST_CONTROL(CollectionLogUpdated.Categories.MINIGAMES, "Pest Control",
 			new Item[] { (new Item(ItemID.VOID_RANGER_HELM)),
@@ -423,7 +417,6 @@ public enum CollectionLogData {
 			// completion rewards,
 			new Item[] {
 					new Item(30524, 1),
-					new Item(30575, 1),
 					new Item(7478, 20),
 					new Item(30581, 1),
 			}),
@@ -566,7 +559,6 @@ public enum CollectionLogData {
 		new Item[] {
 			new Item(30446),
 			new Item(2528, 2),
-			new Item(30575, 2),
 			new Item(30456, 10),
 		}),
 	// TEMPOROSS(CollectionLogUpdated.Categories.MINIGAMES, "Tempoross", new Item[]{
@@ -619,7 +611,6 @@ public enum CollectionLogData {
 			// completion rewards
 			new Item[] {
 					new Item(30530, 1),
-					new Item(30573, 1),
 					new Item(30461, 1),
 					new Item(30570, 12),
 			}),
@@ -635,7 +626,6 @@ public enum CollectionLogData {
 			// completion rewards
 			new Item[] {
 					new Item(30529, 1),
-					new Item(30573, 1),
 					new Item(30572, 1),
 					new Item(30570, 9),
 			}),
@@ -651,7 +641,6 @@ public enum CollectionLogData {
 			// completion rewards
 			new Item[] {
 					new Item(30449, 1),
-					new Item(30573, 1),
 					new Item(30572, 1),
 					new Item(30570, 6),
 			}),
@@ -669,7 +658,6 @@ public enum CollectionLogData {
 		// completion rewards
 		new Item[] {
 			new Item(30572, 1), // 5% Drop Rate Scroll
-			new Item(30574, 1), // $100 Dono Scroll
 			new Item(33017, 1), // Echo orb box
 			new Item(30449, 1)  // Advanced Dono Mystery Chest
 		}
@@ -697,7 +685,6 @@ public enum CollectionLogData {
 			// completion rewards
 			new Item[] {
 					new Item(30449, 3),
-					new Item(30574, 1),
 					new Item(30570, 40),
 					new Item(30571, 1),
 			}),
@@ -766,7 +753,6 @@ public enum CollectionLogData {
 					new Item(30578, 5),
 					new Item(7478, 20),
 					new Item(30461, 3),
-					new Item(30576, 1),
 			}),
 	REVENANT_MALEDICTUS(CollectionLogUpdated.Categories.OTHER, "Revenant Maledictus", new Item[] {
 			(new Item(ItemID.VIGGORAS_CHAINMACE_U)), (new Item(ItemID.CRAWS_BOW_U)),
@@ -782,7 +768,6 @@ public enum CollectionLogData {
 					new Item(21820, 100000),
 					new Item(23490, 30),
 					new Item(22330, 2),
-					new Item(30576, 1),
 			}),
 	ROOFTOP_AGILITY(CollectionLogUpdated.Categories.OTHER, "Rooftop Agility", new Item[] {
 			(new Item(11849)/* Mark of grace */), (new Item(11850)/* Graceful hood */),
@@ -803,7 +788,6 @@ public enum CollectionLogData {
 			// completion rewards
 			new Item[] {
 					new Item(30449, 1),
-					new Item(30576, 1),
 					new Item(30570, 20),
 					new Item(30460, 10),
 			}),
@@ -837,7 +821,6 @@ public enum CollectionLogData {
 			},
 			// completion rewards
 			new Item[] {
-					new Item(30575, 1),
 					new Item(30462, 2),
 					new Item(30581, 2),
 					new Item(30570, 20),
@@ -1034,7 +1017,6 @@ public enum CollectionLogData {
 	},
 			new Item[] {
 					new Item(20544, 25),
-					new Item(30573, 1),
 					new Item(4810, 1),
 					new Item(30570, 10),
 			}),
@@ -1067,7 +1049,6 @@ public enum CollectionLogData {
 	},
 			new Item[] {
 					new Item(20543, 25),
-					new Item(30573, 1),
 					new Item(4810, 2),
 					new Item(30570, 10),
 			}),
@@ -1098,7 +1079,6 @@ public enum CollectionLogData {
 	},
 			new Item[] {
 					new Item(19836, 25),
-					new Item(30573, 1),
 					new Item(30446, 2),
 					new Item(30570, 10),
 			}),
@@ -1125,7 +1105,6 @@ public enum CollectionLogData {
 	},
 			new Item[] {
 					new Item(30497, 1),
-					new Item(30574, 1),
 					new Item(30449, 2),
 					new Item(19687, 1),
 			}),

@@ -357,6 +357,10 @@ public class ObjType {
 			inventoryOptions[1] = null;
 		}
 
+		if (id == 10600) { // Kgp id card, repurposed as the scratch card trigger item
+			inventoryOptions[0] = "Scratch";
+		}
+
 		if (id == 2748) {
 			name = "Coin Casket (giant)";
 			inventoryOptions[1] = null;
@@ -535,6 +539,16 @@ public class ObjType {
 
 		if (id == 11918) {
 			name = "Santa Outfit Box";
+			inventoryOptions[0] = "Open";
+		}
+
+		// Anti Santa Outfit Box's sibling override above was never mirrored here, so
+		// SantaOutfitBox.java's registerInventory(12897, "open", ...) silently failed to
+		// register (ItemAction.registerInventory returns false when the option string
+		// doesn't match any of the item's real options) -- the box looked normal but could
+		// never actually be opened by a player.
+		if (id == 12897) {
+			name = "Anti Santa Outfit Box";
 			inventoryOptions[0] = "Open";
 		}
 

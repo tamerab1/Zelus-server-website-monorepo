@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.ruin.HooksV2;
 import io.ruin.api.protocol.PlatformInfo;
 import io.ruin.api.protocol.login.LoginInfo;
+import io.ruin.api.utils.BCrypt;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.ServerWrapper;
 import io.ruin.cache.Color;
@@ -48,6 +49,7 @@ import io.ruin.model.activities.raids.tob.party.TheatrePartyManager;
 import io.ruin.model.activities.wilderness.BountyHunter;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
+import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
 import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.content.camelstatue.CamelStatueInterface;
@@ -425,7 +427,8 @@ public class Player extends PlayerAttributes {
 		if (getPlayerPerkHandler().getActivePerkSets(this).contains(PerkSets.GOLD_DIGGER)) {
 			int perkIndex = getPlayerPerkHandler().getActivePerkSetIndex(this, PerkSets.GOLD_DIGGER);
 			GoldDigger c = (GoldDigger) getPlayerPerkHandler().getActivePerkSets(this).get(perkIndex).perkSet();
-			dropAddition += c.getDropRateBoost();
+			int level = getPlayerPerkHandler().getActivePerkSetLevel(this, PerkSets.GOLD_DIGGER);
+			dropAddition += c.getDropRateBoost(level);
 		}
 		if (getEquipment().get(Equipment.SLOT_RING) != null && getEquipment().get(Equipment.SLOT_RING).getId() == 30592) {
 			dropAddition += 5;
@@ -460,6 +463,20 @@ public class Player extends PlayerAttributes {
 		if (dailyVote == null)
 			dailyVote = new DailyVoteInterface(this);
 		return dailyVote;
+	}
+
+	public DailyLoginInterface getDailyLogin() {
+		if (dailyLogin == null)
+			dailyLogin = new DailyLoginInterface(this);
+		return dailyLogin;
+	}
+
+	public io.ruin.model.content.casino.CasinoBlackjackGame getCasinoBlackjack() {
+		return casinoBlackjack;
+	}
+
+	public void setCasinoBlackjack(io.ruin.model.content.casino.CasinoBlackjackGame casinoBlackjack) {
+		this.casinoBlackjack = casinoBlackjack;
 	}
 
 	public void teleportToSlayerTask(Player player) {
@@ -629,23 +646,23 @@ public class Player extends PlayerAttributes {
 	}
 
 	public boolean isNobleDonator() {
-		return totalDonated >= 250 && totalDonated < 500;
+		return totalDonated >= 250 && totalDonated < 400;
 	}
 
 	public boolean isGoldDonator() {
-		return totalDonated >= 500 && totalDonated < 1000;
+		return totalDonated >= 400 && totalDonated < 700;
 	}
 
 	public boolean isPlatinumDonator() {
-		return totalDonated >= 1000 && totalDonated < 2500;
+		return totalDonated >= 700 && totalDonated < 1000;
 	}
 
 	public boolean isLegendaryDonator() {
-		return totalDonated >= 2500 && totalDonated < 5000;
+		return totalDonated >= 1000 && totalDonated < 1750;
 	}
 
 	public boolean isSupremeDonator() {
-		return totalDonated >= 5000 && totalDonated < 7500;
+		return totalDonated >= 1750;
 	}
 
 	public int getCurrentItemUpgrades(int currentItem) {
@@ -1062,6 +1079,16 @@ public class Player extends PlayerAttributes {
 			tags += PlayerGroup.YOUTUBER.tag();
 		}
 
+		if (this.isPvpMode()) {
+			tags += io.ruin.cache.Icon.PVP_MODE_SKULL.tag();
+		}
+
+		io.ruin.model.content.loyaltytitles.LoyaltyTitle loyaltyTitle =
+				io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.getEquipped(this);
+		if (loyaltyTitle != null) {
+			return tags + loyaltyTitle.preview(getName());
+		}
+
 		return tags + getName();
 	}
 
@@ -1168,15 +1195,18 @@ public class Player extends PlayerAttributes {
 			packetSender.sendString(119, childId++, s);
 		packetSender.sendClientScript(917, "ii", -1, -1);
 		openInterface(ToplevelComponent.MAINMODAL, 119);
+		// +1 accounts for the blank spacer row written above (childId 4), which is itself
+		// part of the scrollable container and so counts toward its total row height.
+		int rowCount = lines.length + 1;
 		ScrollbarClientScript.create()
 				.interfaceId(119)
 				.containerId(3)
 				.scrollbarChildId(204)
-				.childrenCount(lines.length)
+				.childrenCount(rowCount)
 				.withDarkGraphics()
 				.build()
 				.send(player);
-		packetSender.sendClientScript(2523, "1i", 1, lines.length);
+		packetSender.sendClientScript(2523, "1i", 1, rowCount);
 	}
 
 	public void sendHintArrow(Entity target) {
@@ -1791,7 +1821,7 @@ public class Player extends PlayerAttributes {
 			this.uuid = UUID.randomUUID().toString();
 		}
 		if (this.password == null || this.password.isEmpty()) {
-			this.password = info.password;
+			this.password = BCrypt.hashpw(info.password, BCrypt.gensalt());
 		}
 		this.tfa = info.tfaCode != 0;
 		this.unreadPMs = info.unreadPMs;
@@ -1813,6 +1843,7 @@ public class Player extends PlayerAttributes {
 		this.ownedPerksList = new ArrayList<>();
 		this.activePerksList = new ArrayList<>();
 		this.dailyVote = null;
+		this.dailyLogin = null;
 		this.currentSection = null;
 		this.newcomerTaskInterface = null;
 		this.dailyTasksInterface = null;
@@ -3367,7 +3398,7 @@ public class Player extends PlayerAttributes {
 		}
 
 		// HOTFIX: deadlock prevention
-		if (this.isLocked() && !player.inTutorial && this.lockTimeoutTicks-- <= 0) {
+		if (this.isLocked() && this.lockTimeoutTicks-- <= 0) {
 			this.unlock();
 		}
 
@@ -3511,6 +3542,41 @@ public class Player extends PlayerAttributes {
 		return GameMode.values()[VarPlayerRepository.IRONMAN_MODE.get(this)];
 	}
 
+	/**
+	 * Resolves this account's PVP/PVM segregation. Ironman accounts (any {@link GameMode}
+	 * other than {@code STANDARD}) always resolve to {@link PlayMode#PVM_MODE}, regardless of
+	 * the stored value. Falls back to {@link PlayMode#defaultFor} for saves written before
+	 * this field existed.
+	 */
+	public PlayMode getPlayMode() {
+		GameMode gameMode = getGameMode();
+		if (gameMode.isIronMan()) {
+			return PlayMode.PVM_MODE;
+		}
+		return playMode != null ? playMode : PlayMode.defaultFor(gameMode);
+	}
+
+	public boolean isPvpMode() {
+		return getPlayMode().isPvpMode();
+	}
+
+	public boolean isPvmMode() {
+		return getPlayMode().isPvmMode();
+	}
+
+	/**
+	 * Sets this account's PVP/PVM mode.
+	 *
+	 * @return true if applied; false if rejected (an ironman account can never be set to PVP_MODE)
+	 */
+	public boolean setPlayMode(PlayMode mode) {
+		if (mode == PlayMode.PVP_MODE && getGameMode().isIronMan()) {
+			return false;
+		}
+		this.playMode = mode;
+		return true;
+	}
+
 	public int getTitleEnumId() {
 		return 0;
 	}
@@ -3565,6 +3631,12 @@ public class Player extends PlayerAttributes {
 		this.rsprotPlayerInfo = service.getPlayerInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
 		this.rsprotNPCInfo = service.getNpcInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
 		this.online = true;
+		// Mirrors Loggers.removeOnlinePlayer() in finishDatabase() -- that side was already
+		// wired up, this insert half never was, so online_characters (and therefore the
+		// website's /players/online count) was permanently stuck at 0.
+		io.ruin.services.Loggers.addOnlinePlayer(userId, this.getName(), World.id, this.getIp(),
+				isSupport(), isModerator(), isAdmin());
+		io.ruin.model.var.VarPlayerRepository.OWNER_CLIENT_FLAG.set(this, isOwner() ? 1 : 0);
 	}
 
 	public void onReconnectAccepted(Session<Player> session, int[] newKeys) {
@@ -4175,6 +4247,10 @@ public class Player extends PlayerAttributes {
 	private void finish() {
 		try {
 			MapListener.onLogout(player);
+			// Safety-net sweep so no loyalty title achievement is missed even if its underlying
+			// category has no dedicated trigger (see LoyaltyTitleManager#checkAllUnlocks).
+			io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.checkAllUnlocks(player);
+			io.ruin.services.Highscores.submit(player);
 			this.finishMisc();
 			this.finishDynamicMap();
 			this.finishPet();
@@ -4493,6 +4569,22 @@ public class Player extends PlayerAttributes {
 		this.rsmodPlayer = rsmodPlayer;
 	}
 
+	public static void registerDummyStatsFix() {
+		// Repairs accounts saved before dummyStats[5] (prayer slot) was always populated --
+		// a null element in that array makes the Mongo player-save codec throw on every save,
+		// which repeatedly disconnects the player. Prevents the null at the source now too
+		// (see copyNpcToPlayerDummy below), but this heals already-corrupted saved data.
+		io.ruin.model.entity.shared.listeners.LoginListener.register(player -> {
+			if (player.dummyStats != null) {
+				for (int i = 0; i < player.dummyStats.length; i++) {
+					if (player.dummyStats[i] == null) {
+						player.dummyStats[i] = new io.ruin.model.stat.Stat(1);
+					}
+				}
+			}
+		});
+	}
+
 	public void copyNpcToPlayerDummy(npc_combat.Info info) {
 		if (dummyStats == null)
 			dummyStats = new Stat[7];
@@ -4501,6 +4593,7 @@ public class Player extends PlayerAttributes {
 		this.dummyStats[2] = new Stat(info.strength);
 		this.dummyStats[3] = new Stat(info.hitpoints);
 		this.dummyStats[4] = new Stat(info.ranged);
+		this.dummyStats[5] = new Stat(1); // NPCs have no prayer level to copy; must stay non-null for Mongo serialization
 		this.dummyStats[6] = new Stat(info.magic);
 	}
 

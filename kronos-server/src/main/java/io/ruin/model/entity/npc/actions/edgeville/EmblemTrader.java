@@ -81,7 +81,9 @@ public class EmblemTrader {
 			player.dialogue(new NPCDialogue(npc, "If you find an ancient emblem, totem, or statuette, use it on me in revenant caves and I'll exchange it for " + currencyName + "."));
 		});
 		NPCAction.register(308, "Skull", (player, npc) -> skull(player));
-		NPCAction.register(308, "Rewards", (player, npc) -> ShopManager.openIfExists(player, "PkStore"));
+		NPCAction.register(308, "Rewards", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openPkpShop(player));
+		NPCAction.register(308, "Sell-Emblems", (player, npc) ->
+			io.ruin.model.inter.handlers.shopinterface.CustomShop2.openSellBhEmblemsShop(player));
 		NPCAction.register(308, "reset-kdr", (player, npc) -> player.dialogue(
 			new MessageDialogue("<col=ff0000>Warning:</col> You are about to reset your kills & deaths. All " +
 				"statistics related to kills will also be reset. Are you sure you want to continue?").lineHeight(25),

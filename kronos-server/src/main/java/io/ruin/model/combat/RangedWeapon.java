@@ -55,6 +55,7 @@ public enum RangedWeapon {
 	 * Generated
 	 */
 	CRYSTAL_BOW(new RangedData(250, Projectile.arrow(249))),
+	COMP_BOW(new RangedData(250, Projectile.arrow(249))),
 
 	CRAWS_BOW(new RangedData(1611, Projectile.arrow(1574))),
 	BOW_OF_FAERDHINEN(new RangedData(1933, Projectile.arrow(1934))),
@@ -199,6 +200,7 @@ public enum RangedWeapon {
 			return true;
 		return switch (this) {
 			case CRYSTAL_BOW,
+				 COMP_BOW,
 				 CRAWS_BOW,
 				 BOW_OF_FAERDHINEN,
 				 BOW_OF_FAERDHINEN_BLUE,

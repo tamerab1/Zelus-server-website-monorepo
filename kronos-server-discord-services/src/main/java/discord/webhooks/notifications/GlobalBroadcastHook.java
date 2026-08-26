@@ -18,24 +18,43 @@ import java.util.ArrayList;
  */
 public interface GlobalBroadcastHook {
 
-	static void sendGlobalSpawnedMessage(JSONObject dto) {
+	/** Fallback icon used when a boss/event doesn't supply its own thumbnail. */
+	String DEFAULT_EVENT_THUMBNAIL = "https://oldschool.runescape.wiki/images/Last_Stand_detail.png?72827";
+
+	/** Posted to the dedicated #in-game-events channel ~60 seconds before a world boss or timed
+	 * event spawns. {@code thumbnailUrl} may be null to fall back to a generic icon. */
+	static void sendEventSpawnWarning(String eventName, String thumbnailUrl) {
 		var thumbnail = new Thumbnail();
-			thumbnail.setUrl("https://oldschool.runescape.wiki/images/Last_Stand_detail.png?72827");
+		thumbnail.setUrl(thumbnailUrl != null ? thumbnailUrl : DEFAULT_EVENT_THUMBNAIL);
 
 		var embedMessage = new Embed();
-			embedMessage.setTitle("World boss Spawn!");
-			embedMessage.setDescription("`%s` %s"
-				.formatted(
-					dto.getString("boss"),
-					dto.getString("description")
-				));
-			embedMessage.setColor(8917522);
-			embedMessage.setThumbnail(thumbnail);
+		embedMessage.setTitle("Upcoming Spawn");
+		embedMessage.setDescription("`%s` will spawn in 60 seconds.".formatted(eventName));
+		embedMessage.setColor(8917522);
+		embedMessage.setThumbnail(thumbnail);
 
 		var message = new Message();
-			message.setEmbeds(embedMessage);
+		message.setEmbeds(embedMessage);
 
-		Webhook.send(ServerProperties.get("discord_hook_global_broadcast", ""), message);
+		Webhook.send(ServerProperties.get("discord_hook_events", ""), message);
+	}
+
+	/** Posted to the dedicated #in-game-events channel the moment a world boss or timed event
+	 * actually spawns. {@code thumbnailUrl} may be null to fall back to a generic icon. */
+	static void sendEventSpawnAnnouncement(String eventName, String thumbnailUrl) {
+		var thumbnail = new Thumbnail();
+		thumbnail.setUrl(thumbnailUrl != null ? thumbnailUrl : DEFAULT_EVENT_THUMBNAIL);
+
+		var embedMessage = new Embed();
+		embedMessage.setTitle("World boss Spawn!");
+		embedMessage.setDescription("`%s` has just spawned!".formatted(eventName));
+		embedMessage.setColor(8917522);
+		embedMessage.setThumbnail(thumbnail);
+
+		var message = new Message();
+		message.setEmbeds(embedMessage);
+
+		Webhook.send(ServerProperties.get("discord_hook_events", ""), message);
 	}
 
 	static void sendWellMessage(JSONObject object) {

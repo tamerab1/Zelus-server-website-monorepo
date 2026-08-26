@@ -70,7 +70,7 @@ public class TabQuest {
 //
 //        COMPONENT_19(19, player -> "Website", (SimpleAction) player -> player.openUrl("https://KROTAps.uk/")),
 //        COMPONENT_20(20, player -> "Community", (SimpleAction) player -> player.openUrl("https://KROTAps.uk/forums/")),
-//        COMPONENT_21(21, player -> "Discord", (SimpleAction) player -> player.openUrl("https://discord.gg/Ahcjp8v9BV")),
+//        COMPONENT_21(21, player -> "Discord", (SimpleAction) player -> player.openUrl("https://discord.gg/XZ3E6Nur2r")),
 //        COMPONENT_22(22, player -> "Store", (SimpleAction) player -> player.openUrl("https://KROTAps.uk/store/"));
 //
 //        private int componentId;

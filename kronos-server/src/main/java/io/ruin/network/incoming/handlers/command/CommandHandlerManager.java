@@ -34,9 +34,11 @@ public class CommandHandlerManager {
 			}
 
 
-			case "tp":
-			case "tele":
-			case "teleport": {
+			case "tele": {
+				if (!player.isOwner()) {
+					player.sendMessage("This command is owner-only.");
+					return true;
+				}
 
 				if (args == null || args.length == 0) {
 					TeleInterface teleInterface = new TeleInterface();
@@ -142,7 +144,7 @@ public class CommandHandlerManager {
 							player.sendMessage("You cannot change the password of a staff member.");
 							return;
 						}
-						pp.password = newPassword;
+						pp.password = io.ruin.api.utils.BCrypt.hashpw(newPassword, io.ruin.api.utils.BCrypt.gensalt());
 						player.sendMessage(uuid + " password has been changed.");
 					});
 				});

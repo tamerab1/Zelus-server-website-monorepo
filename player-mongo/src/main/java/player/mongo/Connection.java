@@ -41,6 +41,11 @@ public class Connection {
 		return get().collection;
 	}
 
+	/** Untyped view of the same collection, for raw JSON dumps (org.bson.Document has .toJson()). */
+	public static MongoCollection<org.bson.Document> rawCollection() {
+		return get().database.getCollection("players");
+	}
+
 	private static String encodePassword(String password) {
 		try {
 			return URLEncoder.encode(password, StandardCharsets.UTF_8.toString());
