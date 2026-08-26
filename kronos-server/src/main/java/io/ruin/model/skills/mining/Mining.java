@@ -160,6 +160,19 @@ public class Mining {
 							else
 								player.getInventory().add(id, 1);
 							player.sendFilteredMessage("You manage to mine an additional ore.");
+						} else if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_ART_OF_MINING)) {
+							int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_ART_OF_MINING);
+							TheArtOfMining c = (TheArtOfMining) player.getPlayerPerkHandler().
+								getActivePerks(player).get(perkIndex).getPerk(player);
+							if (Random.rollPercent(c.getBonusOreChance())) {
+								PerkTaskHandler.handleGatherResource(player, id, 1);
+								DailyTasks.handleItemObtained(player, id, StatType.Mining);
+								if (Random.rollPercent(getDonatorNoteChance(player)))
+									player.getInventory().add(id + 1, 1);
+								else
+									player.getInventory().add(id, 1);
+								player.sendFilteredMessage("Your mining expertise allows you to mine an additional ore!");
+							}
 						}
 
 					}
