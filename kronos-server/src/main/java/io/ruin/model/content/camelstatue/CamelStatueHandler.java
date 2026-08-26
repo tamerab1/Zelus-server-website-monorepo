@@ -174,7 +174,7 @@ public class CamelStatueHandler {
 			activeRewards.add(reward);
 			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
 				"The Camel Statue at home has been upgraded and is now giving " +
-					reward.name().toLowerCase().replace("_", " ") + "!");
+					reward.getName().toLowerCase() + "!");
 
 			var dtoArray = new JSONArray();
 			dtoArray.put(new JSONObject()

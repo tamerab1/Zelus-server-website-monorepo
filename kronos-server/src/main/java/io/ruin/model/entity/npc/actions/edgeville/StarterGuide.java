@@ -19,6 +19,7 @@ import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecurityPin;
 import io.ruin.model.entity.shared.LockType;
 import io.ruin.model.entity.shared.listeners.LoginListener;
+import io.ruin.model.content.loyaltytitles.LoyaltyTitleManager;
 import io.ruin.model.inter.Interface;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.dialogue.NPCDialogue;
@@ -241,6 +242,10 @@ public class StarterGuide {
 			// announces them to everyone else, but is easy for the new player to miss in
 			// a scrolling chatbox and reads as third-person, not an instruction to them.
 			player.sendMessage("<col=FF9900>Don't forget to type <col=FF0000>::zelus<col=FF9900> to claim your referral rewards!");
+			// checkAllUnlocks otherwise only runs on kill/logout, so without this a
+			// launch-window player wouldn't see DAY ONE unlock until one of those --
+			// sweep it here too so eligible titles are visible right after tutorial.
+			LoyaltyTitleManager.checkAllUnlocks(player);
 			startTutorial.set(true);
 //			PlayerCreationWebhook.sendAccountCreationHook(player);
 

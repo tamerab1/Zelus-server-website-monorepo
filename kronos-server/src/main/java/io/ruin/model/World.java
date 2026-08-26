@@ -92,7 +92,8 @@ public class World extends EventWorker {
 			return false;
 		}
 		long nowEpoch = System.currentTimeMillis() / 1000L;
-		return (nowEpoch - launch_timestamp) <= (24 * 3600);
+		long delta = nowEpoch - launch_timestamp;
+		return delta >= 0 && delta <= (24 * 3600);
 	}
 
 	public static int db_threads = 4;
