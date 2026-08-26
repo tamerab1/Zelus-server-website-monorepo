@@ -49,6 +49,7 @@ public class RefSystem {
 				player.getInventory().add(30460, 2);//double exp scroll
 				player.getInventory().add(608, 2); //5% dr scroll 1 hour
 				player.getInventory().add(30570, 10); //10 perk point scrolls
+				player.getInventory().add(10600, 1); //scratch card
 				addHwidToFile(player);
 				break;
 			}
@@ -56,6 +57,7 @@ public class RefSystem {
 				player.getInventory().add(DonatorBond.DONATOR_TICKET_ID, 100); //100 donator tickets
 				player.getInventory().add(30460, 2); //double exp scroll
 				player.getInventory().add(30570, 10); //10 perk point scrolls
+				player.getInventory().add(10600, 1); //scratch card
 				addHwidToFile(player);
 				break;
 			}
