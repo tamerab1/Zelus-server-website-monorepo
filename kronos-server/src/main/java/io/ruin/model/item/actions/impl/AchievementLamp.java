@@ -55,6 +55,15 @@ public enum AchievementLamp {
 
 
 	public static final int SKILL_CAMP = 30470;
+	private static final int BASE_EXPERIENCE = 25000;
+
+	// Shared by the preview text and the actual grant, so the amount confirmed on
+	// the dialog can never drift from the amount actually given -- it used to
+	// show this boosted number (e.g. "75k" on a 3x-boost difficulty) but the
+	// confirm action always granted a flat unboosted 25000.
+	public static long getExperienceReward(io.ruin.model.entity.player.Player player) {
+		return (long) (BASE_EXPERIENCE * player.getDifficulty().GetExperienceBoost());
+	}
 
 	public static void register() {
 		ItemAction.registerInventory(SKILL_CAMP, "rub", (player, item) -> {
@@ -80,7 +89,7 @@ public enum AchievementLamp {
 						player.getPacketSender().setHidden(1103, skills.hiddenChildId, true);
 					}
 					player.getPacketSender().setHidden(1103, skill.hiddenChildId, false);
-					player.getPacketSender().sendString(1103, 75, "You will receive " + NumberUtils.formatNumber((long) (25000 * player.getDifficulty().GetExperienceBoost())) + "  experience in " + skillName + ".");
+					player.getPacketSender().sendString(1103, 75, "You will receive " + NumberUtils.formatNumber(getExperienceReward(player)) + "  experience in " + skillName + ".");
 					player.getPacketSender().setHidden(1103, 75, false);
 					player.openInterface(ToplevelComponent.MAINMODAL, 1103);
 					player.selectedSkillLampSkill = skill.statType;
@@ -99,7 +108,7 @@ public enum AchievementLamp {
 					return;
 				}
 
-				int experience = 25000;
+				long experience = getExperienceReward(player);
 				player.closeInterface(ToplevelComponent.MAINMODAL);
 				lamp.remove();
 				player.getStats().addXp(player.selectedSkillLampSkill, experience, false);
