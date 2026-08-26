@@ -200,6 +200,72 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "setlaunchtime": {
+				// Sets the persistent official-launch epoch that server uptime is measured
+				// from from now on (see ServerConfig) -- survives restarts/redeploys, unlike
+				// the previous tick-count-since-boot uptime. Run this once, deliberately, at
+				// the actual launch moment.
+				long epochMs;
+				if (args.length == 0 || args[0].equalsIgnoreCase("now")) {
+					epochMs = System.currentTimeMillis();
+				} else {
+					epochMs = Long.parseLong(args[0]) * 1000L;
+				}
+				io.ruin.services.ServerConfig.setLaunchTimestamp(epochMs);
+				player.sendMessage("Launch timestamp set to " + new java.util.Date(epochMs)
+						+ " -- uptime will now be measured from this moment, permanently.");
+				return true;
+			}
+
+			case "launchtime": {
+				long epochMs = io.ruin.services.ServerConfig.getLaunchTimestamp();
+				player.sendMessage(epochMs > 0
+						? "Launch timestamp is set to " + new java.util.Date(epochMs) + "."
+						: "Launch timestamp is not set -- uptime is currently measured from server boot.");
+				return true;
+			}
+
+			case "launchbackup": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				player.sendMessage("Starting launch backup (saves + hs_users/logs_* + mongo players)... this may take a moment.");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.backup();
+					Server.worker.execute(() -> player.sendScroll("Launch Backup", report.split("\n")));
+				});
+				return true;
+			}
+
+			case "launchwipedryrun": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				player.sendMessage("Running launch wipe dry run (read-only, nothing will be deleted)...");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.dryRun();
+					Server.worker.execute(() -> player.sendScroll("Launch Wipe Dry Run", report.split("\n")));
+				});
+				return true;
+			}
+
+			case "launchwipeexecute": {
+				if (!player.isOwner()) {
+					return false;
+				}
+				if (args.length == 0 || !args[0].equals("CONFIRM")) {
+					player.sendMessage("This PERMANENTLY deletes all player data except mr boolt/peaks. "
+							+ "Run ::launchbackup and ::launchwipedryrun first. To actually execute, use: ::launchwipeexecute CONFIRM");
+					return true;
+				}
+				player.sendMessage("EXECUTING LAUNCH WIPE...");
+				Server.executeAsync(() -> {
+					String report = io.ruin.services.LaunchWipe.execute();
+					Server.worker.execute(() -> player.sendScroll("Launch Wipe Executed", report.split("\n")));
+				});
+				return true;
+			}
+
 			case "hp": {
 				int amount = Integer.parseInt(args[0]);
 				player.setHp(amount);

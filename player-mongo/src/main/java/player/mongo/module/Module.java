@@ -2,6 +2,7 @@ package player.mongo.module;
 
 import core.module.api.IModule;
 import player.mongo.Connection;
+import player.mongo.MongoPlayerMirrorImpl;
 import player.mongo.hook.HookCommand;
 import player.mongo.hook.HookPlayer;
 
@@ -11,6 +12,7 @@ public class Module implements IModule {
 	public void start() {
 		HookPlayer.register();
 		HookCommand.register();
+		MongoPlayerMirrorImpl.register();
 
 		// just initialize connection on start
 		Connection.get();

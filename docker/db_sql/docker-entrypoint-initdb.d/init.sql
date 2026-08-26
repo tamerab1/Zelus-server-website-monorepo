@@ -302,6 +302,13 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 
+CREATE TABLE IF NOT EXISTS `server_config` (
+  `config_key` varchar(64) NOT NULL,
+  `config_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`config_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
 CREATE TABLE IF NOT EXISTS `tp_collect` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `player_name` varchar(12) NOT NULL,

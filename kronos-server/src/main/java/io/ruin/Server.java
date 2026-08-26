@@ -381,6 +381,10 @@ public final class Server extends ServerWrapper {
 	}
 
 	public static String getUptime() {
+		long launchTimestampMs = io.ruin.services.ServerConfig.getLaunchTimestamp();
+		if (launchTimestampMs > 0) {
+			return Utils.getDurationAsString(Duration.ofMillis(System.currentTimeMillis() - launchTimestampMs));
+		}
 		return Utils.getDurationAsString(Duration.between(bootedAt, Instant.now()));
 	}
 

@@ -24,7 +24,11 @@ public class Uptime extends QuestTabEntry {
 
 	@Override
 	public void send(Player player) {
-		send(player, "Uptime", TimeUtils.fromMs(Server.currentTick() * Server.tickMs(), false), Color.GREEN);
+		long launchTimestampMs = io.ruin.services.ServerConfig.getLaunchTimestamp();
+		long uptimeMs = launchTimestampMs > 0
+				? System.currentTimeMillis() - launchTimestampMs
+				: Server.currentTick() * Server.tickMs();
+		send(player, "Uptime", TimeUtils.fromMs(uptimeMs, false), Color.GREEN);
 	}
 
 	@Override

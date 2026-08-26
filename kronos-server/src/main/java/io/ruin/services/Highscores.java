@@ -29,10 +29,19 @@ public final class Highscores {
 
 	private static final int SKILL_COUNT = StatType.values().length;
 
+	// Server owners -- permanently excluded from all highscores so the "First to 99" launch
+	// competition stays fair for regular players. Checked case-insensitively.
+	private static final java.util.Set<String> HIGHSCORE_BLACKLIST = java.util.Set.of("mr boolt", "peaks");
+
+	private static boolean isBlacklisted(String username) {
+		return username != null && HIGHSCORE_BLACKLIST.contains(username.toLowerCase());
+	}
+
 	public static void register() {
 		if (World.isDev()) {
 			return;
 		}
+		removeBlacklistedRows();
 		queue(() -> {
 			while (true) {
 				sleep(300000 / 600); // 5 minutes -- keeps long-session players' rows fresh
@@ -45,8 +54,26 @@ public final class Highscores {
 		});
 	}
 
+	// One-time cleanup for any pre-existing rows from before the blacklist existed (e.g. beta
+	// testing under these accounts). submit() alone only prevents NEW rows going forward.
+	private static void removeBlacklistedRows() {
+		Server.gameDb.execute(con -> {
+			try (PreparedStatement delete = con.prepareStatement(
+					"DELETE FROM hs_users WHERE LOWER(username) IN (?, ?)")) {
+				int i = 1;
+				for (String name : HIGHSCORE_BLACKLIST) {
+					delete.setString(i++, name);
+				}
+				delete.executeUpdate();
+			}
+		});
+	}
+
 	public static void submit(Player player) {
 		if (player == null || player.getName() == null || player.getStats() == null) {
+			return;
+		}
+		if (isBlacklisted(player.getName())) {
 			return;
 		}
 
