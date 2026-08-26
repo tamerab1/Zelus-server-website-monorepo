@@ -237,6 +237,10 @@ public class StarterGuide {
 			event.waitForDialogue(player);
 			Broadcast.WORLD.sendNews(player.getName() + " has just joined " + World.type.getWorldName()
 					+ ". For an early boost, use code ::zelus!");
+			// Direct message to the new player themselves -- the world broadcast above
+			// announces them to everyone else, but is easy for the new player to miss in
+			// a scrolling chatbox and reads as third-person, not an instruction to them.
+			player.sendMessage("<col=FF9900>Don't forget to type <col=FF0000>::zelus<col=FF9900> to claim your referral rewards!");
 			startTutorial.set(true);
 //			PlayerCreationWebhook.sendAccountCreationHook(player);
 
