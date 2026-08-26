@@ -1,6 +1,8 @@
 package io.ruin.model.activities;
 
+import io.ruin.cache.NPCType;
 import io.ruin.model.World;
+import io.ruin.model.activities.bosses.eventboss.IcyEventBoss;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.Position;
@@ -21,6 +23,9 @@ public class IcyEventBossHandler {
 
     /** Called once at server startup from StaticInit. */
     public static void init() {
+        // Without this, NPC.setCombat() falls back to default BasicCombat and Icy's
+        // whole custom attack pattern silently never ran.
+        NPCType.registerCombat(IcyEventBoss.class, 17042);
         spawnBoss();
     }
 

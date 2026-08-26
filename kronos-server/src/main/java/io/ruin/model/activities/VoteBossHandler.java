@@ -2,7 +2,9 @@ package io.ruin.model.activities;
 
 import com.google.gson.annotations.Expose;
 import discord.webhooks.notifications.GlobalBroadcastHook;
+import io.ruin.cache.NPCType;
 import io.ruin.model.World;
+import io.ruin.model.activities.bosses.VoteBoss;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.Position;
@@ -20,6 +22,10 @@ public class VoteBossHandler {
 	public static void init() throws DynamicMap.DynamicMapBuildException {
 		map = new DynamicMap().build(11576, 1).persistent(true);
 		teleportPosition = new Position(map.convertX(2900), map.convertY(3616), 0);
+		// Without this, NPC.setCombat() falls back to default BasicCombat, which has no
+		// loot table for this npc id -- VoteBoss's attack pattern AND its whole
+		// rewardPlayer()/loot table on death silently never ran.
+		NPCType.registerCombat(VoteBoss.class, 8262);
 	}
 
 	public static void addVote(int amount) {

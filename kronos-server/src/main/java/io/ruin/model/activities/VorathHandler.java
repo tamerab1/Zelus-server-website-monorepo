@@ -1,6 +1,8 @@
 package io.ruin.model.activities;
 
+import io.ruin.cache.NPCType;
 import io.ruin.model.World;
+import io.ruin.model.activities.bosses.eventboss.Vorath;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.Position;
@@ -21,6 +23,9 @@ public class VorathHandler {
 
     /** Called once at server startup from StaticInit. */
     public static void init() {
+        // Without this, NPC.setCombat() falls back to default BasicCombat and Vorath's
+        // whole custom attack pattern + loot table silently never ran.
+        NPCType.registerCombat(Vorath.class, 17033);
         spawnBoss();
     }
 
