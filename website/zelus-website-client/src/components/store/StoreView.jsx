@@ -211,7 +211,7 @@ export default function StoreView() {
           {/* Alternate storefront — Tebex checkout is hosted entirely on their
               site, so this is a plain external link, not a package purchase. */}
           <a
-            href="https://zelustore.tebex.io"
+            href="https://zelus-rsps.tebex.store"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 font-fantasy text-xs tracking-widest rounded-sm transition-all duration-200"
