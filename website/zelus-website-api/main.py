@@ -95,6 +95,17 @@ GAME_MODE_ORDINAL = {
 }
 GAME_MODE_NAME = {v: k for k, v in GAME_MODE_ORDINAL.items()}
 
+# hs_users.difficulty -- same ordinal-writing pattern, verified against the real
+# io.ruin.model.entity.player.Difficulty enum.
+DIFFICULTY_ORDINAL = {
+    "EASY":         0,
+    "INTERMEDIATE": 1,
+    "HARD":         2,
+    "EXTREME":      3,
+    "OSRS":         4,
+}
+DIFFICULTY_NAME = {v: k for k, v in DIFFICULTY_ORDINAL.items()}
+
 _SKILL_ORDER = [
     'attack_xp', 'defence_xp', 'strength_xp', 'hitpoints_xp', 'ranged_xp',
     'prayer_xp', 'magic_xp', 'cooking_xp', 'woodcutting_xp', 'fletching_xp',
@@ -243,6 +254,7 @@ def _build_hiscore_row(stat: HiscoreUser) -> dict:
     return {
         "username":         stat.username         or "",
         "mode":             GAME_MODE_NAME.get(stat.mode, "STANDARD"),
+        "difficulty":       DIFFICULTY_NAME.get(stat.difficulty, "EASY"),
         "total_level":      stat.total_level      or 0,
         "total_experience": stat.total_experience or 0,
         "attack_xp":        stat.attack_xp        or 0,
@@ -808,21 +820,28 @@ def push_game_events(request: Request, req: PushEventsRequest, db: Session = Dep
 
 
 @app.get("/hiscores")
-def get_hiscores(limit: int = 50, sort: str = "total_level", mode: str | None = None):
+def get_hiscores(
+    limit: int = 50,
+    sort: str = "total_level",
+    mode: str | None = None,
+    difficulty: str | None = None,
+):
     """
     Returns up to `limit` hiscore rows ordered by `sort`, optionally restricted to one
     game mode (STANDARD, IRONMAN, ULTIMATE_IRONMAN, HARDCORE_IRONMAN, GROUP_IRONMAN,
-    HARDCORE_GROUP_IRONMAN -- see GAME_MODE_ORDINAL).
+    HARDCORE_GROUP_IRONMAN -- see GAME_MODE_ORDINAL) and/or one difficulty tier
+    (EASY, INTERMEDIATE, HARD, EXTREME, OSRS -- see DIFFICULTY_ORDINAL).
     Data source priority:
       1. Game MariaDB hs_users table (authoritative) -- the only tier that can filter
-         by mode; hs_users is the only source that stores it at all.
-      2. JSON character save files (fallback if MariaDB is unreachable) -- mode filter
-         is ignored here since save files don't record game mode.
+         by mode/difficulty; hs_users is the only source that stores either at all.
+      2. JSON character save files (fallback if MariaDB is unreachable) -- mode/
+         difficulty filters are ignored here since save files don't record either.
       3. Local PostgreSQL user_skill_stats (last resort)
     """
     # Resolve sort column — reject unknown keys to prevent injection
     sort_col = HISCORE_SORT_COLUMNS.get(sort, HiscoreUser.total_level)
-    mode_ordinal = GAME_MODE_ORDINAL.get(mode.upper()) if mode else None
+    mode_ordinal       = GAME_MODE_ORDINAL.get(mode.upper()) if mode else None
+    difficulty_ordinal = DIFFICULTY_ORDINAL.get(difficulty.upper()) if difficulty else None
 
     # 1 — Game MariaDB
     try:
@@ -830,13 +849,15 @@ def get_hiscores(limit: int = 50, sort: str = "total_level", mode: str | None = 
         query = gdb.query(HiscoreUser)
         if mode_ordinal is not None:
             query = query.filter(HiscoreUser.mode == mode_ordinal)
+        if difficulty_ordinal is not None:
+            query = query.filter(HiscoreUser.difficulty == difficulty_ordinal)
         rows = query.order_by(sort_col.desc()).limit(limit).all()
         if rows:
             return [_build_hiscore_row(r) for r in rows]
     except Exception as e:
         log.warning("Game DB unavailable for hiscores: %s", e)
 
-    # 2 — Character file fallback (includes PvP stats, but not game mode)
+    # 2 — Character file fallback (includes PvP stats, but not game mode/difficulty)
     all_rows = _read_character_files()
     if all_rows is not None:
         valid_sort = sort if sort in (

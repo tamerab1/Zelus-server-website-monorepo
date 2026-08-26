@@ -23,6 +23,15 @@ const GAME_MODES = [
   { id: 'HARDCORE_GROUP_IRONMAN',   label: 'Hardcore Group Ironman' },
 ];
 
+const DIFFICULTIES = [
+  { id: null,           label: 'All Difficulties' },
+  { id: 'EASY',         label: 'Easy' },
+  { id: 'INTERMEDIATE', label: 'Intermediate' },
+  { id: 'HARD',         label: 'Hard' },
+  { id: 'EXTREME',      label: 'Extreme' },
+  { id: 'OSRS',         label: 'Insane' },
+];
+
 const RANK_COLORS = { 1: '#ffd700', 2: '#c0c0c0', 3: '#cd7f32' };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -130,20 +139,21 @@ export default function HiscoresView() {
   const [pvpCat,   setPvpCat]   = useState(PVP_CATS[0]);
   const [skillCat, setSkillCat] = useState(SKILL_CAT);
   const [search,   setSearch]   = useState('');
-  const [mode,     setMode]     = useState(GAME_MODES[0]);
+  const [mode,       setMode]       = useState(GAME_MODES[0]);
+  const [difficulty, setDifficulty] = useState(DIFFICULTIES[0]);
 
-  const load = useCallback((sortKey, modeId) => {
+  const load = useCallback((sortKey, modeId, difficultyId) => {
     setLoading(true);
     setError(null);
-    fetchHiscores(sortKey, 100, modeId)
+    fetchHiscores(sortKey, 100, modeId, difficultyId)
       .then(d  => { setData(d); setLoading(false); })
       .catch(e => { setError(e.message); setLoading(false); });
   }, []);
 
   useEffect(() => {
     const key = section === 'pvp' ? pvpCat.sortKey : skillCat.sortKey;
-    load(key, mode.id);
-  }, [section, pvpCat, skillCat, mode, load]);
+    load(key, mode.id, difficulty.id);
+  }, [section, pvpCat, skillCat, mode, difficulty, load]);
 
   const ranked = useMemo(() => {
     let list = [...data];
@@ -327,6 +337,16 @@ export default function HiscoresView() {
                 >
                   {GAME_MODES.map(m => (
                     <option key={m.id ?? 'all'} value={m.id ?? ''}>{m.label}</option>
+                  ))}
+                </select>
+                <select
+                  value={difficulty.id ?? ''}
+                  onChange={e => setDifficulty(DIFFICULTIES.find(d => (d.id ?? '') === e.target.value) ?? DIFFICULTIES[0])}
+                  className="rpg-input font-fantasy text-xs tracking-wide px-2 py-1.5"
+                  style={{ fontSize: '11px' }}
+                >
+                  {DIFFICULTIES.map(d => (
+                    <option key={d.id ?? 'all'} value={d.id ?? ''}>{d.label}</option>
                   ))}
                 </select>
                 <SearchBar value={search} onChange={setSearch} onClear={() => setSearch('')} />
