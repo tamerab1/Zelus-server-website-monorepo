@@ -80,6 +80,21 @@ public class World extends EventWorker {
 
 	public static String login_master_password;
 
+	// Epoch seconds of the real public launch, set once in server.properties.
+	// 0/unset = disabled (matches every other optional-feature blank-disables-it
+	// pattern used this session). Gates loyalty title 30006 ("Login day 1 of
+	// launch") -- see PlayerLoginWorker.createNewPlayer() and
+	// LoyaltyTitleManager's 30006 condition.
+	public static long launch_timestamp = 0L;
+
+	public static boolean isWithinLaunchWindow() {
+		if (launch_timestamp <= 0) {
+			return false;
+		}
+		long nowEpoch = System.currentTimeMillis() / 1000L;
+		return (nowEpoch - launch_timestamp) <= (24 * 3600);
+	}
+
 	public static int db_threads = 4;
 
 	public static String name;
@@ -609,6 +624,9 @@ public class World extends EventWorker {
 		final var masterPassword = properties.getProperty("login_master_password");
 		World.login_master_password = (masterPassword == null || masterPassword.isBlank()) ? null : masterPassword;
 		World.login_con_limit = Integer.parseInt(properties.getProperty("login_con_limit"));
+		final var launchTimestampRaw = properties.getProperty("launch_timestamp");
+		World.launch_timestamp = (launchTimestampRaw == null || launchTimestampRaw.isBlank())
+				? 0L : Long.parseLong(launchTimestampRaw.trim());
 		World.login_pow_enabled = Boolean.parseBoolean(properties.getProperty("login_pow_enabled"));
 		World.db_threads = Integer.parseInt(properties.getProperty("db_threads"));
 		World.name = properties.getProperty("world_name");

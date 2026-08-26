@@ -210,6 +210,10 @@ public final class PlayerLoginWorker implements Runnable {
 		final Player player = new Player();
 		player.secondaryGroup = SecondaryGroup.NONE;
 		player.primaryGroup = PlayerGroup.REGISTERED;
+		// Set once, here, at real account creation -- never re-derived later, so
+		// this stays permanently exclusive to accounts actually created within
+		// the launch window even after that window closes for everyone else.
+		player.createdDuringLaunchWindow = World.isWithinLaunchWindow();
 		return player;
 	}
 

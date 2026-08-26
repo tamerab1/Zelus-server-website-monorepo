@@ -1202,6 +1202,10 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public boolean raidsEntranceWarning = false;
 	public boolean ringOfSufferingEffect = true;
 	public boolean hasCustomTitle;
+	// Set once at account creation only (never re-derived later) if creation fell
+	// within World.launchWindowEndEpoch -- gates loyalty title 30006 ("Login day 1
+	// of launch"). See PlayerLoginWorker.createNewPlayer().
+	public boolean createdDuringLaunchWindow;
 	public boolean bestiaryIntro = false;
 	public boolean showHitAsExperience = false;
 	public boolean firstMysteryBoxReward = true;

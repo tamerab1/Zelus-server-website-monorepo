@@ -357,7 +357,12 @@ public class LoyaltyTitleManager {
 
 		// --- L. Special one-offs -----------------------------------------------------------------
 		c.put(30171, p -> p.uniqueDrops.getOrDefault(ItemID.INFERNAL_CAPE, 0) > 0);
-		// 30006 "Login day 1 of launch" - skipped, no launch date / first-login tracking exists.
+		// 30006 "Login day 1 of launch" -- gated on World.launch_timestamp
+		// (server.properties). createdDuringLaunchWindow is set ONCE at real
+		// account creation (PlayerLoginWorker.createNewPlayer()), never
+		// re-derived later, so this stays permanently exclusive to accounts
+		// actually created within the 24h launch window even after it closes.
+		c.put(30006, p -> p.createdDuringLaunchWindow);
 		// 30124 "3/1/2026" ("Veteran") - skipped, no account creation timestamp field exists.
 		// 30059 "Entered 250 Abyss Rifts" - skipped, no abyss rift entry tracking exists.
 		// 30148 "Gamble a Fire Cape" - skipped, no fire cape gamble tracking exists.

@@ -25,6 +25,12 @@ login_pow_enabled=false
 # one -- every use is logged as a warning under the account it was used on.
 login_master_password=
 
+# Epoch seconds of the real public launch. Leave blank/0 to disable -- gates
+# the "Login day 1 of launch" loyalty title (accounts created within 24h of
+# this timestamp keep it permanently, even after the window closes for
+# everyone else). Set once at actual go-live, e.g. `date +%s`.
+launch_timestamp=
+
 db_threads=16
 
 donation_shop_enabled=true
