@@ -244,6 +244,25 @@ class PendingClaim(Base):
 
 
 # ---------------------------------------------------------------------------
+# GameSession — the game server's r_auth token (see main.py's
+# _require_game_session / POST /authenticate/login).
+#
+# DB-backed rather than an in-memory dict: website-api runs multiple gunicorn
+# worker processes, each its own Python interpreter. A dict would only be
+# visible to whichever worker happened to handle the login request, so a
+# /store/claim request routed to a *different* worker would always see the
+# token as unknown and 403 — confirmed live 2026-08-29, a real Tebex
+# purchase's ::claim failed this way even seconds after a fresh, successful
+# re-login. All workers share one DB, so this is worker-count-proof.
+# ---------------------------------------------------------------------------
+class GameSession(Base):
+    __tablename__ = "game_sessions"
+
+    token      = Column(String(64), primary_key=True)
+    expires_at = Column(DateTime, nullable=False)
+
+
+# ---------------------------------------------------------------------------
 # GameEvent — live feed events pushed by the game server to the website DB.
 #
 # The Java game server connects to zelusrsps_db and INSERTs rows here whenever

@@ -76,6 +76,28 @@ public class HttpClient {
 	}
 
 	public static HttpResponse makeRequest(String url, HttpRequestMethod method, Object body) {
+		HttpResponse response = executeRequest(url, method, body);
+
+		// The session token has a server-side TTL that's only refreshed by traffic to
+		// auth-protected endpoints (see _require_game_session in the website API). If
+		// nothing calls one of those endpoints for long enough, the token silently
+		// expires and every request fails with 401/403 forever, since nothing here
+		// used to re-authenticate. Self-heal by re-logging in and retrying once.
+		int code = response.getStatusCode();
+		if (code == HttpStatus.SC_UNAUTHORIZED || code == HttpStatus.SC_FORBIDDEN) {
+			logger.warn("Auth token rejected (status {}) for {} - re-authenticating and retrying.", code, url);
+			try {
+				authenticate();
+				response = executeRequest(url, method, body);
+			} catch (Exception ex) {
+				logger.error("Re-authentication failed while retrying request: " + url, ex);
+			}
+		}
+
+		return response;
+	}
+
+	private static HttpResponse executeRequest(String url, HttpRequestMethod method, Object body) {
 		HttpUrl httpUrl = HttpUrl.parse(World.apiBaseUrl + url);
 		RequestBody requestBody = RequestBody.create("", MEDIA_TYPE);
 		if (body != null) {

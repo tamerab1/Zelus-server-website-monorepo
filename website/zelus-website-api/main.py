@@ -4,7 +4,6 @@ import logging
 import math
 import os
 import secrets
-import time
 
 from dotenv import load_dotenv
 
@@ -1320,13 +1319,14 @@ def claim_vote(vote_id: int, db: Session = Depends(get_db)):
 #   • All claim actions are logged with timestamp for audit.
 # ───────────────────────────────────────────────────────────────────────────────
 
-# In-memory session store: token → expiry (Unix epoch float)
-# Fine for a single-process server; swap for Redis if you run multiple workers.
-_game_sessions: dict[str, float] = {}
+# Sessions live in the game_sessions table (models.GameSession), not an
+# in-memory dict — website-api runs multiple gunicorn workers, each its own
+# process, so a dict would only be visible to whichever worker issued the
+# token. See the comment on models.GameSession for the incident this fixed.
 _SESSION_TTL_SECONDS = 6 * 3600  # 6 hours
 
 
-def _require_game_session(request: Request) -> str:
+def _require_game_session(request: Request, db: Session = Depends(get_db)) -> str:
     """
     FastAPI dependency.  Validates the r_auth cookie sent by the game server.
     Raises 403 if the token is missing, unknown, or expired.
@@ -1346,13 +1346,16 @@ def _require_game_session(request: Request) -> str:
     if not token:
         raise HTTPException(status_code=403, detail="Missing game-server auth token.")
 
-    expiry = _game_sessions.get(token)
-    if expiry is None or time.time() > expiry:
-        _game_sessions.pop(token, None)
+    session = db.query(models.GameSession).filter(models.GameSession.token == token).first()
+    if session is None or session.expires_at < datetime.utcnow():
+        if session is not None:
+            db.delete(session)
+            db.commit()
         raise HTTPException(status_code=403, detail="Invalid or expired game-server session.")
 
     # Sliding expiry — active servers keep their token alive indefinitely
-    _game_sessions[token] = time.time() + _SESSION_TTL_SECONDS
+    session.expires_at = datetime.utcnow() + timedelta(seconds=_SESSION_TTL_SECONDS)
+    db.commit()
     return token
 
 
@@ -1464,7 +1467,7 @@ SLUG_TO_ITEMS: dict[str, list[tuple[int, int]]] = {
 
 @app.post("/authenticate/login")
 @limiter.limit("10/minute")
-async def game_server_login(request: Request):
+async def game_server_login(request: Request, db: Session = Depends(get_db)):
     try:
         body = await request.body()
         password = json.loads(body)          # unwrap the JSON string
@@ -1482,8 +1485,16 @@ async def game_server_login(request: Request):
         log.warning("Game server sent incorrect API password.")
         raise HTTPException(status_code=403, detail="Invalid credentials.")
 
+    # Opportunistic cleanup of expired rows — no cron needed, this table only
+    # ever gets one live row at a time (single game server) plus stragglers.
+    db.query(models.GameSession).filter(models.GameSession.expires_at < datetime.utcnow()).delete()
+
     token = secrets.token_hex(32)            # 256-bit random token
-    _game_sessions[token] = time.time() + _SESSION_TTL_SECONDS
+    db.add(models.GameSession(
+        token=token,
+        expires_at=datetime.utcnow() + timedelta(seconds=_SESSION_TTL_SECONDS),
+    ))
+    db.commit()
     log.info("Game server authenticated — session issued.")
     # Return the token as a bare JSON string (matches GSON.fromJson(..., String.class))
     return JSONResponse(content=token)
