@@ -333,7 +333,21 @@ public class CustomShopInterface2 {
 				player.sendMessage("Please buy this item in a smaller quantity.");
 				return;
 			}
-			currency.getCurrencyHandler().removeCurrency(player, (int) buyPrice);
+			int removedCurrency = currency.getCurrencyHandler().removeCurrency(player, (int) buyPrice);
+			// The "Spend 2,500 Zelus points" newcomer task tracks player.totalReasonPointsSpent,
+			// which io.ruin.model.activities.newshop.shops.ReasonPointStore (the OLD shop this
+			// one replaced, see the ZELUS_POINTS_SHOP comment above) used to increment on every
+			// purchase -- this live shop never did, so the task could never complete no matter
+			// how much a player spent here (confirmed live 2026-08-29: 82k+ points spent via
+			// this shop, totalReasonPointsSpent still 0).
+			if (currency == Currency.REASON) {
+				boolean alreadyCompleted = player.totalReasonPointsSpent >= 2500;
+				player.totalReasonPointsSpent += removedCurrency;
+				if (!alreadyCompleted && player.totalReasonPointsSpent >= 2500) {
+					player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
+						+ io.ruin.model.activities.newcomertasks.NewcomerTasks.SPEND_REASON_POINTS.getFormattedName() + "!");
+				}
+			}
 		}
 
 		player.getInventory().add(itemDef.id, amount);
