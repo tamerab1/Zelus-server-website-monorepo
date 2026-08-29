@@ -121,6 +121,12 @@ public abstract class Entity {
 	public int poisonLevel;
 	public int poisonImmunityLevel; // ^
 	public Toxins toxins;
+	// Sigil of the Menacing Mage (io.ruin.model.content.sigils) -- "a target can only be
+	// under the effect of one curse at a time" per the real effect text. Transient/unpersisted
+	// like the DoT itself is self-contained (see PlayerCombat.postTargetDamage); doesn't need
+	// poisonTicks/poisonDamage's full machinery since the World.startEvent closure that applies
+	// it owns its own tick loop and clears this when it ends.
+	public transient boolean menacingMageCursed = false;
 	public final transient ArrayList<Hit> queuedHits = new ArrayList<>();
 	private transient boolean queuedHitsErrored = false;
 	public transient HitsUpdate hitsUpdate;

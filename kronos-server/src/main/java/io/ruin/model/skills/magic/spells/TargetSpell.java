@@ -14,6 +14,8 @@ import io.ruin.model.combat.AttackType;
 import io.ruin.model.combat.CombatUtils;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.content.combatachievements.CombatAchievements;
+import io.ruin.model.content.sigils.Sigil;
+import io.ruin.model.content.sigils.SigilManager;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
@@ -800,7 +802,11 @@ public class TargetSpell extends Spell {
 		if (BlightedSack != -1 && source.player.getInventory().hasItem(BlightedSack, 1)) {
 			source.player.getInventory().remove(BlightedSack, 1);
 		} else if (r != null) {
-			r.remove();
+			// Sigil of the Meticulous Mage: 50% chance to save runes/staff charges when casting.
+			boolean saved = source.player != null && SigilManager.isAttuned(source.player, Sigil.METICULOUS_MAGE)
+					&& Random.rollPercent(50);
+			if (!saved)
+				r.remove();
 		}
 		return true;
 

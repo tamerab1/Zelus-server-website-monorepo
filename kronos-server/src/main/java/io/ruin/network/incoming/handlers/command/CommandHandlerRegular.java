@@ -600,6 +600,10 @@ public class CommandHandlerRegular {
 				io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player);
 				return true;
 			}
+			case "sigils": {
+				io.ruin.model.content.sigils.SigilManager.openSigilList(player);
+				return true;
+			}
 			case "casinoseed": {
 				if (args.length < 1) {
 					player.sendMessage("Usage: ::casinoseed <value>");

@@ -361,6 +361,16 @@ public class ObjType {
 			inventoryOptions[0] = "Scratch";
 		}
 
+		// Deadman Mode sigils (un-attuned versions only -- the attuned item id is never
+		// actually held, attunement is tracked as player state, see SigilManager) --
+		// these ship from the real OSRS cache with no inventory options at all, so the
+		// "Attune"/"Inspect" options used by io.ruin.model.content.sigils.SigilManager
+		// don't exist until patched in here, same pattern as id 10600 above.
+		if (id == 26078 || id == 26003 || id == 26000 || id == 25991) {
+			inventoryOptions[0] = "Attune";
+			inventoryOptions[1] = "Inspect";
+		}
+
 		if (id == 2748) {
 			name = "Coin Casket (giant)";
 			inventoryOptions[1] = null;

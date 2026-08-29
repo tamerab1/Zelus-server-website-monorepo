@@ -351,6 +351,7 @@ public final class StaticInit {
 		io.ruin.model.content.loyaltytitles.LoyaltyTitle.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.register();
+		io.ruin.model.content.sigils.SigilManager.register();
 		io.ruin.model.entity.player.XpMode.register();
 		io.ruin.model.inter.dialogue.ItemDialogue.register();
 		io.ruin.model.inter.dialogue.LinkDialogue.register();

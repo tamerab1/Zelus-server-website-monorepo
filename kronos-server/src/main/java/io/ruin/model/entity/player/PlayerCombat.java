@@ -25,6 +25,8 @@ import io.ruin.model.combat.special.ranged.DragonThrownaxe;
 import io.ruin.model.combat.special.ranged.ToxicBlowpipe;
 import io.ruin.model.content.combatachievements.CombatAchievementSystem;
 import io.ruin.model.content.itembreaking.ItemBreakPerkHandler;
+import io.ruin.model.content.sigils.Sigil;
+import io.ruin.model.content.sigils.SigilManager;
 import io.ruin.model.content.upgrade.ItemEffect;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.npc.NPC;
@@ -564,6 +566,11 @@ public class PlayerCombat extends Combat {
 					ammo.incrementAmount(-1);
 					hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
 				}
+			} else if (SigilManager.isAttuned(player, Sigil.RIGOROUS_RANGER)
+					&& !ammo.getDef().name.toLowerCase().contains("chinchompa") && Random.rollPercent(50)) {
+				// Sigil of the Rigorous Ranger: "50% chance to save ammunition ... except
+				// when throwing chinchompas" -- only applies in the no-Ava-device fallback
+				// branch above; Ava's own save/destroy/drop rolls already apply otherwise.
 			} else {
 				ammo.incrementAmount(-1);
 				hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
@@ -4747,6 +4754,12 @@ public class PlayerCombat extends Combat {
 					hit.damage *= c.getMeleeDamageReduction(level);
 				}
 			}
+			// Sigil of Resistance: "All attacks from monsters do 25% less damage" -- style
+			// agnostic (unlike the RANGE/MAGIC/MELEE_RESISTANCE perk sets above), permanent
+			// once unlocked, no attune slot needed (see Sigil.Category.PERMANENT).
+			if (SigilManager.isUnlocked(player, Sigil.RESISTANCE)) {
+				hit.damage *= 0.75;
+			}
 		}
 
 		if (player.gauntlet != null && player.gauntlet.inGauntlet) {
@@ -5490,6 +5503,36 @@ public class PlayerCombat extends Combat {
 			if (Random.rollPercent(c.getBleedChance(level)) && hit.damage > 0)
 				if (target.isNpc())
 					c.bleedEffect(player, target.npc, level);
+		}
+
+		// Sigil of the Menacing Mage: on dealing magic damage, 15% chance to curse the
+		// target for 18 damage split over 6 seconds (5 ticks of 2), healing the player the
+		// same amount each tick. "A target can only be under the effect of one curse at a
+		// time" -- guarded by Entity.menacingMageCursed, cleared via the cancel-condition's
+		// own side effect so it's reset even if the target dies mid-curse.
+		if (hit.attackStyle != null && hit.attackStyle.isMagic() && hit.damage > 0 && target.getHp() > 0
+				&& !target.menacingMageCursed && SigilManager.isAttuned(player, Sigil.MENACING_MAGE)
+				&& Random.rollPercent(15)) {
+			target.menacingMageCursed = true;
+			final int totalCurseDamage = 18;
+			final int curseTicks = 5;
+			World.startEvent(e -> {
+				e.setCancelCondition(() -> {
+					boolean done = target.getHp() < 1 || player.getHp() < 1;
+					if (done)
+						target.menacingMageCursed = false;
+					return done;
+				});
+				int dealt = 0;
+				for (int i = 0; i < curseTicks; i++) {
+					e.delay(2);
+					int tickDamage = (totalCurseDamage * (i + 1) / curseTicks) - dealt;
+					dealt += tickDamage;
+					target.hit(new Hit(HitType.DAMAGE).fixedDamage(tickDamage));
+					player.hit(new Hit(HitType.HEAL).fixedDamage(tickDamage));
+				}
+				target.menacingMageCursed = false;
+			});
 		}
 
 		SetEffect.GUTHAN.checkAndApply(player, target, hit);

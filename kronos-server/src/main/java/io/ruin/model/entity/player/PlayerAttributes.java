@@ -818,6 +818,11 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int titleId = -1;
 	public Set<Integer> unlockedLoyaltyTitles = new HashSet<>();
 	public int equippedLoyaltyTitleId = -1;
+	// Deadman Mode sigils (io.ruin.model.content.sigils) -- keyed by Sigil enum ordinal.
+	// unlockedSigils is permanent/uncapped; attunedCombatSigils is the subset of
+	// COMBAT-category sigils currently active, capped at 3 (enforced in SigilManager).
+	public Set<Integer> unlockedSigils = new HashSet<>();
+	public Set<Integer> attunedCombatSigils = new HashSet<>();
 	public int teleportPortalUses = 0;
 	public int presetsLoaded = 0;
 	public int expBonusTimeLeft;
