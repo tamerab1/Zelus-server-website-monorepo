@@ -12,6 +12,16 @@ public final class CacheManager {
 
 	private static final HashMap<Long, OutBuffer> cachedBuffers = new HashMap<>(1000);
 
+	/**
+	 * Sentinel for a JS5 request that resolved to no data (missing/corrupt archive on disk).
+	 * Without this, a client that keeps retrying a request it never gets a response for (normal
+	 * JS5 client behaviour) re-does the disk read AND re-enters this method's global lock on
+	 * every single retry -- for every player, since get() is synchronized across all connections.
+	 * A handful of permanently-broken archives being hammered by one client's retry loop was
+	 * enough to stall JS5 serving for everyone else too (see teleport/login freeze investigation).
+	 */
+	private static final OutBuffer NULL_MARKER = new OutBuffer(0);
+
 	public static synchronized OutBuffer get(int index, int archiveId, boolean priority) throws IOException {
 		int storedType = priority ? index : index + 256;
 		long hash = (long) archiveId + ((long) storedType << 32);
@@ -19,7 +29,7 @@ public final class CacheManager {
 		HashMap<Long, OutBuffer> map = cachedBuffers;
 		OutBuffer cached = map.get(hash);
 		if (cached != null) {
-			return cached;
+			return cached == NULL_MARKER ? null : cached;
 		}
 		if (index == 255 && archiveId == 255) {
 			OutBuffer out = new OutBuffer(fs.files.length * 8);
@@ -51,10 +61,12 @@ public final class CacheManager {
 		} else {
 			IndexFile file = fs.get(index);
 			if (file == null || (index == 255 ? archiveId >= fs.files.length : !file.archiveExists(archiveId))) {
+				map.put(hash, NULL_MARKER);
 				return null;
 			}
 			byte[] archive = file.getArchiveData(archiveId);
 			if (archive == null) {
+				map.put(hash, NULL_MARKER);
 				return null;
 			}
 			int compression = archive[0] & 255;
