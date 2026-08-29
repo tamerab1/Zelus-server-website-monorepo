@@ -223,11 +223,26 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 
 			private final HashMap<Key, ByteBuf> cache = new HashMap<>();
 
+			// CacheManager.get() legitimately returns null for an archive that doesn't exist
+			// in this (heavily hand-edited) cache -- calling .toBuffer() on that null
+			// unconditionally used to throw an NPE that Js5Service.kt's single server-wide
+			// JS5 loop catches by closing that player's ENTIRE JS5 channel ("Unable to serve
+			// channel ..., dropping connection"), not just failing the one bad request. The
+			// client then has to reconnect and re-request everything it still needed --
+			// confirmed live via server_run_js5diag.log (repeated NPEs for real archive ids,
+			// e.g. index=8 archive=17014/17015) -- exactly the "items pop in after a delay"
+			// symptom across bank/shop/inventory, since they all share this JS5 path. The null
+			// check below instead lets rsprot's own Js5MissingGroupBehaviour.DROP_REQUEST (the
+			// library's documented, intended handling for this exact case) skip just the
+			// missing archive and keep the connection alive.
 			@Override
 			public ByteBuf provide(int index, int archive) {
 				var buffer = this.cache.computeIfAbsent(new Key(index, archive), (k) -> {
 					try {
 						var cacheData = CacheManager.get(index, archive, true);
+						if (cacheData == null) {
+							return null;
+						}
 						var input = cacheData.toBuffer();
 						return Unpooled.unreleasableBuffer(input);
 					} catch (Exception e) {
