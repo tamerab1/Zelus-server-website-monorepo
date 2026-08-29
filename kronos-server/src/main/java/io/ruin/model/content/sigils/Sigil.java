@@ -14,8 +14,15 @@ package io.ruin.model.content.sigils;
  */
 public enum Sigil {
 
-	RESISTANCE(25990, 25991, 25992, "Sigil of resistance", Category.PERMANENT,
+	RESILIENCE(25990, 25991, 25992, "Sigil of resilience", Category.PERMANENT,
 		"All attacks from monsters do 25% less damage."),
+	// NOT SAFELY OBTAINABLE: the real OSRS ids for this item (26002-26004) were already
+	// repurposed on this server for UpgradeManager's Ring of the Undead/Beasts/Arachnids
+	// (confirmed live 2026-08-29). ObjType.setCustomFields() deliberately does NOT patch
+	// an "Attune" option onto these ids, so this entry can never actually be attuned in
+	// its current state -- it's kept here (rather than deleted) only so the rune-save
+	// hook in TargetSpell.java has something to reference; isAttuned() for it is always
+	// false until a genuinely free item id is found for this sigil.
 	METICULOUS_MAGE(26002, 26003, 26004, "Sigil of the meticulous mage", Category.COMBAT,
 		"Your magic accuracy is increased by +40 and you have a 50% chance to save runes or staff charges when casting spells."),
 	RIGOROUS_RANGER(25999, 26000, 26001, "Sigil of the rigorous ranger", Category.COMBAT,

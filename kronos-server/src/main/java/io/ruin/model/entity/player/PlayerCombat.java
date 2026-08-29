@@ -4754,10 +4754,10 @@ public class PlayerCombat extends Combat {
 					hit.damage *= c.getMeleeDamageReduction(level);
 				}
 			}
-			// Sigil of Resistance: "All attacks from monsters do 25% less damage" -- style
+			// Sigil of Resilience: "All attacks from monsters do 25% less damage" -- style
 			// agnostic (unlike the RANGE/MAGIC/MELEE_RESISTANCE perk sets above), permanent
 			// once unlocked, no attune slot needed (see Sigil.Category.PERMANENT).
-			if (SigilManager.isUnlocked(player, Sigil.RESISTANCE)) {
+			if (SigilManager.isUnlocked(player, Sigil.RESILIENCE)) {
 				hit.damage *= 0.75;
 			}
 		}

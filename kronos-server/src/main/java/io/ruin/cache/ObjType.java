@@ -366,7 +366,12 @@ public class ObjType {
 		// these ship from the real OSRS cache with no inventory options at all, so the
 		// "Attune"/"Inspect" options used by io.ruin.model.content.sigils.SigilManager
 		// don't exist until patched in here, same pattern as id 10600 above.
-		if (id == 26078 || id == 26003 || id == 26000 || id == 25991) {
+		// NOTE: 26002-26004 (the real "Sigil of the meticulous mage" ids) are NOT included
+		// here -- this server already repurposed them for UpgradeManager's Ring of the
+		// Undead/Beasts/Arachnids (confirmed live 2026-08-29: patching them here silently
+		// added bogus Attune/Inspect options onto Ring of the Beasts in production). Sigil
+		// of the meticulous mage has no free/safe id on this server yet -- see Sigil.java.
+		if (id == 26078 || id == 26000 || id == 25991) {
 			inventoryOptions[0] = "Attune";
 			inventoryOptions[1] = "Inspect";
 		}
