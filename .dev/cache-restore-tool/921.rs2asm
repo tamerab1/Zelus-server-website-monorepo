@@ -1,0 +1,31 @@
+.id                       921
+.int_arg_count            0
+.obj_arg_count            0
+   invoke                 922
+   iconst                 0
+   if_icmpeq              LABEL4
+   jump                   LABEL6
+LABEL4:
+   iconst                 0
+   return                
+LABEL6:
+   invoke                 1972
+   iconst                 1
+   if_icmpeq              LABEL10
+   jump                   LABEL12
+LABEL10:
+   iconst                 1
+   return                
+LABEL12:
+   get_varbit             4608
+   iconst                 0
+   if_icmpeq              LABEL16
+   jump                   LABEL18
+LABEL16:
+   iconst                 0
+   return                
+LABEL18:
+   iconst                 1
+   return                
+   iconst                 -1
+   return                

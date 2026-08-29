@@ -1,0 +1,217 @@
+.id                       3739
+.int_arg_count            1
+.obj_arg_count            1
+   iload                  0
+   iconst                 -1
+   if_icmpeq              LABEL4
+   jump                   LABEL6
+LABEL4:
+   iconst                 16750623
+   istore                 0
+LABEL6:
+   iconst                 0
+   istore                 1
+   iconst                 0
+   istore                 2
+   iconst                 0
+   istore                 3
+   sconst                 ""
+   ostore                 1
+   sconst                 ""
+   ostore                 2
+   sconst                 ""
+   ostore                 3
+   iconst                 0
+   istore                 4
+   iconst                 0
+   istore                 5
+   sconst                 ""
+   ostore                 4
+   iload                  0
+   invoke                 2
+   istore                 3
+   istore                 2
+   istore                 1
+   iload                  1
+   iconst                 16
+   div                   
+   istore                 4
+   iload                  1
+   iconst                 16
+   mod                   
+   istore                 5
+   iload                  4
+   iconst                 10
+   if_icmplt              LABEL41
+   jump                   LABEL45
+LABEL41:
+   iload                  4
+   tostring              
+   ostore                 1
+   jump                   LABEL53
+LABEL45:
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  4
+   iconst                 9
+   sub                   
+   enum                  
+   ostore                 1
+LABEL53:
+   iload                  5
+   iconst                 10
+   if_icmplt              LABEL57
+   jump                   LABEL63
+LABEL57:
+   oload                  1
+   iload                  5
+   tostring              
+   join_string            2
+   ostore                 1
+   jump                   LABEL73
+LABEL63:
+   oload                  1
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  5
+   iconst                 9
+   sub                   
+   enum                  
+   join_string            2
+   ostore                 1
+LABEL73:
+   iload                  2
+   iconst                 16
+   div                   
+   istore                 4
+   iload                  2
+   iconst                 16
+   mod                   
+   istore                 5
+   iload                  4
+   iconst                 10
+   if_icmplt              LABEL85
+   jump                   LABEL89
+LABEL85:
+   iload                  4
+   tostring              
+   ostore                 2
+   jump                   LABEL97
+LABEL89:
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  4
+   iconst                 9
+   sub                   
+   enum                  
+   ostore                 2
+LABEL97:
+   iload                  5
+   iconst                 10
+   if_icmplt              LABEL101
+   jump                   LABEL107
+LABEL101:
+   oload                  2
+   iload                  5
+   tostring              
+   join_string            2
+   ostore                 2
+   jump                   LABEL117
+LABEL107:
+   oload                  2
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  5
+   iconst                 9
+   sub                   
+   enum                  
+   join_string            2
+   ostore                 2
+LABEL117:
+   iload                  3
+   iconst                 16
+   div                   
+   istore                 4
+   iload                  3
+   iconst                 16
+   mod                   
+   istore                 5
+   iload                  4
+   iconst                 10
+   if_icmplt              LABEL129
+   jump                   LABEL133
+LABEL129:
+   iload                  4
+   tostring              
+   ostore                 3
+   jump                   LABEL141
+LABEL133:
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  4
+   iconst                 9
+   sub                   
+   enum                  
+   ostore                 3
+LABEL141:
+   iload                  5
+   iconst                 10
+   if_icmplt              LABEL145
+   jump                   LABEL151
+LABEL145:
+   oload                  3
+   iload                  5
+   tostring              
+   join_string            2
+   ostore                 3
+   jump                   LABEL161
+LABEL151:
+   oload                  3
+   iconst                 105
+   iconst                 115
+   iconst                 1402
+   iload                  5
+   iconst                 9
+   sub                   
+   enum                  
+   join_string            2
+   ostore                 3
+LABEL161:
+   sconst                 "<col=xxyyzz>"
+   ostore                 4
+   oload                  0
+   string_length         
+   iconst                 0
+   if_icmpgt              LABEL168
+   jump                   LABEL173
+LABEL168:
+   oload                  4
+   sconst                 "col"
+   oload                  0
+   invoke                 3302
+   ostore                 4
+LABEL173:
+   oload                  4
+   sconst                 "xx"
+   oload                  1
+   invoke                 3302
+   ostore                 4
+   oload                  4
+   sconst                 "yy"
+   oload                  2
+   invoke                 3302
+   ostore                 4
+   oload                  4
+   sconst                 "zz"
+   oload                  3
+   invoke                 3302
+   ostore                 4
+   oload                  4
+   return                
+   sconst                 ""
+   return                

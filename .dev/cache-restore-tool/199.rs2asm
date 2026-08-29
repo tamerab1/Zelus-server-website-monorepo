@@ -1,0 +1,119 @@
+.id                       199
+.int_arg_count            11
+.obj_arg_count            1
+   iload                  3
+   iload                  4
+   sub                   
+   istore                 11
+   oload                  0
+   iload                  11
+   iconst                 495
+   paraheight            
+   iload                  5
+   multiply              
+   istore                 12
+   iload                  7
+   iconst                 0
+   if_icmpeq              LABEL15
+   jump                   LABEL23
+LABEL15:
+   iload                  8
+   iconst                 103
+   if_icmpeq              LABEL19
+   jump                   LABEL23
+LABEL19:
+   iload                  6
+   iload                  12
+   sub                   
+   istore                 6
+LABEL23:
+   iload                  2
+   iload                  0
+   iconst                 4
+   multiply              
+   cc_find               
+   iconst                 1
+   if_icmpeq              LABEL31
+   jump                   LABEL61
+LABEL31:
+   iload                  11
+   iload                  12
+   iconst                 0
+   iconst                 0
+   iload                  1
+   if_setsize            
+   iload                  4
+   iload                  6
+   iconst                 0
+   iload                  7
+   iload                  1
+   if_setposition        
+   iconst                 0
+   cc_sethide            
+   iload                  11
+   iload                  12
+   iconst                 0
+   iconst                 0
+   cc_setsize            
+   iload                  4
+   iload                  6
+   iconst                 0
+   iload                  7
+   cc_setposition        
+   oload                  0
+   cc_settext            
+   iload                  9
+   cc_setcolour          
+   iload                  10
+   cc_settextshadow      
+LABEL61:
+   iload                  2
+   iload                  0
+   iconst                 4
+   multiply              
+   iconst                 1
+   add                   
+   cc_find               
+   iconst                 1
+   if_icmpeq              LABEL71
+   jump                   LABEL75
+LABEL71:
+   sconst                 ""
+   cc_settext            
+   iconst                 1
+   cc_sethide            
+LABEL75:
+   iload                  2
+   iload                  0
+   iconst                 4
+   multiply              
+   iconst                 2
+   add                   
+   cc_find               
+   iconst                 1
+   if_icmpeq              LABEL85
+   jump                   LABEL89
+LABEL85:
+   sconst                 ""
+   cc_settext            
+   iconst                 1
+   cc_sethide            
+LABEL89:
+   iload                  2
+   iload                  0
+   iconst                 4
+   multiply              
+   iconst                 3
+   add                   
+   cc_find               
+   iconst                 1
+   if_icmpeq              LABEL99
+   jump                   LABEL101
+LABEL99:
+   iconst                 1
+   cc_sethide            
+LABEL101:
+   iload                  12
+   return                
+   iconst                 0
+   return                
