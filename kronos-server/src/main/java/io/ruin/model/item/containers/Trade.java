@@ -206,7 +206,11 @@ public class Trade extends ItemContainer {
 		// title tags -- see Appearance.java's avatar.setName call). Sending the plain getName()
 		// here works only for players with no tags at all; for anyone with a tag the client can't
 		// resolve the name and the trade request becomes unclickable ("unable to find [name]").
-		target.getPacketSender().sendMessage(player.getNameWithRanks() + " wishes to trade with you.", player.getNameWithRanks(), 101);
+		// Neither the client's default (no hardcoded color for type 101) nor RuneLite's chat-color
+		// config (null unless the player sets one) actually colors this without a literal <col> tag
+		// in the message text, so embed the hard pink directly. Uses the plain "name" param (not
+		// the <col>-wrapped message) for the client's clickable-name lookup -- see the comment above.
+		target.getPacketSender().sendMessage("<col=FF00FF>" + player.getNameWithRanks() + " wishes to trade with you.</col>", player.getNameWithRanks(), 101);
 		sendMessage("Sending trade offer...");
 		if (player.wildernessLevel > 0)
 			sendMessage("Trading in the Wilderness is dangerous - you might get killed!");

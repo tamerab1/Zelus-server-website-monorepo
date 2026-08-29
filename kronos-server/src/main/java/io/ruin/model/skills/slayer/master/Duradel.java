@@ -25,7 +25,17 @@ public class Duradel {
 	public static final int DURADEL = 13622;
 
 	private static void assignTask(Player player) {
-		if (player.getCombat().getLevel() < 100) {
+		// Must match giveTask()'s own gate below exactly. It used to be a stricter
+		// combat-only check, so a player with Slayer 50+ but combat <100 passed
+		// giveTask()'s gate (which allows the slayer-level bypass) only to get
+		// silently blocked here -- this "You need a combat level..." dialogue was
+		// queued and then immediately overwritten by giveTask()'s own follow-up
+		// dialogue, which built its message from the stale SLAYER_TASK/AMOUNT
+		// varps left over from the player's last (already-finished) task, e.g.
+		// "kill 0 Turoth" -- and after skipping (which zeroes SLAYER_TASK), the
+		// same mismatch left the player permanently stuck on "Sorry, I have no
+		// tasks for you." Confirmed live 2026-08-29 (combat level ~94).
+		if (player.getStats().get(StatType.Slayer).fixedLevel < 50 && player.getCombat().getLevel() < 100) {
 			player.dialogue(
 				new NPCDialogue(DURADEL, "You need a combat level of at least 100 to receive a task from me.")
 			);

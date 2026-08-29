@@ -25,7 +25,9 @@ public class Nieve {
 	public static final int NIEVE = 6797;
 
 	private static boolean assignTask(Player player) {
-		if (player.getCombat().getLevel() < 85) {
+		// Must match giveTask()'s own gate below -- see the identical fix and
+		// comment on Duradel.assignTask() for the incident this mismatch caused.
+		if (player.getStats().get(StatType.Slayer).fixedLevel < 50 && player.getCombat().getLevel() < 85) {
 			player.dialogue(
 				new NPCDialogue(NIEVE, "You need a combat level of at least 85 to receive a task from me.")
 			);

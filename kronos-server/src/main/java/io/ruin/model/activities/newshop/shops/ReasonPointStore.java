@@ -229,12 +229,31 @@ public class ReasonPointStore extends NewShop {
 									return false;
 								} else {
 									handleUpgradeItem(player, shopUpgrade);
+									// This non-noteable, amount>1 branch used to be the only one of the four
+									// purchase paths in this method that never touched totalReasonPointsSpent,
+									// so bulk-buying (e.g. 50-100x a cheap item in one purchase) silently never
+									// counted toward the "Spend 2500 Zelus points" newcomer task -- confirmed
+									// live 2026-08-29 (player spent 50,000 points, task stayed at 0).
+									boolean sent = false;
+									if (player.totalReasonPointsSpent > 2500)
+										sent = true;
+									player.totalReasonPointsSpent += item.getCost();
+									if (!sent && player.totalReasonPointsSpent > 2500)
+										player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
+											+ NewcomerTasks.SPEND_REASON_POINTS.getFormattedName() + "!");
 									int cost = (int) (item.getCost() * getDonatorCostCut(player));
 									player.updateReasonPoints(-cost);
 									return true;
 								}
 							}
 						}
+						boolean sent = false;
+						if (player.totalReasonPointsSpent > 2500)
+							sent = true;
+						player.totalReasonPointsSpent += item.getCost();
+						if (!sent && player.totalReasonPointsSpent > 2500)
+							player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
+								+ NewcomerTasks.SPEND_REASON_POINTS.getFormattedName() + "!");
 						player.addToCollectionLog(new Item(item.getItem().getId(), 1));
 						int cost = (int) (item.getCost() * getDonatorCostCut(player));
 						player.updateReasonPoints(-cost);
