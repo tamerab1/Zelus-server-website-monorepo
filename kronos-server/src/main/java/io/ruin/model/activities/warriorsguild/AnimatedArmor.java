@@ -8,7 +8,6 @@ import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.ItemObjectAction;
 import io.ruin.model.map.Bounds;
 import io.ruin.model.map.Direction;
-import io.ruin.model.map.ground.GroundItem;
 import io.ruin.model.map.object.GameObject;
 import io.ruin.model.map.object.actions.ObjectAction;
 
@@ -66,10 +65,11 @@ public enum AnimatedArmor {
 			npc.animate(4166, 1);
 			event.delay(2);
 			npc.attackTargetPlayer(() -> !player.getPosition().inBounds(ATTACK_BOUNDS), () -> {
-				if (npc.getCombat().isDead())
-					new GroundItem(8851, tokenCount).owner(player).position(npc.getPosition()).spawn();
+				if (!npc.getCombat().isDead())
+					return;
+				player.getInventory().addOrDrop(8851, tokenCount);
 				for (int id : armorIds)
-					new GroundItem(id, 1).owner(player).position(npc.getPosition()).spawn();
+					player.getInventory().addOrDrop(id, 1);
 			});
 			player.removeDialogueInterface();
 			player.unlock();
