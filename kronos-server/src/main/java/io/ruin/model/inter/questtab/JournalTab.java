@@ -210,7 +210,7 @@ public class JournalTab {
 		// EMPTY2(Tab.MISCELLANEOUS, t4++, player -> "View store", (SimpleAction) player
 		// -> player.openUrl("https://prifddinas.io/community/pages/Store/")),
 		// EMPTY3(Tab.MISCELLANEOUS, t4++, player -> "Join discord", (SimpleAction)
-		// player -> player.openUrl("https://discord.gg/XZ3E6Nur2r")),
+		// player -> player.openUrl("https://discord.gg/sVrcatBdyG")),
 		COMBAT(Tab.MISCELLANEOUS, t4++),
 		TARGET_OVERLAY(Tab.MISCELLANEOUS, t4++, player -> "Target Overlay",
 				(SimpleAction) player -> player.sendMessage("This feature is currently disabled.")),
@@ -784,7 +784,7 @@ public class JournalTab {
 				interfaceHandler.actions[30] = (SimpleAction) player -> player.openUrl("Wiki",
 						"https://zelusrsps.com/wiki");
 				interfaceHandler.actions[31] = (SimpleAction) player -> player.openUrl("Discord",
-						"https://discord.gg/XZ3E6Nur2r");
+						"https://discord.gg/sVrcatBdyG");
 			});
 			InterfaceHandler.register(1086, interfaceHandler -> {
 				interfaceHandler.actions[11] = (SimpleAction) player -> {

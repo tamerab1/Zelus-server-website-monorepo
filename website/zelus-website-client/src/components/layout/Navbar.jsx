@@ -15,7 +15,7 @@ const RIGHT_LINKS = [
 ];
 
 const ALL_LINKS = [...LEFT_LINKS, ...RIGHT_LINKS];
-const DISCORD_URL = 'https://discord.gg/XZ3E6Nur2r';
+const DISCORD_URL = 'https://discord.gg/sVrcatBdyG';
 
 /* ── Shield SVG ornament ─────────────────────────────── */
 function ShieldOrnament({ flip = false }) {

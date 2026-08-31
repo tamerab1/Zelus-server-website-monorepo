@@ -15,7 +15,7 @@ public class UsefulLinks extends QuestTabEntry {
 
 	public static String USEFUL_LINKS = "Useful Links";
 
-	public static String DISCORD_LINK = "https://discord.gg/XZ3E6Nur2r";
+	public static String DISCORD_LINK = "https://discord.gg/sVrcatBdyG";
 	public static String DONATION_LINK_NAME = World.type.getWorldName() + " Store";
 	public static String DONATION_LINK = World.type.getWebsiteUrl() + "/store/";
 	public static String FORUMS_LINK = World.type.getWebsiteUrl() + "/forums/";
@@ -39,7 +39,7 @@ public class UsefulLinks extends QuestTabEntry {
 	public static void openUsefulLinksMenu(Player player) {
         /*
         OptionScroll.open(player, "Select a link",
-                new Option(DISCORD, () -> player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/XZ3E6Nur2r")),
+                new Option(DISCORD, () -> player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/sVrcatBdyG")),
                 new Option(FORUMS, () -> player.openUrl(World.type.getWorldName() + " Forums", FORUMS_LINK)),
                 new Option(VOTE, () -> player.openUrl(World.type.getWorldName() + " Voting", VOTE_LINK)),
                 new Option(DONATE, () -> player.openUrl(DONATION_LINK_NAME, DONATION_LINK))

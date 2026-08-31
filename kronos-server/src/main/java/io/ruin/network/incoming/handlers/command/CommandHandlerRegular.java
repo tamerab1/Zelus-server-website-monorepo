@@ -215,13 +215,13 @@ public class CommandHandlerRegular {
 			}
 
 			case "discord": {
-				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/XZ3E6Nur2r");
+				player.openUrl(World.type.getWorldName() + " Discord", "https://discord.gg/sVrcatBdyG");
 				return true;
 			}
 
 			case "ticket": {
 				player.openUrl(World.type.getWorldName() + " Discord",
-						"https://discord.gg/XZ3E6Nur2r");
+						"https://discord.gg/sVrcatBdyG");
 				return true;
 			}
 			case "araxxor": {
@@ -1919,7 +1919,7 @@ public class CommandHandlerRegular {
 
 			case "rules": {
 				player.openUrl(World.type.getWorldName().concat(" Rules"),
-						"https://discord.gg/XZ3E6Nur2r");
+						"https://discord.gg/sVrcatBdyG");
 				return true;
 			}
 
