@@ -182,10 +182,16 @@ public class DailyVoteInterface {
 			player.canClaimVoteReward = true;
 			player.claimedVoteToday = false;
 			player.votedToday = true;
-			player.lastVoteStreakRewardInEpoch = now.getEpochSecond();
+			// This is the field voteCheck() itself reads back in (lastVoteRewardInstant above) to
+			// decide whether a missed-vote reset is due - it must be kept as real epoch-SECONDS.
+			// Previously only lastVoteStreakRewardInEpoch (a different, otherwise never-read field)
+			// was updated here, so lastVoteRewardInEpoch stayed at its default 0 forever in the
+			// normal voting flow, making "lastVoteRewardInEpoch <= 0" permanently true and the
+			// else-if reset branch below unreachable - streaks never reset for missing a day.
+			player.lastVoteRewardInEpoch = now.getEpochSecond();
 
 			player.voteStreak++;
-			if (player.voteStreak > 29) {
+			if (player.voteStreak > voteRewards.size()) {
 				player.voteStreak = 1;
 				entries.clear();
 				player.getDailyVote().voteRewardRefresh();
@@ -198,6 +204,7 @@ public class DailyVoteInterface {
 			player.canClaimVoteReward = true;
 			player.claimedVoteToday = false;
 			player.voteStreak = 1;
+			player.lastVoteRewardInEpoch = now.getEpochSecond();
 			entries.clear();
 			player.getDailyVote().voteRewardRefresh();
 			player.sendMessage("Your vote streak has been reset as you failed to vote within 36 hours.");
@@ -213,13 +220,8 @@ public class DailyVoteInterface {
 		LocalDate dateFromTimestamp = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
 		LocalDate today = LocalDate.now();
-		LocalDate yesterday = today.minusDays(1);
 
-		LocalDate lastVoteDate = Instant.ofEpochSecond(player.lastVoteRewardInEpoch)
-				.atZone(ZoneId.systemDefault())
-				.toLocalDate();
-
-		if (player.voteStreak >= 28)
+		if (player.voteStreak > voteRewards.size())
 			player.voteStreak = 1;
 
 		if (dateFromTimestamp.isEqual(today)) {
@@ -228,7 +230,10 @@ public class DailyVoteInterface {
 			entries.put(player.voteStreak, player.todaysVoteReward);
 		} else {
 			player.votedToday = false;
-			player.lastVoteRewardInEpoch = today.toEpochDay();
+			// Was "today.toEpochDay()" - LocalDate.toEpochDay() returns days-since-epoch (a tiny
+			// number), but this field is always read as epoch-SECONDS (Instant.ofEpochSecond above
+			// and in voteCheck()), so that resolved to a date in January 1970 every time this ran.
+			player.lastVoteRewardInEpoch = now.getEpochSecond();
 			player.todaysVoteReward = new DailyReward(false, voteRewards.get(player.voteStreak));
 			entries.put(player.voteStreak, player.todaysVoteReward);
 		}
