@@ -4461,6 +4461,11 @@ public class Player extends PlayerAttributes {
 	private void tick() {
 		playTime++;
 
+		// Throttled referral-milestone sweep (cheap early-exit for the common no-referral case);
+		// also swept on login, see ReferralSystem#register.
+		if (playTime % 60 == 0)
+			io.ruin.model.content.referral.ReferralSystem.checkMilestone(this);
+
 		int specialRestoreMaxTick = 50;
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
 				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 25975)

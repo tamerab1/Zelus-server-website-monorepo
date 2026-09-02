@@ -245,6 +245,16 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public long lastClaimDonation;
 	public int votePoints;
 	public int totalWorldTaskPoints;
+	// ── Referral system ──────────────────────────────────────────────────────
+	/** Username of the player who referred this account (null = never referred). */
+	public String referredBy;
+	/** This account's own playTime (seconds) at the moment the referral link was made; audit only. */
+	public long referralLinkedAtPlayTime;
+	/** True once the milestone reward for being referred has been paid out (prevents re-claiming). */
+	public boolean referralRewardClaimed;
+	/** Number of referrals this account has completed (referred players who reached their milestone). */
+	public int totalReferredPlayers;
+	// ─────────────────────────────────────────────────────────────────────────
 	public int uniquePetsObtained = 0;
 	public int slayerTasksCompleted;
 	public int slayerSpree = 0;

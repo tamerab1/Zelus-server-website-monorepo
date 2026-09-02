@@ -1,0 +1,14 @@
+id = 60235
+name = "Refer Package"
+inventory_model = 2426
+zoom2d = 1180
+xan2d = 160
+yan2d = 172
+x_offset2d = 0
+y_offset2d = -14
+cost = 0
+tradeable = false
+stackable = false
+members = false
+options = ["", "", "Take", "", ""]
+interface_options = ["Open", "", "", "", "Destroy"]

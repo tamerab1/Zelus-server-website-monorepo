@@ -20,6 +20,7 @@ import io.ruin.model.activities.tempevents.summerevent.SummerBossesInterface;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.content.HomeHandler;
 import io.ruin.model.content.RefSystem;
+import io.ruin.model.content.referral.ReferralCommand;
 import io.ruin.model.content.combatachievements.CombatAchievement;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.npc.actions.edgeville.EmblemTrader;
@@ -662,6 +663,14 @@ public class CommandHandlerRegular {
 					code = "returning";
 				RefSystem.claimReferral(player, code);
 				return true;
+			}
+
+			// Refer-a-friend (distinct from the "ref" promo-code claim above): links this
+			// account to an existing player's referral. Reward is milestone-gated, see
+			// ReferralSystem.
+			case "referfriend",
+					"invite": {
+				return ReferralCommand.handle(player, args);
 			}
 
 			case "cas": {

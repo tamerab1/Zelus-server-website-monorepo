@@ -37,6 +37,7 @@ public final class StaticInit {
 		io.ruin.cache.IdentityKit.register();
 		io.ruin.data.impl.teleports.register();
 		io.ruin.db.PlayerDatabase.register();
+		io.ruin.db.ReferralRewardDatabase.register();
 		io.ruin.model.Stairs.register();
 		io.ruin.model.TrainingAmulet.register();
 		io.ruin.model.VoteRaffleTicket.register();
@@ -351,6 +352,7 @@ public final class StaticInit {
 		io.ruin.model.content.loyaltytitles.LoyaltyTitle.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.register();
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.register();
+		io.ruin.model.content.referral.ReferralSystem.register();
 		io.ruin.model.content.sigils.SigilManager.register();
 		io.ruin.model.entity.player.XpMode.register();
 		io.ruin.model.inter.dialogue.ItemDialogue.register();
@@ -478,6 +480,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.boxes.mystery.PVPArmourMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.PetMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.Promopackage.register();
+		io.ruin.model.item.actions.impl.boxes.mystery.ReferPackage.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SlayerCasket.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SlayerChest.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.SummerMysteryBox.register();
