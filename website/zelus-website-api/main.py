@@ -949,7 +949,7 @@ def submit_vote(request: Request, req: VoteSubmitRequest, db: Session = Depends(
                 models.Vote.site_name == req.site_name,
                 models.Vote.created_at >= cutoff,
             )
-            .order_by(models.Vote.created_at.desc())
+            .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
             .first()
         )
         if recent_by_username:
@@ -971,7 +971,7 @@ def submit_vote(request: Request, req: VoteSubmitRequest, db: Session = Depends(
                     models.Vote.site_name  == req.site_name,
                     models.Vote.created_at >= cutoff,
                 )
-                .order_by(models.Vote.created_at.desc())
+                .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
                 .first()
             )
             if recent_by_ip:
@@ -1110,43 +1110,45 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
         now    = datetime.utcnow()
         cutoff = now - timedelta(hours=VOTE_COOLDOWN_HOURS)
 
-        # 1. Promote the matching "unverified" row from /vote/submit, if one exists.
-        unverified = (
+        # Single lookup, not two sequential ones. The old version ran a "find unverified"
+        # query, and only if THAT came back empty, a separate "find pending/claimed" query
+        # to avoid duplicating an already-confirmed vote. Those two queries could race
+        # /vote/submit's own insert: if the submit's row landed in the gap between them (or
+        # before either but within the same wall-clock second), both this callback and the
+        # submit request would independently insert their own row for the same vote --
+        # confirmed live 2026-09-02 (RSPS_LIST vote for 'gandalf': #211 inserted unverified
+        # by /vote/submit, #213 inserted pending "no prior submit" by this callback, both
+        # created_at same second). That leaves a permanently-stuck unverified row AND, once
+        # _promote_stale_unverified_votes's 30-minute fallback promotes it too, a genuine
+        # duplicate "pending" row -- claim_votes_for_game() claims every pending row with no
+        # per-site dedup, so the game side would count that site's vote twice in one claim.
+        # One query + branch on whatever it finds closes that race window entirely: there is
+        # now only one decision point, so there is nothing left for /vote/submit's insert to
+        # race against on the read side.
+        recent = (
             db.query(models.Vote)
             .filter(
                 sa_func.lower(models.Vote.game_username) == game_username.lower(),
                 models.Vote.site_name  == site_name,
-                models.Vote.status     == "unverified",
                 models.Vote.created_at >= cutoff,
             )
-            .order_by(models.Vote.created_at.desc())
+            .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
             .first()
         )
-        if unverified:
-            unverified.status = "pending"
+
+        if recent and recent.status == "unverified":
+            recent.status = "pending"
             db.commit()
             log.info("vote_callback: %s confirmed vote #%d for '%s'.",
-                      site_name, unverified.id, game_username)
-            return {"status": "confirmed", "vote_id": unverified.id}
+                      site_name, recent.id, game_username)
+            return {"status": "confirmed", "vote_id": recent.id}
 
-        # 2. No unverified row (callback arrived before/without a /vote/submit call,
-        #    or the topsite re-pinged) -- avoid creating a duplicate if one's already
-        #    pending/claimed for this site+username within the cooldown window.
-        existing = (
-            db.query(models.Vote)
-            .filter(
-                sa_func.lower(models.Vote.game_username) == game_username.lower(),
-                models.Vote.site_name  == site_name,
-                models.Vote.status.in_(["pending", "claimed"]),
-                models.Vote.created_at >= cutoff,
-            )
-            .order_by(models.Vote.created_at.desc())
-            .first()
-        )
-        if existing:
-            return {"status": "duplicate", "vote_id": existing.id}
+        if recent and recent.status in ("pending", "claimed"):
+            return {"status": "duplicate", "vote_id": recent.id}
 
-        # 3. The callback itself is authoritative proof a vote happened -- create it.
+        # No row at all in the window (callback arrived before/without a /vote/submit call,
+        # or the topsite re-pinged well after everything expired) -- the callback itself is
+        # authoritative proof a vote happened, so create it directly.
         new_vote = models.Vote(
             site_name     = site_name,
             vote_points   = VOTE_POINTS_BY_SITE.get(site_name, 2),
@@ -1244,7 +1246,11 @@ def get_vote_status(username: str, db: Session = Depends(get_db)):
                     models.Vote.site_name  == site_name,
                     models.Vote.created_at >= cutoff,
                 )
-                .order_by(models.Vote.created_at.desc())
+                # Secondary sort by id breaks a same-second created_at tie deterministically
+                # (higher id = actually-later insert) -- see _handle_vote_callback's comment
+                # for the race that produces such a tie. Self-heals the display for any
+                # already-existing duplicate pair without needing a DB fix.
+                .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
                 .first()
             )
             state_info = _get_vote_state(recent)
