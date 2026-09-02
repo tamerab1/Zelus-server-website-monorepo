@@ -57,6 +57,7 @@ public class ZelusChest {
 			new Item(1622, 150), //Uncut Emerald
 			new Item(1620, 150), //Uncut Ruby
 			new Item(1618, 75), //Uncut Diamond
+			new Item(19836, 4), //Master clue reward casket
 		}
 	};
 	private static final Item[] UNCOMMON_LOOT = {
@@ -67,6 +68,7 @@ public class ZelusChest {
 		new Item(6739, 1), //Dragon axe
 		new Item(12914, 20), //Anti venom+
 		new Item(23962, 69), //Crystal shard
+		new Item(20543, 4), //Elite clue reward casket
 		new Item(ItemID.DRAGON_PLATELEGS + 1, 6), //Dragon platelegs
 		new Item(3205, 5), //Dragon Halberd
 		new Item(9193, 750), //Dragonstone bolt tips
@@ -93,6 +95,7 @@ public class ZelusChest {
 		new Item(20543, 4), //Elite clue reward casket
 		new Item(30582, 1), //GWD Mystery Box
 		new Item(59973, 1), //Blossom pet
+		new Item(59605, 1), //Imperial bow
 	};
 	private static final Item[] VERY_RARE_LOOT = {
 		new Item(24034, 1), //Dragonstone full helm
