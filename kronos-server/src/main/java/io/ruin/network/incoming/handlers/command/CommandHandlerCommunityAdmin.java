@@ -323,9 +323,9 @@ public class CommandHandlerCommunityAdmin {
 
 			case "deironplayer": {
 				forPlayer(player, query, "::deiron playerName", p2 -> {
-					VarPlayerRepository.IRONMAN_MODE.set(player, 0);
-					VarPlayerRepository.CHAT_ICONS.set(player, 0);
-					GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
+					VarPlayerRepository.IRONMAN_MODE.set(p2, 0);
+					VarPlayerRepository.CHAT_ICONS.set(p2, 0);
+					GameMode.changeForumsGroup(p2, GameMode.STANDARD.groupId);
 					player.sendMessage("Removed ironman status from " + p2.getName() + ".");
 				});
 				return true;
