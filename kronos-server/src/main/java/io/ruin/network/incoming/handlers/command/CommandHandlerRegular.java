@@ -399,70 +399,11 @@ public class CommandHandlerRegular {
 					}
 
 					// Points are per-site (not a flat per-vote amount), plus the usual
-					// donator bonus added once per claim (same as before).
-					// Bonus: voting on BOTH sites in the same claim also awards a Vote
-					// raffle ticket (see VoteRaffleTicket/VoteGambler for the raffle itself).
-					boolean votedRuneLocus = false;
-					boolean votedRspsList  = false;
-					int newlyClaimed = 0;
-					int points = 0;
-					for (String site : claimedVotes) {
-						// DB-backed, atomic per (player, site, cooldown-window) guard --
-						// rejects a duplicate grant if this exact claim was already
-						// recorded, even if two ::claimvote presses raced each other and
-						// both received this same non-empty claimed-vote list.
-						if (!VoteHandler.tryClaimSite(player.uuid(), site)) {
-							continue;
-						}
-						newlyClaimed++;
-						if (site.equalsIgnoreCase("RUNELOCUS")) {
-							points += 2;
-							votedRuneLocus = true;
-						} else if (site.equalsIgnoreCase("RSPS_LIST")) {
-							points += 1;
-							votedRspsList = true;
-						}
-					}
-					if (newlyClaimed == 0) {
-						player.sendMessage("<col=000080>You've already claimed that vote reward.");
-						return;
-					}
-					points += DonatorBonus.VOTE_POINT_BONUS.handleBonus(player);
-					boolean votedBothSites = votedRuneLocus && votedRspsList;
-
-					VoteHandler.addHwid(player.hwid);
-					player.votePoints += points;
-					player.votesClaimed += newlyClaimed;
-					player.claimedVotes++;
-					Instant now = Instant.now();
-					player.lastVoteClaimInEpoch = now.getEpochSecond();
-					if (player.claimedVotes == Achievements.THIRD_PART_CANDIDATE.getCompletionAmount())
-						player.sendMessage("<col=000080>You have completed the achievement: <col=800000>"
-								+ Achievements.THIRD_PART_CANDIDATE.getAchievementName());
-
-					VoteBossHandler.addVote(claimedVotes.size());
-					player.getDailyVote().voteCheck();
-					if (player.votesClaimed == 1)
-						player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
-								+ NewcomerTasks.VOTE_CLAIM.getFormattedName() + "!");
-
-					// Vote Points are credited directly above -- no need to also hand out
-					// Vote Tickets (59602), since redeeming those just grants more vote
-					// points again (see DonatorClaimScroll.java's "claim" action on
-					// 59602). Only the raffle ticket remains, since that's a genuinely
-					// separate reward (raffle entry), not another way to get points.
-					if (votedBothSites) {
-						player.getInventory().addOrDrop(30602, 1);
-					}
-
-					// Add single chance for presents per claim
-
-					player.sendMessage(
-							"You have received " + points + " vote points, you now have " + player.getVotePoints() + " vote points.");
-					if (votedBothSites) {
-						player.sendMessage("You are also rewarded with a Vote raffle ticket for voting on both sites!");
-					}
-					player.getDailyVote().open();
+					// donator bonus added once per claim, plus a raffle ticket for
+					// voting on both sites -- all handled by the shared grant method
+					// (also used by ::forcevoteclaim for manual restitution) so both
+					// paths apply the exact same per-site dedup and reward logic.
+					VoteHandler.grantClaimedVotes(player, claimedVotes);
 //					VotingWebhook.sendVoted(player);
 
 					var dto = new JSONObject()

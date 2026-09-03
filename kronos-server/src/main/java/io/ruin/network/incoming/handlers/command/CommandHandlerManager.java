@@ -2,6 +2,7 @@ package io.ruin.network.incoming.handlers.command;
 
 import io.ruin.cache.*;
 import io.ruin.db.PlayerDatabase;
+import io.ruin.model.VoteHandler;
 import io.ruin.model.World;
 import io.ruin.model.activities.DonationBossHandler;
 import io.ruin.model.activities.bosses.globalboss.GlobalBossHandler;
@@ -15,6 +16,8 @@ import discord.webhooks.logs.AdministrationHook;
 import io.ruin.utility.Broadcast;
 import io.ruin.utility.Utils;
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 import static io.ruin.network.incoming.handlers.command.CommandHandler.*;
 import static io.ruin.model.entity.player.GameMode.*;
@@ -194,6 +197,21 @@ public class CommandHandlerManager {
 					VarPlayerRepository.CHAT_ICONS.set(p2, 0);
 					GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
 					player.sendMessage("Removed ironman status from " + p2.getName() + ".");
+				});
+				return true;
+			}
+
+			// Manual restitution for a vote whose website row was already consumed
+			// (marked claimed) but whose reward never reached the player -- e.g. the
+			// CLAIM_WINDOW_SECONDS bug fixed 2026-09-03 (see VoteHandler.java). Goes
+			// through VoteHandler.grantClaimedVotes(), the exact same reward path as
+			// a real ::claimvote, so it can't grant more/less than a normal claim
+			// would have. Sites are comma-separated, case-insensitive: RUNELOCUS,
+			// RSPS_LIST.
+			case "forcevoteclaim": {
+				forPlayerString(player, query, "::forcevoteclaim playerName RUNELOCUS,RSPS_LIST", (p2, sites) -> {
+					VoteHandler.grantClaimedVotes(p2, Arrays.asList(sites.toUpperCase().split(",")));
+					player.sendMessage("Forced vote claim for " + p2.getName() + ": " + sites);
 				});
 				return true;
 			}
