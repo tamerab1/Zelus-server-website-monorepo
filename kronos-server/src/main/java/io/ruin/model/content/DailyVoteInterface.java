@@ -156,7 +156,7 @@ public class DailyVoteInterface {
 			}
 			player.getPacketSender().setHidden(INTERFACE_ID, startingLockComponent, true);
 
-			if (i >= (player.voteStreak - 1) && i < player.voteStreak)
+			if (i < (player.voteStreak - 1))
 				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");
 			else if (i == (player.voteStreak - 1) && player.claimedVoteToday)
 				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");

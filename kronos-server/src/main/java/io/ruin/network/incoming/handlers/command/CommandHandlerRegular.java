@@ -240,9 +240,7 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "cindermaw": {
-				player.dialogue(new OptionsDialogue("This will teleport you into the Wilderness. Are you sure?",
-						new Option("Yes", () -> player.getMovement().teleport(3361, 4326, 3)),
-						new Option("No", player::closeDialogue)));
+				teleportDangerous(player, 3361, 4326, 3);
 				return true;
 			}
 			//case "deals": {

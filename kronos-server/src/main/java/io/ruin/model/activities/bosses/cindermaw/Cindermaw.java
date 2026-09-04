@@ -20,6 +20,11 @@ import io.ruin.utility.TickDelay;
 ///  - A random anti-melee/anti-range switch, same mechanism Kree'arra uses (a preDefend
 ///    HitListener that nullifies the disallowed style) but toggling randomly over time instead
 ///    of being permanently anti-melee.
+///  - "Wing Nova": a periodic AoE breath that hits every player near the boss, not just the
+///    current combat target -- needed because Cindermaw is a multi-combat wilderness boss and
+///    the rest of its attacks (basicAttack/rangedAttack/breathSpecial/ashfallSpecial) are all
+///    single-target, so a group fighting it together would otherwise only ever see one player
+///    taking damage.
 public class Cindermaw extends NPCCombat {
 
 	private static final Projectile RANGED_PROJECTILE = new Projectile(1636, 25, 31, 40, 30, 8, 16, 96);
@@ -32,13 +37,16 @@ public class Cindermaw extends NPCCombat {
 		ANTI_MELEE, ANTI_RANGE
 	}
 
-	private static final int SWITCH_MIN_TICKS = 8;
-	private static final int SWITCH_MAX_TICKS = 15;
+	private static final int SWITCH_MIN_TICKS = 14;
+	private static final int SWITCH_MAX_TICKS = 20;
+
+	private static final int NOVA_RADIUS = 4;
 
 	private final TickDelay switchTimer = new TickDelay();
 	private DefenseMode mode;
 
 	private int count = 0;
+	private int novaCount = 0;
 	private boolean enraged = false;
 	private boolean iconApplied = false;
 
@@ -106,8 +114,12 @@ public class Cindermaw extends NPCCombat {
 
 		int specialThreshold = enraged ? 3 : 6;
 		int ashfallThreshold = enraged ? 8 : 12;
+		int novaThreshold = enraged ? 6 : 10;
 
-		if (withinDistance(1) && Random.rollDie(2, 1)) {
+		if (novaCount > 0 && novaCount % novaThreshold == 0) {
+			novaBreathSpecial();
+			novaCount = 0;
+		} else if (withinDistance(1) && Random.rollDie(2, 1)) {
 			basicAttack();
 		} else if (count > 0 && count % ashfallThreshold == 0) {
 			ashfallSpecial();
@@ -118,6 +130,7 @@ public class Cindermaw extends NPCCombat {
 			rangedAttack();
 		}
 		count++;
+		novaCount++;
 		return true;
 	}
 
@@ -154,6 +167,24 @@ public class Cindermaw extends NPCCombat {
 			if (target != null && target.getPosition().equals(targetPos)) {
 				target.hit(new Hit(npc, AttackStyle.DRAGONFIRE).randDamage(applyEnrage(5), applyEnrage(15)));
 			}
+		});
+	}
+
+	/// Hits every nearby player, not just `target` -- the only multi-target attack in Cindermaw's
+	/// kit, since basicAttack/rangedAttack/breathSpecial/ashfallSpecial all only ever hit `target`
+	/// even though Cindermaw is fought as a multi-combat wilderness boss.
+	private void novaBreathSpecial() {
+		npc.animate(8276);
+		final Position bossPos = npc.getPosition().copy();
+		npc.getPosition().getRegion().players.forEach(p -> p.sendMessage("Cindermaw rears back and unleashes a wave of fire!"));
+		World.sendGraphics(1638, 0, 0, bossPos);
+		npc.addEvent(event -> {
+			event.delay(2);
+			npc.localPlayers().forEach(p -> {
+				if (p.getPosition().isWithinDistance(bossPos, NOVA_RADIUS)) {
+					p.hit(new Hit(npc, AttackStyle.DRAGONFIRE).randDamage(applyEnrage(5), applyEnrage(15)));
+				}
+			});
 		});
 	}
 
