@@ -175,6 +175,11 @@ public enum ServerTeleports {
 		new Item[]{new Item(31099), new Item(31109), new Item(31111), new Item(31113)},
 		"An ancient demon lurking beneath a crumbling dungeon.", "Master", "No requirements.", 0, 0
 	),
+	CINDERMAW("Cindermaw", new Position(3361, 4326, 3),
+		new Item[]{new Item(60252), new Item(60253), new Item(60255)},
+		"A fearsome oversized drake, wreathed in ash and embers. <br>Randomly switches between anti-melee and anti-ranged defences.",
+		"Hard", "Located in the Wilderness.", 0, 0
+	),
 	SIRE("Abyssal sire", new Position(3030, 4771, 0),
 		new Item[]{(new Item(13263)), (new Item(13265))},
 		"An engineer of the Abyss from <br>a time before the God Wars.", "Master", "85 Slayer.", 29477, 4527

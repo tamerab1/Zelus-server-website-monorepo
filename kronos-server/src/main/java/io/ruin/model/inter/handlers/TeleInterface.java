@@ -205,7 +205,9 @@ public class TeleInterface extends ItemContainer {
 		pageNumber = 4;
 		activateHiddenTeleportNames(player);
 		player.getPacketSender().sendString(851, 22, ServerTeleports.DOOM_OF_MOKHAIOTL.name);
-		for (int i = 23; i <= 33; i++)
+		player.getPacketSender().setHidden(851, 23, false);
+		player.getPacketSender().sendString(851, 23, ServerTeleports.CINDERMAW.name);
+		for (int i = 24; i <= 33; i++)
 			player.getPacketSender().setHidden(851, i, true);
 	}
 
@@ -652,6 +654,9 @@ public class TeleInterface extends ItemContainer {
 				}
 				else if (currentCategory == Categories.BOSSES && pageNumber == 3) {
 					currentTeleport = ServerTeleports.LEVIATHAN;
+				}
+				else if (currentCategory == Categories.BOSSES && pageNumber == 4) {
+					currentTeleport = ServerTeleports.CINDERMAW;
 				}
 				else if (currentCategory == Categories.SKILLING && currentSkillingSection == SkillingSubSections.SLAYER
 					&& pageNumber == 2) {

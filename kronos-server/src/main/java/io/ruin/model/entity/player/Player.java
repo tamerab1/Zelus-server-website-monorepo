@@ -441,6 +441,7 @@ public class Player extends PlayerAttributes {
 		}
 		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DROP_RATE_BOOST))
 			dropAddition += 5;
+		dropAddition += io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.getDropRateAddition(this);
 		switch (player.getSecondaryGroup()) {
 			case SUPER_DONATOR -> dropAddition += 2;
 			case ELITE_DONATOR -> dropAddition += 3;
@@ -4470,6 +4471,8 @@ public class Player extends PlayerAttributes {
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
 				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 25975)
 			specialRestoreMaxTick = 25;
+		specialRestoreMaxTick = io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler
+				.applySpecialRegenBoost(this, specialRestoreMaxTick);
 		if (++specialRestoreTicks >= specialRestoreMaxTick) {
 			specialRestoreTicks = 0;
 			combat.restoreSpecial(10);

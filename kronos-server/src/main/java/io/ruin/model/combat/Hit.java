@@ -19,6 +19,7 @@ import io.ruin.model.item.actions.impl.itemeffects.itemhandlers.HealthSiphon;
 import io.ruin.model.item.actions.impl.itemeffects.itemhandlers.RespectTheDead;
 import io.ruin.model.item.actions.impl.itemeffects.itemhandlers.SiphonTheDead;
 import io.ruin.model.item.actions.impl.itemeffects.itemhandlers.VenomTipped;
+import io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler;
 import io.ruin.model.item.attributes.AttributeExtensions;
 import io.ruin.model.item.attributes.AttributeTypes;
 import io.ruin.model.item.containers.Equipment;
@@ -633,7 +634,8 @@ public class Hit {
 		if (minDamage == maxDamage) {
 			damage = minDamage;
 		} else {
-			maxDamage *= 1D + damageBoost;
+			double totalBoost = damageBoost + PetPerkHandler.getDamageBoost(attacker, attackStyle);
+			maxDamage *= 1D + totalBoost;
 			damage = Random.get(minDamage, maxDamage);
 		}
 		if (damageCap >= 0 && damage > damageCap) {

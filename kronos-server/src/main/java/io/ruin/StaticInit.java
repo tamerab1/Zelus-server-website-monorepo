@@ -675,6 +675,7 @@ public final class StaticInit {
 		io.ruin.model.map.object.actions.impl.dungeons.LizardmenLair.register();
 		io.ruin.model.map.object.actions.impl.dungeons.MiningGuild.register();
 		io.ruin.model.map.object.actions.impl.dungeons.MythicalGuild.register();
+		io.ruin.model.map.object.actions.impl.petperksarea.PetPerksArea.register();
 		io.ruin.model.map.object.actions.impl.dungeons.Paterdomusdungeon.register();
 		io.ruin.model.map.object.actions.impl.dungeons.SmokeDevilDungeon.register();
 		io.ruin.model.map.object.actions.impl.dungeons.StrongholdSecurity.register();

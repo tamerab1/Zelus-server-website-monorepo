@@ -14,5 +14,16 @@ public enum PerkType {
 	WALKER_PERK,
 	BETA_DONATORS,
 
-	KARUULM_IMMUNITY
+	KARUULM_IMMUNITY,
+
+	/**
+	 * Combat/utility perks granted by a custom pet while it is summoned as the player's
+	 * active follower (see Pet.perk + PetPerkHandler). One pet = one perk = no stacking,
+	 * since only one pet can be summoned at a time.
+	 */
+	PET_MELEE_BOOST,
+	PET_MAGE_BOOST,
+	PET_RANGED_BOOST,
+	PET_UTILITY_BOOST,
+	PET_DROP_RATE_BOOST
 }

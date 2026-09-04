@@ -7,6 +7,7 @@ import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.handlers.EquipmentStats;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.impl.chargable.Blowpipe;
+import io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler;
 import io.ruin.model.item.attributes.AttributeTypes;
 import io.ruin.model.item.containers.Equipment;
 import io.ruin.model.stat.StatList;
@@ -117,7 +118,9 @@ public class CombatUtils {
 				bonus = 0; // i know this was implied before but im leaving it explicit just to make it
 										// clear
 		}
-		return effectiveAttack * (bonus + 64D);
+		double attackRoll = effectiveAttack * (bonus + 64D);
+		attackRoll *= 1D + PetPerkHandler.getAccuracyBoost(entity, attackStyle);
+		return attackRoll;
 	}
 
 	/**
@@ -164,7 +167,9 @@ public class CombatUtils {
 			else if (attackStyle == AttackStyle.RANGED)
 				bonus = entity.getCombat().getBonus(EquipmentStats.RANGE_DEFENCE);
 		}
-		return effectiveDefence * (bonus + 64D);
+		double defenceRoll = effectiveDefence * (bonus + 64D);
+		defenceRoll *= 1D + PetPerkHandler.getDefenceBoost(entity);
+		return defenceRoll;
 	}
 
 	/**

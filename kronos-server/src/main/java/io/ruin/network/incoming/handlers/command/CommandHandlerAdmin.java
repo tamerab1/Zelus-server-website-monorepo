@@ -1961,14 +1961,26 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "petperks": {
+				io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.openInfoDialogue(player);
+				return true;
+			}
+
+			case "cindermaw": {
+				player.dialogue(new OptionsDialogue("This will teleport you into the Wilderness. Are you sure?",
+						new Option("Yes", () -> player.getMovement().teleport(3361, 4326, 3)),
+						new Option("No", player::closeDialogue)));
+				return true;
+			}
+
 			case "forcepass": {
-				int firstSpace = query.indexOf(" ", command.length() + 1);
-				if (firstSpace <= 0) {
+				int lastSpace = query.lastIndexOf(' ');
+				if (lastSpace <= command.length()) {
 					player.sendMessage("Usage: ::forcepass playerName newpassword");
 					return true;
 				}
-				String name = query.substring(command.length() + 1, firstSpace).trim();
-				String newPassword = query.substring(firstSpace + 1).trim();
+				String name = query.substring(command.length() + 1, lastSpace).trim();
+				String newPassword = query.substring(lastSpace + 1).trim();
 				if (newPassword.isEmpty()) {
 					player.sendMessage("Usage: ::forcepass playerName newpassword");
 					return true;

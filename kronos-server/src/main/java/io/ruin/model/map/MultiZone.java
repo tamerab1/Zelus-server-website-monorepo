@@ -233,7 +233,10 @@ public class MultiZone {
 			new Bounds(3013, 10108, 3078, 10177, 0),
 
 			/* Raids source area */
-			new Bounds(3264, 5152, 3400, 5727, -1)
+			new Bounds(3264, 5152, 3400, 5727, -1),
+
+			/* Cindermaw boss area (wilderness) */
+			new Bounds(3350, 4305, 3372, 4330, 3)
 
 			/* Revs caves */
 /*                new Bounds(3233, 10229, 3235, 10231, -1),

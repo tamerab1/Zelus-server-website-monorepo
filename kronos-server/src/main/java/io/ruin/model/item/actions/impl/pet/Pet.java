@@ -22,6 +22,7 @@ import io.ruin.model.var.VarPlayerRepository;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.actions.ItemAction;
 import io.ruin.model.item.actions.ItemNPCAction;
+import io.ruin.model.item.actions.impl.pet.perk.PetPerk;
 import io.ruin.model.map.route.routes.DumbRoute;
 import io.ruin.utility.Broadcast;
 import io.ruin.utility.Utils;
@@ -518,6 +519,36 @@ public enum Pet {
 	CURSED_TITAN_PET(60225, 30532, false),
 	SOLAR_BEHEMOTH_PET(60226, 30533, false),
 	DRAGON_SNOWMAN_PET(60228, 30535, false),
+
+	/**
+	 * Random-event / misc creature pets (2026-09-03 test batch) -- admin-spawnable only for now
+	 * (::item <id> then drop), obtain method TBD.
+	 */
+	TEUMO(60236, 30536, false, PetPerk.utility(0.10, 0.10)),
+	ORRVOR_QUO_MATEN(60237, 30537, false, PetPerk.ranged(0.20, 0.20, 0.10)),
+	LORD_TROBIN(60238, 30538, false, PetPerk.utility(0.20, 0.20)),
+	WANDERING_IMPLING(60239, 30539, false),
+	WAGCHIN(60240, 30540, false),
+	MONKEYS_AUNT(60241, 30541, false, PetPerk.dropRate(5)),
+	TEMPOROSS(60242, 30542, false, PetPerk.dropRate(10)),
+	STRISATH(60243, 30543, false, PetPerk.melee(0.20, 0.20)),
+	STARLIGHT(60244, 30544, false, PetPerk.utility(0.10, 0.15)),
+	STAR_SPRITE(60245, 30545, false),
+	SPOOKY_DOG(60246, 30546, false, PetPerk.dropRate(15)),
+	SPIT_GOBLIN(60247, 30547, false, PetPerk.ranged(0.10, 0.10, 0.05)),
+
+	/**
+	 * Second random-content pet batch (2026-09-03) -- admin-spawnable only for now
+	 * (::item <id> then drop), obtain method TBD.
+	 */
+	SHADOW_KEEPER(60248, 30548, false, PetPerk.mage(0.15, 0.10)),
+	SLIMETOES(60249, 30549, false, PetPerk.ranged(0.10, 0.10, 0.10)),
+	STEELWILL(60250, 30550, false, PetPerk.melee(0.10, 0.05)),
+	MOSSFISTS(60251, 30551, false),
+	DAMO(60252, 30552, false, PetPerk.melee(0.10, 0.10)),
+	SLISKE_PET(60253, 30553, false, PetPerk.mage(0.10, 0.10)),
+	LIGHT_LEECH(60254, 30554, false, PetPerk.utility(0.15, 0.20)),
+	TOXISKELE(60255, 30555, false, PetPerk.mage(0.20, 0.20)),
 	;
 
 	public final int itemId, npcId, metaId;
@@ -528,24 +559,37 @@ public enum Pet {
 
 	public final int dropAverage; // 1 out of X
 
+	/// Combat/utility perk granted while this pet is the player's summoned follower, or null.
+	/// See PetPerkHandler for where each perk actually gets applied.
+	public final PetPerk perk;
+
 	Pet(int itemId, int npcId, boolean mysteryBox) {
-		this(itemId, npcId, -1, mysteryBox, 0);
+		this(itemId, npcId, -1, mysteryBox, 0, null);
 	}
 
 	Pet(int itemId, int npcId, int metaId, boolean mysteryBox) {
-		this(itemId, npcId, metaId, mysteryBox, 0);
+		this(itemId, npcId, metaId, mysteryBox, 0, null);
 	}
 
 	Pet(int itemId, int npcId, boolean mysteryBox, int dropAverage) {
-		this(itemId, npcId, -1, mysteryBox, dropAverage);
+		this(itemId, npcId, -1, mysteryBox, dropAverage, null);
+	}
+
+	Pet(int itemId, int npcId, boolean mysteryBox, PetPerk perk) {
+		this(itemId, npcId, -1, mysteryBox, 0, perk);
 	}
 
 	Pet(int itemId, int npcId, int metaId, boolean mysteryBox, int dropAverage) {
+		this(itemId, npcId, metaId, mysteryBox, dropAverage, null);
+	}
+
+	Pet(int itemId, int npcId, int metaId, boolean mysteryBox, int dropAverage, PetPerk perk) {
 		this.itemId = itemId;
 		this.npcId = npcId;
 		this.metaId = metaId;
 		this.mysteryBox = mysteryBox;
 		this.dropAverage = dropAverage;
+		this.perk = perk;
 		this.roamId = findRoamId();
 	}
 

@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ConservativePrayers;
 import io.ruin.model.inter.dialogue.MessageDialogue;
+import io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler;
 import io.ruin.model.inter.handlers.EquipmentStats;
 import io.ruin.model.var.VarPlayerRepository;
 import io.ruin.model.skills.prayer.Prayer;
@@ -230,6 +231,8 @@ public class PlayerPrayer {
 			multiplier += c.getDrainAmount();
 			resistance *= multiplier;
 		}
+
+		resistance *= 1D + PetPerkHandler.getPrayerDrainReduction(player);
 
 		if (drainCounter > resistance) {
 			drain(drainCounter / resistance);
