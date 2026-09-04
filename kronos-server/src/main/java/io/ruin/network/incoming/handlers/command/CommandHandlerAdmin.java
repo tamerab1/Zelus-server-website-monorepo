@@ -1961,17 +1961,6 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
-			case "petperks": {
-				io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.openInfoDialogue(player);
-				return true;
-			}
-
-			case "cindermaw": {
-				player.dialogue(new OptionsDialogue("This will teleport you into the Wilderness. Are you sure?",
-						new Option("Yes", () -> player.getMovement().teleport(3361, 4326, 3)),
-						new Option("No", player::closeDialogue)));
-				return true;
-			}
 
 			case "forcepass": {
 				int lastSpace = query.lastIndexOf(' ');
