@@ -40,6 +40,7 @@ public class Cindermaw extends NPCCombat {
 
 	private int count = 0;
 	private boolean enraged = false;
+	private boolean iconApplied = false;
 
 	@Override
 	public void init() {
@@ -53,13 +54,19 @@ public class Cindermaw extends NPCCombat {
 				hit.block();
 			}
 		});
-		switchDefenseMode();
+		// Pick the starting mode/timer here, but DON'T touch the overhead icon yet -- init() runs
+		// during NPCCombat's info-binding step, before the NPC has a live avatar assigned, so
+		// npc.setHeadIcon() would silently no-op (logs "NPC not initialized" and returns). The
+		// catch-up check at the top of attack() applies the icon once the avatar actually exists.
+		mode = DefenseMode.values()[Random.get(0, DefenseMode.values().length - 1)];
+		switchTimer.delay(Random.get(SWITCH_MIN_TICKS, SWITCH_MAX_TICKS));
 	}
 
 	private void setDefenseIcon() {
 		npc.setHeadIcon(mode == DefenseMode.ANTI_MELEE
 				? NPC.DefaultHeadIconIndex.ProtectFromMelee
 				: NPC.DefaultHeadIconIndex.ProtectFromRanged);
+		iconApplied = true;
 	}
 
 	private void switchDefenseMode() {
@@ -116,6 +123,12 @@ public class Cindermaw extends NPCCombat {
 
 	@Override
 	public void process() {
+		// process() ticks every game tick regardless of combat engagement, so this is the
+		// earliest safe point to apply the starting overhead icon once the avatar exists --
+		// see the comment in init() for why it can't be set there directly.
+		if (!iconApplied && npc.avatar() != null) {
+			setDefenseIcon();
+		}
 	}
 
 	private void triggerEnrage() {
