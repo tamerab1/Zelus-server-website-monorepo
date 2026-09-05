@@ -1,6 +1,7 @@
 package io.ruin.model.content.referral;
 
 import discord.webhooks.logs.ReferralHook;
+import io.ruin.Server;
 import io.ruin.cache.ItemID;
 import io.ruin.db.ReferralRewardDatabase;
 import io.ruin.model.World;
@@ -22,9 +23,13 @@ import io.ruin.utility.Broadcast;
  */
 public final class ReferralSystem {
 
-	/** Referred player must reach this much playTime (seconds) OR the total level below. */
-	public static final int MILESTONE_PLAYTIME_SECONDS = 10 * 3600;
-	public static final int MILESTONE_TOTAL_LEVEL = 750;
+	/**
+	 * Referred player must reach this much playTime (seconds), measured from when the referral
+	 * link was made (not total account playTime - see Player#referralLinkedAtPlayTime, set in
+	 * ReferralCommand#handle), OR the total level below.
+	 */
+	public static final int MILESTONE_PLAYTIME_SECONDS = 60 * 60;
+	public static final int MILESTONE_TOTAL_LEVEL = 120;
 
 	/** Only accounts younger than this (playTime, seconds) may submit a referral link at all. */
 	public static final int REFERRAL_ELIGIBLE_PLAYTIME_SECONDS = 2 * 3600;
@@ -41,6 +46,16 @@ public final class ReferralSystem {
 	public static final int REFERRED_XP_SCROLL_AMOUNT = 2;
 	public static final int REFERRED_MYSTERY_BOX_ITEM_ID = ItemID.TOB_REFUND_CHEST; // id 6199, "Mystery box"
 
+	/** Human-readable form of {@link #MILESTONE_PLAYTIME_SECONDS}, e.g. "30 minutes" or "10 hours". */
+	public static String formatMilestonePlaytime() {
+		if (MILESTONE_PLAYTIME_SECONDS % 3600 == 0) {
+			int hours = MILESTONE_PLAYTIME_SECONDS / 3600;
+			return hours + (hours == 1 ? " hour" : " hours");
+		}
+		int minutes = MILESTONE_PLAYTIME_SECONDS / 60;
+		return minutes + (minutes == 1 ? " minute" : " minutes");
+	}
+
 	public static void register() {
 		LoginListener.register(player -> {
 			checkMilestone(player);
@@ -56,7 +71,11 @@ public final class ReferralSystem {
 		if (referred.referredBy == null || referred.referralRewardClaimed)
 			return;
 
-		boolean playtimeMet = referred.playTime >= MILESTONE_PLAYTIME_SECONDS;
+		// referred.playTime/referralLinkedAtPlayTime are both in game ticks (see Player#tick,
+		// Server.tickMs() = 600ms), not real seconds - Server.toTicks() converts the "seconds"
+		// constant into ticks for this comparison, same idiom as LoyaltyTitleManager.
+		long playtimeSinceLink = referred.playTime - referred.referralLinkedAtPlayTime;
+		boolean playtimeMet = playtimeSinceLink >= Server.toTicks(MILESTONE_PLAYTIME_SECONDS);
 		boolean totalLevelMet = referred.getStats().totalLevel >= MILESTONE_TOTAL_LEVEL;
 		if (!playtimeMet && !totalLevelMet)
 			return;
@@ -76,7 +95,7 @@ public final class ReferralSystem {
 
 		ReferralHook.sendMilestoneCompletedToDiscord(referred.referredBy, referred.getName());
 		Broadcast.WORLD.sendNews(null, "Referral", referred.getName() + " reached the milestone! Both "
-				+ referred.getName() + " and " + referred.referredBy + " have received their referral rewards.");
+				+ referred.getName() + " and " + referred.referredBy + " have earned their referral rewards.");
 	}
 
 	private static void deliverPendingReward(Player referrer) {

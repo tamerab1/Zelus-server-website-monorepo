@@ -36,6 +36,9 @@ public class ShootingStars {
 	private static final int STAR_PROGRESS_5 = 41228;
 	private static final int STAR_FINISH = 41229;
 	private static int METEORITE_REMAINING = 1000;
+	// Star tiers - a random tier is rolled per spawn, gating who can even start mining it.
+	private static final int[] TIER_MINING_LEVELS = {60, 70, 80, 90};
+	private static int requiredMiningLevel = TIER_MINING_LEVELS[0];
 	public static ShootingStars ACTIVE;
 	private static long timeRemaining;
 	private static GameObject rock;
@@ -149,11 +152,13 @@ public class ShootingStars {
 	private static void addStar() {
 		rock = GameObject.spawn(STAR_START, ACTIVE.starSpawn.getX(), ACTIVE.starSpawn.getY(), 0, 10, 0);
 		METEORITE_REMAINING = 16000;
+		requiredMiningLevel = Random.get(TIER_MINING_LEVELS);
 	}
 
 	public static void addStar(int x, int y, int z) {
 		rock = GameObject.spawn(STAR_START, x, y, z, 10, 0);
 		METEORITE_REMAINING = 2200;
+		requiredMiningLevel = Random.get(TIER_MINING_LEVELS);
 	}
 
 
@@ -211,7 +216,8 @@ public class ShootingStars {
 
 
 	private static void inspect(Player player) {
-		player.dialogue(new MessageDialogue("The rock looks like it has " + METEORITE_REMAINING + " x fragments in it."));
+		player.dialogue(new MessageDialogue("The rock looks like it has " + METEORITE_REMAINING + " x fragments in it."
+				+ " It looks like it'll take a Mining level of " + requiredMiningLevel + " to break into."));
 	}
 
 	private static double yieldBoost(Player player) {
@@ -257,6 +263,11 @@ public class ShootingStars {
 			Pickaxe pickaxe = Pickaxe.find(player);
 			if (pickaxe == null) {
 				player.sendMessage("You do not have an pick-axe which you have the mining level to use.");
+				player.privateSound(2277);
+				return;
+			}
+			if (player.getStats().get(StatType.Mining).currentLevel < requiredMiningLevel) {
+				player.sendMessage("You need a Mining level of " + requiredMiningLevel + " to mine this star.");
 				player.privateSound(2277);
 				return;
 			}

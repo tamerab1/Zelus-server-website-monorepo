@@ -8,10 +8,15 @@ import io.ruin.model.inter.actions.SimpleAction;
 import io.ruin.model.item.Item;
 import io.ruin.utility.Misc;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 public class DailyTasksInterface {
 	public void open(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, 1106);
-		player.getPacketSender().sendString(1106, 14, "Daily Tasks Interface");
+		player.getPacketSender().sendString(1106, 14, "Daily Tasks Interface  <col=ffff00>(Resets in " + getTimeUntilReset() + ")");
 		player.getPacketSender().sendString(1106, 22, getCompletionAmount(player));
 		player.getPacketSender().sendString(1106, 21, player.dailyTasksCompletionReward.getDef().getName());
 		player.getPacketSender().sendClientScript(
@@ -43,7 +48,7 @@ public class DailyTasksInterface {
 
 			int barTextureInterfaceHash = 1106 << 16 | taskProgressionbarTextureComponent;
 			int barInterfaceHash = 1106 << 16 | taskProgressionbarComponent;
-			float barPercentage = (amountDone / player.startingDailyTaskAmounts[i]) * 441;
+			float barPercentage = ((float) amountDone / player.startingDailyTaskAmounts[i]) * 441;
 
 			player.getPacketSender().sendClientScript(10607, "Ii", barInterfaceHash, (int) barPercentage);
 			player.getPacketSender().sendClientScript(10608, "Ii", barTextureInterfaceHash, (int) barPercentage);
@@ -135,12 +140,25 @@ public class DailyTasksInterface {
 		}
 
 		if (completionTotal > 1 && completionTotal < 5)
-			completionAmount = "<col=ff561f@Completed " + completionTotal + "/5";
+			completionAmount = "<col=ff561f>Completed " + completionTotal + "/5";
 		else if (completionTotal > 4)
 			completionAmount = "<col=16e614>Completed " + completionTotal + "/5";
 		else
 			completionAmount = "<col=b31a1a>Completed " + completionTotal + "/5";
 		return completionAmount;
+	}
+
+	/** Daily tasks reset at midnight (server local time) - see DailyTask#register's date check. */
+	private String getTimeUntilReset() {
+		ZoneId zone = ZoneId.systemDefault();
+		Instant nextReset = LocalDate.now(zone).plusDays(1).atStartOfDay(zone).toInstant();
+		Duration remaining = Duration.between(Instant.now(), nextReset);
+		if (remaining.isNegative())
+			remaining = Duration.ZERO;
+		long hours = remaining.toHours();
+		long minutes = remaining.toMinutes() % 60;
+		long seconds = remaining.getSeconds() % 60;
+		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
 	}
 
 	public static void register() {

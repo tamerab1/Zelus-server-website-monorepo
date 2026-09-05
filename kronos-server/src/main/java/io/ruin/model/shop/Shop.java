@@ -198,16 +198,23 @@ public class Shop {
 				buyAmount = Math.min(buyAmount, shopItem.getAmount());
 			}
 			int pricePer = getSellPrice(shopItem);
-			int requiredCurrency = buyAmount * pricePer;
 
-			// Limits the buy amount to 10,000
+			// Limits the buy amount to 100,000
 			int buyLimit = 100000;
 			if (buyAmount > buyLimit) {
 				player.sendMessage("You can only buy up to " + buyLimit + " items at once.");
 				buyAmount = buyLimit;
-				// Ensures the gp spent is capped at the max of 10,000 items
-				requiredCurrency = buyAmount * pricePer;
 			}
+			// pricePer * buyAmount as plain int math can overflow (and wrap negative) for a high
+			// enough per-item price at this buyLimit, which would let removeCurrency see a
+			// negative "cost" and add currency back instead of charging it - clamp buyAmount so
+			// the total never exceeds what an int can hold.
+			long totalCost = (long) buyAmount * (long) pricePer;
+			if (totalCost > Integer.MAX_VALUE) {
+				buyAmount = Integer.MAX_VALUE / pricePer;
+				totalCost = (long) buyAmount * (long) pricePer;
+			}
+			int requiredCurrency = (int) totalCost;
 
 			int removedCurrency = currencyHandler.removeCurrency(player, requiredCurrency);
 
@@ -289,6 +296,10 @@ public class Shop {
 			int maxSell = Math.min(Integer.MAX_VALUE - (matchingItem != null ? matchingItem.getAmount() : 0), maxInventory);
 
 			int pricePer = getBuyPrice(requestedItem);
+			// pricePer * removed is plain int math further down - clamp maxSell so that product
+			// can't overflow (and wrap negative) for a huge sell quantity of a priced item.
+			if (pricePer > 0 && maxSell > Integer.MAX_VALUE / pricePer)
+				maxSell = Integer.MAX_VALUE / pricePer;
 
 			boolean allSold = maxSell == inventoryCount;// guarantees that 1 slot will be open
 
@@ -345,6 +356,10 @@ public class Shop {
 		int maxSell = Math.min(Integer.MAX_VALUE - matchingItem.getAmount(), maxInventory);
 
 		int pricePer = getBuyPrice(requestedItem);
+		// pricePer * removed is plain int math further down - clamp maxSell so that product
+		// can't overflow (and wrap negative) for a huge sell quantity of a priced item.
+		if (pricePer > 0 && maxSell > Integer.MAX_VALUE / pricePer)
+			maxSell = Integer.MAX_VALUE / pricePer;
 		int removed = player.getInventory().remove(requestedItem.getId(), maxSell);
 		if (removed > 0) {
 			int unnoted = requestedItem.getDef().isNote() ? requestedItem.getDef().fromNote().id : requestedItem.getId();
@@ -376,11 +391,13 @@ public class Shop {
 		if (canSellToStore && matchingItem != null) {
 			return value;
 		}
-		if (matchingItem == null && !generalStore) {
-			return -1;
-		}
-
-		return 1;
+		// Reachable only when this specialty shop stocks the item but has selling disabled
+		// (canSellToStore == false) - was returning a flat 1gp "junk price" here, which is a
+		// general-store-only mechanic in real OSRS. A specialty shop that won't buy an item
+		// should refuse the same way it does for an unstocked item, not quote a bogus price -
+		// this is exactly what PRICE_CHECK (ShopManager.java) surfaces to the player as
+		// "Shop will buy X for 1 coins" instead of the correct "can't sell to this shop".
+		return -1;
 	}
 
 	public int getSellPrice(ShopItem itemForSlot) {

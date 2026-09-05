@@ -36,13 +36,14 @@ public abstract class CurrencyHandler {
 		if (currencyAmount <= 0) {
 			return 0;
 		}
-		long shopTotalCost = (long) pricePer * (long) shopItem.getAmount();
-		if (shopTotalCost > Integer.MAX_VALUE) {
+		long requestedCost = (long) pricePer * (long) amount;
+		if (requestedCost > Integer.MAX_VALUE) {
 			amount = Integer.MAX_VALUE / pricePer;
+			requestedCost = (long) pricePer * (long) amount;
 			log.debug("total was over max int, set to {}", amount);
 		}
-		log.debug("buy amt request for {} {} {}", shopTotalCost, pricePer * amount, currencyAmount);
-		if (pricePer * amount > currencyAmount) {
+		log.debug("buy amt request for {} {}", requestedCost, currencyAmount);
+		if (requestedCost > currencyAmount) {
 			int newAmount = currencyAmount / pricePer;
 			int remaining = currencyAmount - newAmount;
 

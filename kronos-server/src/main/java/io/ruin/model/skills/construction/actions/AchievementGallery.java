@@ -32,7 +32,12 @@ public class AchievementGallery {
 		player.getPacketSender().sendClientScript(1685, "isi",
 			level,
 			BOX_NAMES[level - 1] + " Jewellery Box",
-			15 // toggling bits in this parameter "unlocks" certain restricted teleports like tears of guthix, by default we just unlock them all
+			// Bitfield that "unlocks" quest-restricted teleports (e.g. Tears of Guthix normally
+			// requires Tree Gnome Village). Intent here is to always unlock everything, but 15
+			// (0b1111) only covers 4 bits - if a restricted destination's flag lives outside
+			// that range it silently stays locked/hidden while the rest of the box works fine.
+			// All bits set removes any guesswork about which bit maps to which destination.
+			-1
 		);
 		player.set("JEWBOX_LEVEL", level);
 	}

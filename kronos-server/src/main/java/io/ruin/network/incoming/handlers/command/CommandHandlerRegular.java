@@ -600,8 +600,7 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			case "ref",
-					"spring",
+			case "spring",
 					"summer",
 					"fall",
 					"zelus": {
@@ -614,11 +613,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			// Refer-a-friend (distinct from the "ref" promo-code claim above): links this
-			// account to an existing player's referral. Reward is milestone-gated, see
-			// ReferralSystem.
+			// Refer-a-friend: links this account to an existing player's referral. Reward is
+			// milestone-gated, see ReferralSystem. "ref" used to be the promo-code claim above
+			// (see RefSystem) - that's retired, "ref" is now just an alias for "referfriend".
 			case "referfriend",
-					"invite": {
+					"invite",
+					"ref": {
 				return ReferralCommand.handle(player, args);
 			}
 

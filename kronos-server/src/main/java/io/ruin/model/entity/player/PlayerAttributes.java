@@ -248,7 +248,11 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	// ── Referral system ──────────────────────────────────────────────────────
 	/** Username of the player who referred this account (null = never referred). */
 	public String referredBy;
-	/** This account's own playTime (seconds) at the moment the referral link was made; audit only. */
+	/**
+	 * This account's own playTime (seconds) at the moment the referral link was made. Used to
+	 * measure the milestone playtime requirement from the link forward rather than from account
+	 * creation - see ReferralSystem#checkMilestone.
+	 */
 	public long referralLinkedAtPlayTime;
 	/** True once the milestone reward for being referred has been paid out (prevents re-claiming). */
 	public boolean referralRewardClaimed;
