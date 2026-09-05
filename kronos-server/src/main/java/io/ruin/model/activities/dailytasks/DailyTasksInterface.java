@@ -16,7 +16,8 @@ import java.time.ZoneId;
 public class DailyTasksInterface {
 	public void open(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, 1106);
-		player.getPacketSender().sendString(1106, 14, "Daily Tasks Interface  <col=ffff00>(Resets in " + getTimeUntilReset() + ")");
+		sendResetTimer(player);
+		startResetTimerTicker(player);
 		player.getPacketSender().sendString(1106, 22, getCompletionAmount(player));
 		player.getPacketSender().sendString(1106, 21, player.dailyTasksCompletionReward.getDef().getName());
 		player.getPacketSender().sendClientScript(
@@ -159,6 +160,27 @@ public class DailyTasksInterface {
 		long minutes = remaining.toMinutes() % 60;
 		long seconds = remaining.getSeconds() % 60;
 		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+	}
+
+	private void sendResetTimer(Player player) {
+		player.getPacketSender().sendString(1106, 14, "Daily Tasks Interface  <col=ffff00>(Resets in " + getTimeUntilReset() + ")");
+	}
+
+	/**
+	 * The countdown text is a plain string component, not a client-side ticking widget, so it
+	 * only moves if the server keeps re-sending it - otherwise it just shows whatever value was
+	 * true the moment the interface opened and visibly "freezes" from then on. Ticks once a
+	 * second for as long as the player has this interface open, and stops itself (via the cancel
+	 * condition) the moment they close it or log out - never leaks past that.
+	 */
+	private void startResetTimerTicker(Player player) {
+		player.startEvent(event -> {
+			event.setCancelCondition(() -> !player.isVisibleInterface(1106));
+			while (true) {
+				event.delay(2);
+				sendResetTimer(player);
+			}
+		});
 	}
 
 	public static void register() {
