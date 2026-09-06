@@ -116,6 +116,15 @@ public enum CollectionLogData {
 					new Item(30578),
 					new Item(30579)
 			}),
+	CATALYSTS(CollectionLogUpdated.Categories.BOSSES, "Catalysts",
+			new Item[] { (new Item(30309)/* Catalyst melee weapon */), (new Item(30312)/* Catalyst mage weapon */),
+					(new Item(30315)/* Catalyst ranged weapon */) },
+			// completion rewards
+			new Item[] {
+					new Item(7478, 5),
+					new Item(30577, 1),
+					new Item(30578, 1),
+			}),
 	CERBERUS(CollectionLogUpdated.Categories.BOSSES, "Cerberus",
 			new Item[] { (new Item(13247)/* Hellpuppy */), (new Item(13227)/* Eternal crystal */),
 					(new Item(13229)/* Pegasian crystal */), (new Item(13231)/* Primordial crystal */), (new Item(13245)/*
