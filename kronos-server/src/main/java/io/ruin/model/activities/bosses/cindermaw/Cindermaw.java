@@ -6,10 +6,14 @@ import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCCombat;
+import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.listeners.HitListener;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.Projectile;
 import io.ruin.utility.TickDelay;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /// Custom boss cloned from Drake (npc 8612) -- bigger, recoloured, renamed. Keeps Drake's base
 /// melee/breath/AoE pattern and adds:
@@ -42,7 +46,11 @@ public class Cindermaw extends NPCCombat {
 
 	private static final int NOVA_RADIUS = 4;
 
+	private static final int RETARGET_MIN_TICKS = 5;
+	private static final int RETARGET_MAX_TICKS = 8;
+
 	private final TickDelay switchTimer = new TickDelay();
+	private final TickDelay retargetTimer = new TickDelay();
 	private DefenseMode mode;
 
 	private int count = 0;
@@ -108,6 +116,10 @@ public class Cindermaw extends NPCCombat {
 			switchDefenseMode();
 		}
 
+		if (!retargetTimer.isDelayed()) {
+			rotateTarget();
+		}
+
 		if (!enraged && npc.getHp() < info.hitpoints * ENRAGE_HP_THRESHOLD) {
 			triggerEnrage();
 		}
@@ -132,6 +144,27 @@ public class Cindermaw extends NPCCombat {
 		count++;
 		novaCount++;
 		return true;
+	}
+
+	/// Combat only tracks a single `target` (see Combat#target), so once checkAggression() locks
+	/// onto whichever player it aggroed first, Cindermaw would otherwise attack that one player
+	/// for the entire fight even though it's a shared multi-combat wilderness boss -- periodically
+	/// hand `target` to another player who's actually fighting it so the group takes turns.
+	private void rotateTarget() {
+		List<Player> attackers = new ArrayList<>();
+		for (Player p : npc.localPlayers()) {
+			if (p.getCombat().getTarget() == npc && canAttack(p)) {
+				attackers.add(p);
+			}
+		}
+		if (attackers.size() > 1) {
+			Player next = attackers.get(Random.get(attackers.size() - 1));
+			if (next != target) {
+				setTarget(next);
+				faceTarget();
+			}
+		}
+		retargetTimer.delay(Random.get(RETARGET_MIN_TICKS, RETARGET_MAX_TICKS));
 	}
 
 	@Override

@@ -85,7 +85,7 @@ public class RevenantMaledictus extends NPCCombat {
 			}
 			for (Player localPlayer : npc.localPlayers()) {
 				if (localPlayer.getPosition().inBounds(areaOfImpact)) {
-					localPlayer.hit(new Hit(npc).randDamage(18, 25));
+					localPlayer.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(18, 25));
 				}
 			}
 		});
@@ -102,7 +102,7 @@ public class RevenantMaledictus extends NPCCombat {
 					e.delay(getTicks(delay));
 					if (p.getPosition().distance(targetPosition) < 1) {
 						int damage = Random.get(info.max_damage);
-						p.hit(new Hit(npc).fixedDamage(damage));
+						p.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(damage));
 						npc.hit(new Hit(HitType.HEAL).fixedDamage((int) (damage * 0.6)));
 					}
 				});
@@ -123,7 +123,7 @@ public class RevenantMaledictus extends NPCCombat {
 						p.graphics(2005);
 						int freezeTime = Random.get(3, 6);
 						p.freeze(freezeTime, npc);
-						p.hit(new Hit(npc).randDamage(info.max_damage));
+						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(info.max_damage));
 						p.getCombat().reset();
 					}
 				});

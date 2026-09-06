@@ -3,6 +3,7 @@ package io.ruin.model.content.referral;
 import io.ruin.Server;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
+import io.ruin.network.HWIDManager;
 import properties.ServerProperties;
 
 import java.util.Set;
@@ -101,13 +102,16 @@ public final class ReferralCommand {
 		return true;
 	}
 
+	// HWIDManager.isHwidValid() is required here: clients that can't report a real device
+	// name send back the same placeholder ("unknown", or null/empty) rather than something
+	// unique, which was matching unrelated players as "sharing" a computer.
 	private static boolean sharesIdentity(Player a, String referrerIp, String referrerHwid, Set<String> referrerHwids) {
 		if (referrerIp != null && a.getIp() != null && a.getIp().equals(referrerIp))
 			return true;
-		if (a.hwid != null && a.hwid.equals(referrerHwid))
+		if (HWIDManager.isHwidValid(a.hwid) && a.hwid.equals(referrerHwid))
 			return true;
 		for (String hwid : a.hwids)
-			if (referrerHwids.contains(hwid))
+			if (HWIDManager.isHwidValid(hwid) && referrerHwids.contains(hwid))
 				return true;
 		return false;
 	}

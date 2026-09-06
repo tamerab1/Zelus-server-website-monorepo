@@ -3,7 +3,9 @@ package io.ruin.model.activities.tempevents;
 
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Icon;
+import io.ruin.cache.NPCType;
 import io.ruin.model.World;
+import io.ruin.model.activities.bosses.RevenantMaledictus;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.Killer;
 import io.ruin.model.entity.Entity;
@@ -52,6 +54,9 @@ public class RevenantMaledictusManager extends TemporaryEvent {
 	private static final Bounds REV_CAVE = new Bounds(3138, 10050, 3261, 10237, -1);
 
 	public void init() {
+		// Without this, NPC.setCombat() falls back to default BasicCombat and the boss's
+		// ranged/ice/blood/AOE attacks never fire.
+		NPCType.registerCombat(RevenantMaledictus.class, MALEDICTUS);
 		World.revenantMaledictusEvent = this;
 		totalCombatOfSlainRevs = 0;
 		eventDuration = 12000;

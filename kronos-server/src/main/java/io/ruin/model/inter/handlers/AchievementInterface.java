@@ -84,6 +84,8 @@ public class AchievementInterface extends ItemContainer {
 		int startingContainerId = 2500;
 		int startingContainer = 145;
 		for (int i = 0; i < item.length; i++) {
+			if (startingContainer > 150)
+				break;
 			int amount = item[i].getAmount();
 			if (player.getAchievementRewardClaimed(achievementID))
 				amount = 0;
@@ -105,8 +107,6 @@ public class AchievementInterface extends ItemContainer {
 			player.getPacketSender().sendIfEvents(849, startingContainer, 0, 27, 1086);
 			startingContainerId++;
 			startingContainer++;
-			if (startingContainer == 150)
-				break;
 		}
 		TextUpdater(achievementID, player, skill);
 

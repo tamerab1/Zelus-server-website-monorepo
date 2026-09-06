@@ -391,7 +391,9 @@ public abstract class NPCCombat extends Combat {
 
 		long playtime = player.playTime * Server.tickMs();
 		long days = TimeUnit.MILLISECONDS.toDays(playtime);
-		if (npc.getId() > 8063 && npc.getId() < 8067 && days < 1) {
+		if (days < 1 && (npc.getDef().name.equalsIgnoreCase("Catalyst Brute")
+				|| npc.getDef().name.equalsIgnoreCase("Catalyst Mager")
+				|| npc.getDef().name.equalsIgnoreCase("Catalyst Ranger"))) {
 			rollNewcomerCatalystDrop(player, npc);
 		}
 		rollMediumCashDrop(player, npc);
@@ -761,19 +763,15 @@ public abstract class NPCCombat extends Combat {
 
 	private void dropCatalystWeapon(Player player, NPC npc) {
 		Item item;
-		if (npc.getId() == 8065) {
+		if (npc.getDef().name.equalsIgnoreCase("Catalyst Ranger")) {
 			item = new Item(30315, 1);
-			AttributeExtensions.setCharges(item, 10000);
-			this.dropItem(item, player);
-		} else if (npc.getId() == 8066) {
+		} else if (npc.getDef().name.equalsIgnoreCase("Catalyst Mager")) {
 			item = new Item(30312, 1);
-			AttributeExtensions.setCharges(item, 10000);
-			this.dropItem(item, player);
 		} else {
 			item = new Item(30309, 1);
-			AttributeExtensions.setCharges(item, 10000);
-			this.dropItem(item, player);
 		}
+		AttributeExtensions.setCharges(item, 10000);
+		this.dropItem(item, player);
 		Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
 				" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase() + "</shad> from a "
 						+ npc.getDef().name.toLowerCase() + "! (<col=FC0101>"
@@ -924,7 +922,8 @@ public abstract class NPCCombat extends Combat {
 		baseRate *= player.getDifficulty().GetDropRate();
 		if (Random.get((int) baseRate) != 0)
 			return;
-		if (player.playTime / (24 * 3600) > 1)
+		// player.playTime is in game ticks, not seconds - see the days check above.
+		if (TimeUnit.MILLISECONDS.toDays(player.playTime * Server.tickMs()) > 1)
 			return;
 		LootTable table = new LootTable().addTable(1,
 				new LootItem(25590, 1, 1, 1),

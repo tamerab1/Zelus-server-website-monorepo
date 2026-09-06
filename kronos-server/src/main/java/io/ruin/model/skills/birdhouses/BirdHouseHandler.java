@@ -114,7 +114,7 @@ public class BirdHouseHandler {
 					player.getInventory().remove(ItemID.CLOCKWORK, 1);
 					player.getInventory().remove(birdHouseHandler.log, 1);
 					player.getInventory().add(birdHouseHandler.birdhouse, 1);
-					player.getStats().addXp(StatType.Crafting, birdHouseHandler.craftingExperience, false);
+					player.getStats().addXp(StatType.Crafting, birdHouseHandler.craftingExperience, true);
 				});
 			}
 		}
@@ -231,7 +231,7 @@ public class BirdHouseHandler {
 				List<Integer> birdhouserewards = BirdHouseHandler.BIRD_HOUSE_REWARDS;
 				Collections.shuffle(birdhouserewards);
 				player.getInventory().addOrDrop(new Item(birdhouserewards.get(0), new Random().nextInt(12 - 6) + 6));
-				player.getStats().addXp(StatType.Hunter, birdHouse.hunterExperience, false);
+				player.getStats().addXp(StatType.Hunter, birdHouse.hunterExperience, true);
 				DailyTasks.handleTaskDecrement(player, "birdhouses");
 				count++;
 			}

@@ -2,7 +2,9 @@ package io.ruin.model.activities;
 
 import com.google.gson.annotations.Expose;
 import discord.webhooks.notifications.GlobalBroadcastHook;
+import io.ruin.cache.NPCType;
 import io.ruin.model.World;
+import io.ruin.model.activities.bosses.Malakar;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
@@ -40,6 +42,7 @@ public class DonationBossHandler {
 	private static Queue<Runnable> bossSpawnQueue = new LinkedList<>();
 
 	public static void init() throws DynamicMap.DynamicMapBuildException {
+		NPCType.registerCombat(Malakar.class, 12336);
 		map = new DynamicMap().build(11576, 1).persistent(true);
 		SummerEvent.map = new DynamicMap().build(11576, 1).persistent(true);
 		malakarMap = new DynamicMap().build(11576, 1).persistent(true);

@@ -353,7 +353,7 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 			try {
 				if (handler != null && handler.getCtx().isRemoved()) {
 					log.info("Unable to accept login, connection reset.");
-					World.removePlayer(player);
+					abortLogin(player);
 					return;
 				}
 				var rankId = player.getMessagingRank().raw;
@@ -370,8 +370,15 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 				player.getPacketSender().sendRegion(true);
 			} catch (Exception e) {
 				log.error("Error while accepting login.", e);
-				World.removePlayer(player);
+				abortLogin(player);
 			}
+		}
+
+		/// World.removePlayer() alone skips finish()+save+cache-evict, leaving the stale
+		/// player object cached forever; forceLogout() drives the real logout state machine
+		/// instead and is safe with no session established.
+		private static void abortLogin(Player player) {
+			player.forceLogout();
 		}
 
 		@Override

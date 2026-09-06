@@ -35,18 +35,23 @@ public class Sarachnis extends NPCCombat {
 	int attacksInARowWithRange = 0;
 
 
+	// Offsets from the boss's spawn tile, not absolute coordinates: this room is fought both
+	// as the global lair and as a per-player instance (see SarachnisMapHandler, which spawns
+	// the NPC via map.convertX/convertY), and an instance's live tiles sit at a different
+	// absolute position than the template map. Stepping to a hardcoded absolute corner sent
+	// the boss to the template coordinates instead of the corresponding tile in the current
+	// instance - i.e. out of the arena the fight is actually happening in.
 	private enum newSpot {
-		SOUTH_WEST(1834, 9894, 0),
-		SOUTH_EAST(1846, 9894, 0),
-		NORTH_WEST(1846, 9906, 0),
-		NORTH_EAST(1834, 9906, 0);
+		SOUTH_WEST(-8, -8),
+		SOUTH_EAST(4, -8),
+		NORTH_WEST(4, 4),
+		NORTH_EAST(-8, 4);
 
-		public final int x, y, z;
+		public final int dx, dy;
 
-		newSpot(int x, int y, int z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
+		newSpot(int dx, int dy) {
+			this.dx = dx;
+			this.dy = dy;
 		}
 	}
 
@@ -102,25 +107,17 @@ public class Sarachnis extends NPCCombat {
 
 
 	private void randomMove() {
-		Position currentPos = npc.getPosition().copy();
-		Position newPos;
+		Position spawn = npc.spawnPosition;
 		int roll = Random.get(1, 4);
 
-		newPos = switch (roll) {
-			case 1 -> new Position(newSpot.NORTH_EAST.x, newSpot.NORTH_EAST.y, newSpot.NORTH_EAST.z);
-			case 2 -> new Position(newSpot.NORTH_WEST.x, newSpot.NORTH_WEST.y, newSpot.NORTH_WEST.z);
-			case 3 -> new Position(newSpot.SOUTH_WEST.x, newSpot.SOUTH_WEST.y, newSpot.SOUTH_WEST.z);
-			case 4 -> new Position(newSpot.SOUTH_EAST.x, newSpot.SOUTH_EAST.y, newSpot.SOUTH_EAST.z);
+		newSpot spot = switch (roll) {
+			case 1 -> newSpot.NORTH_EAST;
+			case 2 -> newSpot.NORTH_WEST;
+			case 3 -> newSpot.SOUTH_WEST;
+			case 4 -> newSpot.SOUTH_EAST;
 			default -> throw new IllegalStateException("Unexpected value: " + roll);
 		};
-//        target.player.sendMessage("CURRENT POS:" + currentPos);
-//        target.player.sendMessage("NEW POS:" + newPos);
-
-		if (currentPos != newPos) {
-			npc.stepAbs(newPos.getX(), newPos.getY(), StepType.WALK);
-			return;
-		}
-		randomMove();
+		npc.stepAbs(spawn.getX() + spot.dx, spawn.getY() + spot.dy, StepType.WALK);
 	}
 
 

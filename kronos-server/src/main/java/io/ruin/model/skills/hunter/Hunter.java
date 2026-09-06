@@ -186,8 +186,12 @@ public class Hunter {
 		ObjectAction.register(type.getFailedObjectId(), "dismantle", Hunter::dismantleTrap);
 		ObjectAction.register(type.getActiveObjectId(), "reset", Hunter::resetTrap);
 		ObjectAction.register(type.getFailedObjectId(), "reset", Hunter::resetTrap);
-		for (int id : type.getSuccessObjects())
+		for (int id : type.getSuccessObjects()) {
 			ObjectAction.register(id, 1, Hunter::checkTrap);
+			// success objects (e.g. box trap's "Shaking box") also carry a "Reset" option in the
+			// cache, letting a caught-but-unchecked trap be re-armed without collecting the catch.
+			ObjectAction.register(id, "reset", Hunter::resetTrap);
+		}
 	}
 
 	public static void checkTrap(Player player, GameObject obj) {
