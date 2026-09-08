@@ -1,8 +1,8 @@
 # Zelus RSPS
 
 ![Status](https://img.shields.io/badge/status-Live%20Launch-brightgreen)
-![Version](https://img.shields.io/badge/release-v1.0.0-blue)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/tamerab1/Zelus-server-website-monorepo/main.yml?branch=main)](https://github.com/tamerab1/Zelus-server-website-monorepo/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tamerab1/Zelus-server-website-monorepo/ci-cd.yml?branch=main&label=build)](https://github.com/tamerab1/Zelus-server-website-monorepo/actions)
+![Version](https://img.shields.io/badge/release-v1.1.85-blue)
 [![License](https://img.shields.io/badge/license-Proprietary-blue)](LICENSE)
 
 **Zelus** is a modern, high-performance, semi-custom Old School RuneScape private server (RSPS) featuring custom bosses, unique raids, optimized network pipelines, an integrated webstore engine, and an automated deployment stack.
