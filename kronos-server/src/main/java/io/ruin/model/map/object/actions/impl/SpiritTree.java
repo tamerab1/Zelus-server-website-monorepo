@@ -63,8 +63,8 @@ public class SpiritTree {
 		});
 	}
 
-	private static List<PatchData> SPIRIT_TREE_PATCHES = Arrays.asList(PatchData.PORT_SARIM_SPIRIT_TREE, PatchData.BRIMHAVEN_SPIRIT_TREE, PatchData.ETCETERIA_SPIRIT_TREE, PatchData.ZEAH_SPIRIT_TREE);
-	private static String[] PATCH_NAMES = {"Port Sarim", "Brimhaven", "Etceteria", "Zeah"};
+	private static List<PatchData> SPIRIT_TREE_PATCHES = Arrays.asList(PatchData.PORT_SARIM_SPIRIT_TREE, PatchData.BRIMHAVEN_SPIRIT_TREE, PatchData.ETCETERIA_SPIRIT_TREE, PatchData.ZEAH_SPIRIT_TREE, PatchData.GUILD_SPIRIT_TREE);
+	private static String[] PATCH_NAMES = {"Port Sarim", "Brimhaven", "Etceteria", "Zeah", "Farming Guild"};
 
 	private static List<Option> getOptions(Player player) {
 		List<Option> options = new ArrayList<>();

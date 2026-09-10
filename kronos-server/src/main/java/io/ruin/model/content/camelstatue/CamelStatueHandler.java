@@ -126,7 +126,7 @@ public class CamelStatueHandler {
 		if (amountSinceLastUpdate.get() >= 250_000_000) {
 			amountSinceLastUpdate.set(0);
 			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
-					"Another 250,000,000 coins have been donated to the Camel Statue at home!");
+					broadcastPrefix + "Another 250,000,000 coins have been donated to the Camel Statue at home!");
 		}
 	}
 

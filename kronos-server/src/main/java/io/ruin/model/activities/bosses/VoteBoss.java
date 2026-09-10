@@ -223,7 +223,7 @@ public class VoteBoss extends NPCCombat {
 	private void magicAttack() {
 		npc.face(target);
 		npc.localPlayers().forEach(p -> {
-			if (p.getPosition().isWithinDistance(npc.getPosition(), 8)) {
+			if (p.getPosition().isWithinDistance(npc.getPosition(), 10)) {
 				int delay = MAGIC_PROJECTILE.send(npc, p);
 				npc.animate(8025);
 				int maxDamage = info.max_damage;
@@ -243,7 +243,7 @@ public class VoteBoss extends NPCCombat {
 	private void rangeAttack() {
 		npc.face(target);
 		npc.localPlayers().forEach(p -> {
-			if (p.getPosition().isWithinDistance(npc.getPosition(), 8)) {
+			if (p.getPosition().isWithinDistance(npc.getPosition(), 10)) {
 				int delay = RANGED_PROJECTILE.send(npc, p);
 				npc.animate(8025);
 				int maxDamage = info.max_damage;

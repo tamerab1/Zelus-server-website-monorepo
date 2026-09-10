@@ -485,6 +485,8 @@ public class PlayerPerkHandler {
 		int expReward = calculateExperienceRewardFromTier(player, tier, type);
 		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_PERK_EXPERIENCE))
 			expReward *= 2;
+		if (player.doubleExpTimer.isDelayed())
+			expReward *= 2;
 		addPerkExperience(player, expReward);
 		player.currentPerkTask = null;
 		player.totalPerkTasksCompleted++;

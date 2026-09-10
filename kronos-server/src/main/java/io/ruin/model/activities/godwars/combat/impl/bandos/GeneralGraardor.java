@@ -36,7 +36,7 @@ public class GeneralGraardor extends General {
 
 	@Override
 	public boolean attack() {
-		if (!withinDistance(4))
+		if (!withinDistance(10))
 			return false;
 		if (Random.rollDie(6, 1))
 			npc.forceText(Random.get(SHOUTS));
