@@ -307,7 +307,8 @@ public class KillCounter {
 			p -> p.argentavisKills,
 			p -> p.solHereditKills,
 			p -> p.galvekKills,
-			p -> p.cindermawKills
+			p -> p.cindermawKills,
+			p -> p.tormentedDemonKills
 		);
 
 		/* Slayer list */

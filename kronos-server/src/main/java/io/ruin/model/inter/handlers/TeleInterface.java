@@ -207,7 +207,9 @@ public class TeleInterface extends ItemContainer {
 		player.getPacketSender().sendString(851, 22, ServerTeleports.DOOM_OF_MOKHAIOTL.name);
 		player.getPacketSender().setHidden(851, 23, false);
 		player.getPacketSender().sendString(851, 23, ServerTeleports.CINDERMAW.name);
-		for (int i = 24; i <= 33; i++)
+		player.getPacketSender().setHidden(851, 24, false);
+		player.getPacketSender().sendString(851, 24, ServerTeleports.TORMENTED_DEMON.name);
+		for (int i = 25; i <= 33; i++)
 			player.getPacketSender().setHidden(851, i, true);
 	}
 
@@ -729,6 +731,9 @@ public class TeleInterface extends ItemContainer {
 				}
 				else if (currentCategory == Categories.BOSSES && pageNumber == 3) {
 					currentTeleport = ServerTeleports.DUKE_SUCELLUS;
+				}
+				else if (currentCategory == Categories.BOSSES && pageNumber == 4) {
+					currentTeleport = ServerTeleports.TORMENTED_DEMON;
 				}
 				else if (currentCategory == Categories.SKILLING
 					&& currentSkillingSection == SkillingSubSections.WOODCUTTING) {

@@ -180,6 +180,11 @@ public enum ServerTeleports {
 		"A fearsome oversized drake, wreathed in ash and embers. <br>Randomly switches between anti-melee and anti-ranged defences.",
 		"Hard", "Located in the Wilderness.", 0, 0
 	),
+	TORMENTED_DEMON("Tormented Demon", new Position(4137, 4364, 0),
+		new Item[]{new Item(29580), new Item(29574), new Item(25778)},
+		"A demon wreathed in flame that hardens its shield <br>against your weapon's attack speed. Bring a demonbane <br>or abyssal weapon once its shield is up.",
+		"Hard", "No requirements.", 0, 0
+	),
 	SIRE("Abyssal sire", new Position(3030, 4771, 0),
 		new Item[]{(new Item(13263)), (new Item(13265))},
 		"An engineer of the Abyss from <br>a time before the God Wars.", "Master", "85 Slayer.", 29477, 4527
