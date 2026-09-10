@@ -46,6 +46,7 @@ public class KillCounter {
 		set(p -> p.kalphiteQueenKills, "kalphite Queen");
 		set(p -> p.yamaKills, "yama");
 		set(p -> p.tormentedDemonKills, "tormented Demon");
+		set(p -> p.cindermawKills, "cindermaw");
 		set(p -> p.kingBlackDragonKills, "king black Dragon");
 		set(p -> p.callistoKills, "callisto");
 		set(p -> p.venenatisKills, "venenatis");
@@ -185,6 +186,7 @@ public class KillCounter {
 			p.araxxorKills.setName("Araxxor").messageOnKill();
 			p.yamaKills.setName("Yama").messageOnKill();
 			p.tormentedDemonKills.setName("Tormented Demon").messageOnKill();
+			p.cindermawKills.setName("Cindermaw").messageOnKill();
 			p.alchemicalHydraKills.setName("Alchemical Hydra").messageOnKill();
 			p.skotizoKills.setName("Skotizo").messageOnKill();
 			p.wintertodtKills.setName("Wintertodt").messageOnKill();
@@ -304,7 +306,8 @@ public class KillCounter {
 			p -> p.vorkathKills,
 			p -> p.argentavisKills,
 			p -> p.solHereditKills,
-			p -> p.galvekKills
+			p -> p.galvekKills,
+			p -> p.cindermawKills
 		);
 
 		/* Slayer list */

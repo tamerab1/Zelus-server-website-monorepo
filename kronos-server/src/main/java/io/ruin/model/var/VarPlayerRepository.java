@@ -1283,6 +1283,19 @@ public class VarPlayerRepository {
 	public static final VarPlayerRepository FARMING_PATCH_11 = varpbit(7910, false);
 	public static final VarPlayerRepository FARMING_PATCH_12 = varpbit(7911, false);
 	public static final VarPlayerRepository FARMING_PATCH_13 = varpbit(7912, false);
+
+	// Redwood patches 34052-34059 (Farming Guild): each used to share FARMING_PATCH_7 with
+	// 34051, so growing one silently rendered growth state on all 9 objects at once. New
+	// dedicated varbits (17796-17803, each a whole new varp 4829-4836) added to the cache
+	// via .dev/cache-restore-tool/src/AddRedwoodVarbits.java + RepointRedwoodObjects.java.
+	public static final VarPlayerRepository FARMING_PATCH_14 = varpbit(17796, false);
+	public static final VarPlayerRepository FARMING_PATCH_15 = varpbit(17797, false);
+	public static final VarPlayerRepository FARMING_PATCH_16 = varpbit(17798, false);
+	public static final VarPlayerRepository FARMING_PATCH_17 = varpbit(17799, false);
+	public static final VarPlayerRepository FARMING_PATCH_18 = varpbit(17800, false);
+	public static final VarPlayerRepository FARMING_PATCH_19 = varpbit(17801, false);
+	public static final VarPlayerRepository FARMING_PATCH_20 = varpbit(17802, false);
+	public static final VarPlayerRepository FARMING_PATCH_21 = varpbit(17803, false);
 	public static final VarPlayerRepository STORAGE_RAKE = varpbit(1435, true);
 	public static final VarPlayerRepository STORAGE_SEED_DIBBER = varpbit(1436, true);
 	public static final VarPlayerRepository STORAGE_SPADE = varpbit(1437, true);
