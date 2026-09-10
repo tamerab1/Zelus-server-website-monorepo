@@ -3505,6 +3505,18 @@ public class PlayerCombat extends Combat {
 				return;
 			defendAnimTicks(delayTicks - 1);
 			target.hit(hit);
+			if (doubleAttackStarted && !chins) {
+				// Double Tap perk: attackWithRanged() is the shared path for shortbows,
+				// longbows, crystal bow, crossbows, darts, etc. Every other ranged attack
+				// method (blowpipes) fires a real second hit when Double Tap procs, but
+				// this path only used doubleAttackStarted to speed up the next attack tick
+				// without ever landing a second shot, so the perk was a no-op on bows.
+				Hit doubleHit = new Hit(player, style, type).boostAttack(accuracyBoost).randDamage(maxDamage)
+						.delay(delayTicks).setAttackWeapon(wepDef);
+				if (ammo != null)
+					doubleHit.setRangedAmmo(ammo.getDef());
+				target.hit(doubleHit);
+			}
 			// if (SetEffect.KARIL.hasPieces(player) &&
 			// player.getEquipment().contains(12853)) {
 			// if (Random.rollDie(4)) {
@@ -4413,7 +4425,14 @@ public class PlayerCombat extends Combat {
 
 	private boolean hasAvaAssembler() {
 		int capeID = player.getEquipment().getId(Equipment.SLOT_CAPE);
-		return capeID == 21898 || capeID == 22109 || capeID == 27374;
+		// 21898/22109/27374 = Assembler max cape / Ava's assembler / Masori assembler.
+		// 24135/24222/27363/27365 = the same three capes' "(l)" variants -- real, wearable,
+		// obtainable items (cost + "Wear" option in their defs), but never added here, so
+		// wearing one fell through to removeAmmo()'s generic no-device branch, which both
+		// destroys AND drops every shot's ammo. Reported as "Ava's assembler (l)" (misread
+		// as "(i)") losing 100% of arrows/bolts while the plain "Ava's assembler" was fine.
+		return capeID == 21898 || capeID == 22109 || capeID == 27374
+				|| capeID == 24135 || capeID == 24222 || capeID == 27363 || capeID == 27365;
 	}
 
 	private boolean hasQuiver() {

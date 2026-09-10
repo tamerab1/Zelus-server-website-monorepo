@@ -230,10 +230,18 @@ public class DailyVoteInterface {
 			entries.put(player.voteStreak, player.todaysVoteReward);
 		} else {
 			player.votedToday = false;
-			// Was "today.toEpochDay()" - LocalDate.toEpochDay() returns days-since-epoch (a tiny
-			// number), but this field is always read as epoch-SECONDS (Instant.ofEpochSecond above
-			// and in voteCheck()), so that resolved to a date in January 1970 every time this ran.
-			player.lastVoteRewardInEpoch = now.getEpochSecond();
+			// Do NOT write player.lastVoteRewardInEpoch here. This method runs on every
+			// LOGIN (see DonatorBond's LoginListener), purely to refresh the preview
+			// item/state for a new calendar day. lastVoteRewardInEpoch is the actual
+			// 18h reward-cooldown gate voteCheck() reads (hoursSinceLastVoteReward) --
+			// stamping it to "now" just because the player logged in on a new day (before
+			// they'd voted at all) silently re-armed an 18h cooldown from login time, so
+			// a player who logs in daily before voting could never satisfy
+			// hoursSinceLastVoteReward >= 18 again: voteCheck()'s reward/reset branches
+			// stopped firing entirely, freezing the streak and leaving claimedVoteToday
+			// stuck true from their last real claim (-> permanent "already claimed"
+			// message). CONFIRMED for 'gandalf': streak froze at day 4 despite voting
+			// through a full week. Only voteCheck() should ever write this field.
 			player.todaysVoteReward = new DailyReward(false, voteRewards.get(player.voteStreak));
 			entries.put(player.voteStreak, player.todaysVoteReward);
 		}

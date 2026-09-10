@@ -130,7 +130,14 @@ public final class HWIDManager implements Runnable {
 		if (hwid == null || hwid.isEmpty()) {
 			return false;
 		}
-		if (hwid.equals("unknown")) {
+		// Some clients fail to run whatever OS command they use to fingerprint the
+		// machine (e.g. missing wmic/system_profiler) and send the caught
+		// exception's message back as the device name instead of a clean fallback,
+		// e.g. "unknown: Cannot run program \"...\"". That's not the literal
+		// "unknown" placeholder, so it slipped past this check and let every
+		// affected player collide on one identical fake hwid (false-flagged as
+		// "sharing a computer" by the referral system). Reject that whole family.
+		if (hwid.startsWith("unknown")) {
 			return false;
 		}
 		return true;
