@@ -537,6 +537,29 @@ public class NPCType {
 			headModels = new int[var4];
 			for (int var5 = 0; var5 < var4; var5++)
 				headModels[var5] = var1.readUnsignedShort();
+		} else if (op == 61) {
+			// Wide (4-byte) variant of opcode 1 -- added in newer OSRS revisions to allow model
+			// ids beyond 65535. Previously unhandled here, which crashed the whole server (this
+			// switch's else-branch calls System.exit(-1) on any unrecognized opcode) the moment
+			// any npc using it loaded, e.g. Mad Angel (16305).
+			int var4 = var1.readUnsignedByte();
+			models = new int[var4];
+			for (int var5 = 0; var5 < var4; var5++)
+				models[var5] = var1.readInt();
+		} else if (op == 62) {
+			// Wide (4-byte) variant of opcode 60, same reason as 61 above.
+			int var4 = var1.readUnsignedByte();
+			headModels = new int[var4];
+			for (int var5 = 0; var5 < var4; var5++)
+				headModels[var5] = var1.readInt();
+		} else if (op == 252) {
+			// New in a recent OSRS revision, undocumented meaning -- reading PAST it (not
+			// interpreting it) is enough to keep the rest of the record aligned. Length of 14 is
+			// measured, not guessed: RS-Realm-Server-Package's own decoder notes npc "Mortimer"
+			// carries three of these back to back with an identical 14-byte body each, which
+			// brackets the payload exactly. Appears on a handful of npcs, e.g. Mad Angel's
+			// dormant form (16306).
+			var1.skip(14);
 		} else if (op == 93) {
 			isMinimapVisible = false;
 		} else if (op >= 74 && op <= 79) {

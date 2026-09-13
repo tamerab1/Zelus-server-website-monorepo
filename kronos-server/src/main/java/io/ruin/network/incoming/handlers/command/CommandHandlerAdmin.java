@@ -655,6 +655,53 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "madangel": {
+				// CHANGED 2026-09-13: used to build the instance directly (createAndEnter), landing
+				// the player next to the dormant angel with no barrier step at all. Now matches
+				// source's own onCommand("madangel") intent (MadAngelEntrance.kt: `telejump(PEW_OUTSIDE)`)
+				// -- teleports next to the real Climb pew so the player has to click it themselves,
+				// but at PEW_OUTSIDE_X/Y (2 tiles south/west of the pew's own doorway tile) rather
+				// than directly on it, so they land cleanly on the path instead of stacked in the
+				// doorway. See MadAngelIds' javadoc: this real-world tile is only a single imported
+				// mapsquare, so it's void-bordered the same way the instance is.
+				player.getMovement().teleport(
+						io.ruin.model.activities.bosses.madangel.MadAngelIds.PEW_OUTSIDE_X,
+						io.ruin.model.activities.bosses.madangel.MadAngelIds.PEW_OUTSIDE_Y, 0);
+				return true;
+			}
+
+			case "madangelcollision": {
+				// TEMP DIAGNOSTIC 2026-09-12: dumps a walkability grid centred on the player's
+				// current position (run this while standing in the Cathedral instance) to the
+				// server log, to directly measure how much of the imported arena is actually open
+				// vs void/blocked -- checking a real, player-reported symptom (bomb's scatter
+				// always landing on the player's own tile; the Mad Angel wandering far out of the
+				// arena while following) against the actual collision data, rather than guessing.
+				// Remove once read.
+				int radius = 15;
+				io.ruin.model.map.Position centre = player.getPosition();
+				StringBuilder grid = new StringBuilder();
+				int open = 0, blocked = 0;
+				for (int dz = radius; dz >= -radius; dz--) {
+					for (int dx = -radius; dx <= radius; dx++) {
+						io.ruin.model.map.Tile tile = io.ruin.model.map.Tile.get(
+								centre.getX() + dx, centre.getY() + dz, centre.getZ(), true);
+						boolean isOpen = tile != null && tile.clipping == 0;
+						if (dx == 0 && dz == 0) {
+							grid.append('P');
+						} else {
+							grid.append(isOpen ? '.' : '#');
+						}
+						if (isOpen) open++; else blocked++;
+					}
+					grid.append('\n');
+				}
+				log.info("[MadAngel COLLISION DIAG] centre={},{},{} radius={} open={} blocked={}\n{}",
+						centre.getX(), centre.getY(), centre.getZ(), radius, open, blocked, grid);
+				player.sendMessage("Collision grid dumped to server log: " + open + " open / " + blocked + " blocked.");
+				return true;
+			}
+
 			// -------------------------------------------------------------------
 			// Zelus PK Bot commands
 			// -------------------------------------------------------------------

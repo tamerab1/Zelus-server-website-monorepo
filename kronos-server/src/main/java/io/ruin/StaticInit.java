@@ -66,6 +66,7 @@ public final class StaticInit {
 		io.ruin.model.activities.bosses.slayer.sire.AbyssalSire.register();
 		io.ruin.model.activities.bosses.slayer.sire.FontOfConsumption.register();
 		io.ruin.model.activities.bosses.vorkath.Vorkath.register();
+		io.ruin.model.activities.bosses.madangel.MadAngel.register();
 		io.ruin.model.activities.bosses.zulrah.Zulrah.register();
 		io.ruin.model.activities.brimstonechest.BrimstoneChest.register();
 		io.ruin.model.activities.clanwars.FFAClanWars.register();

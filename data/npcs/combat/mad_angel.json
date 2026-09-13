@@ -1,0 +1,34 @@
+[
+  {
+    "ids": [16305],
+    "name": "Mad Angel",
+    "hitpoints": 755,
+    "attack": 150,
+    "strength": 230,
+    "defence": 175,
+    "ranged": 250,
+    "magic": 150,
+
+    "stab_attack": 0,
+    "slash_attack": 0,
+    "crush_attack": 0,
+    "magic_attack": 0,
+    "ranged_attack": 0,
+
+    "stab_defence": 60,
+    "slash_defence": 60,
+    "crush_defence": 20,
+    "magic_defence": 165,
+    "ranged_defence": 150,
+
+    "attack_ticks": 6,
+    "death_ticks": 7,
+    "respawn_ticks": 100000,
+
+    "attack_animation": 4589,
+    "death_animation": 14448,
+
+    "combat_xp_modifier": 1.0,
+    "random_drop_count": 1
+  }
+]

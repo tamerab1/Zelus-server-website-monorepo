@@ -217,6 +217,36 @@ public class LocType {
 				} else
 					in.skip(i_9_ * 2);
 			}
+		} else if (opcode == 6) {
+			// Wide (4-byte) variant of opcode 1 -- added in newer OSRS revisions to allow model
+			// ids beyond 65535, same reason NPCType's opcode 61/62 exist. Previously unhandled
+			// here, which crashed the whole server (this switch's else-branch calls System.exit(-1)
+			// via decode(InBuffer) above on any leftover unread bytes) the moment any loc using it
+			// loaded, e.g. the Fallen Cathedral furniture imported alongside Mad Angel (60436 etc).
+			int i_7_ = in.readUnsignedByte();
+			if (i_7_ > 0) {
+				if (modelIds == null || aBool1550) {
+					modelTypes = new int[i_7_];
+					modelIds = new int[i_7_];
+					for (int i_8_ = 0; i_8_ < i_7_; i_8_++) {
+						modelIds[i_8_] = in.readInt();
+						modelTypes[i_8_] = in.readUnsignedByte();
+					}
+				} else
+					in.skip(i_7_ * 5);
+			}
+		} else if (opcode == 7) {
+			// Wide (4-byte) variant of opcode 5, same reason as opcode 6 above.
+			int i_9_ = in.readUnsignedByte();
+			if (i_9_ > 0) {
+				if (modelIds == null || aBool1550) {
+					modelTypes = null;
+					modelIds = new int[i_9_];
+					for (int i_10_ = 0; i_10_ < i_9_; i_10_++)
+						modelIds[i_10_] = in.readInt();
+				} else
+					in.skip(i_9_ * 4);
+			}
 		} else if (opcode == 14)
 			xLength = in.readUnsignedByte();
 		else if (opcode == 15)
@@ -338,6 +368,48 @@ public class LocType {
 			randomizeAnimStart = true;
 		} else if (opcode == 90) {
 			// no clue, some boolean = true
+		} else if (opcode == 91) {
+			// soundDistanceFadeCurve (RuneLite's naming) -- read past, not modeled here, same as
+			// this server's existing "no clue, some boolean" opcodes above.
+			in.readUnsignedByte();
+		} else if (opcode == 93) {
+			// soundFadeInCurve/Duration, soundFadeOutCurve/Duration -- read past, not modeled.
+			in.readUnsignedByte();
+			in.readUnsignedShort();
+			in.readUnsignedByte();
+			in.readUnsignedShort();
+		} else if (opcode == 94) {
+			// RuneLite calls this "unknown1" -- no payload, just a flag not modeled here.
+		} else if (opcode == 95) {
+			// soundVisibility -- read past, not modeled.
+			in.readUnsignedByte();
+		} else if (opcode == 96) {
+			// "raise" -- read past, not modeled.
+			in.readUnsignedByte();
+		} else if (opcode == 100) {
+			// EntityOpsLoader sub-op text on a primary op slot (nested right-click menus) -- read
+			// past, not modeled here (this server's op[] array has no sub-op slots).
+			in.readUnsignedByte();
+			in.readUnsignedByte();
+			in.readStringCp1252NullTerminated();
+		} else if (opcode == 101) {
+			in.readUnsignedByte();
+			in.readUnsignedShort();
+			in.readUnsignedShort();
+			in.readInt();
+			in.readInt();
+			in.readStringCp1252NullTerminated();
+		} else if (opcode == 102) {
+			in.readUnsignedByte();
+			in.readUnsignedShort();
+			in.readUnsignedShort();
+			in.readUnsignedShort();
+			in.readInt();
+			in.readInt();
+			in.readStringCp1252NullTerminated();
+		} else if (opcode == 200) {
+			// contentGroup -- read past, not modeled here.
+			in.readUnsignedShort();
 		} else if (opcode == 249) {
 			params = in.readStringIntParameters();
 		} else {
