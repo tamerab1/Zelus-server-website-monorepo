@@ -10,6 +10,9 @@ import io.ruin.model.entity.npc.NPCCombat;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.listeners.HitListener;
 import io.ruin.model.map.Projectile;
+import io.ruin.model.map.Tile;
+import io.ruin.model.map.object.GameObject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.List;
 // death unleashes a multi-wave "Splinter Cascade" that hits every nearby player a few times in a
 // row -- the "many moving flows" death special, same World/npc-event staged-wave pattern Dusk
 // uses for its own end-of-fight AOE.
+@Slf4j
 public class Sylvaroth extends NPCCombat {
 
 	public static final int SYLVAROTH = 30557;
@@ -56,11 +60,52 @@ public class Sylvaroth extends NPCCombat {
 		NPCType.registerCombat(Sylvaroth.class, SYLVAROTH);
 	}
 
+	// Object 5582 ("Logs") sits somewhere in the reused terrain around her arena, cluttering the
+	// fight space -- removed once, the first time she's spawned (there's only ever one Sylvaroth
+	// in the world, so init() running once at boot is sufficient). Scans a generous box around her
+	// spawn rather than a single hardcoded tile, since the exact tile wasn't hand-measured; finding
+	// none is a harmless no-op, not an error.
+	private static final int OBJ_LOGS = 5582;
+	private static final int ARENA_OBJECT_SCAN_RADIUS = 15;
+	private static boolean arenaObjectsCleared = false;
+
 	private boolean headIconSet = false;
 
 	@Override
 	public void init() {
 		npc.hitListener = new HitListener().preDefend(this::blockMelee);
+		if (!arenaObjectsCleared) {
+			arenaObjectsCleared = true;
+			clearArenaClutter();
+		}
+	}
+
+	private void clearArenaClutter() {
+		try {
+			int centerX = npc.getPosition().getX();
+			int centerY = npc.getPosition().getY();
+			int z = npc.getPosition().getZ();
+			int removed = 0;
+			for (int dx = -ARENA_OBJECT_SCAN_RADIUS; dx <= ARENA_OBJECT_SCAN_RADIUS; dx++) {
+				for (int dy = -ARENA_OBJECT_SCAN_RADIUS; dy <= ARENA_OBJECT_SCAN_RADIUS; dy++) {
+					Tile tile = Tile.get(centerX + dx, centerY + dy, z, true);
+					if (tile == null || tile.gameObjects == null) {
+						continue;
+					}
+					for (GameObject obj : new ArrayList<>(tile.gameObjects)) {
+						if (obj != null && obj.getId() == OBJ_LOGS) {
+							obj.remove();
+							removed++;
+						}
+					}
+				}
+			}
+			if (removed > 0) {
+				log.info("Sylvaroth: removed {} instance(s) of object {} from the arena", removed, OBJ_LOGS);
+			}
+		} catch (Exception e) {
+			log.error("Sylvaroth: failed to clear arena clutter (non-fatal, fight is unaffected)", e);
+		}
 	}
 
 	private void blockMelee(Hit hit) {

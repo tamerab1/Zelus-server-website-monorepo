@@ -398,7 +398,7 @@ public class PlayerCombat extends Combat {
 		if (target.isNpc() && target.npc.getDef() != null) {
 			NPC npc = (NPC) target;
 			global = npc.getId() == 8262 || npc.getId() == 1787 || npc.getId() == 11895 || npc.getId() == 11896
-					|| npc.getId() == 84;
+					|| npc.getId() == 84 || npc.getId() == 30557;
 		}
 
 		if (target.isNpc() && target.npc.getDef() != null) {
