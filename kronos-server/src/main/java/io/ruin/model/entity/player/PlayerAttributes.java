@@ -1448,6 +1448,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter yamaKills = new KillCounter();
 	public KillCounter tormentedDemonKills = new KillCounter();
 	public KillCounter cindermawKills = new KillCounter();
+	public KillCounter madAngelKills = new KillCounter();
+	public KillCounter sylvarothKills = new KillCounter();
 	public KillCounter scurriusKills = new KillCounter();
 	public KillCounter dagannothRexKills = new KillCounter();
 	public KillCounter dagannothPrimeKills = new KillCounter();

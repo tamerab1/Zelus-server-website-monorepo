@@ -209,7 +209,11 @@ public class TeleInterface extends ItemContainer {
 		player.getPacketSender().sendString(851, 23, ServerTeleports.CINDERMAW.name);
 		player.getPacketSender().setHidden(851, 24, false);
 		player.getPacketSender().sendString(851, 24, ServerTeleports.TORMENTED_DEMON.name);
-		for (int i = 25; i <= 33; i++)
+		player.getPacketSender().setHidden(851, 25, false);
+		player.getPacketSender().sendString(851, 25, ServerTeleports.MAD_ANGEL.name);
+		player.getPacketSender().setHidden(851, 26, false);
+		player.getPacketSender().sendString(851, 26, ServerTeleports.SYLVAROTH.name);
+		for (int i = 27; i <= 33; i++)
 			player.getPacketSender().setHidden(851, i, true);
 	}
 
@@ -811,6 +815,9 @@ public class TeleInterface extends ItemContainer {
 				else if (currentCategory == Categories.BOSSES && pageNumber == 3) {
 					currentTeleport = ServerTeleports.VARDORVIS;
 				}
+				else if (currentCategory == Categories.BOSSES && pageNumber == 4) {
+					currentTeleport = ServerTeleports.MAD_ANGEL;
+				}
 				else if (currentCategory == Categories.SKILLING && currentSkillingSection == SkillingSubSections.FARMING
 					&& pageNumber == 1) {
 					currentTeleport = ServerTeleports.CATHERBY_ALLOTMENT;
@@ -878,6 +885,9 @@ public class TeleInterface extends ItemContainer {
 				}
 				else if (currentCategory == Categories.BOSSES && pageNumber == 3) {
 					currentTeleport = ServerTeleports.WHISPERER;
+				}
+				else if (currentCategory == Categories.BOSSES && pageNumber == 4) {
+					currentTeleport = ServerTeleports.SYLVAROTH;
 				}
 				else if (currentCategory == Categories.SKILLING && currentSkillingSection == SkillingSubSections.MINING) {
 					currentTeleport = ServerTeleports.VARROCK_EAST_MINE;

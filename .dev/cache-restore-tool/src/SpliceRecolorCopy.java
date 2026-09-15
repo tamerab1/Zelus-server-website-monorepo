@@ -191,13 +191,25 @@ public class SpliceRecolorCopy {
                 return;
             }
 
-            fileContents.add(newRaw);
+            // See SpliceNewWearableItem's identical fix (reference_configs_archive_sorted_insert_required):
+            // IndexData.writeIndexData() requires ascending sorted ids, so a blind append corrupts
+            // the encoding whenever newId is lower than the current max id. Insert at the correct
+            // sorted position instead.
+            int insertPos = fileData.length;
+            for (int i = 0; i < fileData.length; i++) {
+                if (fileData[i].getId() > newId) {
+                    insertPos = i;
+                    break;
+                }
+            }
+            fileContents.add(insertPos, newRaw);
             FileData[] newFileData = new FileData[fileData.length + 1];
-            System.arraycopy(fileData, 0, newFileData, 0, fileData.length);
+            System.arraycopy(fileData, 0, newFileData, 0, insertPos);
             FileData newEntry = new FileData();
             newEntry.setId(newId);
             newEntry.setNameHash(-1);
-            newFileData[fileData.length] = newEntry;
+            newFileData[insertPos] = newEntry;
+            System.arraycopy(fileData, insertPos, newFileData, insertPos + 1, fileData.length - insertPos);
             archive.setFileData(newFileData);
 
             byte[] newDecompressed = SpliceItemOption.joinChunks(fileContents);

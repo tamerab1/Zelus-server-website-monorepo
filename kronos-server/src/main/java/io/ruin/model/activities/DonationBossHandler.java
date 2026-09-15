@@ -5,6 +5,7 @@ import discord.webhooks.notifications.GlobalBroadcastHook;
 import io.ruin.cache.NPCType;
 import io.ruin.model.World;
 import io.ruin.model.activities.bosses.Malakar;
+import io.ruin.model.activities.tempevents.summerevent.SummerBoss;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
@@ -43,6 +44,14 @@ public class DonationBossHandler {
 
 	public static void init() throws DynamicMap.DynamicMapBuildException {
 		NPCType.registerCombat(Malakar.class, 12336);
+		// BUG FIXED 2026-09-13: SummerBoss.class (the alternating magic/ranged attack pattern, its
+		// own loot table, and -- critically -- the deathEndListener that calls
+		// SummerEvent.newEventStart() to restart the whole 8-boss cycle) was never registered
+		// against npc 17020 anywhere in the codebase. Without this, killing the summer boss used
+		// whatever generic combat its raw cache stats gave it and, since newEventStart() never
+		// fired again, permanently stalled the event after the very first kill -- no new set of 8
+		// target bosses was ever chosen again until someone manually restarted it.
+		NPCType.registerCombat(SummerBoss.class, 17020);
 		map = new DynamicMap().build(11576, 1).persistent(true);
 		SummerEvent.map = new DynamicMap().build(11576, 1).persistent(true);
 		malakarMap = new DynamicMap().build(11576, 1).persistent(true);

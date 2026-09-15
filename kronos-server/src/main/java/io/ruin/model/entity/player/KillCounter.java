@@ -47,6 +47,11 @@ public class KillCounter {
 		set(p -> p.yamaKills, "yama");
 		set(p -> p.tormentedDemonKills, "tormented Demon");
 		set(p -> p.cindermawKills, "cindermaw");
+		set(p -> p.sylvarothKills, "sylvaroth");
+		// Mad Angel's dormant/idle forms (16306-16308) share the exact same display name "Mad Angel"
+		// as her real combat form -- matched by npc id (16305) instead of name to avoid assigning
+		// this counter to forms that never actually die in combat (harmless either way, but precise).
+		set(p -> p.madAngelKills, 16305);
 		set(p -> p.kingBlackDragonKills, "king black Dragon");
 		set(p -> p.callistoKills, "callisto");
 		set(p -> p.venenatisKills, "venenatis");
@@ -187,6 +192,8 @@ public class KillCounter {
 			p.yamaKills.setName("Yama").messageOnKill();
 			p.tormentedDemonKills.setName("Tormented Demon").messageOnKill();
 			p.cindermawKills.setName("Cindermaw").messageOnKill();
+			p.madAngelKills.setName("Mad Angel").messageOnKill();
+			p.sylvarothKills.setName("Sylvaroth").messageOnKill();
 			p.alchemicalHydraKills.setName("Alchemical Hydra").messageOnKill();
 			p.skotizoKills.setName("Skotizo").messageOnKill();
 			p.wintertodtKills.setName("Wintertodt").messageOnKill();
@@ -308,7 +315,9 @@ public class KillCounter {
 			p -> p.solHereditKills,
 			p -> p.galvekKills,
 			p -> p.cindermawKills,
-			p -> p.tormentedDemonKills
+			p -> p.tormentedDemonKills,
+			p -> p.madAngelKills,
+			p -> p.sylvarothKills
 		);
 
 		/* Slayer list */

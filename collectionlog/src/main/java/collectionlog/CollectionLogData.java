@@ -1141,6 +1141,35 @@ public enum CollectionLogData {
 					new Item(19687, 1),
 			}),
 
+	// ADDED 2026-09-13: the 5 uniques from her real wiki drop table (.data/drops/mad_angel.json in
+	// RS-Realm-Server-Package -- verified against source directly, not guessed), matching the exact
+	// ids already wired in Zelus's own newDrops/16305.json. No completion-reward items are defined
+	// anywhere in source for her, so this is deliberately empty rather than invented.
+	MAD_ANGEL(CollectionLogUpdated.Categories.BOSSES, "Mad Angel", new Item[] {
+			new Item(34032) /* Sunstone crystal */,
+			new Item(34033) /* Ardeaglais teleport */,
+			new Item(34027) /* Hallowfell */,
+			new Item(34030) /* Jar of light */,
+			new Item(34042) /* Aggy */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			}),
+
+	SYLVAROTH(CollectionLogUpdated.Categories.BOSSES, "Sylvaroth", new Item[] {
+			new Item(60268) /* Ancient Cleaver */,
+			new Item(60269) /* Ancient Signet */,
+			new Item(60258) /* Nether Defender */,
+			new Item(60330) /* Sylvaroth's Sprout */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			})
+
 	;
 
 	final Item[] uniqueItems;

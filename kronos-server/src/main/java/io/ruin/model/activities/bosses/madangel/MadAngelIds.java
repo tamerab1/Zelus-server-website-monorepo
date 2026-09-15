@@ -169,8 +169,17 @@ public final class MadAngelIds {
     public static final int ITEM_YELLOWFIN = 32328;
     public static final int ITEM_CUPRONICKEL_BAR = 32892;
 
-    // TODO(cache): these 5 items are still brand-new and NOT imported -- the drop table
-    // (data/npcs/drops/newDrops/16305.json) still needs them created before real drops work.
+    // RESOLVED (2026-09-13): all 5 imported (ImportMadAngelItems.java, verified read-back
+    // byte-correct), along with their 5 linked placeholder/cert items (34028/34029/34031/34034/
+    // 34043 -- no models of their own, template-based, per ObjTypeDecoder.kt's own placeholderlink/
+    // certlink opcodes). Two model collisions found and remapped (confirmed DIFFERENT bytes via
+    // CompareModelBytes.java, not assumed): Sunstone crystal's 12302 and Aggy's 61848 (the latter
+    // coincidentally the same slot MadAngelIds' own earlier NPC-cache import already used for an
+    // unrelated smite-hit vfx model) -> 70009 / 70010. Jar of light's model (28441) needed no
+    // import at all -- already present byte-identical, a standard shared vanilla asset. Every id
+    // below is confirmed against the real wiki drop table (.data/drops/mad_angel.json in
+    // RS-Realm-Server-Package) and matches what newDrops/16305.json already had wired. Now also
+    // registered in collectionlog's CollectionLogData enum (MAD_ANGEL entry).
     public static final int ITEM_SUNSTONE_CRYSTAL = 34032;
     public static final int ITEM_ARDEAGLAIS_TELEPORT = 34033;
     public static final int ITEM_HALLOWFELL = 34027;
@@ -195,31 +204,54 @@ public final class MadAngelIds {
     // RS-Realm-Server-Package's own MadAngelEntrance.kt (CATHEDRAL_TEMPLATE = copyAllLevels(312,
     // 272) = mapsquare (39,34); ARENA_ANCHOR = CoordGrid(2532, 2215, 0)), not guessed.
     // <p>
-    // RESOLVED (2026-09-13): the four adjacent mapsquares -- (38,34), (40,34), (39,33), (39,35) --
-    // are now imported too (ImportWyrmscraigNeighborMaps.java, verified present via
-    // CheckNeighborMaps.java's read-back), using the exact same technique as the cathedral's own
-    // import above. Each source group actually has 5 sub-files, not the 2 (terrain/locs) this
-    // engine reads -- confirmed the cathedral's OWN source group also has 5 (sub-files 2/3/4 are
-    // 228/2/1 bytes, IDENTICAL sizes in an unrelated neighbor group, i.e. boilerplate metadata this
-    // engine's Region.java has no mechanism to read anyway, not something the already-working
-    // cathedral import silently lost). Destination archive ids (20001-20008) are a fresh block, not
-    // a same/adjacent-to-source-id scheme, because (39,33)=10017 and (39,35)=10019 are numerically
-    // adjacent to the cathedral's OWN 10018/10019 -- a naive "+1" offset would have collided with
-    // l39_34 immediately. Archive ids don't matter for lookup regardless (Region.java resolves
-    // purely by NAME HASH of "m{x}_{z}"/"l{x}_{z}"), so this needed no changes to the SOURCE data
-    // itself, and the real-world pew tile is no longer an isolated island once a player walks far
-    // enough to load these squares.
+    // RESOLVED (2026-09-13): five adjacent mapsquares -- (38,34), (40,34), (39,33), (39,35), and
+    // the diagonal (40,35) -- are now imported too (ImportWyrmscraigNeighborMaps.java +
+    // ImportWyrmscraigDiagonal.java, verified present via CheckNeighborMaps.java's read-back),
+    // using the exact same technique as the cathedral's own import above. Each source group
+    // actually has 5 sub-files, not the 2 (terrain/locs) this engine reads -- confirmed the
+    // cathedral's OWN source group also has 5 (sub-files 2/3/4 are 228/2/1 bytes, IDENTICAL sizes
+    // in an unrelated neighbor group, i.e. boilerplate metadata this engine's Region.java has no
+    // mechanism to read anyway, not something the already-working cathedral import silently lost).
+    // Destination archive ids (20001-20010) are a fresh block, not a same/adjacent-to-source-id
+    // scheme, because (39,33)=10017 and (39,35)=10019 are numerically adjacent to the cathedral's
+    // OWN 10018/10019 -- a naive "+1" offset would have collided with l39_34 immediately. Archive
+    // ids don't matter for lookup regardless (confirmed directly in Region.java: {@code get(int
+    // regionId)} returns a preallocated {@code LOADED[regionId]} placeholder whose OWN
+    // getMapData()/getLandscapeData() lazily resolve "m{x}_{z}"/"l{x}_{z}" by NAME HASH the first
+    // time it's actually read), so this needed no changes to the source data itself. Three of these
+    // five ((39,35), (40,34), (40,35)) are also used INSIDE the instance now -- see
+    // {@link #WYRMSCRAIG_NORTH_REGION_ID} and friends below.
     // <p>
     // The Church pew object is wired -- MadAngel#register hangs ONE handler off 62250's real
-    // "Climb" option, calling createAndEnter. Exiting uses the REAL "Exit"/"Quick-exit" pew (62251,
-    // imported in the Locs/objects block above) -- see MadAngel's own class javadoc for how the
-    // client-visibility bug from the first attempt at this swap was root-caused and fixed.
+    // "Climb" option; MadAngel#handlePewClimb branches enter/exit on the player's own isInstanced
+    // state (two separate attempts at swapping in the real "Exit"/"Quick-exit" pew, 62251, both
+    // rendered invisible client-side despite targeted, verified root-cause fixes -- see MadAngel's
+    // own class javadoc for the full trace of why that approach was abandoned).
 
     /** The Fallen Cathedral's real mapsquare -- (39 &lt;&lt; 8) | 34. */
     public static final int CATHEDRAL_REGION_ID = 10018;
     /** Her real spawn tile inside that region -- the fight's own SW anchor, per source. */
     public static final int ARENA_ANCHOR_X = 2532;
     public static final int ARENA_ANCHOR_Y = 2215;
+
+    /**
+     * The 3 real mapsquares padding the Cathedral's own inside the instance itself, filling
+     * DynamicMap's NW/SE/NE build-quad slots (see {@code DynamicMap.buildNw/buildSe/buildNe} --
+     * already-existing engine methods {@link io.ruin.model.activities.bosses.madangel.MadAngel}
+     * simply never called; only {@code buildSw} was ever invoked here). This is a DELIBERATE
+     * deviation from source -- {@code MadAngelEntrance.kt}'s own {@code CATHEDRAL_TEMPLATE} builds
+     * only the single 8x8-zone SW square, no padding -- but the engine supports it, the real
+     * terrain for all 3 slots is now imported (see the World section below), and it directly
+     * addresses the instance still being void-bordered even after the real-world neighbor import.
+     * Slot names are the engine's own (not compass-accurate: "NW" fills the tile block whose
+     * region id is {@code swRegion.id+1}, which is the mapsquare directly NORTH of the cathedral,
+     * not northwest) -- what matters is each id below is the REAL neighboring mapsquare in that
+     * slot's actual direction, confirmed via {@code Region.getId()}'s own arithmetic
+     * ({@code ((absX>>6)<<8)|absY>>6}): +1 = north, +256 = east, +257 = north-east.
+     */
+    public static final int WYRMSCRAIG_NORTH_REGION_ID = 10019; // (39,35) -- north of the cathedral
+    public static final int WYRMSCRAIG_EAST_REGION_ID = 10274; // (40,34) -- east of the cathedral
+    public static final int WYRMSCRAIG_NORTHEAST_REGION_ID = 10275; // (40,35) -- diagonal
 
     /** The real Church pew's tile, from the source. Now wired -- see MadAngel#register. */
     public static final int REAL_PEW_X = 2538;

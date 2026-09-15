@@ -237,7 +237,7 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 			// missing archive and keep the connection alive.
 			@Override
 			public ByteBuf provide(int index, int archive) {
-				var buffer = this.cache.computeIfAbsent(new Key(index, archive), (k) -> {
+				return this.cache.computeIfAbsent(new Key(index, archive), (k) -> {
 					try {
 						var cacheData = CacheManager.get(index, archive, true);
 						if (cacheData == null) {
@@ -249,7 +249,6 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 						throw new RuntimeException(e);
 					}
 				});
-				return buffer;
 			}
 		};
 	}

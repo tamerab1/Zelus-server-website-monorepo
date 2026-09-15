@@ -2,6 +2,7 @@ package io.ruin.model.inter.handlers;
 
 import io.ruin.cache.ItemID;
 import io.ruin.model.activities.DonationBossHandler;
+import io.ruin.model.activities.bosses.madangel.MadAngelIds;
 import io.ruin.model.item.Item;
 import io.ruin.model.map.Position;
 import lombok.Getter;
@@ -178,12 +179,29 @@ public enum ServerTeleports {
 	CINDERMAW("Cindermaw", new Position(3361, 4326, 3),
 		new Item[]{new Item(60252), new Item(60253), new Item(60255)},
 		"A fearsome oversized drake, wreathed in ash and embers. <br>Randomly switches between anti-melee and anti-ranged defences.",
-		"Hard", "Located in the Wilderness.", 0, 0
+		// modelId 60346: a standalone baked-recolor copy of the base drake model (36160) with
+		// Cindermaw's own NPC-level recolorToFind/Replace pairs applied directly to its face
+		// colours. The teleport review window renders a raw model id via clientscript 10623 and
+		// does NOT apply NPC-level recolor overlays, so the un-baked 36160 always showed the
+		// plain unrecolored drake here -- see reference_teleport_preview_needs_baked_recolor.
+		"Hard", "Located in the Wilderness.", 60346, 8274
+	),
+	SYLVAROTH("Sylvaroth", new Position(2611, 4775, 0),
+		new Item[]{new Item(60330), new Item(60269), new Item(60268), new Item(60258)},
+		"A towering, corrupted Ent wreathed in shifting colours. <br>Permanently immune to melee -- bring ranged or magic.",
+		// modelId 60345: baked-recolor copy of the base Ent model (28265), same reasoning as
+		// Cindermaw above.
+		"Hard", "No requirements.", 60345, 12502
 	),
 	TORMENTED_DEMON("Tormented Demon", new Position(4137, 4364, 0),
 		new Item[]{new Item(29580), new Item(29574), new Item(25778)},
 		"A demon wreathed in flame that hardens its shield <br>against your weapon's attack speed. Bring a demonbane <br>or abyssal weapon once its shield is up.",
-		"Hard", "No requirements.", 0, 0
+		"Hard", "No requirements.", 53287, 11391
+	),
+	MAD_ANGEL("Mad Angel", new Position(MadAngelIds.PEW_OUTSIDE_X, MadAngelIds.PEW_OUTSIDE_Y, 0),
+		new Item[]{new Item(34027), new Item(34030), new Item(34042)},
+		"A fallen angel bound within the Fallen Cathedral. <br>Climb the church pew to wake her.",
+		"Hard", "No requirements.", 61847, 14453
 	),
 	SIRE("Abyssal sire", new Position(3030, 4771, 0),
 		new Item[]{(new Item(13263)), (new Item(13265))},

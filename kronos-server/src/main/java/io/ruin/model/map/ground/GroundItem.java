@@ -43,6 +43,92 @@ public class GroundItem extends Position {
 
 	public static HooksV2<Hook> hooks = new HooksV2<>(Hook.class);
 
+	// Classic OldSchool ObjDel packets bitwise-and the item id down to 15 bits client-side (max
+	// 32767, see net/rsprot/protocol/game/outgoing/zone/payload/ObjDel.kt's own doc comment), so
+	// any ground item with id >= 32768 (every custom item added to this server) gets silently
+	// orphaned on pickup -- the removal packet's id gets masked to an unrelated value the client
+	// never matches, leaving the visual mesh stuck on the ground forever. Confirmed 2026-09-15 via
+	// live DIAG-GROUND logging (server-side removal proven correct) plus a vanilla-item A/B test
+	// (unaffected, since real item ids are almost all under 32768). ObjAdd/ObjCount have no such
+	// restriction, but empirically an ObjCount-to-zero fallback did NOT hide the ghost either.
+	// Fix: every affected custom item has a dedicated "ground display proxy" -- a minimal,
+	// never-granted item at a real, safe low id (<32768) sharing the exact same inventoryModel --
+	// and every ground-item network packet (add/update/remove) uses that proxy's id instead of
+	// the real one. All server-side logic (pickup, hooks, inventory crediting) keeps using the
+	// real `id` field unchanged; only what's sent over the wire is remapped.
+	private static final java.util.Map<Integer, Integer> GROUND_DISPLAY_PROXY_ID = java.util.Map.ofEntries(
+			java.util.Map.entry(60256, 31132), // Aetherial Scythe
+			java.util.Map.entry(60257, 31133), // Angelic Greatsword
+			java.util.Map.entry(60258, 31134), // Nether Defender
+			java.util.Map.entry(60259, 31135), // Ward of the Depths
+			java.util.Map.entry(60260, 31136), // Owner Cape
+			java.util.Map.entry(60261, 31137), // Owner Wings
+			java.util.Map.entry(60262, 31138), // Souly Wings
+			java.util.Map.entry(60263, 31139), // Zealot's Horned Visage
+			java.util.Map.entry(60264, 31140), // Zealot's Warplate
+			java.util.Map.entry(60265, 31141), // Zealot's Greaves
+			java.util.Map.entry(60266, 31142), // Zealot's Gloves
+			java.util.Map.entry(60267, 31143), // Zealot's Striders
+			java.util.Map.entry(60268, 31144), // Ancient Cleaver
+			java.util.Map.entry(60269, 31145), // Ancient Signet
+			java.util.Map.entry(60270, 31146), // Warlord's Dreadcloak
+			java.util.Map.entry(60271, 31147), // Zarosian Dreadhelm
+			java.util.Map.entry(60272, 31148), // Zarosian Platelegs
+			java.util.Map.entry(60273, 31149), // Zarosian Sabatons
+			java.util.Map.entry(60274, 31150), // Zarosian Warplate
+			java.util.Map.entry(60275, 31151), // Draconic Hornbow
+			java.util.Map.entry(60276, 31152), // Brimstone Hornbow
+			java.util.Map.entry(60277, 31153), // Custom Bond #1
+			java.util.Map.entry(60278, 31154), // Custom Bond #2
+			java.util.Map.entry(60279, 31155), // Custom Bond #3
+			java.util.Map.entry(60280, 31156), // Custom Bond #4
+			java.util.Map.entry(60281, 31157), // Custom Bond #5
+			java.util.Map.entry(60282, 31158), // Custom Bond #6
+			java.util.Map.entry(59531, 31159), // AsVal Gun
+			java.util.Map.entry(59548, 31160), // Icenier Sword
+			java.util.Map.entry(59604, 31161), // Imperial staff
+			java.util.Map.entry(59605, 31162), // Imperial bow
+			java.util.Map.entry(59606, 31163), // Imperial top
+			java.util.Map.entry(59609, 31164), // Crimson hat
+			java.util.Map.entry(59626, 31165), // Nightfall bow
+			java.util.Map.entry(34027, 31166), // Hallowfell
+			java.util.Map.entry(34030, 31167), // Jar of light
+			java.util.Map.entry(34032, 31168), // Sunstone crystal
+			java.util.Map.entry(34033, 31169), // Ardeaglais teleport
+			java.util.Map.entry(59603, 31170), // Nox
+			java.util.Map.entry(60236, 31171), // Teumo
+			java.util.Map.entry(60237, 31172), // Orrvor quo Maten
+			java.util.Map.entry(60238, 31173), // Lord Trobin
+			java.util.Map.entry(60239, 31174), // Wandering impling
+			java.util.Map.entry(60240, 31175), // Wagchin
+			java.util.Map.entry(60241, 31176), // The Monkey's Aunt
+			java.util.Map.entry(60242, 31177), // Tempoross
+			java.util.Map.entry(60243, 31178), // Strisath
+			java.util.Map.entry(60244, 31179), // Starlight
+			java.util.Map.entry(60245, 31180), // Star Sprite
+			java.util.Map.entry(60246, 31181), // Spooky dog
+			java.util.Map.entry(60247, 31182), // Spit goblin
+			java.util.Map.entry(60248, 31183), // Shadow Keeper
+			java.util.Map.entry(60249, 31184), // Slimetoes
+			java.util.Map.entry(60250, 31185), // SteelWill
+			java.util.Map.entry(60251, 31186), // Mossfists
+			java.util.Map.entry(60252, 31187), // Damo
+			java.util.Map.entry(60253, 31188), // Sliske
+			java.util.Map.entry(60254, 31189), // Light Leech
+			java.util.Map.entry(60255, 31190), // ToxiSkele
+			java.util.Map.entry(34042, 31191), // Aggy
+			java.util.Map.entry(60330, 31192)  // Sylvaroth's Sprout (pet)
+	);
+
+	/** The id to use for ground-item network packets -- see GROUND_DISPLAY_PROXY_ID above. */
+	public int displayId() {
+		if (id < 32768) {
+			return id;
+		}
+		Integer proxy = GROUND_DISPLAY_PROXY_ID.get(id);
+		return proxy != null ? proxy : id;
+	}
+
 	public String originalOwner;
 	public String activeOwner;
 	public String diedToIron;

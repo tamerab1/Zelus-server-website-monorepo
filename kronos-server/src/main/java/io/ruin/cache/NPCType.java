@@ -485,6 +485,16 @@ public class NPCType {
 			copy(3966);
 			headIcon = 2;
 		}
+		// NOTE 2026-09-14: Aggy (npc 16317) no longer needs a setCustomFields() override here.
+		// Every attempt at overriding standAnimation/walkAnimation/models from THIS method (server
+		// Java state only) had zero visible effect on the client, because the client independently
+		// decodes those fields from its own downloaded copy of the raw cache bytes -- it never sees
+		// this object's in-memory state. The actual, effective fix is a real binary cache edit (see
+		// .dev/cache-restore-tool/src/FixAggyAnimation.java): npc 16317's own opcode 13/14 payloads
+		// were rewritten from 4588 ("npc_mad_angel_idle", rendered as a frozen T-pose) to 14453
+		// ("human_golem_powered_up_idle", confirmed working on the boss's own active combat form,
+		// 16305), applied directly to the cache. Aggy's model (61845, her own, distinct from the
+		// combat form's 61847) was never changed at the cache level and needs no Java override either.
 	}
 
 	void decode(InBuffer var1, int op) {

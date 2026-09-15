@@ -293,7 +293,10 @@ public class Tile {
 		if (groundItems == null)
 			return null;
 		for (GroundItem groundItem : groundItems) {
-			if (groundItem.id == id && (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
+			// id may be either the real item id or its ground display proxy id (see
+			// GroundItem.displayId()) -- the client reports back whatever id it saw rendered.
+			if ((groundItem.id == id || groundItem.displayId() == id)
+					&& (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
 					|| groundItem.activeOwner.equalsIgnoreCase(ownerId))) {
 				return groundItem;
 			}

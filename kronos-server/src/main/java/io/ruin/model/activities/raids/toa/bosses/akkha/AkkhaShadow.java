@@ -6,10 +6,12 @@ import io.ruin.model.entity.shared.listeners.HitListener;
 import io.ruin.model.map.Bounds;
 import io.ruin.model.map.Direction;
 import io.ruin.model.map.Position;
+import lombok.Getter;
 import lombok.Setter;
 
 public class AkkhaShadow extends NPC {
 	Bounds quadrant;
+	@Getter
 	@Setter
 	boolean canAttack = true;
 

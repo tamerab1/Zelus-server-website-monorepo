@@ -549,6 +549,8 @@ public enum Pet {
 	SLISKE_PET(60253, 30553, false, PetPerk.mage(0.10, 0.10)),
 	LIGHT_LEECH(60254, 30554, false, PetPerk.utility(0.15, 0.20)),
 	TOXISKELE(60255, 30555, false, PetPerk.mage(0.20, 0.20)),
+	AGGY(34042, 16317, false), // Mad Angel pet
+	SYLVAROTH_SPROUT(60330, 30558, false), // Sylvaroth pet
 	;
 
 	public final int itemId, npcId, metaId;

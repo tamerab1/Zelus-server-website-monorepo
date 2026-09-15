@@ -45,6 +45,16 @@ dependencies {
 val defaultJvmArgs = listOf(
 	"-XX:-OmitStackTraceInFastThrow",
 	"-Xms1g",
+	// No -Xmx was set here at all, letting the JVM default to ~1/4 of total system RAM with no cap.
+	// Real hs_err_pid*.log crash reports found in this repo's root show this exact process
+	// (boot.Boot) previously dying with "insufficient memory... native mmap failed... out of
+	// physical RAM or swap" -- an unbounded heap fighting the client JVM, gradle daemon, and
+	// kotlin daemon for the same machine's RAM is a live risk for exactly that failure, and it
+	// crashes the JVM silently (no Java exception, no log line) rather than throwing something
+	// catchable. A fixed, safe cap plus a heap dump on OOM turns "process vanished with zero
+	// trace" into "here is the actual heap dump" if it ever happens again.
+	"-Xmx6g",
+	"-XX:+HeapDumpOnOutOfMemoryError",
 	"-XX:AutoBoxCacheMax=65535",
 	"--enable-preview",
 	"--add-opens=java.base/jdk.internal.vm=ALL-UNNAMED",

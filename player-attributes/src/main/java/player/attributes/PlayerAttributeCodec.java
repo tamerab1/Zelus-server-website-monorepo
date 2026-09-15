@@ -71,11 +71,11 @@ public interface PlayerAttributeCodec<T> {
 
 		@Override
 		public T load(LoadContext ctx) {
+			var saveFile = this.saveFile(ctx.ownerUID());
+			if (!saveFile.toFile().exists()) {
+				return constructor.get();
+			}
 			try {
-				var saveFile = this.saveFile(ctx.ownerUID());
-				if (!saveFile.toFile().exists()) {
-					return constructor.get();
-				}
 				var json = Files.readString(saveFile);
 				var jsonValue = decode(cls, json);
 				if (jsonValue == null) {
@@ -83,7 +83,14 @@ public interface PlayerAttributeCodec<T> {
 				}
 				return jsonValue;
 			} catch (Exception e) {
-				throw new IllegalStateException(e);
+				// A single unreadable attribute save (corrupted file, or one written by an
+				// older/incompatible codec version) must never fail the whole account login -- it
+				// previously did, since this was an unconditional throw. Falling back to a fresh
+				// default resets just this one attribute, not the account.
+				org.slf4j.LoggerFactory.getLogger(Persistent.class)
+						.error("Unable to load persistent attribute {} for {} -- resetting to default. File: {}",
+								cls.getName(), ctx.ownerUID(), saveFile, e);
+				return constructor.get();
 			}
 		}
 

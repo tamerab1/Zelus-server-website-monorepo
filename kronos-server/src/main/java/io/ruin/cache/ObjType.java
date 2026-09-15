@@ -675,6 +675,14 @@ public class ObjType {
 			wearPos1 = buffer.readByte(); // wearPos1
 		else if (opcode == 14)
 			wearPos2 = buffer.readByte(); // wearPos2
+		else if (opcode == 15)
+			// BUG FIXED 2026-09-13: was entirely unhandled. Unlike LocType/NPCType, this method has
+			// no final `else` that crashes on an unrecognized opcode -- it just silently consumes
+			// ZERO bytes and lets the outer loop read the payload's own first byte as if it were a
+			// fresh opcode, desyncing every field after it for that one item. Found via Mad Angel's
+			// "Jar of light"/"Sunstone crystal"/"Aggy" (all non-tradeable, all using this opcode)
+			// rendering as null name -- traced with TraceItemOpcodes.java in .dev/cache-restore-tool.
+			tradeable = false;
 		else if (opcode == 16)
 			members = true;
 		else if (opcode == 23) {
@@ -713,7 +721,39 @@ public class ObjType {
 			}
 		} else if (opcode == 42) {
 			shiftClickDropIndex = buffer.readByte();
-		} else if (opcode == 65)
+		}
+		// BUG FIXED 2026-09-13: opcodes 44-54 (rev 237+ wide/4-byte model-id variants of opcodes
+		// 1/23/24/25/26/78/79/90/91/92/93 respectively -- allows model ids past 65535) were entirely
+		// unhandled, same root cause and same fix as the opcode 15 gap above. This is EXACTLY the
+		// same class of bug already fixed for LocType.java (opcodes 6/7) and NPCType.java (opcodes
+		// 61/62) earlier this session -- the Fallen Cathedral's newly-imported items all reference
+		// models via these wide opcodes (confirmed via TraceItemOpcodes.java: every one of Mad
+		// Angel's 5 unique drop items opens with opcode 44 as its very first opcode).
+		else if (opcode == 44)
+			inventoryModel = buffer.readInt();
+		else if (opcode == 45) {
+			anInt1504 = buffer.readInt();
+			maleOffset = buffer.readUnsignedByte();
+		} else if (opcode == 46)
+			anInt1493 = buffer.readInt();
+		else if (opcode == 47)
+			anInt1498 = buffer.readInt(); // wide manwear3, same field as narrow opcode 78
+		else if (opcode == 48) {
+			anInt1467 = buffer.readInt();
+			femaleOffset = buffer.readUnsignedByte();
+		} else if (opcode == 49)
+			anInt1496 = buffer.readInt();
+		else if (opcode == 50)
+			anInt1499 = buffer.readInt(); // wide womanwear3, same field as narrow opcode 79
+		else if (opcode == 51)
+			maleHeadModel = buffer.readInt(); // wide manhead, same field as narrow opcode 90
+		else if (opcode == 52)
+			anInt1501 = buffer.readInt(); // wide manhead2, same field as narrow opcode 92
+		else if (opcode == 53)
+			femaleHeadModel = buffer.readInt(); // wide womanhead, same field as narrow opcode 91
+		else if (opcode == 54)
+			anInt1503 = buffer.readInt(); // wide womanhead2, same field as narrow opcode 93
+		else if (opcode == 65)
 			grandExchange = true;
 		else if (opcode == 75)
 			buffer.readShort(); // weight

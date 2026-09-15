@@ -4699,12 +4699,11 @@ public class PlayerCombat extends Combat {
 			hit.damage *= 0.5;
 		}
 		if (target != null && target.isNpc()) {
-			for (Item item : player.getEquipment().getItems()) {
-				if (item != null && !AttributeExtensions.hasAttribute(item, AttributeTypes.ENHANCED_SOAK)) {
-					continue;
-				}
-				ItemBreakPerkHandler.handleEnhancedSoak(player);
-				break;
+			// handleEnhancedSoak's returned percentage was never applied to hit.damage --
+			// the perk showed as attached on the item but had zero actual effect in combat.
+			double enhancedSoak = ItemBreakPerkHandler.handleEnhancedSoak(player);
+			if (enhancedSoak > 0 && hit.type != HitType.HEAL) {
+				hit.damage *= (1 - enhancedSoak);
 			}
 			List<Integer> equipmentSlots = Arrays.asList(Equipment.SLOT_CHEST, Equipment.SLOT_LEGS, Equipment.SLOT_HAT);
 			for (Integer equipmentSlot : equipmentSlots) {

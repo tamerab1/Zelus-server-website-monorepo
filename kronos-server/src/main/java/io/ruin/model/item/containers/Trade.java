@@ -210,7 +210,16 @@ public class Trade extends ItemContainer {
 		// config (null unless the player sets one) actually colors this without a literal <col> tag
 		// in the message text, so embed the hard pink directly. Uses the plain "name" param (not
 		// the <col>-wrapped message) for the client's clickable-name lookup -- see the comment above.
-		target.getPacketSender().sendMessage("<col=FF00FF>" + player.getNameWithRanks() + " wishes to trade with you.</col>", player.getNameWithRanks(), 101);
+		//
+		// A loyalty title's preview() embeds its own already-closed <col=...><shad=...>...</shad></col>
+		// span (see LoyaltyTitle.java). Nesting that inside this outer <col=FF00FF> doesn't stack on
+		// this client -- the title's </col> resets to the default (black) instead of restoring the
+		// outer pink, so everything after the title (the name and "wishes to trade...") rendered black
+		// for any player with a title or other embedded color tag equipped. Strip only color/shadow
+		// tags from the display text (rank <img=..> icons are untouched) so a single pink span covers
+		// the whole message; the untouched tagged name is still used for the clickable-name lookup.
+		String displayName = player.getNameWithRanks().replaceAll("</?col(=[0-9a-fA-F]{6})?>|</?shad(=[0-9a-fA-F]{6})?>", "");
+		target.getPacketSender().sendMessage("<col=FF00FF>" + displayName + " wishes to trade with you.</col>", player.getNameWithRanks(), 101);
 		sendMessage("Sending trade offer...");
 		if (player.wildernessLevel > 0)
 			sendMessage("Trading in the Wilderness is dangerous - you might get killed!");

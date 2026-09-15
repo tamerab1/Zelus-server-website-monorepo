@@ -875,12 +875,12 @@ public final class PacketSender {
 
 	public void sendGroundItem(GroundItem groundItem) {
 		write(RSProtService.encodeZonePacket(player, groundItem.x(), groundItem.y(), groundItem.z(),
-				(x, y) -> new ObjAdd(groundItem.id, groundItem.amount, x, y, (byte) 31)));
+				(x, y) -> new ObjAdd(groundItem.displayId(), groundItem.amount, x, y, (byte) 31)));
 	}
 
 	public void sendGroundItemUpdate(GroundItem groundItem, int previousAmount) {
 		write(RSProtService.encodeZonePacket(player, groundItem.x(), groundItem.y(), groundItem.z(),
-				(x, y) -> new ObjCount(groundItem.id, previousAmount, groundItem.amount, x, y)));
+				(x, y) -> new ObjCount(groundItem.displayId(), previousAmount, groundItem.amount, x, y)));
 	}
 
 	public void sendRemoveGroundItem(int id, int amount, int x, int y, int z) {
@@ -889,8 +889,13 @@ public final class PacketSender {
 	}
 
 	public void sendRemoveGroundItem(GroundItem groundItem) {
+		// See GroundItem.displayId()/GROUND_DISPLAY_PROXY_ID: ObjDel's id is bitwise-and'd down to
+		// 15 bits client-side (max 32767), so any real custom item id (all 59000+/60000+) must be
+		// sent via its low-id ground display proxy instead, or the removal silently never matches.
+		// Tile.getPickupItem() accepts either the real id or this displayId when matching an
+		// incoming pickup click, since the client reports back whatever id it saw rendered here.
 		write(RSProtService.encodeZonePacket(player, groundItem.x(), groundItem.y(), groundItem.z(),
-				(x, y) -> new ObjDel(groundItem.id, groundItem.amount, x, y)));
+				(x, y) -> new ObjDel(groundItem.displayId(), groundItem.amount, x, y)));
 	}
 
 	public void sendCreateObject(int id, int x, int y, int z, int type, int dir) {

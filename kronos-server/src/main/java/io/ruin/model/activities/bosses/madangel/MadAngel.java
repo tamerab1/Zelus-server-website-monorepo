@@ -136,9 +136,11 @@ import static io.ruin.model.activities.bosses.madangel.MadAngelIds.*;
  * wrong thing beats a correctly-worded one that doesn't render and traps the player. The 62251
  * import is left in the cache, unused.
  * <p>
- * The 5 brand-new drop-table items are still un-created (see {@link MadAngelIds}'s own TODO). The
- * four mapsquares surrounding the Cathedral's own are now imported too (see {@link MadAngelIds}'s
- * javadoc) -- the real-world pew tile is no longer an isolated island.
+ * The 5 brand-new drop-table items (and their 5 linked placeholder/cert items) are now imported
+ * too (see {@link MadAngelIds}'s own javadoc on {@code ITEM_SUNSTONE_CRYSTAL} and friends) and
+ * registered in collectionlog's {@code CollectionLogData}. The four mapsquares surrounding the
+ * Cathedral's own are also imported (see {@link MadAngelIds}'s javadoc) -- the real-world pew tile
+ * is no longer an isolated island.
  */
 @Slf4j
 public class MadAngel extends NPCCombat {
@@ -248,6 +250,23 @@ public class MadAngel extends NPCCombat {
         } catch (DynamicMap.DynamicMapBuildException e) {
             player.sendMessage("Unable to create the instance right now. Try again in a moment.");
             return;
+        }
+
+        // ADDED 2026-09-13: pads the instance with the 3 real neighboring mapsquares, so the
+        // Cathedral is no longer void-bordered INSIDE the instance itself, not just outside it.
+        // DynamicMap already supports building a 2x2 quad (buildNw/buildSe/buildNe exist alongside
+        // buildSw) -- this class simply never called the other three. A deliberate deviation from
+        // source (MadAngelEntrance.kt's own CATHEDRAL_TEMPLATE builds only the single SW square,
+        // no padding), but the engine supports it and the real terrain for all 3 slots is now
+        // imported (see MadAngelIds' javadoc on WYRMSCRAIG_NORTH_REGION_ID and friends). Purely
+        // cosmetic padding -- failure here must never block the actual fight, so it's caught and
+        // logged, not propagated.
+        try {
+            map.buildNw(WYRMSCRAIG_NORTH_REGION_ID, 3);
+            map.buildSe(WYRMSCRAIG_EAST_REGION_ID, 3);
+            map.buildNe(WYRMSCRAIG_NORTHEAST_REGION_ID, 3);
+        } catch (DynamicMap.DynamicMapBuildException e) {
+            log.error("Failed to pad the Mad Angel instance with surrounding Wyrmscraig terrain", e);
         }
 
         NPC dormant = new NPC(NPC_DORMANT)
@@ -738,9 +757,18 @@ public class MadAngel extends NPCCombat {
      * standard, pre-existing spotanim -- decoded from Zelus's own cache: model 3116, ordinary
      * 128/128 scale, nothing shared with the broken 60632 mesh) per explicit instruction, as the
      * one that visibly does not stretch.
+     * <p>
+     * BUG FIXED 2026-09-13: {@code delay=30, durationStart=120} (30+120=150 cycles=5 ticks total,
+     * matching {@link #BOMB_OUT_TICKS}) meant the first tick was an INVISIBLE pause before the ball
+     * even appeared -- only 4 of the 5 ticks were spent actually watching it move. Reallocated to
+     * {@code delay=0, durationStart=150}: same 150-cycle total (still exactly in sync with
+     * BOMB_OUT_TICKS -- changing one without the other reintroduces the
+     * detonates-before-it-visibly-lands bug from before), but now the ball is in visible motion for
+     * the entire window instead of pausing first. If it still reads as fast after this, the
+     * remaining suspect is model 3116's own baked animation length, not these timing numbers.
      */
     private static final Projectile PROJ_BOMB_OUT =
-            new Projectile(160, 220, 30, 30, 120, 0, 40, 0);
+            new Projectile(160, 220, 30, 0, 150, 0, 40, 0);
     /** The 1-tick return leg. Same id/history as {@link #PROJ_BOMB_OUT} above -- see its javadoc. */
     private static final Projectile PROJ_BOMB_BACK =
             new Projectile(160, 30, 220, 0, 30, 0, 17, 0);
@@ -797,18 +825,29 @@ public class MadAngel extends NPCCombat {
     }
 
     /**
-     * TEMP DISABLED 2026-09-13: the per-tile GFX_BOMB_HIT wash loop is removed (was hundreds of
-     * overlapping copies of model 60632 across the room). Then reported STILL showing "a tight
-     * circle of vertical light pillars completely filling the room" from just the single remaining
-     * call below -- consistent with model 60632 itself being authored as a multi-pillar cluster,
-     * not a simple column, the same suspicion that already justified swapping PROJ_BOMB_BACK and
-     * the reflect flash (see their javadocs). Same swap applied here for consistency: gfx 76,
-     * Saradomin Strike's hit splash (SaradominStrike.java), standard content, single dispatch on
-     * the landing tile. Damage is unaffected either way -- t.hit() below was never tied to either
-     * the loop or the specific graphic id.
+     * RESTORED 2026-09-13 as a small-radius grid, per explicit instruction ("missing the ball
+     * has an unmistakable explosion"). History: the ORIGINAL per-tile wash used the custom bomb
+     * model (60632, spotanim 4014-4017) and was disabled after being reported as "a tight circle of
+     * vertical light pillars completely filling the room" -- that break was specific to model 60632
+     * itself (the same model that also broke as a moving projectile, see PROJ_BOMB_OUT's javadoc),
+     * not to the concept of a multi-tile grid. gfx 76 (Saradomin Strike's own hit splash) is
+     * ordinary, standard, already-verified content -- tiling it across a small area doesn't carry
+     * the same risk. Kept deliberately small ({@link #DETONATE_RADIUS}=2, a 5x5 tile square) rather
+     * than source's full-room wash, since this arena's collision is a per-tile check
+     * ({@link #isOpen}), not a line-of-walk test (see the class javadoc's own note on this), so a
+     * wider radius risks painting through the hall's walls same as it would have for the cleave.
      */
     private void detonate(Position landing, Player t) {
-        World.sendGraphics(76, 0, 0, landing);
+        for (int dx = -DETONATE_RADIUS; dx <= DETONATE_RADIUS; dx++) {
+            for (int dz = -DETONATE_RADIUS; dz <= DETONATE_RADIUS; dz++) {
+                Position tile = landing.translated(dx, dz);
+                if (!isOpen(tile)) {
+                    continue;
+                }
+                int ring = Math.max(Math.abs(dx), Math.abs(dz));
+                World.sendGraphics(76, 0, ring * DETONATE_SPREAD_PER_RING, tile);
+            }
+        }
         int damage = Random.get(DETONATE_MIN, DETONATE_MAX);
         t.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(damage).delay(HIT_NOW).ignoreDefence());
         t.graphics(76, 0, 0);
@@ -1113,8 +1152,9 @@ public class MadAngel extends NPCCombat {
     private static final int DETONATE_MAX = 40;
     private static final int REFLECT_MIN = 18;
     private static final int REFLECT_MAX = 22;
-    // BLAST_RADIUS / BLAST_SPREAD_CYCLES removed 2026-09-13 along with detonate()'s per-tile loop
-    // (see detonate()'s javadoc) -- no longer referenced.
+    /** RE-ADDED 2026-09-13 -- see detonate()'s own javadoc for why this is small, not a full-room wash. */
+    private static final int DETONATE_RADIUS = 2;
+    private static final int DETONATE_SPREAD_PER_RING = 2;
     private static final int CLIENT_CYCLES_PER_TICK = 30;
 
     // Sword Cleave
