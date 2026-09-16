@@ -18,6 +18,7 @@ import io.ruin.data.impl.items.shield_types;
 import io.ruin.data.impl.items.weapon_types;
 import io.ruin.data.impl.npcs.npc_combat;
 import io.ruin.data.impl.npcs.npc_drops;
+import io.ruin.data.impl.npcs.npc_drops_new;
 import io.ruin.data.impl.npcs.npc_spawns;
 import io.ruin.data.impl.objects.object_spawns;
 import io.ruin.data.impl.teleports;
@@ -2562,6 +2563,10 @@ public class CommandHandlerAdmin {
 			}
 			case "reloadcombat": {
 				DataFile.reload(player, npc_combat.class);
+				return true;
+			}
+			case "reloadnewdrops": {
+				DataFile.reload(player, npc_drops_new.class);
 				return true;
 			}
 
