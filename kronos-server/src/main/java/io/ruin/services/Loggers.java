@@ -18,9 +18,9 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -713,11 +713,7 @@ public final class Loggers extends DatabaseUtils {
 	private static void writeLog(Path directoryPath, String fileName, Map<String, Object> entry) {
 		Server.executeAsync(() -> {
 			try {
-				// Create directory if it doesn't exist
-				File directory = directoryPath.toFile();
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
+				Files.createDirectories(directoryPath);
 
 				ObjectMapper objectMapper = new ObjectMapper();
 				String json = objectMapper.writeValueAsString(entry);

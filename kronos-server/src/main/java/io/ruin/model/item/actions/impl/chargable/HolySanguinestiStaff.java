@@ -64,15 +64,19 @@ public class HolySanguinestiStaff {
 			player.sendMessage("Your staff can't hold any more charges.");
 			return;
 		}
-		int chargesInInventory = player.getInventory().getAmount(ItemID.BLOOD_RUNE) / 3;
-		if (chargesInInventory == 0) {
+		int runesInInventory = player.getInventory().getAmount(ItemID.BLOOD_RUNE);
+		if (runesInInventory == 0) {
 			player.sendMessage("You require blood runes to charge your staff.");
 			return;
 		}
-		int chargesToAdd = Math.min(chargesInInventory, MAX_CHARGES - currentCharges);
-		player.integerInput("How many charges do you want to apply? (Up to " + NumberUtils.formatNumber(chargesToAdd) + ")", (input) -> {
-			int allowed = MAX_CHARGES - currentCharges;
-			int removed = player.getInventory().remove(ItemID.BLOOD_RUNE, Math.min(allowed * 3, input * 3));
+		// Asks for blood RUNES directly, not charges (1 charge = 3 runes) -- see
+		// SanguinestiStaff.charge() for the full incident writeup (30k+ runes eaten in one go
+		// from the old "how many charges?" prompt only capping against staff capacity, not the
+		// player's actual holdings against the x3 multiplier).
+		int maxRunesUsable = Math.min(runesInInventory, (MAX_CHARGES - currentCharges) * 3);
+		player.integerInput("How many blood runes do you want to use? (Up to " + NumberUtils.formatNumber(maxRunesUsable) + ", 3 runes per charge)", (input) -> {
+			int runesToUse = Math.min(Math.max(input, 0), maxRunesUsable);
+			int removed = player.getInventory().remove(ItemID.BLOOD_RUNE, runesToUse);
 			AttributeExtensions.addCharges(staff, removed / 3);
 			staff.setId(CHARGED);
 			check(player, staff);

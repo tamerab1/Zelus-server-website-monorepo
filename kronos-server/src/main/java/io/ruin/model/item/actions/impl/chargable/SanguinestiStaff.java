@@ -64,15 +64,22 @@ public class SanguinestiStaff {
 			player.sendMessage("Your staff can't hold any more charges.");
 			return;
 		}
-		int chargesInInventory = player.getInventory().getAmount(ItemID.BLOOD_RUNE) / 3;
-		if (chargesInInventory == 0) {
+		int runesInInventory = player.getInventory().getAmount(ItemID.BLOOD_RUNE);
+		if (runesInInventory == 0) {
 			player.sendMessage("You require blood runes to charge your staff.");
 			return;
 		}
-		int chargesToAdd = Math.min(chargesInInventory, MAX_CHARGES - currentCharges);
-		player.integerInput("How many charges do you want to apply? (Up to " + NumberUtils.formatNumber(chargesToAdd) + ")", (input) -> {
-			int allowed = MAX_CHARGES - currentCharges;
-			int removed = player.getInventory().remove(ItemID.BLOOD_RUNE, Math.min(allowed * 3, input * 3));
+		// Asks for blood RUNES directly, not charges (1 charge = 3 runes) -- the old prompt
+		// asked "how many charges?" but only capped the removal against the staff's raw
+		// capacity, not the player's actual rune count matched to the x3 multiplier. A player
+		// charging a near-empty staff (capacity up to 60,000 runes) who typed any charge amount
+		// >= their own rune count / 3 had their ENTIRE stack silently consumed -- confirmed as
+		// a real incident (30k+ blood runes eaten in one go). Working in runes throughout
+		// removes the multiplier surprise and clamps input directly against what's held.
+		int maxRunesUsable = Math.min(runesInInventory, (MAX_CHARGES - currentCharges) * 3);
+		player.integerInput("How many blood runes do you want to use? (Up to " + NumberUtils.formatNumber(maxRunesUsable) + ", 3 runes per charge)", (input) -> {
+			int runesToUse = Math.min(Math.max(input, 0), maxRunesUsable);
+			int removed = player.getInventory().remove(ItemID.BLOOD_RUNE, runesToUse);
 			AttributeExtensions.addCharges(staff, removed / 3);
 			staff.setId(CHARGED);
 			check(player, staff);

@@ -77,6 +77,7 @@ import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCombat;
+import io.ruin.model.inter.dialogue.ItemDialogue;
 import io.ruin.model.inter.questtab.main.Achievements;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.impl.BoneCrusher;
@@ -3310,6 +3311,15 @@ public abstract class NPCCombat extends Combat {
 								+ (npc.getDef().killCounter.apply(pKiller.player).getKills() + 1) + " KC<col=000000>)");
 
 		}
+
+		// On-screen popup for the killer only (world chat line above is easy to lose in combat
+		// scroll -- a rare drop deserves something that actually stops the player and makes them
+		// look, not just another line of text). Uses the same interrupting ItemDialogue already
+		// used elsewhere in this codebase (e.g. SanguinestiStaff.uncharge()), not a new system.
+		pKiller.dialogue(new ItemDialogue().one(item.getId(),
+				"<col=8000C0>Rare drop!</col><br>You received: " + (amount > 1 ? NumberUtils.formatNumber(amount) + " x " : "")
+						+ item.getDef().name + "!"));
+
 		// In-game world broadcast above fires for any lootBroadcast/valuableDrop/dropAnnounce
 		// item (as before) -- but the public Discord webhook is reserved for actual mega-rares,
 		// otherwise every drop-table item merely flagged "rare" spams the Discord channel.

@@ -4,11 +4,14 @@ import io.ruin.api.utils.Random;
 import io.ruin.cache.NPCType;
 import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.Hit;
+import io.ruin.model.combat.Killer;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCCombat;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.shared.StepType;
 import io.ruin.model.entity.shared.listeners.HitListener;
+import io.ruin.model.map.Position;
 import io.ruin.model.map.Projectile;
 import io.ruin.model.map.Tile;
 import io.ruin.model.map.object.GameObject;
@@ -55,6 +58,30 @@ public class Sylvaroth extends NPCCombat {
 	private static final double MULTI_TARGET_CHANCE = 0.35;
 
 	private static final int DEATH_SPECIAL_WAVES = 3;
+
+	// Splinter Wave -- a line of moving hazards sweeps across the arena floor and players must
+	// step out of its path or take heavy damage. Same spawn-a-line-of-NPCs-and-step-them-forward
+	// technique Galvek's tsunami special uses (see Galvek.java#waveAttack), reused rather than
+	// reinvented -- WAVE_NPC_ID 8099 is the same stock "Tsunami" NPC that attack already relies
+	// on. Everything below is computed relative to Sylvaroth's own live position rather than
+	// hardcoded region coordinates (unlike Galvek's arena-specific version), since the safe/clear
+	// radius around her spawn is only confirmed out to ARENA_OBJECT_SCAN_RADIUS (15 tiles, see
+	// clearArenaClutter()) -- both the sweep width and travel distance below stay comfortably
+	// inside that.
+	private static final int WAVE_NPC_ID = 8099;
+	private static final int WAVE_HALF_WIDTH = 6;
+	private static final int WAVE_SWEEP_RANGE = 10;
+	private static final int WAVE_ATTACK_INTERVAL = 6;
+	private final List<NPC> waves = new ArrayList<>();
+	private int attacksSinceWave = 0;
+
+	// Group loot: everyone who dealt at least this share of the kill's total damage gets their
+	// own independent handleNewDrop() roll (same call every solo kill already uses), instead of
+	// only whichever single player NPCCombat's generic getKiller() would otherwise pick. Reuses
+	// the existing Combat.killers damage bookkeeping (inherited from NPCCombat/Combat) rather
+	// than tracking damage a second time. More damage share means more roll attempts, so heavier
+	// contributors get meaningfully better odds, not just a participation drop.
+	private static final double DAMAGE_SHARE_THRESHOLD = 0.10;
 
 	public static void register() {
 		NPCType.registerCombat(Sylvaroth.class, SYLVAROTH);
@@ -124,6 +151,13 @@ public class Sylvaroth extends NPCCombat {
 		if (!target.getPosition().isWithinDistance(npc.getPosition(), 10)) {
 			return false;
 		}
+
+		if (++attacksSinceWave >= WAVE_ATTACK_INTERVAL) {
+			attacksSinceWave = 0;
+			splinterWaveAttack();
+			return true;
+		}
+
 		boolean magic = Math.random() < 0.5;
 		fireAt(target, magic);
 
@@ -158,6 +192,40 @@ public class Sylvaroth extends NPCCombat {
 		victim.hit(new Hit(npc, style).randDamage(info.max_damage).clientDelay(duration));
 	}
 
+	private void splinterWaveAttack() {
+		npc.animate(info.attack_animation);
+		int centerX = npc.getPosition().getX();
+		int centerY = npc.getPosition().getY();
+		int z = npc.getPosition().getZ();
+
+		for (Player p : npc.localPlayers()) {
+			if (!p.dead() && p.getPosition().isWithinDistance(npc.getPosition(), 15)) {
+				p.sendMessage("Sylvaroth unleashes a wave of splintering roots -- move out of its path!");
+			}
+		}
+
+		int startX = centerX - WAVE_SWEEP_RANGE;
+		int endX = centerX + WAVE_SWEEP_RANGE;
+		for (int dy = -WAVE_HALF_WIDTH; dy <= WAVE_HALF_WIDTH; dy++) {
+			NPC wave = new NPC(WAVE_NPC_ID).spawn(new Position(startX, centerY + dy, z));
+			waves.add(wave);
+			wave.startEvent(event -> {
+				int ticks = 0;
+				while (ticks++ < WAVE_SWEEP_RANGE * 2 && wave.getPosition().getX() < endX) {
+					event.delay(1);
+					wave.step(1, 0, StepType.WALK);
+					for (Player p : npc.localPlayers()) {
+						if (!p.dead() && p.isAt(wave.getPosition())) {
+							p.hit(new Hit(npc).fixedDamage(p.getHp()));
+						}
+					}
+				}
+				wave.remove();
+				waves.remove(wave);
+			});
+		}
+	}
+
 	@Override
 	public void startDeath(Hit killHit) {
 		setDead(true);
@@ -165,6 +233,7 @@ public class Sylvaroth extends NPCCombat {
 			reset();
 		}
 		List<Player> witnesses = new ArrayList<>(npc.localPlayers());
+		Player primaryKiller = getKiller() != null ? getKiller().player : null;
 		npc.addEvent(event -> {
 			for (int wave = 0; wave < DEATH_SPECIAL_WAVES; wave++) {
 				for (Player p : witnesses) {
@@ -175,8 +244,40 @@ public class Sylvaroth extends NPCCombat {
 				}
 				event.delay(1);
 			}
+			distributeGroupDrops(primaryKiller);
 			super.startDeath(killHit);
 		});
+	}
+
+	private void distributeGroupDrops(Player primaryKiller) {
+		if (killers == null || killers.isEmpty()) {
+			return;
+		}
+		int totalDamage = 0;
+		for (Killer k : killers.values()) {
+			totalDamage += k.damage;
+		}
+		if (totalDamage <= 0) {
+			return;
+		}
+		for (Killer k : killers.values()) {
+			Player player = k.player;
+			if (player == null) {
+				continue;
+			}
+			double share = k.damage / (double) totalDamage;
+			if (share < DAMAGE_SHARE_THRESHOLD) {
+				continue;
+			}
+			int rolls = share >= 0.50 ? 3 : share >= 0.25 ? 2 : 1;
+			// primaryKiller already gets one roll from the normal single-killer path in
+			// super.startDeath() (called right after this) -- only give them the extra rolls
+			// their damage share earns on top of that, so their total matches everyone else's.
+			int extraRolls = player == primaryKiller ? rolls - 1 : rolls;
+			for (int i = 0; i < extraRolls; i++) {
+				handleNewDrop(player, npc.getId(), player.getPosition());
+			}
+		}
 	}
 
 }

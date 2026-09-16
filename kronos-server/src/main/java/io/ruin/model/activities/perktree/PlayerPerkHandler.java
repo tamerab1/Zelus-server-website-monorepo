@@ -528,11 +528,12 @@ public class PlayerPerkHandler {
 		return calculateExperienceForLevel(player.perkTreeLevel);
 	}
 
-	// Cumulative total XP required to complete the given level (each level costs 5000 more
-	// than the last, so this is a triangular sum -- not flat 5000*level, which let a single
-	// big lamp skip ~20 levels at once regardless of how deep into the tree the player was).
+	// Cumulative total XP required to complete the given level -- not flat 5000*level, which
+	// let a single big lamp skip ~20 levels at once regardless of how deep into the tree the
+	// player was. Rebalanced 2026-09-16 against the 250k-XP lamp: level 50 = 3,250,000 total
+	// XP, level 100 = 12,750,000 total XP (1250*L*(L+2) solves both exactly).
 	public int calculateExperienceForLevel(int level) {
-		return 5000 * level * (level + 1) / 2;
+		return 1250 * level * (level + 2);
 	}
 
 	public float calculateNextPerkLevelPercentage(Player player) {
