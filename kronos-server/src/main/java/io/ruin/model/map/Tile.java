@@ -231,15 +231,58 @@ public class Tile {
 							.position(groundItem.getX(), groundItem.getY(), groundItem.getZ());
 					newItem.tile = this;
 					groundItems.add(newItem);
-					newItem.sendAdd();
+					addOrQueueVisibility(newItem);
 				}
 				groundItem.amount = 1;
 			}
 		}
 		groundItem.tile = this;
 		groundItems.add(groundItem);
-		groundItem.sendAdd();
+		addOrQueueVisibility(groundItem);
 		checkActive();
+	}
+
+	/**
+	 * OSRS only ever shows one ground-item slot per (displayId, tile, owner) to a given client.
+	 * If one is already visible here, this copy stays queued (added to the list but never sent)
+	 * instead of getting its own ObjAdd -- otherwise picking up either one would send an ObjDel
+	 * that the client can't tell apart from the other, silently vanishing both. See
+	 * GroundItem.visible and revealNextHidden().
+	 */
+	private void addOrQueueVisibility(GroundItem groundItem) {
+		if (hasVisibleItem(groundItem.displayId(), groundItem.activeOwner))
+			return;
+		groundItem.sendAdd();
+	}
+
+	private boolean hasVisibleItem(int displayId, String ownerId) {
+		if (groundItems == null)
+			return false;
+		for (GroundItem groundItem : groundItems) {
+			if (groundItem.visible && groundItem.displayId() == displayId && sameOwner(groundItem.activeOwner, ownerId))
+				return true;
+		}
+		return false;
+	}
+
+	/** Reveals the next same-id/owner copy left queued by addOrQueueVisibility(), if any. */
+	private void revealNextHidden(int displayId, String ownerId) {
+		if (groundItems == null)
+			return;
+		for (GroundItem groundItem : groundItems) {
+			if (!groundItem.visible && groundItem.displayId() == displayId && sameOwner(groundItem.activeOwner, ownerId)) {
+				groundItem.sendAdd();
+				return;
+			}
+		}
+	}
+
+	private static boolean sameOwner(String a, String b) {
+		boolean aPublic = a == null || a.isEmpty();
+		boolean bPublic = b == null || b.isEmpty();
+		if (aPublic || bPublic)
+			return aPublic && bPublic;
+		return a.equalsIgnoreCase(b);
 	}
 
 	public void removeItem(GroundItem groundItem) {
@@ -247,9 +290,13 @@ public class Tile {
 			/* tile has been destroyed */
 			return;
 		}
-		groundItem.sendRemove();
+		boolean wasVisible = groundItem.visible;
+		if (wasVisible)
+			groundItem.sendRemove();
 		groundItem.tile = null;
 		groundItems.remove(groundItem);
+		if (wasVisible)
+			revealNextHidden(groundItem.displayId(), groundItem.activeOwner);
 		checkActive();
 	}
 
@@ -267,13 +314,20 @@ public class Tile {
 		if (groundItems == null) {
 			return;
 		}
+		boolean wasVisible = groundItem.visible;
 		// Remove from list first - prevents any concurrent/subsequent Region.update
 		// from sending an ObjAdd that would create a ghost ground item visual.
 		groundItems.remove(groundItem);
-		// Send ObjDel before nulling tile (sendRemove needs tile.region.players)
-		picker.getPacketSender().sendRemoveGroundItem(groundItem);
-		groundItem.sendRemove();
+		if (wasVisible) {
+			// Send ObjDel before nulling tile (sendRemove needs tile.region.players)
+			picker.getPacketSender().sendRemoveGroundItem(groundItem);
+			groundItem.sendRemove();
+		}
 		groundItem.tile = null;
+		if (wasVisible)
+			// A same-id/owner copy may have been queued invisibly behind this one (see
+			// addOrQueueVisibility) -- reveal it now instead of leaving it stranded.
+			revealNextHidden(groundItem.displayId(), groundItem.activeOwner);
 		checkActive();
 	}
 
@@ -292,16 +346,23 @@ public class Tile {
 	public GroundItem getPickupItem(int id, String ownerId) {
 		if (groundItems == null)
 			return null;
+		// Prefer the visible copy -- if several same-id items share this tile, only one is ever
+		// actually shown to the client (see addOrQueueVisibility); the rest are queued and
+		// invisible, so the click the client sent could only ever have targeted the visible one.
+		GroundItem fallback = null;
 		for (GroundItem groundItem : groundItems) {
 			// id may be either the real item id or its ground display proxy id (see
 			// GroundItem.displayId()) -- the client reports back whatever id it saw rendered.
 			if ((groundItem.id == id || groundItem.displayId() == id)
 					&& (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
 					|| groundItem.activeOwner.equalsIgnoreCase(ownerId))) {
-				return groundItem;
+				if (groundItem.visible)
+					return groundItem;
+				if (fallback == null)
+					fallback = groundItem;
 			}
 		}
-		return null;
+		return fallback;
 	}
 
 	/**
@@ -317,8 +378,10 @@ public class Tile {
 		}
 		if (groundItems != null) {
 			for (GroundItem groundItem : groundItems) {
-				if (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
-						|| groundItem.activeOwner.equalsIgnoreCase(player.getName())) {
+				// Skip copies still queued behind another same-id item on this tile (see
+				// addOrQueueVisibility) -- they were never shown, so don't leak them here either.
+				if (groundItem.visible && (groundItem.activeOwner == null || groundItem.activeOwner.isEmpty()
+						|| groundItem.activeOwner.equalsIgnoreCase(player.getName()))) {
 					// This only runs as part of a region reload (see Entity.updateRegion()),
 					// which the client processes by rebuilding its own local zone state from
 					// scratch -- so it can never already have this item rendered, and the

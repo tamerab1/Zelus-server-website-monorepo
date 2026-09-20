@@ -2,7 +2,6 @@ package io.ruin.model.activities.newcomertasks;
 
 import io.ruin.cache.ItemID;
 import io.ruin.model.item.Item;
-import io.ruin.api.utils.StringUtils;
 
 public enum NewcomerTasks {
 	MISSING_HOME("Beach Weather", "Teleport to sand crabs.", 1, new Item(28434, 1)),
@@ -30,7 +29,7 @@ public enum NewcomerTasks {
 	}
 
 	public String getFormattedName() {
-		return StringUtils.capitalizeFirst(name().toLowerCase().replace("_", " "));
+		return name;
 	}
 
 	public static final NewcomerTasks[] VALUES = values();

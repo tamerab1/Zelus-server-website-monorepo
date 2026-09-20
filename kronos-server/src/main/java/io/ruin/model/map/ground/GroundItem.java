@@ -117,7 +117,19 @@ public class GroundItem extends Position {
 			java.util.Map.entry(60254, 31189), // Light Leech
 			java.util.Map.entry(60255, 31190), // ToxiSkele
 			java.util.Map.entry(34042, 31191), // Aggy
-			java.util.Map.entry(60330, 31192)  // Sylvaroth's Sprout (pet)
+			java.util.Map.entry(60330, 31192), // Sylvaroth's Sprout (pet)
+			java.util.Map.entry(60331, 31193), // Draconic Cape
+			java.util.Map.entry(60332, 31194), // Draconic Godsword
+			java.util.Map.entry(60333, 31195), // Draconic Helmet
+			java.util.Map.entry(60334, 31196), // Draconic Longsword
+			java.util.Map.entry(60335, 31197), // Draconic Platebody
+			java.util.Map.entry(60336, 31198), // Draconic Platelegs
+			java.util.Map.entry(60337, 31199), // Draconic Wings
+			java.util.Map.entry(60338, 31200), // Draconies Hood
+			java.util.Map.entry(60339, 31201), // Draconies Platebody
+			java.util.Map.entry(60340, 31202), // Draconies Platelegs
+			java.util.Map.entry(60341, 31203), // Draconies Warhammer
+			java.util.Map.entry(60342, 31204)  // Draconies Wings
 	);
 
 	/** The id to use for ground-item network packets -- see GROUND_DISPLAY_PROXY_ID above. */
@@ -135,6 +147,15 @@ public class GroundItem extends Position {
 	public int id;
 	public int amount;
 	public Tile tile;
+	// The client only ever renders one ground-item "slot" per (displayId, tile, owner) -- ObjDel
+	// matches purely by (id, quantity, coord), with no per-instance token, so a second sendAdd()
+	// for an id already visible on this tile is indistinguishable from the first once either is
+	// picked up: picking up one silently makes the other's visual vanish too, even though it's
+	// still a live object server-side (root cause of the stacked-same-tile item-loss report,
+	// 2026-09-17). Tile now only sends ObjAdd for the first copy and queues extras invisibly,
+	// revealing the next one as each visible copy is picked up or despawns -- see
+	// Tile.addOrQueueVisibility/revealNextHidden. This flag tracks whether that has happened yet.
+	public boolean visible = false;
 	private int respawnMinutes;
 	private long timeDropped;
 	private String dropperName, dropperIp;
@@ -261,6 +282,13 @@ public class GroundItem extends Position {
 	private void appear() {
 		if (isRemoved()) {
 			/* this is possible because the task never gets stopped! */
+			return;
+		}
+		if (!visible) {
+			// Still queued behind another copy on this tile -- nothing to re-send yet, it was
+			// never shown. Just flip ownership; it'll go out with the correct (now-public) owner
+			// whenever it's actually revealed.
+			activeOwner = null;
 			return;
 		}
 		sendRemove();
@@ -433,6 +461,7 @@ public class GroundItem extends Position {
 	 */
 
 	public void sendAdd() {
+		visible = true;
 		for (Player player : tile.region.players) {
 			if (activeOwner == null || activeOwner.isEmpty()) {
 				player.getPacketSender().sendGroundItem(this);
