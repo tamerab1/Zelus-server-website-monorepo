@@ -1158,6 +1158,22 @@ public enum CollectionLogData {
 				new Item(30461, 1),
 			}),
 
+	DRACO(CollectionLogUpdated.Categories.MINIGAMES, "Draco", new Item[] {
+			new Item(60391) /* Baby Draco (pet) */,
+			new Item(11286) /* Draconic visage */,
+			new Item(60338) /* Draconies Hood */,
+			new Item(60339) /* Draconies Platebody */,
+			new Item(60340) /* Draconies Platelegs */,
+			new Item(60275) /* Draconic Hornbow */,
+			new Item(60341) /* Draconies Warhammer */,
+			new Item(60334) /* Draconic Longsword */,
+			new Item(60405) /* Draco Pickaxe */,
+			new Item(60337) /* Draconic Wings */,
+			new Item(60342) /* Draconies Wings */,
+	},
+			// completion rewards (none defined yet)
+			new Item[] {}),
+
 	SYLVAROTH(CollectionLogUpdated.Categories.BOSSES, "Sylvaroth", new Item[] {
 			new Item(60268) /* Ancient Cleaver */,
 			new Item(60269) /* Ancient Signet */,

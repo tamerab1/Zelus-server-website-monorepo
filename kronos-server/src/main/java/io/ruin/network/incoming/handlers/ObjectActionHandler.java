@@ -62,6 +62,10 @@ public class ObjectActionHandler implements MessageConsumer<Player, OpLoc> {
 	}
 
 	private static void handleExamine(Player player, int id) {
+		if (id == io.ruin.model.map.object.actions.impl.DracoChest.DRACO_CHEST_ID) {
+			player.getLootsViewer().updateInterface(player, io.ruin.model.inter.handlers.LootsTables.DRACO_CHEST);
+			return;
+		}
 		LocType def = LocType.get(id);
 		if (def != null) {
 			if (player.debug) {

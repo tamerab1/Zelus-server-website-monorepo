@@ -5,6 +5,8 @@ import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.ItemContainerG;
+import io.ruin.model.item.attributes.AttributeExtensions;
+import io.ruin.model.item.attributes.AttributeTypes;
 import io.ruin.model.item.containers.Equipment;
 import io.ruin.model.map.object.actions.impl.OccultAltar;
 import io.ruin.model.skills.magic.SpellBook;
@@ -303,42 +305,50 @@ public final class GearPresetHandler {
 	}
 
 	private static boolean withdrawAndEquip(Player player, int slot, Item requested) {
-		if (!withdrawToInventory(player, requested))
+		Map<String, String> realAttributes = withdrawToInventory(player, requested);
+		if (realAttributes == null)
 			return false;
-		Item inventoryItem = player.getInventory().findItem(requested.getId(), requested.copyOfAttributes());
+		Item inventoryItem = player.getInventory().findItem(requested.getId(), realAttributes);
 		if (inventoryItem == null)
 			return false;
 		player.getEquipment().equip(inventoryItem);
 		Item equipped = player.getEquipment().getSafe(slot);
 		return equipped != null && equipped.getId() == requested.getId()
-			&& equipped.getAttributeHash() == requested.getAttributeHash()
+			&& equipped.getAttributeHash() == AttributeExtensions.hashAttributes(realAttributes)
 			&& equipped.getAmount() == requested.getAmount();
 	}
 
-	private static boolean withdrawToInventory(Player player, Item requested) {
+	/** Withdraws the requested item from the bank into the inventory and returns the attribute map
+	 * it was ACTUALLY withdrawn with (null on failure). ItemContainerG's item lookups require an
+	 * exact attribute-hash match, so a charge-tracked item (scythe, chargeable bolts, etc) can't be
+	 * found by simply omitting the charge count from the query -- instead, the player's real bank
+	 * copy is located by id first (via findItemExact, id-only) to discover its CURRENT charge
+	 * value, which then replaces the preset's saved charge value for the actual withdrawal. This is
+	 * what makes presets load regardless of the exact charge count they were saved with. */
+	private static Map<String, String> withdrawToInventory(Player player, Item requested) {
 		int bankId = ObjType.unnotedId(requested.getId());
-		Map<String, String> attributes = requested.copyOfAttributes();
+		Map<String, String> attributes = currentChargeAdjustedAttributes(player, bankId, requested);
 		int removed = player.getBank().remove(bankId, requested.getAmount(), attributes);
 		if (removed != requested.getAmount()) {
 			if (removed > 0)
 				player.getBank().add(bankId, removed, attributes);
-			return false;
+			return null;
 		}
 		int added = player.getInventory().add(requested.getId(), requested.getAmount(), attributes);
 		if (added != requested.getAmount()) {
 			if (added > 0)
 				player.getInventory().remove(requested.getId(), added, attributes);
 			player.getBank().add(bankId, removed, attributes);
-			return false;
+			return null;
 		}
-		return true;
+		return attributes;
 	}
 
 	private static boolean withdrawToSlot(Player player, int slot, Item requested) {
 		if (player.getInventory().getSafe(slot) != null)
 			return false;
 		int bankId = ObjType.unnotedId(requested.getId());
-		Map<String, String> attributes = requested.copyOfAttributes();
+		Map<String, String> attributes = currentChargeAdjustedAttributes(player, bankId, requested);
 		int removed = player.getBank().remove(bankId, requested.getAmount(), attributes);
 		if (removed != requested.getAmount()) {
 			if (removed > 0)
@@ -347,6 +357,31 @@ public final class GearPresetHandler {
 		}
 		player.getInventory().set(slot, new Item(requested.getId(), requested.getAmount(), attributes));
 		return true;
+	}
+
+	private static final String CHARGES_KEY = String.valueOf(AttributeTypes.CHARGES);
+
+	private static Map<String, String> currentChargeAdjustedAttributes(Player player, int bankId, Item requested) {
+		Map<String, String> attributes = requested.copyOfAttributes();
+		if (!attributes.containsKey(CHARGES_KEY))
+			return attributes;
+		Item actual = player.getBank().findItemExact(bankId);
+		if (actual == null || actual.attributes == null || !actual.attributes.containsKey(CHARGES_KEY))
+			attributes.remove(CHARGES_KEY);
+		else
+			attributes.put(CHARGES_KEY, actual.attributes.get(CHARGES_KEY));
+		return attributes;
+	}
+
+	/** Attributes that shouldn't affect whether an item "matches" for preset purposes -- a preset
+	 * saved with a Scythe of Vitur / chargeable bolts / other charge-tracked item should still
+	 * match (and load) regardless of the current charge count. */
+	private static Map<String, String> withoutChargeAttributes(Map<String, String> attributes) {
+		if (attributes == null || attributes.isEmpty() || !attributes.containsKey(String.valueOf(AttributeTypes.CHARGES)))
+			return attributes;
+		Map<String, String> copy = new HashMap<>(attributes);
+		copy.remove(String.valueOf(AttributeTypes.CHARGES));
+		return copy;
 	}
 
 	private static final class ItemKey {
@@ -359,7 +394,8 @@ public final class GearPresetHandler {
 		}
 
 		static ItemKey of(Item item) {
-			return new ItemKey(ObjType.unnotedId(item.getId()), item.getAttributeHash());
+			return new ItemKey(ObjType.unnotedId(item.getId()),
+				AttributeExtensions.hashAttributes(withoutChargeAttributes(item.attributes)));
 		}
 
 		@Override

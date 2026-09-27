@@ -515,6 +515,11 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "draco": {
+				teleport(player, 3340, 3348, 0);
+				return true;
+			}
+
 			case "claimdonortablet": {
 				if (player.isDonator()) {
 					player.getInventory().add(new Item(30611, 1));

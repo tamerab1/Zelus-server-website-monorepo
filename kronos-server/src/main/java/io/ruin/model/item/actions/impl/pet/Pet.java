@@ -551,6 +551,7 @@ public enum Pet {
 	TOXISKELE(60255, 30555, false, PetPerk.mage(0.20, 0.20)),
 	AGGY(34042, 16317, false), // Mad Angel pet
 	SYLVAROTH_SPROUT(60330, 30558, false), // Sylvaroth pet
+	BABY_DRACO(60391, 30566, false, 870), // Draco pet (David npc mining minigame), 1/870 from Draco kills
 	;
 
 	public final int itemId, npcId, metaId;

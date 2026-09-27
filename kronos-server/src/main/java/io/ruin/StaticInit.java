@@ -319,6 +319,7 @@ public final class StaticInit {
 		io.ruin.model.entity.npc.actions.guild.woodcutting.Lars.register();
 		io.ruin.model.entity.npc.actions.guild.woodcutting.Murfet.register();
 		io.ruin.model.entity.npc.actions.guild.woodcutting.Nesty.register();
+		io.ruin.model.entity.npc.actions.minigame.David.register();
 		io.ruin.model.entity.npc.actions.mossleharmless.Patchy.register();
 		io.ruin.model.entity.npc.actions.piscatoris.ArnoldLydspor.register();
 		io.ruin.model.entity.npc.actions.traveling.CaptainBentley.register();
@@ -438,6 +439,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.ItemSet.register();
 		io.ruin.model.item.actions.impl.LocatorOrb.register();
 		io.ruin.model.item.actions.impl.MaxCape.register();
+		io.ruin.model.item.actions.impl.DraconicVisageUpgrades.register();
 		io.ruin.model.item.actions.impl.MonkeyGreeGree.register();
 		io.ruin.model.item.actions.impl.MysteriousEmblem.register();
 		io.ruin.model.item.actions.impl.NestBoxes.register();
@@ -697,6 +699,9 @@ public final class StaticInit {
 		io.ruin.model.map.object.actions.impl.ScratchMachine.register();
 		io.ruin.model.map.object.actions.impl.ZelusChest.register();
 		io.ruin.model.map.object.actions.impl.NewCustomsObjects.register();
+		io.ruin.model.map.object.actions.impl.DracoChest.register();
+		io.ruin.model.activities.minigame.MiningMinigameInstance.register();
+		io.ruin.model.map.object.actions.impl.DracoRock.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.HouseOnTheHillObjects.register();
 		io.ruin.model.map.object.actions.impl.fossilisland.MushTree.register();
 		io.ruin.model.map.object.actions.impl.gnome_stronghold.MonkeyMadness.register();

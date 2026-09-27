@@ -171,11 +171,15 @@ public enum Altars {
 				}
 			} else {
 				ArrayList<Item> essences;
-				if (altar.essence == Essence.PURE) {
+				if (altar.essence == Essence.PURE)
 					essences = player.getInventory().collectItems(Essence.PURE.id);
-					essenceCount += (fromPouches = essenceFromPouches(player));
-				} else
+				else
 					essences = player.getInventory().collectItems(Essence.REGULAR.id, Essence.PURE.id);
+				// Rune essence pouches only ever hold pure essence, but pure essence is valid at
+				// EVERY altar (not just blood/soul) -- this used to only draw from pouches for the
+				// PURE case, so pouches were silently worthless (and uncounted for perk/daily
+				// tasks) at every other altar.
+				essenceCount += (fromPouches = essenceFromPouches(player));
 				if (essences != null) {
 					for (Item ess : essences)
 						ess.remove();

@@ -406,6 +406,15 @@ public enum ServerTeleports {
 		new Item(ItemID.JUSTICIAR_CHESTGUARD), new Item(ItemID.JUSTICIAR_LEGGUARDS), new Item(30545)},
 		"Fight numerous high level monsters <br>within these raids.<br>",
 		"Grand Master", "No requirements, high stats recommended.", 35381, 8120),
+	DRACO("Draco", new Position(3340, 3348, 0),
+		new Item[]{new Item(60391), new Item(11286), new Item(60275), new Item(60334), new Item(60341),
+			new Item(60405), new Item(60337), new Item(60342)},
+		"Mine the Draco Rock for Dracodust, survive his whelps,<br>then face Draco himself in his forge.",
+		// modelId 60347: baked-recolor copy of 32682 (Tekton's body) with Draco's own npc-level
+		// recolor pairs applied -- the review window renders a raw model id and never applies
+		// npc recolors (same as Cindermaw 60346 / Sylvaroth 60345). anim 7480 = Draco's stand.
+		"Hard", "82 Mining to mine the Draco Rock.", 60347, 7480
+	),
 	TOMBS_OF_AMASCUT("Tombs of Amascut", new Position(3355, 9119, 0), new Item[]{new Item(27386),
 		new Item(27277), new Item(27226), new Item(27229), new Item(27232), new Item(25985), new Item(26219),
 		new Item(25975)},

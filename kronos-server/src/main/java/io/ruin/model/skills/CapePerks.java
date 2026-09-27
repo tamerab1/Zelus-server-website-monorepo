@@ -5,6 +5,7 @@ import io.ruin.model.activities.duelarena.DuelRule;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.Widget;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
+import io.ruin.model.item.actions.impl.MaxCape;
 import io.ruin.model.item.actions.impl.skillcapes.MagicSkillcape;
 import io.ruin.model.stat.StatType;
 import io.ruin.model.var.VarPlayerRepository;
@@ -195,6 +196,27 @@ public class CapePerks {
 			})));
 	}
 
+	private static void guildTeleports(Player player, Item item) {
+		player.dialogue(new OptionsDialogue("Choose a Destination",
+			new Option("Warriors' Guild", () -> teleport(player, 2875, 3546)),
+			new Option("Fishing Guild", () -> teleport(player, 2590, 3417)),
+			new Option("Crafting Guild", () -> teleport(player, 2933, 3287)),
+			new Option("Farming Guild", () -> teleport(player, 1247, 3729)),
+			new Option("NeverMind", player::closeDialogue)));
+	}
+
+	private static void skillingAreas(Player player, Item item) {
+		player.dialogue(new OptionsDialogue("Choose a Destination",
+			new Option("Otto's Grotto", () -> teleport(player, 2505, 3488)),
+			new Option("Carnivorous Chinchompas", () -> teleport(player, 2558, 2936)),
+			new Option("Black Chinchompas", () -> {
+				player.dialogue(new OptionsDialogue("Are you sure you wish to teleport to level 32 wilderness?",
+					new Option("Yes", () -> teleport(player, 3146, 3774)),
+					new Option("No", player::closeDialogue)));
+			}),
+			new Option("NeverMind", player::closeDialogue)));
+	}
+
 	private static void fishingTeleports(Player player, Item item) {
 		player.dialogue(new OptionsDialogue("Choose a Destination",
 			new Option("Fishing guild", () -> teleport(player, 2590, 3417)),
@@ -334,6 +356,23 @@ public class CapePerks {
 		}
 	}
 
+	// Option names must match the cache's own menu text exactly (inventory ops + worn-op params
+	// 451-458) -- registerInventory/registerEquipment silently no-op on a name the item doesn't have.
+	// Worn menu in the cache: Home, Crafting Guild, Guild Teleports, Skilling Areas, POH Portals,
+	// Spellbook, Features (the variants carry the same list, appended after their own ops).
+	private static void registerMaxCapeActions(int capeId) {
+		ItemAction.registerInventory(capeId, "Teleports", CapePerks::maxCapeInvTeleports);
+		ItemAction.registerInventory(capeId, "POH Portals", CapePerks::houseDestinations);
+		ItemAction.registerInventory(capeId, "Features", CapePerks::maxCapeFeaturesInv);
+		ItemAction.registerEquipment(capeId, "Home", CapePerks::teleToHouse);
+		ItemAction.registerEquipment(capeId, "Crafting Guild", CapePerks::teleportToCraftingGuild);
+		ItemAction.registerEquipment(capeId, "Guild Teleports", CapePerks::guildTeleports);
+		ItemAction.registerEquipment(capeId, "Skilling Areas", CapePerks::skillingAreas);
+		ItemAction.registerEquipment(capeId, "POH Portals", CapePerks::houseDestinations);
+		ItemAction.registerEquipment(capeId, "Spellbook", MagicSkillcape::swapSelection);
+		ItemAction.registerEquipment(capeId, "Features", CapePerks::maxCapeFeaturesInv);
+	}
+
 	public static void register() {
 		// Agility
 		ItemAction.registerInventory(9771, "Stamina Boost", CapePerks::staminaBoost);
@@ -427,17 +466,13 @@ public class CapePerks {
 		ItemAction.registerEquipment(20760, "Kandarin Monastery", CapePerks::teleportToMonastery);
 		ItemAction.registerEquipment(20760, "Ardougne Farm", CapePerks::teleportToArdougneFarm);
 
-		// Max Cape
-		ItemAction.registerInventory(13342, "Teleports", CapePerks::maxCapeInvTeleports);
-		ItemAction.registerInventory(13342, "Features", CapePerks::maxCapeFeaturesInv);
-		ItemAction.registerEquipment(13342, "Warriors' Guild", CapePerks::teleportToWarriorsGuild);
-		ItemAction.registerEquipment(13342, "Fishing Teleports", CapePerks::fishingTeleports);
-		ItemAction.registerEquipment(13342, "Crafting Guild", CapePerks::teleportToCraftingGuild);
-		ItemAction.registerEquipment(13342, "Tele to POH", CapePerks::teleToHouse);
-		ItemAction.registerEquipment(13342, "POH portals", CapePerks::houseDestinations);
-		ItemAction.registerEquipment(13342, "Other Teleports", CapePerks::otherMaxCapeTeleports);
-		ItemAction.registerEquipment(13342, "Spellbook", MagicSkillcape::swapSelection);
-		ItemAction.registerEquipment(13342, "Features", CapePerks::maxCapeFeaturesInv);
+		// Max Cape (base + every infused variant from MaxCape.MaxCapes -- each produces its own
+		// item id via the combine mechanic, and needs the same teleport/spellbook actions or
+		// upgrading the cape silently loses all of them)
+		registerMaxCapeActions(13342);
+		for (MaxCape.MaxCapes variant : MaxCape.MaxCapes.VALUES) {
+			registerMaxCapeActions(variant.newCapeId);
+		}
 
 		// Myth cape
 		ItemAction.registerInventory(22114, "Teleport", CapePerks::teleportToMythGuild);

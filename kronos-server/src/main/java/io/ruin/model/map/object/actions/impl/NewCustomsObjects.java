@@ -15,7 +15,8 @@ public class NewCustomsObjects {
 	private static final int SUPRISE_ID = 72000;
 
 	public static void register() {
-		for (int id : new int[]{KULYX_BOX_ID, PRISMATIC_CHEST_ID, SUPRISE_ID}) {
+		// PRISMATIC_CHEST_ID (62389) is now the Draco Chest -- see DracoChest.java.
+		for (int id : new int[]{KULYX_BOX_ID, SUPRISE_ID}) {
 			ObjectAction.register(id, "Open", (player, obj) -> {
 				player.sendMessage("You open it, but there's nothing inside... yet.");
 			});

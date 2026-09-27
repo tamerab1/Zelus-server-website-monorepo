@@ -338,39 +338,35 @@ public class Mining {
 	}
 
 	private static Boolean addBar(Player player, int ore) { // TODO: consider changing back to actually smelting bars when charge consuming is added
+		int barId;
+		double xp;
 		switch (ore) {
 			case 436:
 			case 438:
-				player.getInventory().add(2349, 1);
-				player.getStats().addXp(StatType.Smithing, 2.5, true);
-				return true;
+				barId = 2349; xp = 2.5; break;
 			case 440:
-				player.getInventory().add(2351, 1);
-				player.getStats().addXp(StatType.Smithing, 5.0, true);
-				return true;
+				barId = 2351; xp = 5.0; break;
 			case 442:
-				player.getInventory().add(2355, 1);
-				player.getStats().addXp(StatType.Smithing, 5.5, true);
-				return true;
+				barId = 2355; xp = 5.5; break;
 			case 444:
-				player.getInventory().add(2357, 1);
-				player.getStats().addXp(StatType.Smithing, 9.0, true);
-				return true;
+				barId = 2357; xp = 9.0; break;
 			case 447:
-				player.getInventory().add(2359, 1);
-				player.getStats().addXp(StatType.Smithing, 12.0, true);
-				return true;
+				barId = 2359; xp = 12.0; break;
 			case 449:
-				player.getInventory().add(2361, 1);
-				player.getStats().addXp(StatType.Smithing, 15.0, true);
-				return true;
+				barId = 2361; xp = 15.0; break;
 			case 451:
-				player.getInventory().add(2363, 1);
-				player.getStats().addXp(StatType.Smithing, 20.0, true);
-				return true;
+				barId = 2363; xp = 20.0; break;
 			default:
 				return false;
 		}
+		player.getInventory().add(barId, 1);
+		player.getStats().addXp(StatType.Smithing, xp, true);
+		// Same hooks SmeltBar.java's normal furnace smelting calls -- previously missing here, so
+		// mining straight into bars via the infernal pickaxe's special never counted toward
+		// smithing perk tasks (or daily tasks).
+		PerkTaskHandler.handleGatherResource(player, barId, 1);
+		DailyTasks.handleItemObtained(player, barId, StatType.Smithing);
+		return true;
 	}
 
 	public static double chance(int level, Rock type, Pickaxe pickaxe) {

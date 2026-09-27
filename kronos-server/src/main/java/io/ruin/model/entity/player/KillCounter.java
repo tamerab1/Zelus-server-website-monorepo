@@ -52,6 +52,9 @@ public class KillCounter {
 		// as her real combat form -- matched by npc id (16305) instead of name to avoid assigning
 		// this counter to forms that never actually die in combat (harmless either way, but precise).
 		set(p -> p.madAngelKills, 16305);
+		// Draco by id (all 6 forms 30560-30565) -- the name overload is a substring match and would
+		// also pick up "Draco Whelp" / "Baby Draco".
+		set(p -> p.dracoKills, 30560, 30561, 30562, 30563, 30564, 30565);
 		set(p -> p.kingBlackDragonKills, "king black Dragon");
 		set(p -> p.callistoKills, "callisto");
 		set(p -> p.venenatisKills, "venenatis");
@@ -194,6 +197,7 @@ public class KillCounter {
 			p.cindermawKills.setName("Cindermaw").messageOnKill();
 			p.madAngelKills.setName("Mad Angel").messageOnKill();
 			p.sylvarothKills.setName("Sylvaroth").messageOnKill();
+			p.dracoKills.setName("Draco").messageOnKill();
 			p.alchemicalHydraKills.setName("Alchemical Hydra").messageOnKill();
 			p.skotizoKills.setName("Skotizo").messageOnKill();
 			p.wintertodtKills.setName("Wintertodt").messageOnKill();
@@ -317,7 +321,8 @@ public class KillCounter {
 			p -> p.cindermawKills,
 			p -> p.tormentedDemonKills,
 			p -> p.madAngelKills,
-			p -> p.sylvarothKills
+			p -> p.sylvarothKills,
+			p -> p.dracoKills
 		);
 
 		/* Slayer list */

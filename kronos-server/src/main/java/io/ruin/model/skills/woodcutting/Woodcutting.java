@@ -171,6 +171,10 @@ public class Woodcutting {
 							player.getStats().addXp(StatType.Firemaking, burning.exp, true);
 							PerkTaskHandler.handleGatherResource(player, treeData.log, 1);
 							DailyTasks.handleItemObtained(player, treeData.log, StatType.Woodcutting);
+							// The log is also being burned in the same action (that's the whole point of the
+							// infernal axe's special) -- credit "Burn X logs" daily tasks (StatType.Firemaking)
+							// too, not just the woodcutting ones. Previously only Woodcutting was reported.
+							DailyTasks.handleItemObtained(player, treeData.log, StatType.Firemaking);
 							int petOdds = treeData.petOdds;
 							if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_PET_HUNTER)) {
 								int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_PET_HUNTER);

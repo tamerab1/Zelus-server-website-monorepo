@@ -258,16 +258,22 @@ public class ElidinisWarden extends NPCCombat {
 
 	@Override
 	public void process() {
-		if (!npc.getPosition().getRegion().players.isEmpty() && Objects.nonNull(player.getCurrentToARaid())) {
-			if (!timerSet) {
-				timer = new ActivityTimer();
-				timerSet = true;
-			}
-			if (!invocationsSet) {
-				Player player = npc.getPosition().getRegion().players.getFirst();
-				invocationsSet = true;
-				invocations = player.getCurrentToARaid().getInvocations();
-			}
+		if (npc.getPosition().getRegion().players.isEmpty())
+			return;
+		// This used to check the inherited NPCCombat#player field, which nothing in this fight
+		// (or anywhere else in the TOA package) ever assigns -- it was always null, so this threw
+		// an NPE every tick a player stood in the room, before the fight timer/invocations could
+		// ever be set up, and the boss never actually started.
+		Player firstPlayer = npc.getPosition().getRegion().players.getFirst();
+		if (firstPlayer.getCurrentToARaid() == null)
+			return;
+		if (!timerSet) {
+			timer = new ActivityTimer();
+			timerSet = true;
+		}
+		if (!invocationsSet) {
+			invocationsSet = true;
+			invocations = firstPlayer.getCurrentToARaid().getInvocations();
 		}
 	}
 

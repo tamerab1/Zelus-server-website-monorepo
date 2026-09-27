@@ -201,6 +201,9 @@ public class CollectionLogUpdated {
 				}
 				break;
 			case MINIGAMES:
+				// Draco lives under Minigames (David mining minigame) but still has a real kill counter.
+				if (log == CollectionLogData.DRACO)
+					killCount = KillCounter.getKills(log.name, player);
 				player.getPacketSender().setHidden(1134, 324, true);
 				break;
 

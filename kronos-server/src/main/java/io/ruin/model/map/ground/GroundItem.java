@@ -129,7 +129,28 @@ public class GroundItem extends Position {
 			java.util.Map.entry(60339, 31201), // Draconies Platebody
 			java.util.Map.entry(60340, 31202), // Draconies Platelegs
 			java.util.Map.entry(60341, 31203), // Draconies Warhammer
-			java.util.Map.entry(60342, 31204)  // Draconies Wings
+			java.util.Map.entry(60342, 31204), // Draconies Wings
+			java.util.Map.entry(60355, 31205), // Drakonbone Boots
+			java.util.Map.entry(60356, 31206), // Drakonbone Crest
+			java.util.Map.entry(60357, 31207), // Drakonbone Cuirass
+			java.util.Map.entry(60358, 31208), // Drakonbone Gloves
+			java.util.Map.entry(60359, 31209), // Drakonbone Platelegs
+			java.util.Map.entry(60360, 31210), // Hallowed Cape
+			java.util.Map.entry(60361, 31211), // Hallowed Elf Boots
+			java.util.Map.entry(60362, 31212), // Hallowed Gloves
+			java.util.Map.entry(60363, 31213), // Hallowed Goster
+			java.util.Map.entry(60364, 31214), // Hallowed Jack-o
+			java.util.Map.entry(60365, 31215), // Hallowed Trousers
+			java.util.Map.entry(60366, 31216), // Halloween Bow
+			java.util.Map.entry(60367, 31217), // Halloween Godsword
+			java.util.Map.entry(60368, 31218), // Halloween Key
+			java.util.Map.entry(60369, 31219), // Halloween Scimitar
+			java.util.Map.entry(60370, 31220), // Halloween Staff
+			java.util.Map.entry(60371, 31221), // Halloween Whip
+			java.util.Map.entry(60389, 31222), // Dracodust
+			java.util.Map.entry(60391, 31223), // Baby Draco (pet)
+			java.util.Map.entry(60400, 31224), // Draconic Pickaxe
+			java.util.Map.entry(60405, 31225)  // Draco Pickaxe
 	);
 
 	/** The id to use for ground-item network packets -- see GROUND_DISPLAY_PROXY_ID above. */

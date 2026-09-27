@@ -635,6 +635,9 @@ public class TeleInterface extends ItemContainer {
 				else if (currentCategory == Categories.CITIES && pageNumber == 2) {
 					currentTeleport = ServerTeleports.POLLNIVNEACH;
 				}
+				else if (currentCategory == Categories.MINIGAMES && pageNumber == 2) {
+					currentTeleport = ServerTeleports.DRACO;
+				}
 				else if (currentCategory == Categories.MINIGAMES) {
 					currentTeleport = ServerTeleports.CHAMBERS_OF_XERIC;
 				}
@@ -1630,6 +1633,17 @@ public class TeleInterface extends ItemContainer {
 		player.getPacketSender().sendString(851, 31, ServerTeleports.THE_GAUNTLET.name);
 		player.getPacketSender().sendString(851, 32, ServerTeleports.THEATRE_OF_BLOOD.name);
 		player.getPacketSender().sendString(851, 33, ServerTeleports.TOMBS_OF_AMASCUT.name);
+		pageNumber = 1;
+	}
+
+	// Minigames page 2 -- page 1's 12 slots (22-33) are full.
+	public void sendMinigamesTeleportsPageTwo(Player player) {
+		currentTeleport = null;
+		activateHiddenTeleportNames(player);
+		player.getPacketSender().sendString(851, 22, ServerTeleports.DRACO.name);
+		for (int i = 23; i <= 33; i++)
+			player.getPacketSender().setHidden(851, i, true);
+		pageNumber = 2;
 	}
 
 	public void sendWildernessTeleports(Player player) {
@@ -1763,6 +1777,9 @@ public class TeleInterface extends ItemContainer {
 			case BOSSES:
 				maxPageNumber = 4;
 				break;
+			case MINIGAMES:
+				maxPageNumber = 2;
+				break;
 			case SKILLING:
 				if (currentSkillingSection == null)
 					break;
@@ -1813,6 +1830,8 @@ public class TeleInterface extends ItemContainer {
 			}
 			else if (currentCategory == Categories.CITIES)
 				sendCityTeleports(player);
+			else if (currentCategory == Categories.MINIGAMES)
+				sendMinigamesTeleports(player);
 
 		}
 		else {
@@ -1830,6 +1849,8 @@ public class TeleInterface extends ItemContainer {
 			}
 			else if (currentCategory == Categories.CITIES)
 				sendCityTeleportsPageTwo(player);
+			else if (currentCategory == Categories.MINIGAMES && pageNumber == 1)
+				sendMinigamesTeleportsPageTwo(player);
 			else if (currentCategory == Categories.SKILLING && currentSkillingSection != null) {
 				switch (currentSkillingSection) {
 					case SLAYER:

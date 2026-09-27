@@ -28,6 +28,7 @@ public enum LootsTables {
 	ARAXXOR("Araxxor", Araxxor.table),
 	ADVANCED_MYSTERY_BOX("Advanced Mystery Box", MysteryBox.ADVANCED_MYSTERY_BOX_COMMON_TABLE),
 	BRIMSTONE_CHEST("Brimstone Chest", BrimstoneChest.BRIMSTONE_TABLE),
+	DRACO_CHEST("Draco Chest", io.ruin.model.map.object.actions.impl.DracoChest.DRACO_CHEST_TABLE),
 	LARRANS_CHEST("Larran's Chest", LarransChest.COMMON),
 	SLAYER_MYSTERY_BOX("Slayer Mystery Box", MysteryBox.SLAYER_MYSTERY_BOX_TABLE),
 	MALAKAR("Malakar Group Boss", Malakar.table),

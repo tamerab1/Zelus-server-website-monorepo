@@ -20,7 +20,18 @@ public enum Pickaxe {
 	THIRD_AGE(61, 20014, 42, 7283, 7282),
 	DRAGON_OR(61, 12797, 42, 642, 335),
 	INFERNAL(61, 13243, 42, 4482, 4481),
-	CRYSTAL(71, 23680, 42, 8347, 8343);;
+	CRYSTAL(71, 23680, 42, 8347, 8343),
+	// Real root cause (confirmed via CheckSeqHandItems on the SEQUENCE cache archive): EVERY real
+	// pickaxe tier's swing sequence has a hardcoded rightHandItem override (opcode 7) baked in --
+	// Rune=1787, Dragon=12432, Infernal=13755, Crystal=24192 -- which forces THAT item's model to
+	// render in-hand for the animation's duration, regardless of what's actually equipped. This is
+	// true for every tier's regularAnimationID AND crystalAnimationID alike, not just Infernal's/
+	// Crystal's "special" ones. No borrowed real-pickaxe animation can ever show a custom model
+	// correctly. Fix: seq 14455/14456 are new sequences (CloneSeqWithHandItem, cloned from Dragon's
+	// 7139) with rightHandItem repointed at 60400/60405 respectively -- confirmed via CheckSeqHandItems
+	// after applying.
+	DRACONIC(82, 60400, 48, 14455, 14455),
+	DRACO_PICKAXE(83, 60405, 50, 14456, 14456);;
 
 	public final int levelReq, id, points, regularAnimationID, crystalAnimationID;
 

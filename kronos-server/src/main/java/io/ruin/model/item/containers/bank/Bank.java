@@ -189,16 +189,20 @@ public class Bank extends ItemContainerG<BankItem> {
 					blankItem = item;
 				continue;
 			}
-			if (hash == 0) {
-				if (item.getId() == id && !item.hasAttributes()) {
-					item.incrementAmount(amount);
-					return amount;
-				}
-				if (item.getId() == def.placeholderMainId) {
-					item.setId(id);
-					item.setAmount(amount);
-					return amount;
-				}
+			if (hash == 0 && item.getId() == id && !item.hasAttributes()) {
+				item.incrementAmount(amount);
+				return amount;
+			}
+			// Placeholder slots hold no attributes themselves, so a deposited item carrying
+			// attributes (perk charges, chargeable gear, etc) must still be able to fill its own
+			// placeholder -- this used to be nested inside the `hash == 0` check above, so any
+			// attributed item silently skipped its placeholder and landed in a new slot instead,
+			// leaving the placeholder stuck behind forever.
+			if (item.getId() == def.placeholderMainId) {
+				item.setId(id);
+				item.setAmount(amount);
+				item.putAttributes(attributes);
+				return amount;
 			}
 		}
 		if (blankItem != null) {
