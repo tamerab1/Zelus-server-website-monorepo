@@ -2,6 +2,7 @@ package io.ruin.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ruin.Server;
+import io.ruin.api.utils.ServerWrapper;
 import io.ruin.api.database.DatabaseUtils;
 import io.ruin.api.utils.JsonUtils;
 import io.ruin.cache.ObjType;
@@ -36,7 +37,15 @@ import static io.ruin.cache.ItemID.BLOOD_MONEY;
 import static io.ruin.cache.ItemID.COINS_995;
 
 public final class Loggers extends DatabaseUtils {
-	private static final Path ROOT_DIR_PATH = Path.of("data/runtime/logs");
+	// Was a bare relative Path.of("data/runtime/logs"), resolved against the JVM's working directory
+	// (/app in the production container) instead of the configured data_path -- every write threw
+	// AccessDeniedException: /app/data, so NO chat/PM/trade/stake/drop/pickup/command/death logs
+	// were being saved in production at all. Same ServerWrapper.dataFolder convention as
+	// HWIDManager / RSProtNetworkSnapshotService. Resolved per call (not a static field) so it can
+	// never be read before dataFolder is initialised.
+	private static Path rootDir() {
+		return ServerWrapper.dataFolder.toPath().resolve("runtime").resolve("logs");
+	}
 	public static final Logger memlog = LoggerFactory.getLogger("MemoryLogger");
 	public static final Marker successfulTestMarker = MarkerFactory.getMarker("testOK");
 
@@ -75,7 +84,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("world_stage", World.stage.name());
 		logEntry.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("public_chat"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("public_chat"), userName + ".json", logEntry);
 	}
 
 	public static void logClanChat(int userId, String userName, String userIp, String message) {
@@ -88,7 +97,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("world_stage", World.stage.name());
 		logEntry.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("clan_chat"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("clan_chat"), userName + ".json", logEntry);
 	}
 
 	public static void logBond(int userId, String userName, String userIp, String message) {
@@ -101,7 +110,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("world_stage", World.stage.name());
 		logEntry.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("bond"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("bond"), userName + ".json", logEntry);
 	}
 
 	public static void logYell(int userId, String userName, String userIp, String message) {
@@ -111,7 +120,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("user_ip", userIp);
 		logEntry.put("message", message);
 
-		writeLog(ROOT_DIR_PATH.resolve("chat_yell"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("chat_yell"), userName + ".json", logEntry);
 	}
 
 	public static void logPrivateChat(int userId, String userName, String userIp, String friendName, String message) {
@@ -125,7 +134,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("world_stage", World.stage.name());
 		logEntry.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("chat_private"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("chat_private"), userName + ".json", logEntry);
 	}
 
 	public static void logCommand(int userId, String userName, String userIp, String commandQuery) {
@@ -138,7 +147,7 @@ public final class Loggers extends DatabaseUtils {
 		logEntry.put("world_stage", World.stage.name());
 		logEntry.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("command"), userName + ".json", logEntry);
+		writeLog(rootDir().resolve("command"), userName + ".json", logEntry);
 
 	}
 
@@ -239,7 +248,7 @@ public final class Loggers extends DatabaseUtils {
 		}
 		tradeLog.put("items", itemLogs);
 
-		writeLog(ROOT_DIR_PATH.resolve("trade"), userName + ".json", tradeLog);
+		writeLog(rootDir().resolve("trade"), userName + ".json", tradeLog);
 	}
 
 	public static void logDuelStake(int userId1, String userName1, String userIp1, int userId2, String userName2,
@@ -268,7 +277,7 @@ public final class Loggers extends DatabaseUtils {
 		duelStakeLog.put("world_stage", World.stage.name());
 		duelStakeLog.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("duel_stake"), userName1 + ".json", duelStakeLog);
+		writeLog(rootDir().resolve("duel_stake"), userName1 + ".json", duelStakeLog);
 	}
 
 	// Helper method to convert items to JSON array
@@ -308,7 +317,7 @@ public final class Loggers extends DatabaseUtils {
 		dangerousDeathLog.put("world_stage", World.stage.name());
 		dangerousDeathLog.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("danger_death"), userName + ".json", dangerousDeathLog);
+		writeLog(rootDir().resolve("danger_death"), userName + ".json", dangerousDeathLog);
 	}
 
 	// Helper method to convert items to a list of maps
@@ -346,7 +355,7 @@ public final class Loggers extends DatabaseUtils {
 		dropLog.put("world_stage", World.stage.name());
 		dropLog.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("drop"), userName + ".json", dropLog);
+		writeLog(rootDir().resolve("drop"), userName + ".json", dropLog);
 	}
 
 	public static void logPickup(int userId, String userName, String userIp, int itemId, int itemAmount, int x, int y,
@@ -372,7 +381,7 @@ public final class Loggers extends DatabaseUtils {
 		pickupLog.put("world_stage", World.stage.name());
 		pickupLog.put("world_type", World.type.name());
 
-		writeLog(ROOT_DIR_PATH.resolve("pickup"), userName + ".json", pickupLog);
+		writeLog(rootDir().resolve("pickup"), userName + ".json", pickupLog);
 	}
 
 	public static void logDropTrade(String takerId, @Nullable String dropperId, String takerIp, String dropperIp,
@@ -405,7 +414,7 @@ public final class Loggers extends DatabaseUtils {
 		dropTradeLog.put("time_dropped", new Timestamp(timeDropped));
 
 		writeLog(
-				ROOT_DIR_PATH.resolve("drop_trade_logs"),
+				rootDir().resolve("drop_trade_logs"),
 				takerName + "_vs_" + dropperName + "_drop_trade_log.json",
 				dropTradeLog);
 	}
