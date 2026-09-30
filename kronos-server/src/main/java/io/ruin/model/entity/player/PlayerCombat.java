@@ -411,6 +411,9 @@ public class PlayerCombat extends Combat {
 			if (target.npc.getId() == 12336 || target.npc.getId() == 763 || target.npc.getId() == 6477
 					|| target.npc.getId() == 11903 || target.npc.getId() == 7903)
 				return true;
+			// Golden Relic: Aurelius' Golden Aegis minions must be attackable while he's fighting you.
+			if (target.npc.getId() == 30572)
+				return true;
 		}
 
 
