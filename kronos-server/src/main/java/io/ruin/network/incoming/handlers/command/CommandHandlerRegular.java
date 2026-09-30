@@ -244,7 +244,7 @@ public class CommandHandlerRegular {
 				return true;
 			}
 			case "petperks": {
-				io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.openInfoDialogue(player);
+				io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.openInterface(player);
 				return true;
 			}
 			case "cindermaw": {

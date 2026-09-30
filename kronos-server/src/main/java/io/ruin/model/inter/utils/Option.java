@@ -24,6 +24,22 @@ public class Option {
 		this.consumer = consumer;
 	}
 
+	/** Marker action for {@link #info}: an OptionScroll row that is display-only. */
+	private static final Consumer<Player> INFO_ROW = p -> {
+	};
+
+	/**
+	 * A display-only row (headers, status lines, spacers) for an OptionScroll: it is not made
+	 * clickable at all, so the client never shows "Please wait..." for it.
+	 */
+	public static Option info(String name) {
+		return new Option(name, INFO_ROW);
+	}
+
+	public boolean isInfo() {
+		return consumer == INFO_ROW;
+	}
+
 	public void select(Player player) {
 		consumer.accept(player);
 	}

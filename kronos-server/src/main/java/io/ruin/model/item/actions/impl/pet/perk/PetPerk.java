@@ -61,6 +61,21 @@ public final class PetPerk {
 		};
 	}
 
+	/// Same values as describe(), one short line per stat -- for the ::petperks scroll, which
+	/// doesn't wrap text.
+	public String[] describeLines() {
+		return switch (type) {
+			case PET_MELEE_BOOST -> new String[]{"+" + pct(value1) + "% melee accuracy", "+" + pct(value2) + "% melee damage"};
+			case PET_MAGE_BOOST -> new String[]{"+" + pct(value1) + "% magic accuracy", "+" + pct(value2) + "% magic damage",
+					"+" + pct(value3) + "% defence"};
+			case PET_RANGED_BOOST -> new String[]{"+" + pct(value1) + "% ranged accuracy", "+" + pct(value2) + "% ranged damage",
+					"+" + pct(value3) + "% defence"};
+			case PET_UTILITY_BOOST -> new String[]{pct(value1) + "% faster special attack regen", "-" + pct(value2) + "% prayer drain"};
+			case PET_DROP_RATE_BOOST -> new String[]{"+" + (int) value1 + "% drop rate"};
+			default -> new String[0];
+		};
+	}
+
 	private static String pct(double fraction) {
 		return String.valueOf((int) Math.round(fraction * 100));
 	}

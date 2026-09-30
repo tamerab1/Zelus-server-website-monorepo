@@ -4,7 +4,8 @@ import io.ruin.cache.ObjType;
 import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.player.Player;
-import io.ruin.model.inter.dialogue.MessageDialogue;
+import io.ruin.model.inter.handlers.OptionScroll;
+import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.actions.impl.pet.Pet;
 
 import java.util.ArrayList;
@@ -105,61 +106,67 @@ public final class PetPerkHandler {
 		return (perk != null && perk.type == PerkType.PET_DROP_RATE_BOOST) ? (int) perk.value1 : 0;
 	}
 
-	/// ::petperks -- a chat-dialogue "interface" listing every perk-granting pet with its own
-	/// tuned values, grouped by category, plus the player's own currently active perk (if any).
-	public static void openInfoDialogue(Player player) {
-		List<MessageDialogue> pages = new ArrayList<>();
+	// ::petperks guide -- same look as the ::bonds guide: a clickable category list, then a
+	// scroll page per category. Dark colours only (parchment background); lines stay short
+	// (~42 chars) because the scroll interface doesn't wrap text.
+	private static final String HEADER = "<col=800000>", CATEGORY = "<col=4a2600>", PET = "<col=000080>",
+			TEXT = "<col=1a1a1a>", ACTIVE = "<col=006600>", NONE = "<col=333333>";
 
+	private static final Object[][] CATEGORIES = {
+			{"Melee Pets", PerkType.PET_MELEE_BOOST},
+			{"Mage Pets", PerkType.PET_MAGE_BOOST},
+			{"Ranged Pets", PerkType.PET_RANGED_BOOST},
+			{"Utility Pets", PerkType.PET_UTILITY_BOOST},
+			{"Drop Rate Pets", PerkType.PET_DROP_RATE_BOOST},
+	};
+
+	/// ::petperks -- the player's active pet perk plus a clickable list of pet categories.
+	public static void openInterface(Player player) {
+		List<Option> options = new ArrayList<>();
 		Pet active = player.pet;
-		String activeLine = active != null && active.perk != null
-				? "Your active pet is <col=006600>" + petName(active) + "</col>, granting: <col=006600>"
-						+ active.perk.describe() + "</col>."
-				: "You have no perk-granting pet summoned right now.";
-		pages.add(new MessageDialogue("<col=ff0000>Pet Perks</col><br><br>" + activeLine).lineHeight(20));
-
-		pages.addAll(categoryPages("Melee Pets", PerkType.PET_MELEE_BOOST));
-		pages.addAll(categoryPages("Mage Pets", PerkType.PET_MAGE_BOOST));
-		pages.addAll(categoryPages("Ranged Pets", PerkType.PET_RANGED_BOOST));
-		pages.addAll(categoryPages("Utility Pets", PerkType.PET_UTILITY_BOOST));
-		pages.addAll(categoryPages("Drop Rate Pets", PerkType.PET_DROP_RATE_BOOST));
-
-		player.dialogue(pages.toArray(new MessageDialogue[0]));
+		// The status row is fully colour-tagged so it does NOT light up on mouse-over (it isn't
+		// clickable); the category rows below have no tags, so clientscript 218's hover colour shows.
+		options.add(Option.info(active != null && active.perk != null
+				? ACTIVE + petName(active) + " (active): " + active.perk.describe() + "</col>"
+				: NONE + "No perk pet summoned right now</col>"));
+		for (Object[] category : CATEGORIES) {
+			String title = (String) category[0];
+			PerkType type = (PerkType) category[1];
+			int count = petsOf(type).size();
+			options.add(Option.info(" ")); // spacer row
+			options.add(new Option(title + " (" + count + " pet" + (count == 1 ? "" : "s") + ")",
+					p -> openCategory(p, title, type)));
+		}
+		// keepOpen, so clicking the status/spacer rows does nothing instead of closing the list.
+		OptionScroll.openKeepOpen(player, "Pet Perks", options);
 	}
 
-	// At most 2 pets per page -- a single Mage/Ranged entry already wraps to 2 lines in the
-	// dialogue box (name + 3 stats), so anything more than 2 per page pushed text off the
-	// bottom, hidden behind the "Click here to continue" prompt (confirmed via screenshot).
-	private static final int PETS_PER_PAGE = 2;
+	private static void openCategory(Player player, String title, PerkType type) {
+		List<String> lines = new ArrayList<>();
+		lines.add("");
+		lines.add(TEXT + "A pet's perk works while it's summoned.");
+		for (Pet pet : petsOf(type)) {
+			lines.add("");
+			boolean isActive = player.pet == pet;
+			lines.add(PET + petName(pet) + "</col>" + (isActive ? ACTIVE + " (active)</col>" : ""));
+			for (String stat : pet.perk.describeLines())
+				lines.add(TEXT + io.ruin.model.content.bonds.BondGuide.BULLET + stat);
+		}
+		if (petsOf(type).isEmpty()) {
+			lines.add("");
+			lines.add(NONE + "(no pets in this category yet)");
+		}
+		io.ruin.model.content.bonds.BondGuide.openRows(player, title, lines,
+				io.ruin.model.content.bonds.BondGuide.BACK_PREFIX + "Back to all categories", PetPerkHandler::openInterface);
+	}
 
-	private static List<MessageDialogue> categoryPages(String title, PerkType type) {
+	private static List<Pet> petsOf(PerkType type) {
 		List<Pet> pets = new ArrayList<>();
 		for (Pet pet : Pet.VALUES) {
-			if (pet.perk != null && pet.perk.type == type) {
+			if (pet.perk != null && pet.perk.type == type)
 				pets.add(pet);
-			}
 		}
-
-		List<MessageDialogue> pages = new ArrayList<>();
-		if (pets.isEmpty()) {
-			pages.add(new MessageDialogue("<col=ff0000>" + title + "</col><br><br>(none currently)").lineHeight(18));
-			return pages;
-		}
-
-		for (int start = 0; start < pets.size(); start += PETS_PER_PAGE) {
-			int end = Math.min(start + PETS_PER_PAGE, pets.size());
-			StringBuilder sb = new StringBuilder();
-			String pageTitle = start == 0 ? title : title + " (cont.)";
-			sb.append("<col=ff0000>").append(pageTitle).append("</col><br><br>");
-			for (int i = start; i < end; i++) {
-				if (i > start) {
-					sb.append("<br>");
-				}
-				Pet pet = pets.get(i);
-				sb.append(petName(pet)).append(": ").append(pet.perk.describe());
-			}
-			pages.add(new MessageDialogue(sb.toString()).lineHeight(18));
-		}
-		return pages;
+		return pets;
 	}
 
 	private static String petName(Pet pet) {

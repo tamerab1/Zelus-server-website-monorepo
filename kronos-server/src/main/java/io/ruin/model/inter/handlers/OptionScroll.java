@@ -36,10 +36,26 @@ public class OptionScroll {
 	}
 
 	public void open(Player player) {
-		player.optionScroll = this;
+		// Open FIRST, then register: when a scroll is already showing (e.g. going from a list to
+		// its detail page), openInterface closes it, and 187's closedAction nulls
+		// player.optionScroll. Assigning before that wiped out the NEW scroll, so every click on
+		// the second page was ignored (the client just sat on "Please wait...").
 		player.openInterface(ToplevelComponent.MAINMODAL, 187);
+		player.optionScroll = this;
 		player.getPacketSender().sendClientScript(217, "ss1", title, clientString, allowHotkeys ? 1 : 0);
-		player.getPacketSender().sendIfEvents(187, 3, 0, 127, 1);
+		// Only real options get the click op; Option.info rows (headers/status/spacers) stay
+		// unclickable. Sent as contiguous runs to keep the packet count small.
+		player.getPacketSender().sendIfEvents(187, 3, 0, 127, 0);
+		int runStart = -1;
+		for (int i = 0; i <= options.length; i++) {
+			boolean clickable = i < options.length && !options[i].isInfo();
+			if (clickable && runStart < 0)
+				runStart = i;
+			if (!clickable && runStart >= 0) {
+				player.getPacketSender().sendIfEvents(187, 3, runStart, i - 1, 1);
+				runStart = -1;
+			}
+		}
 	}
 
 	private void select(Player player, int slot) {
@@ -47,6 +63,8 @@ public class OptionScroll {
 			player.closeInterfaces();
 			return;
 		}
+		if (options[slot].isInfo())
+			return;
 		if (!keepOpen) {
 			player.closeInterface(ToplevelComponent.MAINMODAL);
 		}
