@@ -50,7 +50,7 @@ public class FrostDragon extends NPCCombat {
 				case 2:
 					fire(SHOCK_PROJECTILE, 12);
 					if (target.player != null && Random.rollDie(3, 1))
-						Arrays.stream(SHOCK_STATS).forEach(s -> target.player.getStats().get(s).drain(2));
+						Arrays.stream(SHOCK_STATS).forEach(s -> io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(s), 2));
 					break;
 				case 3:
 					fire(POISON_PROJECTILE, 10);

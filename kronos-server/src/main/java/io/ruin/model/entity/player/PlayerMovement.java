@@ -105,6 +105,11 @@ public class PlayerMovement extends Movement {
 
 	public void drainEnergy(int percent) {
 		int oldEnergy = getEnergy();
+		if (io.ruin.model.content.bonds.BondPerks.infiniteRun(player)) {
+			player.energyUnits = 10000;
+			sendEnergy(oldEnergy);
+			return;
+		}
 		double drain = percent * 100D;
 		player.energyUnits = Math.max(0, player.energyUnits - drain);
 		sendEnergy(oldEnergy);
@@ -289,6 +294,11 @@ public class PlayerMovement extends Movement {
 
 	private void drainEnergy() {
 		int oldEnergy = getEnergy();
+		if (io.ruin.model.content.bonds.BondPerks.infiniteRun(player)) {
+			player.energyUnits = 10000;
+			sendEnergy(oldEnergy);
+			return;
+		}
 		double weight = player.getInventory().weight + player.getEquipment().weight;
 		if (weight < 0D)
 			weight = 0D;

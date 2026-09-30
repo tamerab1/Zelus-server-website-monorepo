@@ -139,10 +139,7 @@ public class Mining {
 
 						PerkTaskHandler.handleGatherResource(player, id, 1);
 						DailyTasks.handleItemObtained(player, id, StatType.Mining);
-						if (Random.rollPercent(getDonatorNoteChance(player)))
-							player.getInventory().add(id + 1, 1);
-						else
-							player.getInventory().add(id, 1);
+						io.ruin.model.content.bonds.BondPerks.gatherResource(player, id, 1, Random.rollPercent(getDonatorNoteChance(player)));
 
 						if (player.dragonPickaxeSpecial > 0 && Random.rollPercent(50)) {
 							PerkTaskHandler.handleGatherResource(player, id, 1);

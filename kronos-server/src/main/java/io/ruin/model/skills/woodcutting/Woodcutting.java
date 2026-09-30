@@ -230,9 +230,7 @@ public class Woodcutting {
 								player.getStats().addXp(StatType.Woodcutting, treeData.experience / 2.0, true);
 							}
 						}
-						if (Random.rollPercent(getDonatorNoteChance(player)))
-							player.getInventory().add(treeData.log + 1, 1);
-						else player.getInventory().add(treeData.log, 1);
+						io.ruin.model.content.bonds.BondPerks.gatherResource(player, treeData.log, 1, Random.rollPercent(getDonatorNoteChance(player)));
 						PerkTaskHandler.handleGatherResource(player, treeData.log, 1);
 						DailyTasks.handleItemObtained(player, treeData.log, StatType.Woodcutting);
 						player.sendFilteredMessage("You get some " + treeData.treeName + ".");

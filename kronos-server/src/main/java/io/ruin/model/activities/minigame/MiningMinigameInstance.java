@@ -139,6 +139,9 @@ public class MiningMinigameInstance {
 		this.ownerId = player.getUserId();
 		this.map = new DynamicMap();
 		map.build(BOUNDS);
+		// Multi-combat so the player can still fight Draco while the Draco Whelps he summons during
+		// his smithing phase are attacking them (single-combat would block the attack on Draco).
+		map.makeDynamicMapMultiCombat();
 		GameObject.spawn(DRACO_ROCK_ID, convertPosition(DRACO_ROCK_POSITION), 10, 0);
 		GameObject.spawn(EXIT_PORTAL_ID, convertPosition(EXIT_PORTAL_POSITION), 10, 0);
 		GameObject.spawn(PRISMATIC_CHEST_ID, convertPosition(PRISMATIC_CHEST_POSITION), 10, DIRECTION_EAST);

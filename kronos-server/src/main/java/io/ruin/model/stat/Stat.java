@@ -137,11 +137,12 @@ public class Stat {
 	}
 
 	public void process(boolean hitpoints, boolean rapidRestore, boolean rapidHeal, boolean preserve,
-	                    int eternalRegenLevel) {
+	                    int eternalRegenLevel, double boostDurationMultiplier) {
 		if (currentLevel > fixedLevel) {
 			int boostTime = 100; // 60 seconds
 			if (preserve)
 				boostTime *= 1.2;
+			boostTime *= boostDurationMultiplier; // Bond of the Sovereign Monarch Preservation Field
 			if (rapidRestore && !hitpoints)
 				boostTime /= 2;
 			if (++boostedFor >= boostTime) {

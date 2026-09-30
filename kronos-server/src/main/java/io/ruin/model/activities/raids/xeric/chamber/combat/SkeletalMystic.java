@@ -57,7 +57,7 @@ public class SkeletalMystic extends NPCCombat {
 			maxDamage /= 2;
 		target.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(maxDamage).clientDelay(delay).ignoreDefence().ignorePrayer().postDamage(entity -> {
 			if (entity.player != null)
-				entity.player.getStats().get(StatType.Defence).drain(0.1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(entity.player, entity.player.getStats().get(StatType.Defence), 0.1);
 		}));
 		target.graphics(VULN_HIT_GFX, 124, delay);
 	}

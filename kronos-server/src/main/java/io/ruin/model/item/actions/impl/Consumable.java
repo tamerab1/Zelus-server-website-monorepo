@@ -831,22 +831,22 @@ public class Consumable {
 			player.hit(new Hit().fixedDamage(10));
 			event.delay(1);
 			if (potion == PotionDrink.DIVINE_SUPER_ATTACK) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Attack).boost(5, 0.15);
 					event.delay(25);
 				}
 			} else if (potion == PotionDrink.DIVINE_SUPER_STRENGTH) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Strength).boost(5, 0.15);
 					event.delay(25);
 				}
 			} else if (potion == PotionDrink.DIVINE_SUPER_DEFENCE) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Defence).boost(5, 0.15);
 					event.delay(25);
 				}
 			} else if (potion == PotionDrink.DIVINE_SUPER_COMBAT) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Attack).boost(5, 0.15);
 					player.getStats().get(StatType.Strength).boost(5, 0.15);
 					player.getStats().get(StatType.Defence).boost(5, 0.15);
@@ -866,12 +866,12 @@ public class Consumable {
 			player.hit(new Hit().fixedDamage(10));
 			event.delay(1);
 			if (potion == PotionDrink.DIVINE_RANGING) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Ranged).boost(4, 0.10);
 					event.delay(25);
 				}
 			} else if (potion == PotionDrink.DIVINE_BASTION) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Ranged).boost(4, 0.10);
 					player.getStats().get(StatType.Defence).boost(5, 0.15);
 					event.delay(25);
@@ -890,12 +890,12 @@ public class Consumable {
 			player.hit(new Hit().fixedDamage(10));
 			event.delay(1);
 			if (potion == PotionDrink.DIVINE_MAGIC) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Magic).boost(4, 0);
 					event.delay(25);
 				}
 			} else if (potion == PotionDrink.DIVINE_BATTLEMAGE) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Magic).boost(4, 0);
 					player.getStats().get(StatType.Magic).boost(5, 15);
 					event.delay(25);
@@ -918,7 +918,7 @@ public class Consumable {
 				event.delay(2);
 			}
 			if (potion == PotionDrink.OVERLOAD_PLUS) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					if (player.raidsParty == null || player.raidsParty.getRaid() == null) {
 						player.sendMessage("Your overload boost has worn off.");
 						player.overloadBoostActive = false;
@@ -941,7 +941,7 @@ public class Consumable {
 					}
 				}
 			} else if (potion == PotionDrink.OVERLOAD_MINUS) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					if (player.raidsParty == null || player.raidsParty.getRaid() == null) {
 						player.sendMessage("Your overload boost has worn off.");
 						player.overloadBoostActive = false;
@@ -964,7 +964,7 @@ public class Consumable {
 					}
 				}
 			} else if (potion == PotionDrink.OVERLOAD_REGULAR) {
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
 					player.getStats().get(StatType.Attack).boost(5, 0.15);
 					player.getStats().get(StatType.Strength).boost(5, 0.15);
 					player.getStats().get(StatType.Defence).boost(5, 0.15);

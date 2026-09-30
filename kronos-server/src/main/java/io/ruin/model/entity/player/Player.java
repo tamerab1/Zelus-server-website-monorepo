@@ -1199,11 +1199,15 @@ public class Player extends PlayerAttributes {
 		// +1 accounts for the blank spacer row written above (childId 4), which is itself
 		// part of the scrollable container and so counts toward its total row height.
 		int rowCount = lines.length + 1;
+		// Clientscript 10532 sizes the scroll area as childrenCount x 15px, but interface 119's text
+		// rows are 20px apart (y = 0, 20, 40...), so passing the plain row count left the last ~25%
+		// of every long scroll unreachable. Scale the count so the scroll height covers every row.
+		int scrollRows = (rowCount * 20 + 14) / 15;
 		ScrollbarClientScript.create()
 				.interfaceId(119)
 				.containerId(3)
 				.scrollbarChildId(204)
-				.childrenCount(rowCount)
+				.childrenCount(scrollRows)
 				.withDarkGraphics()
 				.build()
 				.send(player);
@@ -4473,6 +4477,7 @@ public class Player extends PlayerAttributes {
 			specialRestoreMaxTick = 25;
 		specialRestoreMaxTick = io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler
 				.applySpecialRegenBoost(this, specialRestoreMaxTick);
+		specialRestoreMaxTick = io.ruin.model.content.bonds.BondPerks.specialRegenTicks(this, specialRestoreMaxTick);
 		if (++specialRestoreTicks >= specialRestoreMaxTick) {
 			specialRestoreTicks = 0;
 			combat.restoreSpecial(10);
@@ -4613,4 +4618,13 @@ public class Player extends PlayerAttributes {
 		this.delveTimer = new ActivityTimer();
 	}
 
+	/** True while an attuned copy of this Custom Bond is in the inventory (its perks are active). */
+	public boolean hasAttunedBond(io.ruin.model.content.bonds.BondType type) {
+		return type.tier(this) > 0;
+	}
+
+	/** Tier (1-5) of the attuned Custom Bond in the inventory, or 0 when none is attuned. */
+	public int getBondTier(io.ruin.model.content.bonds.BondType type) {
+		return type.tier(this);
+	}
 }

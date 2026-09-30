@@ -74,7 +74,7 @@ public class SkeletalWyvern extends NPCCombat {
 			maxDamage = 10;
 		} else if (target.player != null) {
 			for (StatType statType : DRAIN) {
-				target.player.getStats().get(statType).drain(9);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(statType), 9);
 			}
 			target.player.sendMessage("The wyvern's ice breath drains your stats!");
 		}

@@ -34,6 +34,7 @@ public class SuperiorSlayer {
 
 		odds = (int) (odds * getDonatorSpawnChanceModifier(player));
 
+		odds = io.ruin.model.content.bonds.BondPerks.superiorOdds(player, odds);
 		if (Random.get(odds) == 1) {
 			System.out.println("spawned");
 			NPC boss = new NPC(superior);
@@ -81,6 +82,7 @@ public class SuperiorSlayer {
 		}
 
 
+		odds = io.ruin.model.content.bonds.BondPerks.superiorOdds(player, odds);
 		if (Random.get(odds) == 1) {
 			NPC boss = new NPC(superior);
 			boss.spawn(npc.getPosition());

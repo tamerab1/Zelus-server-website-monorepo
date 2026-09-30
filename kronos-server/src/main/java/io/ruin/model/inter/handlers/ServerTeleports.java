@@ -406,6 +406,13 @@ public enum ServerTeleports {
 		new Item(ItemID.JUSTICIAR_CHESTGUARD), new Item(ItemID.JUSTICIAR_LEGGUARDS), new Item(30545)},
 		"Fight numerous high level monsters <br>within these raids.<br>",
 		"Grand Master", "No requirements, high stats recommended.", 35381, 8120),
+	CHAMBER_OF_ASCENSION("Chamber of Ascension", new Position(1631, 4959, 0),
+		new Item[]{new Item(31301), new Item(31311), new Item(31321), new Item(60277), new Item(60279), new Item(60282)},
+		"Face Azurion, Verdanox, Crimsar and Aurelius the Gilded<br>for their armour sets and the six Bonds.",
+		// modelId 60348: baked-recolor copy of 46348 (Aurelius's body) with its gold npc recolor
+		// pairs applied -- the review window renders a raw model id and never applies npc recolors
+		// (same as Draco 60347). anim 9741 = Aurelius's stand.
+		"Hard", "None.", 60348, 9741),
 	DRACO("Draco", new Position(3340, 3348, 0),
 		new Item[]{new Item(60391), new Item(11286), new Item(60275), new Item(60334), new Item(60341),
 			new Item(60405), new Item(60337), new Item(60342)},

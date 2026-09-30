@@ -204,7 +204,7 @@ public class Turael {
 								+ " Slayer points.", () -> {
 									int slayerPointsBeforeSkip = VarPlayerRepository.SLAYER_POINTS.get(player);
 									int bonusReduction = DonatorBonus.REDUCTION_OF_CANCEL_SLAYER_TASK.handleBonus(player);
-									int cost = 30 - bonusReduction;
+									int cost = SlayerUnlock.cancelCost(player);
 
 									if (slayerPointsBeforeSkip >= cost) {
 										SlayerUnlock.cancelTask(player);

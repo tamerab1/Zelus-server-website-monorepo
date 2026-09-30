@@ -47,7 +47,8 @@ public enum Herb {
 	}
 
 	public void mix(Player player, Item herbItem, Item vialItem) {
-		herbItem.remove();
+		if (!io.ruin.model.content.bonds.BondPerks.saveMaterials(player))
+			herbItem.remove();
 		vialItem.remove();
 		player.getInventory().add(unfId, 1);
 		player.animate(363);

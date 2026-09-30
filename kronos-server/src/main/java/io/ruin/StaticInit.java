@@ -221,6 +221,7 @@ public final class StaticInit {
 		io.ruin.model.content.UpgradeMachine.register();
 		io.ruin.model.content.UpgradeManager.register();
 		io.ruin.model.content.Voidwaker.register();
+		io.ruin.model.content.bonds.BondHandler.register();
 		io.ruin.model.content.camelstatue.CamelStatueInterface.register();
 		io.ruin.model.inter.questtab.presets.Preset.register();
 		io.ruin.model.entity.player.presets.PresetManager.register();

@@ -14,6 +14,8 @@ import java.util.Map;
 public class PvmPoints {
 
     private static final Map<String, Integer> BOSS_POINTS = new HashMap<>();
+    // Id-keyed overrides for custom npcs whose cache names aren't stable/unique.
+    private static final Map<Integer, Integer> NPC_ID_POINTS = new HashMap<>();
 
     static {
         // Tier 1 - Easy bosses (2 pts)
@@ -52,13 +54,20 @@ public class PvmPoints {
             "tumeken's warden", "elidinis' warden",
             "ba-ba", "akkha", "kephri", "zebak"
         }) BOSS_POINTS.put(name, 20);
+
+        // Perkers area: Mage/Range/Melee Perker + Aurelius the Gilded (2 pts)
+        for (int id : new int[]{30568, 30569, 30570, 30571}) NPC_ID_POINTS.put(id, 2);
+    }
+
+    private static Integer pointsFor(NPC npc) {
+        Integer points = NPC_ID_POINTS.get(npc.getId());
+        return points != null ? points : BOSS_POINTS.get(npc.getDef().name.toLowerCase());
     }
 
     public static void addPoints(Player player, NPC npc) {
         if (player == null || npc == null || npc.getDef() == null) return;
         if (!player.isPvmMode()) return; // PVP Mode accounts never earn PVM Points
-        String name = npc.getDef().name.toLowerCase();
-        Integer points = BOSS_POINTS.get(name);
+        Integer points = pointsFor(npc);
         if (points != null && points > 0) {
             player.PvmPoints += points;
             player.sendMessage("<shad=000000><col=BA0000>[PVM Points]</col> <col=0C2AC1>You earn <col=C10CB9>(+" + points + ") pvm points <col=0C2AC1>after killing <col=0C2AC1>"
@@ -69,7 +78,7 @@ public class PvmPoints {
     /** True if {@code npc} has a dedicated entry in the named-boss point table above. */
     public static boolean hasNamedPoints(NPC npc) {
         if (npc == null || npc.getDef() == null) return false;
-        return BOSS_POINTS.containsKey(npc.getDef().name.toLowerCase());
+        return pointsFor(npc) != null;
     }
 
     /** Award points directly for raid completions (CoX, ToB, ToA). */

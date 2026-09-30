@@ -141,7 +141,8 @@ public enum Armour {
 					if (player.runecraftedRunesCounter == Achievements.SKIN_IS_THE_GAME.getCompletionAmount())
 						player.sendMessage("<col=000080>You have completed the achievement: <col=800000>%s".formatted(Achievements.SKIN_IS_THE_GAME.getAchievementName()));
 				}
-				player.getInventory().remove(armourType.leatherType.leather, newAmount);
+				if (!io.ruin.model.content.bonds.BondPerks.saveMaterials(player))
+					player.getInventory().remove(armourType.leatherType.leather, newAmount);
 				if (makingStuddedLeather)
 					player.getInventory().remove(ItemID.STEEL_STUDS, 1);
 

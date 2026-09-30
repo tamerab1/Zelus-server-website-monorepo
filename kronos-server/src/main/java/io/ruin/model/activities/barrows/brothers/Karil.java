@@ -42,7 +42,7 @@ public class Karil extends NPCCombat {
 		});
 		if (Random.rollDie(4)) {
 			target.graphics(401, 100, 0);
-			target.player.getStats().get(StatType.Agility).drain(5);
+			io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Agility), 5);
 		}
 		return true;
 	}

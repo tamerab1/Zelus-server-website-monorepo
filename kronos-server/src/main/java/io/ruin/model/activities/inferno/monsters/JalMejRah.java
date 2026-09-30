@@ -32,11 +32,11 @@ public class JalMejRah extends NPCCombat {
 		if (target.player != null) {
 			target.player.getMovement().drainEnergy(3);
 			if (Random.rollDie(4, 1)) { // 25% chance of draining combat stats
-				target.player.getStats().get(StatType.Attack).drain(1);
-				target.player.getStats().get(StatType.Strength).drain(1);
-				target.player.getStats().get(StatType.Defence).drain(1);
-				target.player.getStats().get(StatType.Ranged).drain(1);
-				target.player.getStats().get(StatType.Magic).drain(1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Attack), 1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Strength), 1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Defence), 1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Ranged), 1);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Magic), 1);
 			}
 		}
 		return true;

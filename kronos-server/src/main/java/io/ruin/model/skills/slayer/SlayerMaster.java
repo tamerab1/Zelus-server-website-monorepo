@@ -329,7 +329,7 @@ public class SlayerMaster {
 
 				player.sendMessage("<col=7F00FF>You've completed " + spree + " tasks in a row and received " + (total)
 						+ " points. Return to a Slayer Master for a new task.");
-				VarPlayerRepository.SLAYER_POINTS.set(player, current + total);
+				VarPlayerRepository.SLAYER_POINTS.set(player, current + total + io.ruin.model.content.bonds.BondPerks.slayerBonusPoints(player, total));
 			} else {
 				SuperiorSlayer.trySpawn(player, creature, npc);
 			}
@@ -374,7 +374,7 @@ public class SlayerMaster {
 								+ NewcomerTasks.SLAYER_TASK_COMPLETION.getFormattedName() + "!");
 					player.sendMessage("<col=7F00FF>You've completed " + spree + " tasks in a row and received "
 							+ (total) + " points. Return to a Slayer Master for a new task.");
-					VarPlayerRepository.SLAYER_POINTS.set(player, current + total);
+					VarPlayerRepository.SLAYER_POINTS.set(player, current + total + io.ruin.model.content.bonds.BondPerks.slayerBonusPoints(player, total));
 				}
 			}
 		}

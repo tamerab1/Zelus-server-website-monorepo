@@ -34,7 +34,7 @@ public class BasiliskKnight extends NPCCombat {
 			if (target.player.getEquipment().getId(Equipment.SLOT_SHIELD) != 4156 &&
 				target.player.getEquipment().getId(Equipment.SLOT_SHIELD) != 24266) {
 				for (StatType statType : DRAIN) {
-					target.player.getStats().get(statType).drain(4);
+					io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(statType), 4);
 				}
 				target.hit(new Hit(npc, null).randDamage(2, 5).ignoreDefence().ignorePrayer());
 				target.player.sendMessage("<col=ff0000>The basilisk's piercing gaze drains your stats!");

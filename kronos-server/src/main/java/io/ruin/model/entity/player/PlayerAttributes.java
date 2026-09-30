@@ -1451,6 +1451,11 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter madAngelKills = new KillCounter();
 	public KillCounter sylvarothKills = new KillCounter();
 	public KillCounter dracoKills = new KillCounter();
+	public KillCounter perkersKills = new KillCounter();
+	/** Bond of the Sovereign Monarch T5: auto-loot that doesn't fit the inventory goes to the bank (::vaultloot). */
+	public boolean bondVaultRouting = true;
+	/** Bond of the Sovereign Monarch T4 Pocket Bank: last ::bank use (epoch ms), 10 minute cooldown. */
+	public long bondPocketBankAt;
 	public KillCounter scurriusKills = new KillCounter();
 	public KillCounter dagannothRexKills = new KillCounter();
 	public KillCounter dagannothPrimeKills = new KillCounter();

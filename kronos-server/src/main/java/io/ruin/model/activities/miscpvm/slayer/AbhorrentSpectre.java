@@ -31,7 +31,7 @@ public class AbhorrentSpectre extends NPCCombat {
 		if (target.player != null && target.player.getEquipment().getId(Equipment.SLOT_HAT) != 4168 && !Slayer.hasSlayerHelmEquipped(target.player)) {
 			hit.randDamage(info.max_damage + 3).ignoreDefence().ignorePrayer();
 			for (StatType statType : DRAIN) {
-				target.player.getStats().get(statType).drain(6);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(statType), 6);
 			}
 			target.player.sendMessage("<col=ff0000>The abhorrent spectre's stench disorients you!");
 			target.player.sendMessage("<col=ff0000>A nose peg can protect you from this attack.");

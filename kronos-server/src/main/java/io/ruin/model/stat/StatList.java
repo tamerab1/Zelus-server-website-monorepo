@@ -162,6 +162,7 @@ public class StatList {
 				}
 			}
 		}
+		amount *= io.ruin.model.content.bonds.BondPerks.xpMultiplier(player, type);
 		if (type == StatType.Agility || type == StatType.Prayer || type == StatType.Farming || type == StatType.Runecrafting
 			|| type == StatType.Construction || type == StatType.Crafting
 			|| type == StatType.Hunter || type == StatType.Thieving || type == StatType.Slayer || type == StatType.Fletching
@@ -377,7 +378,9 @@ public class StatList {
 
 	public void process() {
 		boolean rapidRestore = player.getPrayer().isActive(Prayer.RAPID_RESTORE);
-		boolean rapidHeal = player.getPrayer().isActive(Prayer.RAPID_HEAL) || HitpointsSkillCape.wearsHitpointsCape(player);
+		boolean rapidHeal = player.getPrayer().isActive(Prayer.RAPID_HEAL) || HitpointsSkillCape.wearsHitpointsCape(player)
+			|| io.ruin.model.content.bonds.BondPerks.fastHpRegen(player);
+		double boostDurationMultiplier = io.ruin.model.content.bonds.BondPerks.boostDurationMultiplier(player);
 		boolean preserve = player.getPrayer().isActive(Prayer.PRESERVE);
 		StatType[] types = StatType.VALUES;
 		totalLevel = 0;
@@ -402,7 +405,7 @@ public class StatList {
 				}
 			}
 			if (type != StatType.Prayer)
-				stat.process(type == StatType.Hitpoints, rapidRestore, rapidHeal, preserve, eternalRegenLevel);
+				stat.process(type == StatType.Hitpoints, rapidRestore, rapidHeal, preserve, eternalRegenLevel, boostDurationMultiplier);
 			if (stat.updated) {
 				stat.updated = false;
 				player.getPacketSender().sendStat(statId, stat.currentLevel, (int) stat.experience);

@@ -399,9 +399,11 @@ public class ObjType {
 		}
 
 		if (id == 290) {
+			// Slots must match the client's cache def (290 was "Research package" with no options
+			// there, so this Open/Gift was unclickable) -- the cache now has Open at 0, Gift at 1.
 			name = "Super Mystery Box";
-			inventoryOptions[1] = "Open";
-			inventoryOptions[2] = "Gift";
+			inventoryOptions[0] = "Open";
+			inventoryOptions[1] = "Gift";
 		}
 		if (id == 30185) {
 			name = "Summer Mystery Box";

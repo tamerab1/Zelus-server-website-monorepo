@@ -70,7 +70,7 @@ public class BossMaster {
 					player.dialogue(new NPCDialogue(bossMaster, "You don't have a boss slayer task to skip."));
 					return;
 				}
-				int cost = 30 - DonatorBonus.REDUCTION_OF_CANCEL_SLAYER_TASK.handleBonus(player);
+				int cost = SlayerUnlock.cancelCost(player);
 				if (VarPlayerRepository.SLAYER_POINTS.get(player) < cost) {
 					player.dialogue(new NPCDialogue(bossMaster, "You need " + cost + " Slayer points to skip that task."));
 					return;
@@ -122,7 +122,7 @@ public class BossMaster {
 					+ DonatorBonus.BONUS_SLAYER_POINTS.handleBonus(player);
 				final int total = SlayerMaster.points(8, spree) + basePoints;
 				final int current = VarPlayerRepository.SLAYER_POINTS.get(player);
-				VarPlayerRepository.SLAYER_POINTS.set(player, current + total);
+				VarPlayerRepository.SLAYER_POINTS.set(player, current + total + io.ruin.model.content.bonds.BondPerks.slayerBonusPoints(player, total));
 				player.sendMessage("<col=7F00FF>You've completed " + player.bossSlayerStreak + " boss tasks in a row and received " + (total) + " points. Return to a Nomad for a new task.");
 
 			} else {
@@ -303,7 +303,7 @@ public class BossMaster {
 					new Option("I'd like to skip this task. I have " + VarPlayerRepository.SLAYER_POINTS.get(player) + " Slayer points.", () -> {
 						int slayerPointsBeforeSkip = VarPlayerRepository.SLAYER_POINTS.get(player);
 						int bonusReduction = DonatorBonus.REDUCTION_OF_CANCEL_SLAYER_TASK.handleBonus(player);
-						int cost = 30 - bonusReduction;
+						int cost = SlayerUnlock.cancelCost(player);
 
 						if (slayerPointsBeforeSkip >= cost) {
 							skipTask(player);
@@ -327,7 +327,7 @@ public class BossMaster {
 				new Option("I'd like to skip this task. I have " + VarPlayerRepository.SLAYER_POINTS.get(player) + " Slayer points.", () -> {
 					int slayerPointsBeforeSkip = VarPlayerRepository.SLAYER_POINTS.get(player);
 					int bonusReduction = DonatorBonus.REDUCTION_OF_CANCEL_SLAYER_TASK.handleBonus(player);
-					int cost = 30 - bonusReduction;
+					int cost = SlayerUnlock.cancelCost(player);
 
 					if (slayerPointsBeforeSkip >= cost) {
 						skipTask(player);

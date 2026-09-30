@@ -713,6 +713,9 @@ public class TeleInterface extends ItemContainer {
 				else if (currentCategory == Categories.CITIES && pageNumber == 2) {
 					currentTeleport = ServerTeleports.GNOME_STRONGHOLD;
 				}
+				else if (currentCategory == Categories.MINIGAMES && pageNumber == 2) {
+					currentTeleport = ServerTeleports.CHAMBER_OF_ASCENSION;
+				}
 				else if (currentCategory == Categories.MINIGAMES) {
 					currentTeleport = ServerTeleports.WARRIORS_GUILD;
 				}
@@ -1636,12 +1639,13 @@ public class TeleInterface extends ItemContainer {
 		pageNumber = 1;
 	}
 
-	// Minigames page 2 -- page 1's 12 slots (22-33) are full.
+	// Minigames page 2 -- page 1's 12 slots (22-33) are full. Slots: 22 Draco, 23 Chamber of Ascension.
 	public void sendMinigamesTeleportsPageTwo(Player player) {
 		currentTeleport = null;
 		activateHiddenTeleportNames(player);
 		player.getPacketSender().sendString(851, 22, ServerTeleports.DRACO.name);
-		for (int i = 23; i <= 33; i++)
+		player.getPacketSender().sendString(851, 23, ServerTeleports.CHAMBER_OF_ASCENSION.name);
+		for (int i = 24; i <= 33; i++)
 			player.getPacketSender().setHidden(851, i, true);
 		pageNumber = 2;
 	}

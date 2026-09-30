@@ -296,10 +296,7 @@ public class FishingSpot {
 						DailyTasks.handleItemObtained(player, c.id, StatType.Fishing);
 
 
-						if (Random.rollPercent(getDonatorNoteChance(player)) && c.id != 13339)
-							player.getInventory().add(c.id + 1, amount);
-						else
-							player.getInventory().add(c.id, amount);
+						io.ruin.model.content.bonds.BondPerks.gatherResource(player, c.id, amount, Random.rollPercent(getDonatorNoteChance(player)) && c.id != 13339);
 
 
 						if (c.id == 371) {

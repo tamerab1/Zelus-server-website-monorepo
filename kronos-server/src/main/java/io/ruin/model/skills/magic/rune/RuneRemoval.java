@@ -90,6 +90,12 @@ public class RuneRemoval {
 				 */
 				continue;
 			}
+			if (io.ruin.model.content.bonds.BondPerks.freeRune(player, reqRune)) {
+				/**
+				 * Bond of the Astral Archmage
+				 */
+				continue;
+			}
 			for (Item item : pItems) {
 				ObjType def = item.getDef();
 				if (reqRune != null) {

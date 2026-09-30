@@ -78,12 +78,12 @@ public class GroundItem extends Position {
 			java.util.Map.entry(60274, 31150), // Zarosian Warplate
 			java.util.Map.entry(60275, 31151), // Draconic Hornbow
 			java.util.Map.entry(60276, 31152), // Brimstone Hornbow
-			java.util.Map.entry(60277, 31153), // Custom Bond #1
-			java.util.Map.entry(60278, 31154), // Custom Bond #2
-			java.util.Map.entry(60279, 31155), // Custom Bond #3
-			java.util.Map.entry(60280, 31156), // Custom Bond #4
-			java.util.Map.entry(60281, 31157), // Custom Bond #5
-			java.util.Map.entry(60282, 31158), // Custom Bond #6
+			java.util.Map.entry(60277, 31153), // 1: Bond of the Blood Titan
+			java.util.Map.entry(60278, 31154), // 2: Bond of the Slayer King
+			java.util.Map.entry(60279, 31155), // 3: Bond of the Astral Archmage
+			java.util.Map.entry(60280, 31156), // 4: Bond of the Sovereign Monarch
+			java.util.Map.entry(60281, 31157), // 5: Bond of the Artisan
+			java.util.Map.entry(60282, 31158), // 6: Bond of the Void Deadeye
 			java.util.Map.entry(59531, 31159), // AsVal Gun
 			java.util.Map.entry(59548, 31160), // Icenier Sword
 			java.util.Map.entry(59604, 31161), // Imperial staff

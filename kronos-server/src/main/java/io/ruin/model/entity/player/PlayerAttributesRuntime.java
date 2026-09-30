@@ -120,6 +120,8 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	private static final int VARPS_COUNT = 30_000;
 
 	public transient int[] updatedVarpIds = new int[VARPS_COUNT];
+	/** Consecutive landed ranged hits, for the Bond of the Void Deadeye streak perk. */
+	public transient int bondRangedStreak;
 	public transient boolean[] updatedVarps = new boolean[VARPS_COUNT];
 	public transient int[][] lootedPlunderObjects = {
 			{ 26580, 0 },

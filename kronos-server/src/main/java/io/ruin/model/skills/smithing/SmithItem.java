@@ -60,6 +60,8 @@ public class SmithItem {
 					if (Random.rollPercent(c.chanceToKeepMaterials()))
 						keepBars = true;
 				}
+				if (!keepBars && io.ruin.model.content.bonds.BondPerks.saveMaterials(player))
+					keepBars = true;
 				if (!keepBars) {
 					for (Item bar : bars)
 						bar.remove();

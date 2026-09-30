@@ -103,8 +103,16 @@ public class CommandHandlerRegular {
 			case "bank":
 			case "openbank": {
 				if (!player.isModerator() && !player.isLegendaryDonator() && !player.isSupremeDonator()) {
-					player.sendMessage("This command is for legendary+ donators and staff only.");
-					return true;
+					// Bond of the Sovereign Monarch T4+ Pocket Bank: every 10 minutes outside the Wilderness.
+					if (player.getBondTier(io.ruin.model.content.bonds.BondType.UTILITY) < 4) {
+						player.sendMessage("This command is for legendary+ donators and staff only.");
+						return true;
+					}
+					String denied = io.ruin.model.content.bonds.BondPerks.usePocketBank(player);
+					if (denied != null) {
+						player.sendMessage(denied);
+						return true;
+					}
 				}
 				player.getBank().open();
 				return true;
@@ -1387,6 +1395,20 @@ public class CommandHandlerRegular {
 			case "chaosele":
 			case "ele": {
 				teleportDangerous(player, 3262, 3919, 0);
+				return true;
+			}
+
+			case "bonds":
+			case "auras": {
+				io.ruin.model.content.bonds.BondGuide.open(player);
+				return true;
+			}
+
+			case "vaultloot": {
+				player.bondVaultRouting = !player.bondVaultRouting;
+				player.sendMessage("Bond of the Sovereign Monarch vault routing is now "
+						+ (player.bondVaultRouting ? "ON: drops that don't fit your inventory go to your bank." : "OFF: they drop on the ground.")
+						+ (player.getBondTier(io.ruin.model.content.bonds.BondType.UTILITY) < 5 ? " (Needs the bond attuned at MAX.)" : ""));
 				return true;
 			}
 

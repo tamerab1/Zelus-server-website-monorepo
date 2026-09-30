@@ -294,6 +294,7 @@ public abstract class NPCCombat extends Combat {
 			int amount = Random.get(drop.minAmount, drop.maxAmount);
 			float dropRateBonus = 1 - (player.calculateDropRate() / 100f);
 			dropRate *= dropRateBonus;
+			dropRate = io.ruin.model.content.bonds.BondPerks.rareDropRate(player, drop.dropRate, dropRate);
 
 			if (Random.get(dropRate) == 0) {
 				Item item = new Item(drop.itemid, amount);
@@ -3587,11 +3588,19 @@ public abstract class NPCCombat extends Combat {
 	}
 
 	private void dropItem(Item item, Player owner, Position position) {
+		if (io.ruin.model.content.bonds.BondPerks.autoLoot(owner, item)) {
+			this.notifyDrop(owner, item.getId(), item.getAmount());
+			return;
+		}
 		new GroundItem(item).owner(owner).position(position).spawn();
 		this.notifyDrop(owner, item.getId(), item.getAmount());
 	}
 
 	private void dropItem(int id, int amount, Player owner, Position position) {
+		if (io.ruin.model.content.bonds.BondPerks.autoLoot(owner, id, amount)) {
+			this.notifyDrop(owner, id, amount);
+			return;
+		}
 		new GroundItem(id, amount).owner(owner).position(position).spawn();
 		this.notifyDrop(owner, id, amount);
 	}

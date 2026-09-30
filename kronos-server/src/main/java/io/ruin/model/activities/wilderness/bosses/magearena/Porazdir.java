@@ -69,7 +69,7 @@ public class Porazdir extends NPCCombat {
 				int minLevel = (int) (magic.fixedLevel * 0.95);
 				int drain = magic.currentLevel - minLevel;
 				if (drain > 0) {
-					magic.drain(drain);
+					io.ruin.model.content.bonds.BondPerks.npcDrain(entity.player, magic, drain);
 					entity.player.sendMessage("You feel your magical powers weaken.");
 				}
 			}

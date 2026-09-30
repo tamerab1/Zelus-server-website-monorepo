@@ -39,7 +39,7 @@ public class Sourhog extends NPCCombat {
 			for (StatType statType : DRAIN) {
 				var stat = target.player.getStats().get(statType);
 				var toDrain = stat.currentLevel *= 0.9; // Drain 90% of their stat
-				stat.drain(toDrain);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, stat, toDrain);
 			}
 			// ... "Not the face!"
 			target.player.forceText("Argh! My eyes!");

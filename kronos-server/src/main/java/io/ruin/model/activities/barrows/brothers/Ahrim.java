@@ -44,7 +44,7 @@ public class Ahrim extends NPCCombat {
 				player.killedAllBarrowsWithoutDamaged = false;
 		});
 		if (Random.rollDie(4)) {
-			target.player.getStats().get(StatType.Strength).drain(5);
+			io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(StatType.Strength), 5);
 			target.graphics(400);
 		}
 		return true;

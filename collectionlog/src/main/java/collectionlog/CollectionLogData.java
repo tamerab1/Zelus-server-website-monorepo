@@ -1184,7 +1184,30 @@ public enum CollectionLogData {
 			new Item[] {
 				new Item(7478, 15),
 				new Item(30461, 1),
-			})
+			}),
+
+	// Chamber of Ascension: the Perkers room (Azurion / Verdanox / Crimsar / Aurelius), its three armour sets and the six bonds.
+	CHAMBER_OF_ASCENSION(CollectionLogUpdated.Categories.MINIGAMES, "Chamber of Ascension", new Item[] {
+			new Item(31300) /* Azurion's helm */,
+			new Item(31301) /* Azurion's body */,
+			new Item(31302) /* Azurion's legs */,
+			new Item(31303) /* Azurion's gauntlets */,
+			new Item(31304) /* Azurion's boots */,
+			new Item(31320) /* Verdanox's helm */,
+			new Item(31321) /* Verdanox's chestplate */,
+			new Item(31322) /* Verdanox's tassets */,
+			new Item(31310) /* Crimsongilt faceguard */,
+			new Item(31311) /* Crimsongilt chestguard */,
+			new Item(31312) /* Crimsongilt legguards */,
+			new Item(60277) /* Bond of the Blood Titan */,
+			new Item(60282) /* Bond of the Void Deadeye */,
+			new Item(60279) /* Bond of the Astral Archmage */,
+			new Item(60280) /* Bond of the Sovereign Monarch */,
+			new Item(60281) /* Bond of the Artisan */,
+			new Item(60278) /* Bond of the Slayer King */,
+	},
+			// completion rewards (none defined yet)
+			new Item[] {})
 
 	;
 

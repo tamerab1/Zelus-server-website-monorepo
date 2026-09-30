@@ -1252,7 +1252,7 @@ public class MysteryBox {
 
 
 	public static void register() {
-		ItemAction.registerInventory(30461, "open", (player, item) -> {
+		ItemAction donatorMysteryBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
@@ -1297,7 +1297,11 @@ public class MysteryBox {
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
-		});
+		};
+		ItemAction.registerInventory(30461, "open", donatorMysteryBoxAction);
+		// 30444 is an identical "Donator mystery box" in the cache (the summer box hands it out)
+		// that never had an Open handler, so it could never be opened.
+		ItemAction.registerInventory(30444, "open", donatorMysteryBoxAction);
 		ItemAction.registerInventory(30529, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();

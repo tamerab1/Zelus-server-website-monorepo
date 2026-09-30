@@ -30,7 +30,7 @@ public class Banshee extends NPCCombat {
 		if (target.player != null && target.player.getEquipment().getId(Equipment.SLOT_HAT) != 4166 && !Slayer.hasSlayerHelmEquipped(target.player)) {
 			hit.randDamage(info.max_damage + 6).ignoreDefence().ignorePrayer();
 			for (StatType statType : DRAIN) {
-				target.player.getStats().get(statType).drain(5);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(statType), 5);
 			}
 			target.player.sendMessage("The banshee's deafening scream drains your stats!");
 		} else {

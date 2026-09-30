@@ -187,6 +187,16 @@ public enum SlayerUnlock {
 		VarPlayerRepository.BLOCKED_TASKS[slot].set(player, 0);
 	}
 
+	/** Points to skip/cancel a task: 30, minus the donator reduction, halved by the Bond of the Slayer King (T2+). */
+	public static int cancelCost(Player player) {
+		return io.ruin.model.content.bonds.BondPerks.slayerCost(player, 30 - io.ruin.model.entity.player.DonatorBonus.REDUCTION_OF_CANCEL_SLAYER_TASK.handleBonus(player));
+	}
+
+	/** Points to block a task: 100, halved by the Bond of the Slayer King (T2+). */
+	public static int blockCost(Player player) {
+		return io.ruin.model.content.bonds.BondPerks.slayerCost(player, 100);
+	}
+
 	public static void cancelTask(Player player) {
 		SlayerCreature task = SlayerCreature.lookup(VarPlayerRepository.SLAYER_TASK.get(player));
 
@@ -195,10 +205,10 @@ public enum SlayerUnlock {
 			return;
 		}
 
-		int cost = 30;
+		int cost = cancelCost(player);
 
 		if (VarPlayerRepository.SLAYER_POINTS.get(player) < cost) {
-			player.sendMessage("You need 30 points to cancel your task.");
+			player.sendMessage("You need " + cost + " points to cancel your task.");
 			return;
 		}
 
@@ -218,8 +228,8 @@ public enum SlayerUnlock {
 			player.sendMessage("You don't have a slayer task to block.");
 			return;
 		}
-		if (VarPlayerRepository.SLAYER_POINTS.get(player) < 100) {
-			player.sendMessage("You need 100 points to block your task.");
+		if (VarPlayerRepository.SLAYER_POINTS.get(player) < blockCost(player)) {
+			player.sendMessage("You need " + blockCost(player) + " points to block your task.");
 			return;
 		}
 
@@ -243,7 +253,7 @@ public enum SlayerUnlock {
 				VarPlayerRepository.SLAYER_TASK_AMOUNT.set(player, 0);
 				VarPlayerRepository.SLAYER_TASK.set(player, 0);
 
-				int pts = VarPlayerRepository.SLAYER_POINTS.get(player) - 100;
+				int pts = VarPlayerRepository.SLAYER_POINTS.get(player) - blockCost(player);
 				player.slayerTasksBlockedOrExtended++;
 
 				VarPlayerRepository.SLAYER_POINTS.set(player, pts);

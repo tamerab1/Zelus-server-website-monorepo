@@ -70,8 +70,10 @@ public class Draco extends NPCCombat {
 		// Neither this nor MovrethCombat.java (the only other user of this boss-bar HUD system)
 		// ever closed it on death -- confirmed via source: no getHealthHud().close() call existed
 		// anywhere for either boss, so the bar just stayed on screen forever after a kill.
-		npc.deathStartListener = (entity, killer, killHit) ->
-				npc.localPlayers().forEach(p -> p.getHealthHud().close());
+		npc.deathStartListener = (entity, killer, killHit) -> {
+			npc.localPlayers().forEach(p -> p.getHealthHud().close());
+			removeWhelps();
+		};
 		npc.attackNpcListener = (player, npc1, message) -> false;
 		npc.addEvent(event -> {
 			npc.lock();
@@ -190,6 +192,8 @@ public class Draco extends NPCCombat {
 			npc.animate(7479);
 			npc.transform(DRACO_WALK);
 			npc.faceNone(false);
+			npc.forceText("Whelps, defend your master!");
+			spawnWhelps();
 			event.delay(2);
 			npc.getRouteFinder().routeAbsolute(npc.getSpawnPosition().getX(), npc.getSpawnPosition().getY());
 			// Capped -- waitForMovement() has no timeout, so an unreachable/moving target could hang this
@@ -227,6 +231,36 @@ public class Draco extends NPCCombat {
 			npc.faceNone(false);
 			npc.unlock();
 		});
+	}
+
+	// 2-3 Draco Whelps (npc 30567) join the fight while Draco is off smithing and immune. Same
+	// targetPlayer + attackTargetPlayer pattern as DracoRock.spawnWhelp (the generic aggro scan skips
+	// idle players and only looks 4 tiles out). They outlive the smithing phase until killed, and
+	// are cleared when Draco dies or the player leaves.
+	private static final int DRACO_WHELP_ID = 30567;
+	private final List<NPC> whelps = new ArrayList<>();
+
+	private void spawnWhelps() {
+		List<Player> players = new ArrayList<>(npc.localPlayers());
+		if (players.isEmpty())
+			return;
+		int count = Random.get(2, 3);
+		for (int i = 0; i < count; i++) {
+			Player player = Random.get(players);
+			int x = player.getAbsX() + Random.get(-2, 2);
+			int y = player.getAbsY() + Random.get(-2, 2);
+			NPC whelp = new NPC(DRACO_WHELP_ID).spawn(x, y, player.getHeight(), 5).targetPlayer(player, false);
+			whelp.attackTargetPlayer(() -> !player.isOnline()
+					|| !player.getPosition().isWithinDistance(whelp.getPosition()));
+			whelps.add(whelp);
+		}
+	}
+
+	private void removeWhelps() {
+		for (NPC whelp : whelps)
+			if (!whelp.isRemoved())
+				whelp.remove();
+		whelps.clear();
 	}
 
 	@Override

@@ -540,12 +540,20 @@ public class PlayerCombat extends Combat {
 
 	public void removeAmmo(Item ammo, Hit... hits) {
 		if (rangedData.alwaysBreak) {
-			ammo.remove(hits.length);
+			int used = 0;
+			for (Hit hit : hits) {
+				if (!io.ruin.model.content.bonds.BondPerks.saveAmmo(player, target))
+					used++;
+			}
+			if (used > 0)
+				ammo.remove(used);
 			return;
 		}
 		boolean assembler = hasAvaAssembler();
 		boolean ava = hasAvaDevice();
 		for (Hit hit : hits) {
+			if (io.ruin.model.content.bonds.BondPerks.saveAmmo(player, target))
+				continue; // Bond of the Void Deadeye
 			if (hasQuiver()) {
 
 			} else if (hasAvaAssembler()) {
@@ -954,6 +962,8 @@ public class PlayerCombat extends Combat {
 			return false;
 		}
 
+		if (io.ruin.model.content.bonds.BondPerks.saveSpecialEnergy(player, target))
+			return true;
 		VarPlayerRepository.SPECIAL_ENERGY.set(player, energy - (amount * 10));
 		return true;
 
@@ -1080,7 +1090,7 @@ public class PlayerCombat extends Combat {
 	public double getBonus(int bonusType) {
 		// if (bonusType == EquipmentStats.RANGED_STRENGTH)
 		// return DizanaQuiver.getPrimaryOrQuiverCombatBonus(player);
-		return player.getEquipment().bonuses[bonusType];
+		return player.getEquipment().bonuses[bonusType] + io.ruin.model.content.bonds.BondPerks.equipmentBonus(player, target, bonusType);
 	}
 
 	@Override
@@ -4867,6 +4877,7 @@ public class PlayerCombat extends Combat {
 
 	private void preTargetDefend(Hit hit, Entity target) {
 		forinthrySkullBoost(player, hit, target);
+		io.ruin.model.content.bonds.BondPerks.preTargetDefend(player, hit, target);
 		boolean slayerHelmEffectActive = SlayerHelm.boost(player, target, hit);
 		boolean BloodFuryEffectActive = SetEffect.BLOOD_FURY.checkAndApply(player, target, hit);
 		boolean veracsEffectActive = SetEffect.VERAC.checkAndApply(player, target, hit);
@@ -5560,6 +5571,8 @@ public class PlayerCombat extends Combat {
 			if (item != null && item.getDef() != null)
 				item.getDef().postTargetDamage(player, item, hit, target);
 		}
+
+		io.ruin.model.content.bonds.BondPerks.postTargetDamage(player, hit, target);
 
 		// Process the 'Thunder Khopesh'
 		if (player.getEquipment().contains(30388)) {

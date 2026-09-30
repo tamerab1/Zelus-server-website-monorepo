@@ -26,7 +26,7 @@ public class Cockatrice extends NPCCombat {
 			basicAttack();
 		if (target.player != null && target.player.getEquipment().getId(Equipment.SLOT_SHIELD) != 4156) {
 			for (StatType statType : DRAIN) {
-				target.player.getStats().get(statType).drain(8);
+				io.ruin.model.content.bonds.BondPerks.npcDrain(target.player, target.player.getStats().get(statType), 8);
 			}
 			target.player.sendMessage("<col=ff0000>The cockatrice's piercing gaze drains your stats!");
 			target.player.sendMessage("<col=ff0000>A mirror shield can protect you from this attack.");

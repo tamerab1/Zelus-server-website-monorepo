@@ -1010,7 +1010,7 @@ public class GreatOlm extends NPCCombat {
 					player.forceText("Burn with me!");
 				player.hit(new Hit(npc).fixedDamage(5));
 				for (StatType type : BURN_STAT_DRAIN)
-					player.getStats().get(type).drain(2);
+					io.ruin.model.content.bonds.BondPerks.npcDrain(player, player.getStats().get(type), 2);
 				player.localPlayers().forEach(other -> {
 					if (other.getPosition().isWithinDistance(player.getPosition(), 1))
 						burnPlayer(other, true);
