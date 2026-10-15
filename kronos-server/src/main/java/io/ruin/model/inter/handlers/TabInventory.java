@@ -77,11 +77,18 @@ public class TabInventory {
 		if (item == null)
 			return;
 
+		// Rivals layout mode: the kit can only be dragged into place (examine is fine)
+		if (ifbutton != 10 && io.ruin.model.content.rivals.RivalsLayout.active(player)) {
+			player.sendMessage("Drag the items to arrange them, then Save or Cancel your Rivals layout.");
+			return;
+		}
+
 		if (!item.getDef().consumable && player.isLockedExclude(LockType.FULL_ALLOW_EAT))
 			return;
 
 		if (ifbutton == 10) {
 			item.examine(player);
+			ItemStatsViewer.open(player, item.getId());
 			return;
 		}
 		ObjType def = item.getDef();
@@ -114,6 +121,9 @@ public class TabInventory {
 		Bounds TourneyBounds = new Bounds(3627, 9067, 3669, 9109, 0);
 		Bounds TourneyFinal = new Bounds(3610, 8986, 3621, 8997, 0);
 		if (option == def.dropOption) {
+			if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "dropped")) {
+				return;
+			}
 			String dropOptionLabel = def.inventoryOptions != null && def.dropOption - 1 < def.inventoryOptions.length
 					? def.inventoryOptions[def.dropOption - 1] : null;
 			if ("Destroy".equalsIgnoreCase(dropOptionLabel)) {

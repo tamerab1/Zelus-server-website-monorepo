@@ -84,6 +84,9 @@ public class PvpPresetManager {
      * Pass {@code null} to use the preset's {@link PvpPreset#defaultSpellbook()}.
      */
     public static void activate(Player player, PvpPreset preset, SpellBook spellbookOverride) {
+        // Division Rivals: mid-match the containers hold the kit and are wiped on restore
+        if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+            return;
         if (player.pvpPresetActive) {
             deactivate(player, false);
         }

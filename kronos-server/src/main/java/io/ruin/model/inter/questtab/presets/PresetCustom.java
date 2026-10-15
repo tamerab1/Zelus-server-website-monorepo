@@ -134,6 +134,9 @@ public class PresetCustom extends Preset {
 
 	@Override
 	public void selectStart(Player player) {
+		// Division Rivals: mid-match the containers hold the kit and are wiped on restore
+		if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+			return;
         PresetCustom preset = player.customPresets[id - 1];
         if (donatorGroups != null && donatorGroups.length > 0) {
             boolean allowed = false;

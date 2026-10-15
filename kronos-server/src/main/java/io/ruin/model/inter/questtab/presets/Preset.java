@@ -276,6 +276,30 @@ public class Preset extends QuestTabEntry {
 	protected int[] attack, strength, defence, ranged, prayer, magic, hitpoints;
 	protected SpellBook spellBook;
 	protected Item[] invItems = new Item[28], equipItems = new Item[14];
+
+	/* Read-only kit access for Division Rivals (copies; the preset itself is never changed). */
+	public Item[] kitInventory() {
+		Item[] out = new Item[invItems.length];
+		for (int i = 0; i < invItems.length; i++)
+			out[i] = invItems[i] == null ? null : invItems[i].copy();
+		return out;
+	}
+
+	public Item[] kitEquipment() {
+		Item[] out = new Item[equipItems.length];
+		for (int i = 0; i < equipItems.length; i++)
+			out[i] = equipItems[i] == null ? null : equipItems[i].copy();
+		return out;
+	}
+
+	/** {level, xp} for Attack, Strength, Defence, Ranged, Prayer, Magic, Hitpoints (null entries are left alone). */
+	public int[][] kitLevels() {
+		return new int[][]{attack, strength, defence, ranged, prayer, magic, hitpoints};
+	}
+
+	public SpellBook kitSpellBook() {
+		return spellBook;
+	}
 	protected Item[] runePouchItems = new Item[3];
 
 	@Override
@@ -331,6 +355,9 @@ public class Preset extends QuestTabEntry {
 	}
 
 	public void selectStart(Player player) {
+		// Division Rivals: mid-match the containers hold the kit and are wiped on restore
+		if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+			return;
 		player.dialogue(
 			new OptionsDialogue(
 				name,

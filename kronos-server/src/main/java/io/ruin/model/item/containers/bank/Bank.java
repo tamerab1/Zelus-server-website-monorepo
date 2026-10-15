@@ -69,6 +69,12 @@ public class Bank extends ItemContainerG<BankItem> {
 	transient boolean sortSkip, sortRequired;
 
 	public void open() {
+		// Division Rivals: the match kit is phantom gear that CAN be banked, and every container is restored from the
+		// snapshot afterwards -- so no bank (incl. the pocket bank / ::bank) while a Rivals snapshot is active
+		if (io.ruin.model.content.rivals.RivalsSnapshot.active(player)) {
+			player.sendMessage("You can't use your bank during a Rivals match.");
+			return;
+		}
 		asNote = false;
 		/* Component 79 is the sidebar strip that contains the Presets button (120); both are
 		 * hidden by default in the cache and must be explicitly shown. */
@@ -81,6 +87,10 @@ public class Bank extends ItemContainerG<BankItem> {
 		// if(player.getBankPin().requiresVerification(p -> open()))
 		// return;
 		removeBlankItems(); // don't rely solely on the close-triggered cleanup -- guarantee a clean, gap-free bank on every open
+		// Rebuild the tab sizes (varbits 4171-4179) from the items' own tab numbers on every open. The sizes are
+		// saved separately from the items, so they can be stale (e.g. after a restart) and the client then draws no
+		// tabs until a deposit sorts the bank. sort() also re-sends the varbits after the interface opens.
+		sort();
 		player.getPacketSender().sendClientScript(917, "ii", -1, -2);
 		player.setInterfaceUnderlay(-1, -2);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.BANK);
@@ -244,16 +254,12 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	public int deposit(Item item, int amount, boolean message, boolean forced) {
-		// PvP Preset "rental" gear is stamped phantom specifically so it can't leave the
-		// player's possession -- Trade.java and Shop.java already guard their own single-item
-		// entry points against it, but banking had no check at all, letting rental gear be
-		// unequipped and permanently deposited (surviving ::pvpmode off / death cleanup, both
-		// of which only sweep the live Equipment/Inventory containers, never the bank).
-		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
-			if (message)
-				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
+		// wilderness loot keys never leave the inventory (they're lost on death by design)
+		if (item.getId() == 26651) {
+			lootKeyRefused();
 			return 0;
 		}
+		// Spawned (phantom) items may be banked since 2026-10-14 (SpawnedItems): they stay flagged in the bank.
 		if (player.isVisibleInterface(Interface.BANK) || player.isVisibleInterface(Interface.DEPOSIT_BOX) || forced) {
 			ObjType def = item.getDef();
 			int moved = item.move(def.isNote() ? def.notedId : def.id, amount, this);
@@ -262,6 +268,11 @@ public class Bank extends ItemContainerG<BankItem> {
 			return moved;
 		}
 		return 0;
+	}
+
+	private void lootKeyRefused() {
+		player.sendMessage("<col=7f0000>Wilderness loot keys can't be banked.</col> <col=000080>Claim the loot at the Loot Chest"
+			+ " (the coffer north of Edgeville bank) or use the key's Check option.</col>");
 	}
 
 	public int deposit(int itemId, int amount) {
@@ -279,14 +290,7 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 
 		if (item.getId() == 26651) {
-			return 0;
-		}
-
-		// See the other deposit(Item, int, boolean, boolean) overload above -- this is an
-		// independent implementation that doesn't delegate to it, so it needs its own guard.
-		if (io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item)) {
-			if (message)
-				player.sendMessage("<col=ffd700>[PvP Preset]</col> Phantom rental gear cannot be banked.");
+			lootKeyRefused();
 			return 0;
 		}
 

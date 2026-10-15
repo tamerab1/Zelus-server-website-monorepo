@@ -28,6 +28,8 @@ public class Killer {
 	public static final Bounds EDGEVILLE_FARM_SKIP_BOUNDS = new Bounds(3034, 3523, 3125, 3574, 0);
 
 	public static int BASE_BM_REWARD = 50;
+	/** Cap on the blood money one kill can pay (a long streak shutdown included). */
+	public static int MAX_BM_REWARD = 1_000;
 
 	/**
 	 * Extension point for economy/anti-farm modules that need to veto a kill
@@ -57,6 +59,9 @@ public class Killer {
 	/** Set true when {@link #reward} was vetoed by a {@link Hook.ValidateKill} listener. */
 	public boolean rewardBlocked;
 
+	/** Set by PlayerCombat for a PvP Preset death: the victim risked nothing, so the kill pays no blood money. */
+	public boolean presetKill;
+
 	public void reward(Player pKilled, boolean bhTarget) {
 		Verdict verdict = new Verdict();
 		hooks.handle(new Hook.ValidateKill(this, pKilled, verdict));
@@ -71,28 +76,32 @@ public class Killer {
 		long ms = System.currentTimeMillis();
 		if (player.getIpInt() == pKilled.getIpInt()) //don't reward bm for killing someone on your same ip
 			return;
-		if (!pKilled.getPosition().inBounds(EDGEVILLE_FARM_SKIP_BOUNDS)) {
-			boolean logged = player.bmIpLogs.contains(pKilled.getIpInt(), ms, 5L)
-				|| player.bmUserLogs.contains(pKilled.getUserId(), ms, 5L);
-			player.bmIpLogs.add(pKilled.getIpInt(), ms);
-			player.bmUserLogs.add(pKilled.getUserId(), ms);
-			if (logged)
-				return;
-		}
+		// 5-minute repeat-victim cooldown, everywhere: it used to be skipped in EDGEVILLE_FARM_SKIP_BOUNDS (Edge low
+		// wilderness), which let two players kill-trade there for unlimited blood money and PK points (2026-10-15)
+		boolean logged = player.bmIpLogs.contains(pKilled.getIpInt(), ms, 5L)
+			|| player.bmUserLogs.contains(pKilled.getUserId(), ms, 5L);
+		player.bmIpLogs.add(pKilled.getIpInt(), ms);
+		player.bmUserLogs.add(pKilled.getUserId(), ms);
+		if (logged)
+			return;
 
 
 		VarPlayerRepository.SPECIAL_ENERGY.set(player, 1000);
+		// PK points per kill by donator rank. Noble, Gold and Supreme were missing from this chain and fell back to the
+		// base 4 -- less than Elite (2026-10-15)
 		int pkpReward = 4;
 		if (player.isRegularDonator())
 			pkpReward = 5;
 		else if (player.isSuperDonator())
 			pkpReward = 6;
-		else if (player.isEliteDonator())
+		else if (player.isEliteDonator() || player.isNobleDonator())
 			pkpReward = 7;
-		else if (player.isPlatinumDonator())
+		else if (player.isGoldDonator() || player.isPlatinumDonator())
 			pkpReward = 8;
 		else if (player.isLegendaryDonator())
 			pkpReward = 9;
+		else if (player.isSupremeDonator())
+			pkpReward = 10;
 		if (player.getIpInt() != pKilled.getIpInt()) {
 			player.updatePKPoints(pkpReward);
 			player.sendMessage("<shad=000000><col=BA0000>[PK Points]</shad> <col=0C2AC1>You earn <col=C10CB9>(+" + pkpReward + ") pk points <col=0C2AC1>after killing <col=0C2AC1>"
@@ -105,6 +114,7 @@ public class Killer {
 		 * Increment killer kills & spree.
 		 */
 		VarPlayerRepository.PVP_KILLS.increment(player, 1);
+		io.ruin.model.activities.scoreboard.Scoreboard.onPvpKill(player, pKilled);
 		int killerSpree = ++player.currentKillSpree;
 		if (killerSpree > player.highestKillSpree)
 			player.highestKillSpree = killerSpree;
@@ -125,7 +135,7 @@ public class Killer {
 		int targetSpree = pKilled.currentKillSpree; //Spree is set to 0 in death method. (After this method)
 		if (targetSpree >= 5) {
 			String shutdownMessage = KillingSpree.shutdownMessage(player.getName(), pKilled.getName(), targetSpree);
-			Broadcast.WORLD.sendPlain("<img=36> " + Color.PVP_RED.tag() + shutdownMessage);
+			Broadcast.WORLD.sendPlain(Icon.PK_SWORDS.tag() + " " + Color.PVP_RED.tag() + shutdownMessage);
 			ShutdownEmbedMessage.sendDiscordMessage(shutdownMessage);
 			if (targetSpree > player.highestShutdown)
 				player.highestShutdown = targetSpree;
@@ -136,7 +146,17 @@ public class Killer {
 
 
 		/*
-		 * Finally reward the player the blood money and refill their special attack
+		 * Blood money for the kill (only reached past the farming checks above): a base, the killer's own streak, and
+		 * the bounty on the victim's streak that the spree broadcast promises, with the donator bonus, capped.
+		 */
+		int bloodMoney = (int) ((BASE_BM_REWARD + Math.min(100, streakValue(killerSpree)) + bountyValue(targetSpree))
+			* donatorBonus(player));
+		// x the server's blood money event (World.boostBM: "Blood money drops from player kills are now doubled!")
+		if (!presetKill)
+			player.rewardBm(pKilled, Math.min(MAX_BM_REWARD, bloodMoney) * Math.max(1, World.bmMultiplier));
+
+		/*
+		 * Finally refill their special attack
 		 */
 		if (player.getPosition().isWithinDistance(pKilled.getPosition(), 32)) {
 			// only restore special if they're within a 32 tile radius
@@ -181,7 +201,9 @@ public class Killer {
 	}
 
 	private static double donatorBonus(Player player) {
-		if (player.isSecondaryGroup(SecondaryGroup.LEGENDARY_DONATOR)) {
+		if (player.isSecondaryGroup(SecondaryGroup.SUPREME_DONATOR)) { // was missing: the top rank got no bonus (2026-10-15)
+			return 1.30;
+		} else if (player.isSecondaryGroup(SecondaryGroup.LEGENDARY_DONATOR)) {
 			return 1.25;
 		} else if (player.isSecondaryGroup(SecondaryGroup.PLATINUM_DONATOR)) {
 			return 1.20;

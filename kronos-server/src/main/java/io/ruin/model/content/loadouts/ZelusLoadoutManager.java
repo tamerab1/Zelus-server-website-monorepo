@@ -134,6 +134,9 @@ public class ZelusLoadoutManager {
      * Shows a confirmation dialogue then loads the preset.
      */
     public static void loadWithConfirm(Player player, int slot) {
+        // Division Rivals: mid-match the containers hold the kit and are wiped on restore
+        if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+            return;
         ensureListSize(player);
         ZelusLoadout loadout = player.loadouts.get(slot);
         if (loadout.isEmpty()) {

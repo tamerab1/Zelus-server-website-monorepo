@@ -129,6 +129,9 @@ public class GearLoadoutHandler {
 	}
 
 	public static void equipPreset(Player player, GearLoadoutPreset preset) {
+		// Division Rivals: mid-match the containers hold the kit and are wiped on restore
+		if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+			return;
 		if (preset == null) {
 			player.sendMessage("You don't have a preset selected to load.");
 			return;
@@ -169,34 +172,46 @@ public class GearLoadoutHandler {
 	}
 
 	public static void spawnFreeKit(Player player, GearLoadoutPreset kit) {
+		spawnFreeKit(player, kit, true);
+	}
+
+	/**
+	 * @param reopenLoadouts reopen the Gear Loadouts interface afterwards (when loading from it); the Battle Presets
+	 *                       screen passes false so the player stays on it
+	 */
+	public static void spawnFreeKit(Player player, GearLoadoutPreset kit, boolean reopenLoadouts) {
 		if (kit == null) {
 			player.sendMessage("You don't have a free kit selected to load.");
 			return;
 		}
 		kit.normalize();
+		// current gear (real or spawned) goes to the bank first
 		if (!depositCurrentLoadout(player))
 			return;
 
+		// free kits are spawned items: usable, but never bankable, tradeable, droppable or lootable
 		Item[] equipment = kit.getEquipmentItems();
 		for (int slot = 0; slot < equipment.length; slot++) {
 			Item item = equipment[slot];
 			if (item != null)
-				player.getEquipment().set(slot, item.copy());
+				player.getEquipment().set(slot, io.ruin.model.content.pvppreset.SpawnedItems.stamp(item));
 		}
 
 		Item[] inventory = kit.getInventoryItems();
 		for (int slot = 0; slot < inventory.length; slot++) {
 			Item item = inventory[slot];
 			if (item != null)
-				player.getInventory().set(slot, item.copy());
+				player.getInventory().set(slot, io.ruin.model.content.pvppreset.SpawnedItems.stamp(item));
 		}
 
 		applyStats(player, kit);
 		kit.getSpellBook().setActive(player);
 		player.getInventory().sendUpdates();
 		player.getEquipment().sendUpdates();
-		GearLoadoutInterface.open(player);
+		if (reopenLoadouts)
+			GearLoadoutInterface.open(player);
 		player.sendMessage("Free kit loaded!");
+		io.ruin.model.content.cosmetic.Stardust.celebrate(player);
 	}
 
 	private static boolean depositCurrentLoadout(Player player) {

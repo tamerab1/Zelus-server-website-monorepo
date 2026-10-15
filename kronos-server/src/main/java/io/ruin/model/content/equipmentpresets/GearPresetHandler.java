@@ -200,6 +200,9 @@ public final class GearPresetHandler {
 	}
 
 	public static boolean load(Player player, GearPreset preset) {
+		// Division Rivals: mid-match the containers hold the kit and are wiped on restore
+		if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+			return false;
 		if (preset == null || !player.gearPresets.contains(preset))
 			return false;
 		if (!validatePreset(preset)) {

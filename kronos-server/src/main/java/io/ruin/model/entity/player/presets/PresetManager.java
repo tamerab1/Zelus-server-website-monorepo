@@ -257,6 +257,9 @@ public class PresetManager {
     }
 
     public void load(Player player, PresetType type, int index) {
+        // Division Rivals: mid-match the containers hold the kit and are wiped on restore
+        if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+            return;
         try {
             final Preset preset = getPreset(type, index);
             if (preset == null) {

@@ -164,9 +164,9 @@ public class WildernessRewardBox {
 			return 0.87;
 		} else if (player.isSecondaryGroup(SecondaryGroup.ELITE_DONATOR)) {
 			return 0.90;
-		} else if (player.isSecondaryGroup(SecondaryGroup.DONATOR)) {
-			return 0.93;
 		} else if (player.isSecondaryGroup(SecondaryGroup.SUPER_DONATOR)) {
+			return 0.93; // Super and Regular were swapped: Super had worse odds than Regular (2026-10-15)
+		} else if (player.isSecondaryGroup(SecondaryGroup.DONATOR)) {
 			return 0.95;
 		} else {
 			return 1.00;

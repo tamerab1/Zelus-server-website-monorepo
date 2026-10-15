@@ -85,7 +85,10 @@ public class TabAccountManagement {
 	}
 
 	public static String getDonatorRank(Player player) {
-		if (player.isSecondaryGroup(SecondaryGroup.LEGENDARY_DONATOR)) {
+		// Supreme and Super were missing and showed as no rank (2026-10-15)
+		if (player.isSecondaryGroup(SecondaryGroup.SUPREME_DONATOR)) {
+			return SecondaryGroup.SUPREME_DONATOR.tag() + " Supreme";
+		} else if (player.isSecondaryGroup(SecondaryGroup.LEGENDARY_DONATOR)) {
 			return SecondaryGroup.LEGENDARY_DONATOR.tag() + " Legendary";
 		} else if (player.isSecondaryGroup(SecondaryGroup.PLATINUM_DONATOR)) {
 			return SecondaryGroup.PLATINUM_DONATOR.tag() + " Platinum";
@@ -95,6 +98,8 @@ public class TabAccountManagement {
 			return SecondaryGroup.NOBLE_DONATOR.tag() + " Noble";
 		} else if (player.isSecondaryGroup(SecondaryGroup.ELITE_DONATOR)) {
 			return SecondaryGroup.ELITE_DONATOR.tag() + " Elite";
+		} else if (player.isSecondaryGroup(SecondaryGroup.SUPER_DONATOR)) {
+			return SecondaryGroup.SUPER_DONATOR.tag() + " Super";
 		} else if (player.isSecondaryGroup(SecondaryGroup.DONATOR)) {
 			return SecondaryGroup.DONATOR.tag() + " Regular";
 		} else {

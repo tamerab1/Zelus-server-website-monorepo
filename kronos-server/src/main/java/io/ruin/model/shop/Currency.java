@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 @Getter
 public enum Currency {
 	COINS(new ItemCurrencyHandler(ItemID.COINS_995)),
-	DTICKETS(new ItemCurrencyHandler(30035)),
+	// the Donator Ticket (59600, DonatorBond.DONATOR_TICKET_ID). It was 30035 = "Moonrise wines" (fixed 2026-10-15)
+	DTICKETS(new ItemCurrencyHandler(io.ruin.model.item.actions.impl.DonatorBond.DONATOR_TICKET_ID)),
 	GAUNTLET_SHARDS(new ItemCurrencyHandler(10506)),
 	STARDUST(new ItemCurrencyHandler(25527)),
 	ADMIN_TOKEN(new ItemCurrencyHandler(ItemID.SURVIVAL_TOKEN)),
