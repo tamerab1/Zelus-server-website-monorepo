@@ -1,0 +1,6 @@
+# Division Rivals capes (2026-10-15): animated palette-remapped copies of the cape lava textures.
+# texture <srcTex> <newTex> <newSprite> <dir|-> <speed|-> <gradient stops>
+# 218 Challenger: crimson lava with gold sparks (from the Fire cape's 40)
+texture 40 218 24540 - - 0:050000,0.35:2a0000,0.6:7a0000,0.8:c01010,0.92:e0a020,1:ffe080
+# 219 Champion: black and gold celestial shimmer (from the Infernal cape's 59)
+texture 59 219 24541 - - 0:000000,0.4:0d0b14,0.65:2a2418,0.82:8a6a20,0.94:e0c060,1:fff4c0

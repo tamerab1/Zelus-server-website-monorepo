@@ -1,0 +1,10 @@
+# Animated-texture test items: Judicator pieces with texture 56 swapped for the textures in texture_test_textures.txt.
+# variant <src> <newId> <placeholderId> <tradeable> <ops> <name>
+variant 59557 31606 31607 0 -|Wield|-|-|Drop Frostbrand sword
+retexture 31606 56:157
+variant 59557 31608 31609 0 -|Wield|-|-|Drop Soulfire sword
+retexture 31608 56:158
+variant 59552 31610 31611 0 -|Wield|-|-|Drop Voidrend axe
+retexture 31610 56:159
+variant 59555 31612 31613 0 -|Wear|-|-|Drop Emberforged platebody
+retexture 31612 56:160

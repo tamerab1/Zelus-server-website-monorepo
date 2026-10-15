@@ -1,0 +1,3 @@
+# Wilderness Forge (interface 1002) hover sprites: warm "forge glow" copies of the tab and button sprites.
+sprite 4529 24469 c8903c 0.20
+sprite 4525 24470 c8903c 0.20

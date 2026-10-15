@@ -1,0 +1,27 @@
+# Boxing Tournament (2026-10-13): glove tiers T2-T5 (clones of Boxing gloves 7671) and the Boxing Mystery Chest
+# (clone of Advanced donator mystery chest 30449 -- 30449 itself is untouched). Build: build_boxing.sh.
+# variant <src> <newId> <placeholderId> <tradeable> <ops> <name>
+# 7671 colours: 947 glove body, 10471 cuff, 8 black lining.
+# T2 Brawler's Golden Gloves: deep polished gold body, pale-gold cuff, bronze lining
+variant 7671 31750 31751 1 -|Wield|-|-|Drop Brawler's Golden Gloves
+placeholderfrom 31750 14387
+recolor 31750 947:8120,10471:8928,8:7828
+# T3 Obsidian Heavy Gloves: matte charcoal-black body with a deep red cuff
+variant 7671 31752 31753 1 -|Wield|-|-|Drop Obsidian Heavy Gloves
+placeholderfrom 31752 14387
+recolor 31752 947:268,10471:798,8:4
+# T4 Infernal Fury Gloves: lava texture 195 body, ember-orange cuff
+variant 7671 31754 31755 1 -|Wield|-|-|Drop Infernal Fury Gloves
+placeholderfrom 31754 14387
+models 31754 12277:60065,13317:60066,13329:60067
+recolor 31754 10471:5042,8:6
+# T5 Cosmic Champion Gloves: cosmic dual-blend texture 196 body, electric cyan cuff
+variant 7671 31756 31757 1 -|Wield|-|-|Drop Cosmic Champion Gloves
+placeholderfrom 31756 14387
+models 31756 12277:60068,13317:60069,13329:60070
+recolor 31756 10471:32720,8:44034
+# Boxing Mystery Chest: royal flow texture 197 panels, metallic gold frame (54169 = old purple), bright gold corners
+variant 30449 31758 31759 1 Open|Look-in|-|-|Drop Boxing Mystery Chest
+placeholderfrom 31758 14387
+models 31758 59335:60071
+recolor 31758 54169:7976,11212:9956,10969:9055,11068:9143,8635:8890,8627:8878

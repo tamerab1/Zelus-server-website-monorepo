@@ -1,0 +1,2 @@
+# Zelus Relic set + Celestial Halo (2026-10-15 r2): animated cyan with gilded veins (Infernal cape's 59 flow).
+texture 59 228 24550 - - 0:001218,0.35:003844,0.6:00788a,0.76:20c8dc,0.86:a0f4ff,0.93:d8a440,1:fff0a0

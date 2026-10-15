@@ -1,0 +1,17 @@
+# Whip progression line: spec bar (906, cost 500 = 50%) + spec description (1739), copied from 4151.
+int 906 31418 500
+str 1739 31418 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31420 500
+str 1739 31420 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31422 500
+str 1739 31422 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31424 500
+str 1739 31424 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31426 500
+str 1739 31426 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31428 500
+str 1739 31428 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31430 500
+str 1739 31430 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.
+int 906 31432 500
+str 1739 31432 Energy Drain: Deal an attack with 25% increased accuracy that siphons 10% of your target's run energy.

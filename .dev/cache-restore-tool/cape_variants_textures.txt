@@ -1,0 +1,8 @@
+# Infernal cape (texture 59, sprite 318) themed variants -- see CreateRecoloredTextures
+# texture <srcTex> <newTex> <newSprite> <dir> <speed> <gradient stops>
+# Glacial: deep navy -> electric blue -> cyan -> white
+texture 59 154 24466 - - 0:061428,0.3:0b3d8c,0.55:1279e0,0.75:22d4ff,0.9:a8f4ff,1:ffffff
+# Cosmic: deep royal purple -> violet -> magenta -> pale pink
+texture 59 155 24467 - - 0:0c0420,0.3:2e0b6e,0.55:6a17c4,0.75:b42be0,0.9:ff4fd8,1:ffd6f6
+# Void: near-black obsidian with a neon teal / spectral green glow in the hot spots
+texture 59 156 24468 - - 0:020304,0.4:050c0c,0.6:083a33,0.78:0fa585,0.9:2affc6,1:c8fff0

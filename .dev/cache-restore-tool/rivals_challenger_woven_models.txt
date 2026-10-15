@@ -1,0 +1,4 @@
+# Rivals Challenger cape r6 (2026-10-15): the Max cape body faces get the woven crimson texture 225 (BuildWovenTexture).
+model 29616 60139 225 668,673,675,784,815,902,945,972
+model 29624 60140 225 668,673,675,784,815,902,945,972
+model 29630 60141 225 668,673,675,784,815,902,945,972

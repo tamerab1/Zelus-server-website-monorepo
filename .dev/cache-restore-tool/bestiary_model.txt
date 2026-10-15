@@ -1,0 +1,4 @@
+# Ascended Bestiary (2026-10-12): Arena book cover (orange/brown faces) gets the cosmic texture 186
+model 10575 60002 186 7857,3862,5018
+# Astral Spore (pet ascension catalyst): the single-colour Jute seed model, every face cosmic
+model 7215 60036 186 all

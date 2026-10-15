@@ -1,0 +1,6 @@
+# Textures for the textured real items (party hat, santa hat). Recoloured copies of texture 56.
+# texture <srcTex> <newTex> <newSprite> <dir> <speed> <gradient stops>
+# Prismatic: shifting rainbow for the party hat
+texture 56 161 24475 1 2 0:3a0060,0.25:0040ff,0.5:00d0a0,0.75:ffe000,1:ff3070
+# Festive: deep red -> crimson -> gold sparkle for the santa hat
+texture 56 162 24476 2 2 0:2a0000,0.45:b00010,0.8:ff4040,1:ffe080

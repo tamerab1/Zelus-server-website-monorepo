@@ -1,0 +1,16 @@
+# Wilderness Forge (interface 1002): replace placeholder "*" ops and the close button's broken hover sprites.
+str 2 actions Exit -> Close
+int 2 onMouseOverListener 3579 832
+int 2 onMouseLeaveListener 3578 831
+str 9 actions * -> View Weapons
+str 13 actions * -> View Accessories
+str 17 actions [sp]* -> View Armour
+str 21 actions * -> View Jewellery
+str 25 actions * -> View Misc. Items
+str 169 actions * -> Upgrade
+# Tab parent layers carry click flag 2 with no op; the working Upgrade button's parent has 0.
+med 8 clickMask 2 0
+med 12 clickMask 2 0
+med 16 clickMask 2 0
+med 20 clickMask 2 0
+med 24 clickMask 2 0

@@ -1,0 +1,6 @@
+# Zelus donator top row (2026-10-15): animated palette-remapped copies of the cape lava textures.
+# texture <srcTex> <newTex> <newSprite> <dir|-> <speed|-> <gradient stops>
+# 226 Zelus Partyhat: cosmic dark crimson with a gold sheen (Infernal cape's 59)
+texture 59 226 24548 - - 0:020004,0.45:1a0412,0.7:4a0a24,0.86:8a1838,0.95:d8a048,1:fff0b8
+# 227 Zelus H'ween Mask: matte obsidian stone with glowing crimson fissures (Fire cape's 40 cracks)
+texture 40 227 24549 - - 0:040304,0.55:100c0e,0.78:22080c,0.9:7a0814,0.97:e01828,1:ff6050

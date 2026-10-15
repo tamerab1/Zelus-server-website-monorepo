@@ -1,0 +1,26 @@
+# Division Rivals shop items (2026-10-15). Build: CreateItemVariants verify|apply <cache> rivals_items.txt
+# (textures 218/219 first: CreateRecoloredTextures rivals_textures.txt)
+# 2026-10-15 r2: both capes on the Max cape model (29616: no texture; body reds, white borders, gold trims), matte
+# Challenger: crimson body, charcoal borders, gilded gold trim
+# r6 (2026-10-15): Challenger = Max cape mesh + its own woven obsidian / crimson texture 225 (no lava), charcoal + gold trims
+variant 13342 31780 31781 0 -|Wear|-|-|Drop Rivals Challenger cape
+placeholderfrom 31780 31781
+recolor 31780 668:920,673:925,675:927,784:12,815:930,902:6,945:935,972:940,522:8,4300:22,4316:26,5437:18,5458:24,4820:8910,5683:8890,5706:8900,5708:8902,5714:8908
+models 31780 29616:60139,29624:60140,29630:60141
+# Champion: matte black body, ornate gold trim (the trim's hue 9 / sat 6 is what the client's star specks look for)
+variant 13342 31782 31783 0 -|Wear|-|-|Drop Rivals Champion cape
+placeholderfrom 31782 31783
+# r5: Champion = Max cape body with the animated obsidian / crimson velvet (texture 220 on models 60135 / 60136), gold trims
+recolor 31782 668:6,673:8,675:10,784:2,815:12,902:1,945:14,972:18,522:4,4300:10044,4316:10054,5437:10040,5458:10050,4820:9040,5683:9020,5706:9030,5708:9032,5714:9038
+models 31782 29616:60135,29630:60136,29624:60138
+# celestial weapons (permanent: no Dismantle, the kit binds for good): navy (h43 s4) bodies + gold (h8 s6) accents, like Twisted bow (celestial) 31778
+variant 11802 31784 31785 1 -|Wield|-|-|Drop Armadyl godsword (celestial)
+recolor 31784 43059:44584,43072:44594,43092:44606,43113:44620,43117:44624,43121:44628,41257:9001,41265:9009,43328:9030
+variant 27690 31786 31787 1 -|Wield|-|-|Drop Voidwaker (celestial)
+recolor 31786 0:44544,12:44556,16:44560,18:44562,24:44568,33:44577,39:44583,45:44589,43906:8980,46742:9000,50450:8990,51115:9020,51480:9000,51738:9005
+variant 24423 31788 31789 1 -|Wield|-|-|Drop Harmonised nightmare staff (celestial)
+recolor 31788 16:44560,18:44562,20:44564,28:44572,35:44579,7326:9000,7333:9010,7442:8990,35891:8912,36160:8922,36296:8930,61598:44732,61718:44722,61838:44712,61962:44702
+variant 20143 31790 31791 1 -|-|-|-|Drop Celestial ornament kit
+recolor 31790 0:44544,24:44568,28:44572,37:44581,924:8988,933:8997,935:8999,947:9011,960:9024,43063:44599,43067:44603,63424:44736,63822:44750
+variant 6199 31792 31793 1 Open|-|-|-|Drop Rivals mystery box
+recolor 31792 22410:916,2999:9010

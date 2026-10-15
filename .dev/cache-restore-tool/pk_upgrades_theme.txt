@@ -1,0 +1,103 @@
+# PK upgrade items (Wilderness Forge): themed recolours of Barrows sets + PK weapons. See GenThemeRecolors.
+# theme <name> <pHue> <pSat> <pMul> <pAdd> <aHue> <aSat> <aMul> <aAdd> <accentSat> <accentLum>
+theme bloodrage  0 6 1.25 2   0 1 0.35 4   3 70
+theme venomshot 23 6 1.30 4   8 2 1.60 10  8 40
+theme arcanist  49 5 1.10 2   8 6 1.60 20  3 60
+# PK weapons: each has its own palette (see the table in project memory)
+theme tempest      40 0 1.60 10  38 6 0.90 6   8 60
+theme frostfang    36 5 1.80 4   33 2 3.00 10  8 26
+theme venomfang     0 0 0.40 2   22 7 1.10 4   3 127
+theme nightshade   50 1 0.80 2   50 6 1.50 6   3 127
+# granite maul has no bright or saturated colours: a lower accent threshold makes its head molten
+theme obsidian     48 1 0.45 4    5 7 1.40 8   3 50
+theme eclipse      56 6 1.40 8   48 2 0.50 3   3 127
+theme thunderstrike 10 7 1.60 14  40 5 1.60 8  3 127
+theme sunforged     8 1 1.70 10   8 6 1.80 16  3 127
+theme bloodletter   0 1 0.50 2    0 7 0.90 4   8 45
+# Jewellery and accessories
+theme havoc      0 0 0.80 0   50 6 1.30 6   8 25
+theme eldritch  30 1 0.60 2   30 6 2.40 10  3 127
+theme warlord    0 0 0.30 2    0 7 0.80 2   4 127
+theme deadeye   22 6 0.70 0    8 6 0.95 0   5 127
+theme mysticeye 42 1 1.00 0   42 6 0.70 0   4 127
+theme bulwark   30 0 1.60 8   30 4 1.10 2   3 127
+theme reaper     0 0 0.60 2    0 7 0.60 6   3 127
+theme hellstride 48 1 0.60 2   5 7 1.60 6   8 32
+theme chaos     50 1 0.60 2   50 6 1.10 4   3 127
+# Round 3: Armadyl/Bandos sets, torso, crossbows, voidwaker, more jewellery/boots, divine wrath potion
+theme gladiator   0 6 0.70 0    7 5 1.00 0   8 55
+theme celestial  40 3 1.15 4   38 6 0.85 0   3 127
+theme warbringer 48 1 0.60 2    6 7 1.10 0   3 40
+theme skyfall    40 6 1.20 4   38 2 1.10 6   8 60
+theme hellfire    0 0 0.45 2    5 7 1.80 6   4 127
+theme riftbreaker 42 2 0.60 2  31 7 1.20 4   2 127
+theme carnage     8 5 1.30 6    0 7 0.95 0   3 127
+theme agony       0 0 0.80 0   22 7 0.95 0   3 127
+theme retribution 40 1 1.30 4  55 7 0.95 0   3 127
+theme sunbearer   9 2 1.00 0    5 7 1.00 0   3 127
+theme wraithbound 0 0 0.60 2   30 6 1.40 8   3 127
+theme ragefire    0 4 0.60 2    8 7 2.00 6   4 127
+theme windstrider 37 1 1.40 6  37 6 2.20 10  4 127
+theme starweave  50 5 1.10 2    8 7 1.00 0   3 127
+theme wrath       8 3 0.95 0    0 7 2.20 4   5 127
+# item <srcId> <newId> <placeholderId> <tradeable> <ops> <theme> <name...>
+item 4716 31500 31501 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's helm
+item 4718 31502 31503 1 -|Wield|-|-|Drop bloodrage Bloodrage Dharok's greataxe
+item 4720 31504 31505 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platebody
+item 4722 31506 31507 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platelegs
+item 4732 31508 31509 1 -|Wear|-|-|Drop venomshot Venomshot Karil's coif
+item 4734 31510 31511 1 -|Wield|-|-|Drop venomshot Venomshot Karil's crossbow
+item 4736 31512 31513 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leathertop
+item 4738 31514 31515 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leatherskirt
+item 4708 31516 31517 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's hood
+item 4710 31518 31519 1 -|Wield|-|-|Drop arcanist Arcanist Ahrim's staff
+item 4712 31520 31521 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robetop
+item 4714 31522 31523 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robeskirt
+item 11802 31524 31525 1 -|Wield|-|-|Drop tempest Tempest godsword
+item 13652 31526 31527 1 -|Wield|-|-|Drop frostfang Frostfang claws
+item 4587 31528 31529 1 -|Wield|-|-|Drop venomfang Venomfang scimitar
+item 5698 31530 31531 1 -|Wield|-|-|Drop nightshade Nightshade dagger(p++)
+# keep the dagger's green poison tip and gold hilt
+keep 31530 22459,6036
+item 4153 31532 31533 1 -|Wield|-|-|Drop obsidian Obsidian maul
+item 11235 31534 31535 1 -|Wield|-|-|Drop eclipse Eclipse bow
+item 19481 31536 31537 1 -|Wield|-|-|Drop thunderstrike Thunderstrike ballista
+item 13576 31538 31539 1 -|Wield|-|-|Drop sunforged Sunforged warhammer
+item 22613 31540 31541 1 -|Wield|-|-|Drop bloodletter Bloodletter longsword
+item 6585 31542 31543 1 -|Wear|-|-|Drop havoc Amulet of havoc
+item 12002 31544 31545 1 -|Wear|-|-|Drop eldritch Eldritch necklace
+item 11773 31546 31547 1 -|Wear|-|-|Drop warlord Warlord ring
+item 11771 31548 31549 1 -|Wear|-|-|Drop deadeye Deadeye ring
+item 11770 31550 31551 1 -|Wear|-|-|Drop mysticeye Mystic eye ring
+item 12954 31552 31553 1 -|Wield|-|-|Drop bulwark Bulwark defender
+item 7462 31554 31555 1 -|Wear|-|-|Drop reaper Reaper gloves
+item 11840 31556 31557 1 -|Wear|-|-|Drop hellstride Hellstride boots
+item 21795 31558 31559 1 -|Wear|-|-|Drop chaos Cape of chaos
+item 10551 31560 31561 1 -|Wear|-|-|Drop gladiator Gladiator's torso
+item 11826 31562 31563 1 -|Wear|-|-|Drop celestial Celestial Armadyl helmet
+item 11828 31564 31565 1 -|Wear|-|-|Drop celestial Celestial Armadyl chestplate
+item 11830 31566 31567 1 -|Wear|-|-|Drop celestial Celestial Armadyl chainskirt
+item 11832 31568 31569 1 -|Wear|-|-|Drop warbringer Warbringer Bandos chestplate
+item 11834 31570 31571 1 -|Wear|-|-|Drop warbringer Warbringer Bandos tassets
+item 11836 31572 31573 1 -|Wear|-|-|Drop warbringer Warbringer Bandos boots
+item 11785 31574 31575 1 -|Wield|-|-|Drop skyfall Skyfall crossbow
+item 11804 31576 31577 1 -|Wield|-|-|Drop warbringer Warbringer godsword
+item 21902 31578 31579 1 -|Wield|-|-|Drop hellfire Hellfire crossbow
+item 27690 31580 31581 1 -|Wield|-|-|Drop riftbreaker Riftbreaker
+item 19553 31582 31583 1 -|Wear|-|-|Drop carnage Amulet of carnage
+item 19547 31584 31585 1 -|Wear|-|-|Drop agony Necklace of agony
+item 19710 31586 31587 1 -|Wear|-|-|Drop retribution Ring of retribution
+item 25975 31588 31589 1 -|Wear|-|-|Drop sunbearer Sunbearer
+item 19544 31590 31591 1 -|Wear|-|-|Drop wraithbound Wraithbound bracelet
+item 13239 31592 31593 1 -|Wear|-|-|Drop ragefire Ragefire boots
+item 13237 31594 31595 1 -|Wear|-|-|Drop windstrider Windstrider boots
+item 13235 31596 31597 1 -|Wear|-|-|Drop starweave Starweave boots
+item 23685 31598 31599 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(4)
+item 23688 31600 31601 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(3)
+item 23691 31602 31603 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(2)
+item 23694 31604 31605 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(1)
+# keep the potions' corks
+keep 31598 8757
+keep 31600 8757
+keep 31602 8757
+keep 31604 8757

@@ -1,0 +1,19 @@
+# Wildforged PK weapons: spec bar (906) + description (1739) copied from the source weapons.
+int 906 31524 500
+str 1739 31524 The Judgement: Deal an attack that inflicts 37.5% more damage with double accuracy.
+int 906 31526 500
+str 1739 31526 Slice and Dice: Hit 4 times in quick succession, with great accuracy.
+int 906 31528 550
+str 1739 31528 Sever: Deal a slash with increased accuracy that prevents your target from using protection prayers for 5 seconds if it successfully hits.
+int 906 31530 250
+str 1739 31530 Puncture: Deal two quick slashes with 15% increased accuracy and 15% increased damage.
+int 906 31532 600
+str 1739 31532 Quick Smash: Deal an extra attack instantly.
+int 906 31534 550
+str 1739 31534 Descent of Darkness: Deal a double attack that inflicts up to 30% more damage (minimum damage of 5 per hit).
+int 906 31536 650
+str 1739 31536 Concentrated Shot: Deal an attack with 25% increased accuracy and damage, but takes an additional 2.4 seconds to fire.
+int 906 31538 500
+str 1739 31538 Smash: Deal an attack that inflicts 50% more damage and lowers your target's Defence level by 30%.
+int 906 31540 250
+str 1739 31540 Feint: Deal an attack which treats your target's defence as if it was reduced by 75%. It will deal a minimum of 20% extra damage.

@@ -52,6 +52,7 @@ public class DumpInterfaceGroup {
                     }
                 }
                 if (def.originalWidth != 0 || def.originalHeight != 0) sb.append(" w=").append(def.originalWidth).append(" h=").append(def.originalHeight);
+                sb.append(" x=").append(def.originalX).append(" y=").append(def.originalY).append(" parent=").append(def.parentId == -1 ? -1 : (def.parentId & 0xffff)).append(" pos=").append(def.xPositionMode).append("/").append(def.yPositionMode).append(" hidden=").append(def.isHidden);
                 System.out.println(sb);
             }
         }

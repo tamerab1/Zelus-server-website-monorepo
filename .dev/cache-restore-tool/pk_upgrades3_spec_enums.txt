@@ -1,0 +1,9 @@
+# Round 3 PK upgrades: spec bar (906) + description (1739) copied from the source weapons.
+int 906 31576 500
+int 906 31574 500
+int 906 31578 600
+int 906 31580 500
+str 1739 31576 Warstrike: Deal an attack, with double accuracy, that inflicts 21% more damage and drains one of your target's combat stats by the damage dealt.
+str 1739 31574 Armadyl Eye: Deal an attack with double accuracy, also doubles the base activation chance of enchanted bolt effects.
+str 1739 31578 Annihilate: Hit your target with 20% extra damage and in multicombat zones, hit all adjacent targets by 20% less damage.
+str 1739 31580 Disrupt: Summon a powerful bolt of lightning that deals guaranteed magic damage based on your max hit.

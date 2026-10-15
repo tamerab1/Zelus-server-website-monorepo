@@ -1,0 +1,9 @@
+# Perkers magic set "Azurion's": Bloodbark reskin, WHITE + BLUE. Dark bark -> white (sat 0), mid bark -> light grey-white, tan + red accents -> royal blue (hue 42 sat 6).
+# Packed HSL = hue<<10 | sat<<7 | lum. Pairs are find,replace.
+recolor 3346,100,3470,94,3594,88,3350,104,5392,96,6336,118,6331,114,4550,120,3226,84,3230,90,3235,96,3239,102,6315,43826,6319,43832,714,43838,706,43834,970,43840,697,43828,683,43818,545,43810,801,43810,664,43804,677,43812,161,43810,796,43804
+# item <sourceId> <newId> <newPlaceholderId> <name...>
+item 25413 31300 31305 Azurion's helm
+item 25404 31301 31306 Azurion's body
+item 25416 31302 31307 Azurion's legs
+item 25407 31303 31308 Azurion's gauntlets
+item 25410 31304 31309 Azurion's boots

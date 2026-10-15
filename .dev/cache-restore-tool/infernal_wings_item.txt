@@ -1,0 +1,2 @@
+variant 59551 59551 59686 0 -|Wear|-|-|Destroy Infernal Wings
+models 59551 59665:59990,59666:59991

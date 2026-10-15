@@ -1,0 +1,3 @@
+# Infernal Wings (59551): lava texture 59 like the Infernal cape. model <src> <new> <tex> auto
+model 59665 59990 59 auto
+model 59666 59991 59 auto

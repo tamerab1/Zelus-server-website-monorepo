@@ -1,0 +1,13 @@
+# Zelus donator top row: textured model copies (TextureModelFaces <src> <dst> <texture> <colours>)
+model 187 60148 226 926
+model 363 60149 226 926
+model 2635 60150 226 926
+model 3188 60151 227 926
+model 3192 60152 227 926
+model 2438 60153 227 926
+model 189 60154 220 933
+model 366 60155 220 933
+model 2537 60156 220 933
+model 35371 60157 218 536,784,790
+model 32906 60158 218 536,784,790
+model 35742 60159 218 536,784,790

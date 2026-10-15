@@ -1,0 +1,16 @@
+# Zelus home reskin (2026-10-15): cyan / Zelus teal liquid + glyphs with gilded gold, via RecolorObjectSpec.
+# Packed HSL = hue<<10 | sat<<7 | light (hue 0-63, cyan ~30-32, gold ~7-9). No replacement may equal a find colour.
+#
+# Ornate pool of Rejuvenation 29241 (model 32101):
+#   liquid  61594/61598/61603 (h60 s1 l26-35) + 61714/61718 (h60 s2 l18-22)  -> glowing cyan, h30-32 s5-7 l50-76
+#   trim    8121/8128 (h7 s7 l57/64)                                         -> richer gilded gold h8 s5-6 l62/74
+#   rim     90 (lightest grey, 24 faces)                                     -> soft gold accent h8 s4 l88
+object 29241 61594:32574,61598:32580,61603:31436,61714:33714,61718:33720,8121:9022,8128:8906,90:8792
+#
+# Portal Nexus 33410 (model 36052):
+#   filigree 8123/9152/10178 (gold)                    -> gilded gold h8-9 s4-6 l56-86
+#   details  119/127 (white)                           -> bright gold h8-9 s4-5 l90-100 (103 marble kept)
+#   mist     24811/26851/32993/33001/33118 (alpha)     -> soft cyan glow h31 s3-5 l96-108
+#   core     32675/33688/33692/34706 (deep blue)       -> deep teal h31-32 s7 l22-40
+#   glyphs   33715/33728/33740 (bright blue)           -> bright cyan h30 s5-6 l72-100
+object 33410 8123:9016,9152:8902,10178:9814,119:8922,127:9828,24811:32236,26851:32356,32993:32354,33001:32488,33118:32480,32675:32680,33688:32670,33692:32674,34706:33686,33715:31560,33728:31572,33740:31460

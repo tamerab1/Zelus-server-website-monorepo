@@ -1,0 +1,5 @@
+# Combat pet tier textures (2026-10-12, round 2)
+# 186 = T3 "astral nebula": lava flow 40 remapped near-black void > dark violet > deep red > ember gold highlights
+# 187 = T2 "electric flow": icy streaks 134 remapped deep blue > electric cyan > white
+texture 40 186 24502 - - 0:020004,0.55:090212,0.7:1a052e,0.8:340a52,0.88:620a1c,0.94:a8160f,0.98:f06a24,1:ffd38a
+texture 134 187 24503 - - 0:001226,0.35:003f7a,0.6:0090d8,0.8:22e8ff,0.92:9ffcff,1:ffffff

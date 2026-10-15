@@ -1,0 +1,8 @@
+# Boxing Tournament (2026-10-13): animated textures for the top glove tiers and the Boxing Mystery Chest.
+# Build: build_boxing.sh. All three are recoloured copies of lava flow 40 (keeps its animation).
+# 195 = T4 Infernal Fury: molten lava, black crust > deep red > orange > yellow-white cracks
+# 196 = T5 Cosmic Champion: Zelus dual blend, the void/violet of 186 into the electric cyan of 187, gold-white peaks
+# 197 = Boxing Mystery Chest: royal flow, deep plum > violet > magenta > gold sheen
+texture 40 195 24511 - - 0:140000,0.45:4a0500,0.65:a01800,0.8:f04a00,0.9:ff8c10,0.97:ffd040,1:fff4b0
+texture 40 196 24512 - - 0:020008,0.4:10043a,0.58:34097a,0.7:6a18c8,0.8:0a70e0,0.88:22e8ff,0.95:c8a0ff,1:fff0c0
+texture 40 197 24513 - - 0:08000e,0.45:240538,0.65:4e0c70,0.8:9a1890,0.92:e05aa0,1:ffd878

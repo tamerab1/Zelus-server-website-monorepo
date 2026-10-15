@@ -1,0 +1,9 @@
+# Stardust sparkle GFX (2026-10-14): themed copies of the 1388 confetti burst (anim 7636).
+# 4293 gold = Twisted bow aura + celebration effects; 4294 crimson = Scythe of vitur aura.
+# Server: io.ruin.model.content.cosmetic.Stardust. Build: BuildBossVariants gfx apply <cache> stardust_gfx.txt
+#     name      pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme stardust  8    6    1.00 30   10   7    0.90 60   4         80
+theme bloodstar 0    7    0.80 18   62   7    0.90 45   4         80
+#   src  new  theme     texture model
+gfx 1388 4293 stardust  -       -
+gfx 1388 4294 bloodstar -       -

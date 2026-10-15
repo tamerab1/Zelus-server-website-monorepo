@@ -1,0 +1,35 @@
+# Zelus donator top row (2026-10-15), Donation Shop (CustomShop2.DONATOR_STORE) slots 0-9. Build: build_zelus_donator.sh
+# Partyhat: cosmic crimson texture 226
+variant 1038 31794 31795 1 -|Wear|-|-|Drop Zelus Partyhat
+models 31794 187:60148,363:60149,2635:60150
+# H'ween mask: obsidian fissure texture 227; eye holes glowing crimson, teeth charcoal, highlight crimson
+variant 1057 31796 31797 1 -|Wear|-|-|Drop Zelus H'ween Mask
+recolor 31796 0:950,127:24,10349:930
+models 31796 3188:60151,3192:60152,2438:60153
+# Santa hat: crimson velvet texture 220 on the hat, gold trim + pom-pom
+variant 1050 31798 31799 1 -|Wear|-|-|Drop Zelus Santa Hat
+recolor 31798 10351:7998
+models 31798 189:60154,366:60155,2537:60156
+# Relic set (Twisted relic hunter t3), r2: cyan-gilded texture 228 on the coloured panels, light cloth gold, black kept
+variant 24387 31800 31801 1 -|Wear|-|-|Drop Zelus Relic Hood
+recolor 31800 10312:7980,10334:7998
+models 31800 38964:60160,38975:60161,39041:60162
+variant 24389 31802 31803 1 -|Wear|-|-|Drop Zelus Relic Coat
+recolor 31802 4550:7990,10312:7980,10326:7990,10334:7998
+models 31802 38968:60163,38978:60164,39036:60165
+variant 24391 31804 31805 1 -|Wear|-|-|Drop Zelus Relic Legs
+recolor 31804 10291:7970,10304:7975,10312:7980,10326:7990,10334:7998
+models 31804 38961:60166,38973:60167,39044:60168
+variant 24393 31806 31807 1 -|Wear|-|-|Drop Zelus Relic Boots
+recolor 31806 4626:7975
+models 31806 38969:60169,38979:60170,39038:60171
+# Scythe of Vitur: the red detail faces carry the animated crimson lava (texture 218)
+variant 22325 31808 31809 1 -|Wield|-|-|Drop Zelus Scythe of Vitur
+models 31808 35371:60157,32906:60158,35742:60159
+# Cosmic Wings: Angel wings in deep cosmic indigo with a gold-lit edge (client star motes: WeaponSparklesOverlay)
+variant 59573 31810 31811 1 -|Wear|-|-|Drop Zelus Cosmic Wings
+recolor 31810 62:47886,76:47898,94:7998
+# Celestial Halo, r2: cyan-gilded texture 228 on the ring, the rest gold
+variant 12638 31812 31813 1 -|Wear|-|-|Drop Zelus Celestial Halo
+recolor 31812 1730:7980,1969:7980,6984:8010
+models 31812 27643:60172,28832:60173,28838:60174

@@ -1,0 +1,13 @@
+# Ascended Bestiary (2026-10-12): core item of the combat pet system. Clone of Arena book 6891:
+# cosmic-textured cover (model 60002, texture 186), page block recoloured to ornate gold.
+variant 6891 31746 31747 0 Inspect|Read|-|-|Drop Ascended Bestiary
+placeholderfrom 31746 14387
+models 31746 10575:60002
+recolor 31746 32809:8877,32813:8882,32817:8887
+# Astral Spore (2026-10-12): stackable pet ascension catalyst, clone of Jute seed 5306 with the cosmic
+# textured model 60036. Its stack-size models (op100-109 -> plain seed piles) are stripped.
+variant 5306 31748 31749 1 -|-|-|-|Drop Astral Spore
+placeholderfrom 31748 14387
+models 31748 7215:60036
+recolor 31748 4533:49453
+strip 31748 100,101,102,103,104,105,106,107,108,109

@@ -1,0 +1,10 @@
+# Fire cape themes (2026-10-15), SetItemColoursInPlace part: retexture the lava 40 -> 205/206/207 (fire_cape_themes.txt)
+# and recolour the Fire cape trim 924 (red, h0 s7 l28) / 6032 (dark ember border, h5 s7 l16) to match each theme.
+item 59983 recolor 924:35112,6032:35090
+item 59983 retexture 40:208
+item 59984 recolor 924:918,6032:65160
+item 59984 retexture 40:209
+item 59985 recolor 924:22298,6032:22156
+item 59985 retexture 40:207
+# Round 2: Glacial Fire = frost silver (tex 208, grey-blue trim), Umbral Fire = blood shadow (tex 209, crimson trim).
+# 2026-10-15: 59983 renamed "Lunar Fire cape" (SetItemName); the silver look didn't read as glacial. Spec names below are historical.

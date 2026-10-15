@@ -1,0 +1,3 @@
+# Rivals capes (2026-10-15): replace the Max cape worn options they inherited (Home / Crafting Guild / Guild Teleports...)
+item 31780 inv=-|Wear|Teleport|-|Drop worn=Teleport
+item 31782 inv=-|Wear|Teleport|Features|Drop worn=Teleport|Features|Rejuvenate

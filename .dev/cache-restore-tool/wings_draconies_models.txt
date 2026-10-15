@@ -1,0 +1,17 @@
+# Textured models (TextureModelFaces): model <src> <new> <tex> <colours|auto>
+# Fallen Angel Wings (59575, model 59698 = worn + inventory) -> 4 variants
+model 59698 60079 198 all
+model 59698 60080 199 all
+model 59698 60081 200 all
+model 59698 60082 201 all
+# Draconies set, in place (PatchItemModelRefs): hood worn/inv/head, platebody, platelegs, warhammer, wings
+model 57339 60083 202 auto
+model 57340 60084 202 auto
+model 49461 60085 202 auto
+model 57341 60086 202 auto
+model 57342 60087 202 auto
+model 57343 60088 202 auto
+model 57344 60089 202 auto
+model 57345 60090 202 auto
+model 57346 60091 202 auto
+model 57347 60092 202 auto

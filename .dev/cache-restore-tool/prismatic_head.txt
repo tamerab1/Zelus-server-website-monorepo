@@ -1,0 +1,3 @@
+# Cape Forge Master (NPC 3873) dialogue head (2026-10-15): the Prismatic partyhat's chathead model. The item's head
+# model is the vanilla red hat (29); its worn model 59849 has texture 161 on all 52 faces, so the head copy gets the same.
+model 29 60131 161 all

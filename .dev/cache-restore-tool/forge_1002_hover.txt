@@ -1,0 +1,8 @@
+# Wilderness Forge (interface 1002) hover effects: script 44 (if_setgraphic) swaps to the glow sprites
+# made by forge_hover_sprites.txt (24469 tab, 24470 button) and back on mouse leave.
+hover 9 44 24469 4529
+hover 13 44 24469 4529
+hover 17 44 24469 4529
+hover 21 44 24469 4529
+hover 25 44 24469 4529
+hover 169 44 24470 4525

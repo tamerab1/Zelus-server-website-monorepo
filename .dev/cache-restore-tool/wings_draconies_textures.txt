@@ -1,0 +1,13 @@
+# Fallen Angel Wings variants + Draconies retexture (2026-10-14). Build: build_wings_draconies.sh
+# CreateRecoloredTextures: texture <srcTex> <newTex> <newSprite> <dir> <speed> <stops>
+# Each wing texture scrolls a different way / speed so the four variants animate differently.
+# Seraphic Wings: holy gold, slow upward drift
+texture 59 198 24514 1 1 0:3a2a08,0.4:b08a30,0.75:ffe070,1:ffffff
+# Voidborne Wings: violet void cells, steady sideways flow
+texture 56 199 24515 2 2 0:05000e,0.4:2a0a5a,0.75:9040ff,1:f0d0ff
+# Frostfall Wings: glacier ice, falling
+texture 59 200 24516 3 3 0:020a1a,0.4:0a4a8a,0.75:70d8ff,1:ffffff
+# Brimstone Wings: crimson inferno, fast churn
+texture 59 201 24517 4 4 0:140000,0.4:8a0a00,0.75:ff5a10,1:ffe080
+# Draconies set: emerald dragonfire
+texture 59 202 24518 1 2 0:020a02,0.4:0a4a14,0.75:30d060,1:e0ffb0

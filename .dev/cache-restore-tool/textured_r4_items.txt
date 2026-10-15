@@ -1,0 +1,79 @@
+# Round 4 textured items (generated). variant + models lines for CreateItemVariants
+variant 24288 31626 31627 1 -|Wear|-|-|Drop Nightweaver hat
+models 31626 38918:59867,38911:59868,38914:59869
+variant 24291 31628 31629 1 -|Wear|-|-|Drop Nightweaver robe top
+models 31628 38917:59870,38912:59871,38915:59872
+variant 24294 31630 31631 1 -|Wear|-|-|Drop Nightweaver robe bottom
+models 31630 38916:59873,38910:59874,38913:59875
+variant 13379 31632 31633 1 -|Wear|-|-|Drop Kingsguard helm
+models 31632 30982:59876,29696:59877,29788:59878
+variant 13381 31634 31635 1 -|Wear|-|-|Drop Kingsguard body
+models 31634 30978:59879,29774:59880,29713:59881,29806:59882,29800:59883
+variant 13380 31636 31637 1 -|Wear|-|-|Drop Kingsguard greaves
+models 31636 30981:59884,29708:59885,29794:59886
+variant 13378 31638 31639 1 -|Wear|-|-|Drop Kingsguard boots
+models 31638 30980:59887,29783:59888,29815:59889
+variant 13377 31640 31641 1 -|Wear|-|-|Drop Kingsguard gloves
+models 31640 30979:59890,29698:59891,29790:59892
+variant 13111 31642 31643 1 -|Wield|Teleport|-|Drop Wildfang blade
+models 31642 29157:59893,29085:59894,29092:59895
+variant 12853 31644 31645 1 -|Wear|-|-|Drop Amulet of the forsaken
+models 31644 28995:59896,28991:59897
+variant 23528 31646 31647 1 -|Wield|-|-|Drop Broodmother cudgel
+models 31646 37337:59898,37284:59899,37285:59900
+variant 30569 31648 31649 1 -|Wield|-|-|Drop Grizzlemaw chainmace
+models 31648 59486:59901,59487:59902
+variant 27610 31650 31651 1 -|Wield|-|-|Drop Skyhunter bow
+models 31650 47098:59903,46963:59904,46964:59905
+variant 30521 31652 31653 1 -|Wear|-|-|Drop Glacius mask
+models 31652 59441:59906,59433:59907,59438:59908
+variant 30522 31654 31655 1 -|Wear|-|-|Drop Glacius robe top
+models 31654 59440:59909,59435:59910,59436:59911
+variant 30523 31656 31657 1 -|Wear|-|-|Drop Glacius robe bottom
+models 31656 59439:59912,59434:59913,59437:59914
+variant 28933 31658 31659 1 -|Wear|-|-|Drop Solarflare helm
+models 31658 52235:59915,50791:59916,50993:59917
+variant 28936 31660 31661 1 -|Wear|-|-|Drop Solarflare cuirass
+models 31660 52237:59918,50889:59919,51114:59920
+variant 28939 31662 31663 1 -|Wear|-|-|Drop Solarflare chausses
+models 31662 52251:59921,50855:59922,51065:59923
+variant 25001 31664 31665 1 -|Wear|-|-|Drop Wildstalker hood
+models 31664 41089:59924,40911:59925,40934:59926
+variant 25004 31666 31667 1 -|Wear|-|-|Drop Wildstalker top
+models 31666 41074:59927,40923:59928,40946:59929
+variant 25007 31668 31669 1 -|Wear|-|-|Drop Wildstalker trousers
+models 31668 41092:59930,40918:59931,40941:59932
+variant 25010 31670 31671 1 -|Wear|-|-|Drop Wildstalker boots
+models 31670 41082:59933,40928:59934,40950:59935
+variant 21298 31672 31673 1 -|Wear|-|-|Drop Magmacore helmet
+models 31672 33147:59936,33100:59937,33109:59938
+variant 21301 31674 31675 1 -|Wear|-|-|Drop Magmacore platebody
+models 31674 33149:59939,33108:59940,33107:59941,33117:59942,33116:59943
+variant 21304 31676 31677 1 -|Wear|-|-|Drop Magmacore platelegs
+models 31676 33148:59944,33106:59945,33115:59946
+variant 24034 31678 31679 1 -|Wear|-|-|Drop Starheart full helm
+models 31678 38755:59947,38020:59948,38156:59949
+variant 24037 31680 31681 1 -|Wear|-|-|Drop Starheart platebody
+models 31680 38757:59950,38096:59951,38231:59952
+variant 24040 31682 31683 1 -|Wear|-|-|Drop Starheart platelegs
+models 31682 38752:59953,38064:59954,38199:59955
+variant 24043 31684 31685 1 -|Wear|-|-|Drop Starheart boots
+models 31684 38751:59956,38118:59957,38255:59958
+variant 24046 31686 31687 1 -|Wear|-|-|Drop Starheart gauntlets
+models 31686 38750:59959,38053:59960,38186:59961
+variant 1038 31688 31689 1 -|Wear|-|-|Drop Galaxy partyhat
+models 31688 2635:59962,187:59963,363:59964
+variant 1038 31690 31691 1 -|Wear|-|-|Drop Toxic partyhat
+models 31690 2635:59965,187:59966,363:59967
+variant 1038 31692 31693 1 -|Wear|-|-|Drop Inferno partyhat
+models 31692 2635:59968,187:59969,363:59970
+variant 1038 31694 31695 1 -|Wear|-|-|Drop Frostbite partyhat
+models 31694 2635:59971,187:59972,363:59973
+variant 1050 31696 31697 1 -|Wear|-|-|Drop Aurora santa hat
+models 31696 2537:59974,189:59975,366:59976
+variant 1050 31698 31699 1 -|Wear|-|-|Drop Midnight santa hat
+models 31698 2537:59977,189:59978,366:59979
+variant 1050 31700 31701 1 -|Wear|-|-|Drop Candy cane santa hat
+models 31700 2537:59980,189:59981,366:59982
+variant 1050 31702 31703 1 -|Wear|-|-|Drop Golden santa hat
+models 31702 2537:59983,189:59984,366:59985

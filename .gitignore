@@ -79,3 +79,16 @@ Thumbs.db
 *.zip
 .dev/recent_paths.dat
 .dev/interface_editor.log
+
+# local runtime artefacts (2026-10-15): JVM heap dumps, local server run logs, the original-cache snapshot
+*.hprof
+server_run_*.log
+.dev/orig_cache_snapshot/
+.dev/cache-restore-tool/DumpSeqInfo.jar
+# cache tool build output and scratch (track sources, specs and build scripts only)
+.dev/cache-restore-tool/out*/
+.dev/cache-restore-tool/fatjar/
+.dev/cache-restore-tool/batch_output/
+*.class
+*.bak_*
+.dev/cache-restore-tool/*.rs2asm

@@ -1,0 +1,7 @@
+# Perkers range set "Verdanox's": Eclipse moon reskin, GREEN + ORANGE. Dark leather -> emerald (hue 22 sat 6), gold -> orange (hue 3-4 sat 7).
+# Packed HSL = hue<<10 | sat<<7 | lum. Pairs are find,replace.
+recolor 5524,23322,5772,23314,5648,23318,6024,23310,5910,23324,26776,23326,26780,23330,26785,23336,26772,23322,26892,23314,4550,5072,6693,5042,7085,5047,5921,4013,6703,5052,6969,5060,6978,5066,6988,5076,6554,4008,6439,5044,6435,5040
+# item <sourceId> <newId> <newPlaceholderId> <name...>
+item 29010 31320 31323 Verdanox's helm
+item 29004 31321 31324 Verdanox's chestplate
+item 29007 31322 31325 Verdanox's tassets

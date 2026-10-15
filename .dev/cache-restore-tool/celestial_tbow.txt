@@ -1,0 +1,4 @@
+# Twisted bow (celestial) (2026-10-14): Twisted bow 20997 clone, navy body + gold accents. Passive gold stardust while
+# wielded: io.ruin.model.content.cosmetic.Stardust. Build: CreateItemVariants apply <cache> celestial_tbow.txt
+variant 20997 31778 31779 1 -|Wield|-|-|Drop Twisted bow (celestial)
+recolor 31778 0:44544,8:44552,16:44560,24:44568,33:44577,41:44585,10318:9038,10334:9054,13223:9148,14236:9133

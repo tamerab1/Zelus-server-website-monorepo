@@ -1,0 +1,9 @@
+# Fallen Angel Wings variants (CreateItemVariants): variant <src> <new> <placeholder> <tradeable> <ops> <name>
+variant 59575 31760 31761 0 -|Wear|-|-|Drop Seraphic Wings
+models 31760 59698:60079
+variant 59575 31762 31763 0 -|Wear|-|-|Drop Voidborne Wings
+models 31762 59698:60080
+variant 59575 31764 31765 0 -|Wear|-|-|Drop Frostfall Wings
+models 31764 59698:60081
+variant 59575 31766 31767 0 -|Wear|-|-|Drop Brimstone Wings
+models 31766 59698:60082

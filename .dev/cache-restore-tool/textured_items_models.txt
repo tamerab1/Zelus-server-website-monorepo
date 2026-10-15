@@ -1,0 +1,30 @@
+# Textured copies of untextured item models (see TextureModelFaces). v2 ids 59848-59857: v1 (59838-59847)
+# was encoded without vertex skins (worn items froze) and is unused now. model <src> <new> <texId> <colours|all>
+# Prismatic partyhat (red partyhat 1038: inv 2635, male 187, female 363)
+model 2635 59848 161 926
+model 187 59849 161 926
+model 363 59850 161 926
+# Festive santa hat (1050: inv 2537, male 189, female 366) -- red part only, white trim kept
+model 2537 59851 162 933
+model 189 59852 162 933
+model 366 59853 162 933
+# Mystery box (6199: inv 2426) -- box only, ribbon kept
+model 2426 59854 159 2999
+# Dragon platelegs (4087: inv 5026, male 5024, female 5025)
+model 5026 59855 160 926,912,908
+model 5024 59856 160 926,912,908
+model 5025 59857 160 926,912,908
+# Dragonfire platebody (21892: inv 35103, male 34630, female 34645) -- red plates; black, dark trim and silver kept
+model 35103 59858 160 902,912,916,920,922,926
+model 34630 59859 160 902,912,916,920,922,926
+model 34645 59860 160 902,912,916,920,922,926
+# Dragonfire full helm (11335: inv 26662, male 19861, female 254) -- red parts; gold trims, silver and skin kept.
+# The old female model 254 is almost all one colour (25238), so it is textured whole.
+model 26662 59861 160 902,914,918,922,924,929,933
+model 19861 59862 160 902,914,916,918,920,922,924
+model 254 59863 160 all
+# Volcanic whip (31428: inv 5412, worn 5409) -- lash body (0 inv / 16 worn); orange coil edges kept
+model 5412 59864 160 0
+# v1 59865 textured only colour 16, which in this WORN model is a nearly invisible ghost layer (alpha 240);
+# the solid lash is colour 528 (68 faces). v2 59866 textures both, so the worn lash shows the texture.
+model 5409 59866 160 16,528

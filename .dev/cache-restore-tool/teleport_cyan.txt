@@ -1,0 +1,7 @@
+# Cyan Arceuus teleport (2026-10-13): the server's main teleport effect (ModernTeleport.teleport / Player.StartTeleport).
+# 1822 / 1823 = the gray Arceuus teleport column (start / arrive). Build: BuildBossVariants gfx apply <cache> teleport_cyan.txt
+#     name pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme cyan 31   6    1.10 6    30   4    1.00 0    4         80
+#   src  new  theme texture model
+gfx 1822 4291 cyan  -       -
+gfx 1823 4292 cyan  -       -

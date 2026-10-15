@@ -1,0 +1,10 @@
+# Round 4 textured pet items
+variant 34042 31704 31705 0 -|-|-|-|Drop Seraphic Aggy
+models 31704 61851:59987
+variant 60330 31706 31707 0 -|-|-|-|Drop Bloomfire sprout
+models 31706 28265:59988
+# Sylvaroth's Sprout 60330 links placeholder 60331, which is actually the Draconic Cape (existing
+# data bug), so build this placeholder from a proper template (red partyhat's 14387).
+placeholderfrom 31706 14387
+variant 60391 31708 31709 0 -|-|-|-|Drop Emberscale Draco
+models 31708 32682:59989

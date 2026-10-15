@@ -1,0 +1,124 @@
+60436 name=null models=[58596] anim=null
+60438 name=null models=[58598] anim=null
+60439 name=null models=[58599] anim=null
+60440 name=null models=[58600] anim=null
+60441 name=null models=[58601] anim=null
+60442 name=null models=[58602] anim=null
+60443 name=null models=[58603] anim=null
+60444 name=null models=[58604] anim=null
+60453 name=null models=[58532] anim=13564
+60454 name=null models=[58532] anim=13564
+61180 name=null models=[61735] anim=null
+62201 name=null models=[61736] anim=null
+62202 name=null models=[61737] anim=null
+62203 name=null models=[61738] anim=null
+62204 name=null models=[61739] anim=null
+62205 name=null models=[61740] anim=null
+62206 name=null models=[61741] anim=null
+62207 name=null models=[61742] anim=null
+62208 name=Dead tree models=[61748] anim=null
+62214 name=Dead tree models=[61754] anim=null
+62219 name=Cave models=[61731] anim=null
+62227 name=null models=[61713, 61714, 61715, 61716] anim=null
+62228 name=null models=[61717, 61718] anim=null
+62229 name=null models=[61719, 61720, 61721, 61722] anim=null
+62230 name=null models=[61723] anim=null
+62231 name=null models=[61723] anim=null
+62232 name=null models=[61724] anim=null
+62234 name=null models=[61725, 61726] anim=null
+62235 name=null models=[61725, 61726] anim=null
+62236 name=null models=[61727] anim=null
+62238 name=null models=[61728] anim=null
+62239 name=null models=[61728] anim=null
+62240 name=null models=[61729] anim=null
+62241 name=null models=[61730] anim=null
+62246 name=null models=[61679] anim=null
+62248 name=Church pew models=[61681] anim=null
+62249 name=Church pew models=[61682] anim=null
+62250 name=Church pew models=[61680] anim=null
+62252 name=null models=[3509] anim=null
+62253 name=Stand models=[61852] anim=5906
+62254 name=Staircase models=[18579] anim=null
+62258 name=Throne models=[61683] anim=null
+62259 name=null models=[61684] anim=null
+62263 name=null models=[] anim=null
+62265 name=null models=[] anim=null
+62267 name=Rocks models=[9235] anim=null
+62279 name=null models=[61615] anim=null
+62280 name=null models=[61616] anim=null
+62281 name=null models=[61617] anim=null
+62282 name=null models=[61618] anim=null
+62283 name=null models=[61619] anim=null
+62284 name=null models=[61620] anim=null
+62285 name=null models=[61621] anim=null
+62286 name=null models=[61622] anim=null
+62287 name=null models=[61623] anim=null
+62288 name=null models=[61624] anim=null
+62289 name=null models=[61625] anim=null
+62290 name=null models=[61626] anim=null
+62291 name=null models=[61627] anim=null
+62292 name=null models=[61628] anim=null
+62293 name=null models=[61629] anim=null
+62294 name=null models=[61630] anim=null
+62295 name=null models=[61631] anim=null
+62296 name=null models=[61632] anim=null
+62297 name=null models=[61633] anim=null
+62298 name=null models=[61634] anim=null
+62299 name=null models=[61635] anim=null
+62300 name=null models=[61636] anim=null
+62301 name=null models=[61637] anim=null
+62302 name=null models=[61638] anim=null
+62303 name=null models=[61639] anim=null
+62304 name=null models=[61640] anim=null
+62305 name=null models=[61641] anim=null
+62306 name=null models=[61642] anim=null
+62307 name=null models=[61643] anim=null
+62308 name=null models=[61644] anim=null
+62309 name=null models=[61645] anim=null
+62310 name=null models=[61646] anim=null
+62311 name=null models=[61647] anim=null
+62312 name=null models=[61648] anim=null
+62313 name=null models=[61649] anim=null
+62314 name=null models=[61650] anim=null
+62315 name=null models=[61651] anim=null
+62316 name=null models=[61652] anim=null
+62317 name=null models=[61653] anim=null
+62318 name=null models=[61654] anim=null
+62319 name=null models=[61655] anim=null
+62320 name=null models=[61656] anim=null
+62321 name=null models=[61657] anim=null
+62322 name=null models=[61658] anim=null
+62323 name=null models=[61659] anim=null
+62324 name=null models=[61660] anim=null
+62325 name=null models=[61661] anim=null
+62326 name=null models=[61662] anim=null
+62327 name=null models=[61663] anim=null
+62328 name=null models=[61664] anim=null
+62329 name=null models=[61665] anim=null
+62330 name=null models=[61666] anim=null
+62331 name=null models=[61667] anim=null
+62332 name=null models=[61668] anim=null
+62333 name=null models=[61669] anim=null
+62334 name=null models=[61670] anim=null
+62335 name=null models=[61671] anim=null
+62336 name=null models=[61672] anim=null
+62337 name=null models=[61673] anim=null
+62338 name=null models=[61674] anim=null
+62339 name=null models=[61675] anim=null
+62340 name=null models=[61676] anim=null
+62341 name=null models=[61677] anim=null
+62342 name=null models=[61678] anim=null
+62368 name=Cathedral door models=[22838] anim=null
+62369 name=Cathedral door models=[22838] anim=null
+62372 name=null models=[] anim=null
+62374 name=null models=[] anim=null
+62378 name=Bookcase models=[12415] anim=null
+62386 name=Tree models=[1570] anim=null
+62387 name=Tree models=[1570] anim=null
+
+=== SUMMARY ===
+objects requested: 117, failures: 0
+distinct models referenced: 115
+[1570, 3509, 9235, 12415, 18579, 22838, 58532, 58596, 58598, 58599, 58600, 58601, 58602, 58603, 58604, 61615, 61616, 61617, 61618, 61619, 61620, 61621, 61622, 61623, 61624, 61625, 61626, 61627, 61628, 61629, 61630, 61631, 61632, 61633, 61634, 61635, 61636, 61637, 61638, 61639, 61640, 61641, 61642, 61643, 61644, 61645, 61646, 61647, 61648, 61649, 61650, 61651, 61652, 61653, 61654, 61655, 61656, 61657, 61658, 61659, 61660, 61661, 61662, 61663, 61664, 61665, 61666, 61667, 61668, 61669, 61670, 61671, 61672, 61673, 61674, 61675, 61676, 61677, 61678, 61679, 61680, 61681, 61682, 61683, 61684, 61713, 61714, 61715, 61716, 61717, 61718, 61719, 61720, 61721, 61722, 61723, 61724, 61725, 61726, 61727, 61728, 61729, 61730, 61731, 61735, 61736, 61737, 61738, 61739, 61740, 61741, 61742, 61748, 61754, 61852]
+distinct anims referenced: 2
+[5906, 13564]

@@ -1,0 +1,3 @@
+# Wilderness Forge (interface 1002): the scrollbar (171) onLoad script 63 pointed at 837:35 (54853667),
+# left over from the interface 1002 was copied from. Point it at 1002:35 (65667107), the list layer.
+int 171 onLoadListener 54853667 65667107

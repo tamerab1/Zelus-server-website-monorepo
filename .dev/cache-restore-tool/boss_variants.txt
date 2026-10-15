@@ -1,0 +1,36 @@
+# Boss variants (2026-10-13). Build: build_boss_variants.sh (BuildBossVariants, see its header).
+# Server: io.ruin.model.activities.bosses.variants.* (BossVariant + one combat class each) -- keep the gfx ids in sync.
+#     name    pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme crimson 0    5    0.45 4    0    7    0.70 20   4         80
+theme azure   42   5    0.35 6    36   7    0.60 45   4         80
+theme void    48   3    0.30 3    52   6    0.60 30   4         80
+theme voidfx  50   6    0.50 25   52   7    0.60 40   4         80
+theme toxic   18   4    0.50 6    14   7    0.60 40   4         80
+theme frost   38   2    0.60 40   32   4    0.40 75   4         80
+theme storm   8    3    0.45 10   10   7    0.50 60   4         80
+theme jade    25   4    0.40 8    26   6    0.55 45   4         80
+#    key         src   npc   theme   tex frac firstModel scale lvl name
+boss harrowlord  11293 30594 crimson 188 0.6  60037      150   420 Sanguine Harrowlord
+boss pyretyrant  12564 30595 azure   189 0.6  60038      210   470 Azureflame Pyretyrant
+boss gloomfang   12580 30596 void    190 0.6  60039      150   560 Gloomfang Devourer
+boss venomtongue 12569 30597 toxic   191 0.6  60040      150   440 Venomtongue Abomination
+boss rimeweaver  7649  30598 frost   192 0.6  60041      140   480 Rimeweaver Hexer
+boss thunderborn 6716  30599 storm   193 0.6  60049      140   510 Thunderborn Warlord
+boss deadeye     6723  30600 jade    194 0.6  60056      140   490 Jadeshot Deadeye
+#   src  new  theme   texture model
+gfx 374  4275 crimson -   -
+gfx 375  4276 crimson -   -
+gfx 377  4277 crimson -   -
+gfx 1637 4278 azure   -   -
+gfx 157  4279 azure   -   -
+gfx 1482 4280 void    190 60063
+gfx 381  4281 voidfx  -   -
+gfx 383  4282 voidfx  -   -
+gfx 1356 4283 toxic   -   -
+gfx 360  4284 frost   -   -
+gfx 361  4285 frost   -   -
+gfx 1355 4286 frost   -   -
+gfx 369  4287 frost   -   -
+gfx 1940 4288 storm   -   -
+gfx 1120 4289 jade    -   -
+gfx 1484 4290 jade    194 60064

@@ -10,3 +10,5 @@
 *.exe binary
 
 tool-cache-packer binary
+*.dat binary
+*.hprof binary

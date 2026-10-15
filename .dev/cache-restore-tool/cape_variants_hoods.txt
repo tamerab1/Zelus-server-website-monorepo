@@ -1,0 +1,8 @@
+# Matching max hoods for the themed max capes (Infernal max hood 21282 has no texture -- recolour only).
+# Skin/hair/eye colours on the worn + chathead models (4550, 4661, 1944, 6798, 127, 43303, 4, 12) are deliberately left alone.
+variant 21282 31412 31413 0 -|Wear|-|-|Drop Glacial max hood
+recolor 31412 0:38056,16:38082,945:35651,972:34523,5043:34507,4820:34540,5458:34538
+variant 21282 31414 31415 0 -|Wear|-|-|Drop Cosmic max hood
+recolor 31414 0:51458,16:51469,945:52008,972:10054,5043:10031,4820:10064,5458:10062
+variant 21282 31416 31417 0 -|Wear|-|-|Drop Void max hood
+recolor 31416 0:32896,16:32906,945:32418,972:31682,5043:31661,4820:31694,5458:31692

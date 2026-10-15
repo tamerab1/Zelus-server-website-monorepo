@@ -1,0 +1,51 @@
+# Tiered combat pets (2026-10-12, round 2). Build: build_tier_pets.sh (BuildTierPets, see its header).
+# T1 bronze/iron recolour; T2 cobalt/cyan + animated electric texture 187; T3 obsidian + cosmic nebula texture 186.
+#     name pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme t1   37   1   0.85 12   6    5   0.80 18   4         85
+theme t2   42   6   0.75 6    31   7   0.55 62   4         80
+theme t3   48   2   0.35 4    0    6   0.45 25   4         80
+# effect (spotanim) tints: g1 bronze, g2 electric cyan, g3 violet (the textures carry the colour mix)
+theme g1   6    5   0.80 20   8    4   0.70 45   4         80
+theme g2   32   7   0.55 55   30   7   0.40 80   4         80
+theme g3   50   5   0.45 18   0    7   0.45 40   4         80
+#   key        srcNpc scale zoom  xan yan  xOff yOff [itemModel]
+pet doubt      3477   80    3600  150 1900 0    0
+pet luke       604    75    3200  150 1900 0    0
+pet maledictus 11246  26    15000 150 1900 0    0
+pet tzhaar     7035   75    3000  150 1900 0    0    60000
+pet jalxil     7698   40    7800  150 1900 0    0
+pet xamphur    10955  42    6500  150 1900 0    0
+#    key        theme npc   item  ph    tex[:frac] texModels         texItemModel name
+tier doubt      t1    30576 31710 31711 -          -                 -     Voidmind Hexer (T1)
+tier doubt      t2    30577 31712 31713 187        60003             -     Voidmind Hexer (T2)
+tier doubt      t3    30578 31714 31715 186        59992             -     Voidmind Hexer (T3)
+tier luke       t1    30579 31716 31717 -          -                 -     Ironknuckle Brawler (T1)
+tier luke       t2    30580 31718 31719 187        60004             -     Ironknuckle Brawler (T2)
+tier luke       t3    30581 31720 31721 186        59993             -     Ironknuckle Brawler (T3)
+tier maledictus t1    30582 31722 31723 -          -                 -     Spectral Soulbinder (T1)
+tier maledictus t2    30583 31724 31725 187:0.95   60005             -     Spectral Soulbinder (T2)
+tier maledictus t3    30584 31726 31727 186:0.95   59994             -     Spectral Soulbinder (T3)
+tier tzhaar     t1    30585 31728 31729 -          -                 -     Magmafist Smasher (T1)
+tier tzhaar     t2    30586 31730 31731 187        60006,60007,60008 60009 Magmafist Smasher (T2)
+tier tzhaar     t3    30587 31732 31733 186        59995,59996,59997 60001 Magmafist Smasher (T3)
+tier jalxil     t1    30588 31734 31735 -          -                 -     Magma Skirmisher (T1)
+tier jalxil     t2    30589 31736 31737 187        60010             -     Magma Skirmisher (T2)
+tier jalxil     t3    30590 31738 31739 186        59998             -     Magma Skirmisher (T3)
+tier xamphur    t1    30591 31740 31741 -          -                 -     Starbound Invoker (T1)
+tier xamphur    t2    30592 31742 31743 187:0.9    60011             -     Starbound Invoker (T2)
+tier xamphur    t3    30593 31744 31745 186:0.9    59999             -     Starbound Invoker (T3)
+# Tiered attack effects: gfx <srcSpotanim> <t1> <t2> <t3> <t2Model> <t3Model>
+# T1 = bronze recolour; T2/T3 = every face of a copy of the effect model textured with 187/186, plus the g2/g3 tint.
+# Server table: combatpet/TierEffects.java (keep in sync).
+gfx 380  4239 4240 4241 60012 60024
+gfx 381  4242 4243 4244 60013 60025
+gfx 383  4245 4246 4247 60014 60026
+gfx 2010 4248 4249 4250 60015 60027
+gfx 2002 4251 4252 4253 60016 60028
+gfx 2005 4254 4255 4256 60017 60029
+gfx 1028 4257 4258 4259 60018 60030
+gfx 1377 4260 4261 4262 60019 60031
+gfx 1907 4263 4264 4265 60020 60032
+gfx 1908 4266 4267 4268 60021 60033
+gfx 1914 4269 4270 4271 60022 60034
+gfx 1919 4272 4273 4274 60023 60035

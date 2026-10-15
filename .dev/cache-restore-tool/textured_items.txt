@@ -1,0 +1,9 @@
+# Textured real items: copies of the originals, then PatchItemModelRefs points them at the
+# textured models from textured_items_models.txt.
+# variant <src> <newId> <placeholderId> <tradeable> <ops> <name>
+variant 1038 31614 31615 1 -|Wear|-|-|Drop Prismatic partyhat
+variant 1050 31616 31617 1 -|Wear|-|-|Drop Festive santa hat
+variant 6199 31618 31619 0 Open|-|-|-|Drop Arcane mystery box
+variant 4087 31620 31621 1 -|Wear|-|-|Drop Dragonfire platelegs
+variant 21892 31622 31623 1 -|Wear|-|-|Drop Dragonfire platebody
+variant 11335 31624 31625 1 -|Wear|-|-|Drop Dragonfire full helm

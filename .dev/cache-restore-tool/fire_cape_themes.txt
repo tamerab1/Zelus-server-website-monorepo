@@ -1,0 +1,19 @@
+# Fire cape themes (2026-10-15): Glacial / Umbral / Venomous Fire capes 59983-59985 were recolour-only and kept the
+# orange lava (texture 40, the Fire cape's flow). Like the Infernal variants (cape_variants_textures.txt) they get a
+# palette-remapped copy of the lava + matching trim.
+#
+# --- CreateRecoloredTextures part ---
+# texture <srcTex> <newTex> <newSprite> <dir> <speed> <gradient stops>
+# Glacial: same ice gradient as texture 154 (Glacial cape)
+texture 40 205 24521 - - 0:061428,0.3:0b3d8c,0.55:1279e0,0.75:22d4ff,0.9:a8f4ff,1:ffffff
+# Umbral: black -> shadow violet -> pale lilac
+texture 40 206 24522 - - 0:020104,0.35:120a24,0.6:2e1a52,0.8:5a3c8c,0.92:9a7cd0,1:e0d4ff
+# Venomous: swamp black -> toxic green -> acid lime
+texture 40 207 24523 - - 0:020802,0.3:0a2a0c,0.55:16661a,0.75:2fb02c,0.9:8cf04a,1:e8ffc0
+#
+# Round 2 (same day): the user wants the Fire capes clearly different from the Infernal themes (Glacial cape = vivid
+# blue, Cosmic = purple, Void = black/teal), so Glacial Fire and Umbral Fire get new textures; 205/206 stay unused.
+# Glacial Fire: frost silver -- desaturated grey-blue -> pale silver -> white
+texture 40 208 24524 - - 0:0e1418,0.3:2a3a44,0.55:5f7f8c,0.75:a6c4cc,0.9:dceff2,1:ffffff
+# Umbral Fire: blood shadow -- black -> deep crimson -> blood red -> pale rose
+texture 40 209 24525 - - 0:050101,0.35:1a0405,0.6:4a0a10,0.8:8c1420,0.92:d0303a,1:ff9c9c

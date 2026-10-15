@@ -1,0 +1,5 @@
+# Celestial weapons (Division Rivals shop, 2026-10-15): spec bar (906) + description (1739), copied from 11802 / 27690.
+int 906 31784 500
+str 1739 31784 The Judgement: Deal an attack that inflicts 37.5% more damage with double accuracy.
+int 906 31786 500
+str 1739 31786 Disrupt: Summon a powerful bolt of lightning that deals guaranteed magic damage based on your max hit.

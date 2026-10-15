@@ -1,0 +1,2 @@
+# Rivals Champion cape r3 (2026-10-15): slow dark velvet (obsidian / crimson with faint warm glints) on the cape body.
+texture 59 220 24542 - 1 0:020001,0.45:12030a,0.7:2a0814,0.86:4a1020,0.95:7a2a2a,1:b06a3a

@@ -1,0 +1,13 @@
+# Boxing Tournament (2026-10-13): textured glove/chest models (TextureModelFaces; vertex skins kept, so worn gloves still animate).
+# model <src> <new> <texId> <colours|all>. Boxing gloves 7671: inv 12277, male 13317, female 13329; glove body = colour 947 (cuff 10471 and black 8 kept).
+# Infernal Fury Gloves (T4, texture 195)
+model 12277 60065 195 947
+model 13317 60066 195 947
+model 13329 60067 195 947
+# Cosmic Champion Gloves (T5, texture 196)
+model 12277 60068 196 947
+model 13317 60069 196 947
+model 13329 60070 196 947
+# Boxing Mystery Chest (clone of 30449, inv 59335): the big panel faces (23038, 23295) get the flow texture;
+# the purple frame (-11367 = 54169) and the trims are recoloured to metallic gold by the item
+model 59335 60071 197 23038,23295

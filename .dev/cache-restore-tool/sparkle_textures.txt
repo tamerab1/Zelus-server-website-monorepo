@@ -1,0 +1,3 @@
+# Weapon sparkle glitter (2026-10-14): fast scroll = twinkle. CreateRecoloredTextures format.
+texture 59 203 24519 1 6 0:b08010,0.45:ffd030,0.8:fff6b0,1:ffffff
+texture 59 204 24520 1 6 0:c01818,0.45:ff4040,0.8:ffb0b0,1:ffffff

@@ -1,0 +1,3 @@
+# Round 4: Grizzlemaw chainmace spec bar + description copied from the Ursine chainmace (8872).
+int 906 31648 750
+str 1739 31648 Backstab: Deal an attack with greatly increased accuracy on unsuspecting targets and that lowers your target's Defence level by the damage dealt.

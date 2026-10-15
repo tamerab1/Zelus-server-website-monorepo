@@ -1,0 +1,10 @@
+# Boss variants (2026-10-13): one texture per boss. Build: build_boss_variants.sh
+# 188 crimson (Sanguine Harrowlord)   189 azure flame (Azureflame Pyretyrant)   190 void (Gloomfang Devourer)
+# 191 toxic (Venomtongue Abomination)  192 frost (Rimeweaver Hexer)  193 storm gold (Thunderborn Warlord)  194 jade (Jadeshot Deadeye)
+texture 40  188 24504 - - 0:050000,0.5:2a0006,0.75:5c000c,0.9:9e0a14,1:ff3a30
+texture 40  189 24505 - - 0:000514,0.5:001a5c,0.75:0050c0,0.9:30a0ff,1:d8f0ff
+texture 40  190 24506 - - 0:020006,0.55:12002a,0.75:2e0a5c,0.9:7a20c8,1:e0a0ff
+texture 40  191 24507 - - 0:011000,0.5:0a3300,0.75:1f6b00,0.9:6acc10,1:e8ff70
+texture 134 192 24508 - - 0:0a1a2e,0.4:2f5f8f,0.7:8fc8ff,0.9:dff4ff,1:ffffff
+texture 134 193 24509 - - 0:1a1000,0.4:5a3e00,0.7:c89a10,0.9:ffe066,1:fffbe0
+texture 134 194 24510 - - 0:00140c,0.4:005038,0.7:10a070,0.9:70f0c0,1:e8fff6

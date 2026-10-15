@@ -1,0 +1,8 @@
+# Round 4 textured pets: textured copies of pet npc/item models.
+model 61845 59986 183 auto
+model 61851 59987 183 auto
+model 28265 59988 184 auto
+model 32682 59989 185 auto
+# Pet npcs: CopyNpcVerbatimBatch 16317:30573,30558:30574,30566:30575, renamed via UpdateDefsInPlace,
+# models repointed via SetNpcModelsInPlace (61845:59986, 28265:59988, 32682:59989).
+# Pet items (CreateItemVariants spec lines below are also in textured_r4_pet_items.txt).

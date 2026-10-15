@@ -1,0 +1,7 @@
+# Perkers melee set "Crimsongilt": Justiciar reskin, silver plate -> gilded gold (hue 6 sat 7); gold trim, blue cloth, dark greys -> crimson (hue 0 sat 5-7).
+# Packed HSL = hue<<10 | sat<<7 | lum. Pairs are find,replace.
+recolor 59453,7106,59466,7118,59441,7096,59445,7100,59474,7126,54307,7086,6602,955,6736,961,6709,945,6699,937,4550,955,43294,930,43299,936,43414,922,43303,940,12,654,16,658,22,664,268,654,278,664,3346,660
+# item <sourceId> <newId> <newPlaceholderId> <name...>
+item 22326 31310 31313 Crimsongilt faceguard
+item 22327 31311 31314 Crimsongilt chestguard
+item 22328 31312 31315 Crimsongilt legguards

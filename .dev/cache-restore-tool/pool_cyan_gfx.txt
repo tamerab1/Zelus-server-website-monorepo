@@ -1,0 +1,6 @@
+# Cyan pool splash (2026-10-15): the Ornate pool of Rejuvenation "Drink" effect, a cyan copy of 1039 to match the
+# reskinned liquid (zelus_home_reskin.txt). Server: KronosRejuvinationPool.heal. Build: BuildBossVariants gfx apply <cache> pool_cyan_gfx.txt
+#     name pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme cyan 31   6    1.10 6    30   4    1.00 0    4         80
+#   src  new  theme texture model
+gfx 1039 4295 cyan  -       -

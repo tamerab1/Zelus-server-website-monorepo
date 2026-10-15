@@ -241,6 +241,7 @@ public class SpliceItemOption {
         else if (opcode == 12) is.readInt();
         else if (opcode == 13) is.readByte();
         else if (opcode == 14) is.readByte();
+        else if (opcode == 15) { /* no payload: "not tradeable" flag (Mad Angel items, e.g. Aggy) */ }
         else if (opcode == 16) { /* no payload */ }
         else if (opcode == 23) { is.readUnsignedShort(); is.readUnsignedByte(); }
         else if (opcode == 24) is.readUnsignedShort();

@@ -143,13 +143,28 @@ public class SpliceNewPetItem {
                 return;
             }
 
-            fileContents.add(newRaw);
+            // IndexData.writeIndexData() delta-encodes ids as id[i]-id[i-1] and requires the
+            // array to stay in ascending sorted order -- blindly appending at the end (as this
+            // code used to do) silently corrupts the encoding whenever newId is lower than the
+            // current max id (confirmed 2026-09-21: appending 60389 after an existing max of
+            // 125867 wrapped the unsigned 16-bit delta and the entry landed as id 125925 instead
+            // of 60389). Insert at the correct sorted position instead, matching
+            // SpliceNewWearableItem/SpliceNewPlaceholder/SpliceNewObject's already-correct pattern.
+            int insertAt = fileData.length;
+            for (int i = 0; i < fileData.length; i++) {
+                if (fileData[i].getId() > newId) {
+                    insertAt = i;
+                    break;
+                }
+            }
+            fileContents.add(insertAt, newRaw);
             FileData[] newFileData = new FileData[fileData.length + 1];
-            System.arraycopy(fileData, 0, newFileData, 0, fileData.length);
+            System.arraycopy(fileData, 0, newFileData, 0, insertAt);
             FileData newEntry = new FileData();
             newEntry.setId(newId);
             newEntry.setNameHash(-1);
-            newFileData[fileData.length] = newEntry;
+            newFileData[insertAt] = newEntry;
+            System.arraycopy(fileData, insertAt, newFileData, insertAt + 1, fileData.length - insertAt);
             archive.setFileData(newFileData);
 
             byte[] newDecompressed = SpliceItemOption.joinChunks(fileContents);

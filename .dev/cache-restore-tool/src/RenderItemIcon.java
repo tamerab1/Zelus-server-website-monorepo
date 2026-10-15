@@ -27,7 +27,7 @@ import net.runelite.cache.item.ItemSpriteFactory;
 // file-id entries that crash RuneLite's Map-backed ArchiveFiles.loadContents()) -- everything
 // else (models, sprites, textures) loads through the real, unmodified RuneLite cache managers.
 //
-// Usage: RenderItemIcon <cachePath> <outDir> <itemId:filename.png> [itemId:filename.png ...]
+// Usage: RenderItemIcon <cachePath> <outDir> <itemId[@modelId]:filename.png> [...]  (@modelId = draw that model instead)
 public class RenderItemIcon {
     public static void main(String[] args) throws Exception {
         String cachePath = args[0];
@@ -45,11 +45,16 @@ public class RenderItemIcon {
             List<byte[]> fileContents = SpliceItemOption.splitChunks(decompressed, fileData.length);
 
             ItemLoader itemLoader = new ItemLoader();
+            java.util.Map<Integer, Integer> modelOverride = new java.util.HashMap<>();
             ItemProvider itemProvider = itemId -> {
                 for (int i = 0; i < fileData.length; i++) {
                     if (fileData[i].getId() == itemId) {
                         try {
-                            return itemLoader.load(itemId, fileContents.get(i));
+                            ItemDefinition d = itemLoader.load(itemId, fileContents.get(i));
+                            Integer m = modelOverride.get(itemId);
+                            if (m != null)
+                                d.inventoryModel = m;
+                            return d;
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -66,7 +71,12 @@ public class RenderItemIcon {
             };
 
             SpriteManager spriteManager = new SpriteManager(store);
-            spriteManager.load();
+            try {
+                spriteManager.load();
+            } catch (Exception e) {
+                System.out.println("WARNING: SpriteManager.load() failed on a broken sprite slot ("
+                        + e + ") -- continuing with partial/no sprite data, fine for pure 3D-model icons.");
+            }
 
             TextureManager textureManager = new TextureManager(store);
             textureManager.load();
@@ -76,7 +86,12 @@ public class RenderItemIcon {
 
             for (int i = 2; i < args.length; i++) {
                 String[] parts = args[i].split(":", 2);
-                int itemId = Integer.parseInt(parts[0]);
+                // itemId@modelId:file.png renders another model (e.g. a worn model) with the item's icon camera
+                String[] idm = parts[0].split("@", 2);
+                int itemId = Integer.parseInt(idm[0]);
+                modelOverride.clear();
+                if (idm.length == 2)
+                    modelOverride.put(itemId, Integer.parseInt(idm[1]));
                 String filename = parts[1];
 
                 ItemDefinition def = itemProvider.provide(itemId);
