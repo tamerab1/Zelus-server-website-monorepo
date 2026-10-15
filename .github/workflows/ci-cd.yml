@@ -122,7 +122,7 @@ jobs:
       - working-directory: website/zelus-website-api
         run: |
           pip install --no-cache-dir -r requirements.txt
-          pip install --no-cache-dir ruff pytest
+          pip install --no-cache-dir "ruff==0.17.1" pytest  # pinned: an unpinned ruff release added UP017 and failed a release (2026-10-16)
           ruff check .
           # Exit code 5 = "no tests collected", not a failure — this project
           # has zero test files yet. Still fails on 1 (tests failed), 2

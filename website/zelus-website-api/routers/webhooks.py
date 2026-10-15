@@ -54,7 +54,7 @@ import hmac
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import httpx
 import stripe
@@ -118,7 +118,7 @@ def _fulfill(db: Session, txn: models.Transaction) -> None:
     )
     db.add(claim)
     txn.status = models.TransactionStatus.COMPLETED.value
-    txn.completed_at = datetime.now(timezone.utc)
+    txn.completed_at = datetime.now(UTC)
     log.info(
         "[Fulfill] PendingClaim written — user='%s' pkg='%s' tokens=%d txn_id=%d",
         txn.username, txn.package_id, tokens, txn.id,

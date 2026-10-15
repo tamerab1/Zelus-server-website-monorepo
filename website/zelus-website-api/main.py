@@ -8,7 +8,7 @@ import secrets
 from dotenv import load_dotenv
 
 load_dotenv()
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import bcrypt
@@ -429,10 +429,10 @@ VOTE_COOLDOWN_HOURS = 12
 def _get_vote_state(vote: models.Vote | None) -> dict:
     if not vote:
         return {"state": "idle", "seconds_remaining": None, "vote_id": None}
-    now     = datetime.now(timezone.utc)
+    now     = datetime.now(UTC)
     created = vote.created_at
     if created.tzinfo is None:
-        created = created.replace(tzinfo=timezone.utc)
+        created = created.replace(tzinfo=UTC)
     elapsed   = (now - created).total_seconds()
     remaining = int(VOTE_COOLDOWN_HOURS * 3600 - elapsed)
     if remaining > 0:
@@ -507,7 +507,7 @@ def _generate_synthetic_feed(rows: list[dict], limit: int) -> list[dict]:
     not fabricated client-side.
     """
     events = []
-    now    = datetime.now(timezone.utc)
+    now    = datetime.now(UTC)
 
     # ── Killstreaks ───────────────────────────────────────────────────────────
     streakers = sorted(rows, key=lambda r: r.get('killstreak', 0), reverse=True)
