@@ -40,6 +40,16 @@ public class TradePostCache {
 		activeOffers.addAll(offers);
 	}
 
+	/** Identity check: is this exact offer object still live on the market? */
+	public static boolean contains(TradePostOffer offer) {
+		for (var it : activeOffers) {
+			if (it == offer) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static int offersCount() {
 		return activeOffers.size();
 	}

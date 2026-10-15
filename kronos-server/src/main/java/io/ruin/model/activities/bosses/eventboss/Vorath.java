@@ -188,7 +188,7 @@ public class Vorath extends NPCCombat {
             p.getInventory().addOrDrop(reward.getId(), reward.getAmount());
             p.sendMessage(Color.RED.wrap("You received " + reward.getDef().name + " from Vorath!"));
             if (reward.lootBroadcast != null)
-                Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR,
+                Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP,
                     "<col=000000>" + p.getName(),
                     " just received " + reward.getDef().descriptiveName + " from Vorath!");
         });

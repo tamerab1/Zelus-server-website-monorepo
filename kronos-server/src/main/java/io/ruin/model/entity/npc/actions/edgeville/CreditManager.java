@@ -1,5 +1,7 @@
 package io.ruin.model.entity.npc.actions.edgeville;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.model.World;
 import io.ruin.model.entity.npc.NPC;
@@ -120,9 +122,9 @@ public class CreditManager {
                     dialogues.add(new NPCDialogue(npc, "Claimed " + claimedPurchases + "/" + totalPurchases + " purchases.<br>Come back for the rest when you have enough inventory space.").lineHeight(19));
                 if(bankedItems)
                     player.sendMessage(Color.COOL_BLUE.wrap("One or more of your claimed items have been deposited into your bank."));
-                Broadcast.GLOBAL.sendNews(player, player.getName() + " has claimed a donation :O! Join them at ::store!");
+                Broadcast.GLOBAL.sendNews(player, Icon.DONATOR_ICON, null, player.getName() + " has claimed a donation :O! Join them at ::store!");
                 if (Random.get(1, 4) > 2) {
-                    Broadcast.GLOBAL.sendNews(Icon.DONATOR, "Next donation claim ingame has a 40% chance of doubling!");
+                    Broadcast.GLOBAL.sendNews(Icon.DONATOR_ICON, "Next donation claim ingame has a 40% chance of doubling!");
                     doubleChance = true;
                 }
                 player.storeAmountSpent += spent;

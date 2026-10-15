@@ -210,7 +210,7 @@ public enum TabEmote {
 			return 7121;
 		if (capeId == 13280 || capeId == 13329 || capeId == 13331 || capeId == 13333 || capeId == 13335
 			|| capeId == 13337 || capeId == 13342 || capeId == 20760 || capeId == 21776 || capeId == 21780
-			|| capeId == 21784 || capeId == 21898 || capeId == 21285) //Max cape
+			|| capeId == 21784 || capeId == 21898 || capeId == 21285 || capeId == 31406 || capeId == 31408 || capeId == 31410) //Max cape
 			return 7121;
 		return -1;
 	}
@@ -269,7 +269,7 @@ public enum TabEmote {
 			return 1286;
 		if (capeId == 13280 || capeId == 13329 || capeId == 13331 || capeId == 13333 || capeId == 13335 ||
 			capeId == 13337 || capeId == 13342 || capeId == 20760 || capeId == 21776 || capeId == 21780 ||
-			capeId == 21784 || capeId == 21898 || capeId == 21285) //Max cape
+			capeId == 21784 || capeId == 21898 || capeId == 21285 || capeId == 31406 || capeId == 31408 || capeId == 31410) //Max cape
 			return 1286;
 		return -1;
 	}

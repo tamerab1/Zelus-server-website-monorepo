@@ -156,7 +156,7 @@ public class NightmareCombat extends NPCCombat {
 
 					new GroundItem(rolled).owner(player).position(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ()).spawn();
 					if (rolled.getId() == 24420 || rolled.getId() == 24421 || rolled.getId() == 24419 || rolled.getId() == 24417 || rolled.getId() == 24514 || rolled.getId() == 24517 || rolled.getId() == 24511 || rolled.getId() == 24422) {
-						Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " has just received <shad=000000>" + Color.DARK_RED.wrap(rolled.getDef().name) + "</shad> from the nightmare!" + "");
+						Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " has just received <shad=000000>" + Color.DARK_RED.wrap(rolled.getDef().name) + "</shad> from the nightmare!" + "");
 						String message = player.getName() + " just received ";
 						message += rolled.getDef().descriptiveName;
 

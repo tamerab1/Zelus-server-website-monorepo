@@ -10,6 +10,7 @@ import io.ruin.model.item.Item;
 import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
 import tradepost.hook.Attributes;
+import tradepost.inter.ZelusMarket;
 
 import java.math.BigInteger;
 import static core.task.api.API.*;
@@ -138,7 +139,9 @@ public class TradePostHandler {
 
 							queue(() -> {
 								TradePost.placeOffer(player, item, amount, price, kind).await();
-								player.tradePost().inter.openTradePost(player);
+								if (player.isOnline()) {
+									ZelusMarket.open(player, ZelusMarket.myShopTab());
+								}
 							});
 
 						});
@@ -173,8 +176,10 @@ public class TradePostHandler {
 			multiplier = 1_000_000_000L;
 			input = input.substring(0, input.length() - 1);
 		}
-		var baseNumber = new BigInteger(input, 10);
-		var result = baseNumber.multiply(BigInteger.valueOf(multiplier));
+		// "1.5m" / "250k" / "2b" / "1,000,000"; fractions of a coin are dropped
+		var baseNumber = new java.math.BigDecimal(input.trim());
+		var result = baseNumber.multiply(java.math.BigDecimal.valueOf(multiplier))
+				.setScale(0, java.math.RoundingMode.DOWN).toBigInteger();
 		if (MathUtils.lt(result, BigInteger.ZERO)) {
 			throw new NumberFormatException();
 		}

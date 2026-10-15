@@ -60,7 +60,7 @@ public class PvpPresetInterface {
 
     // ── Preset preview (chat lines) + activation dialogue ───────────────────
 
-    private static void previewPreset(Player player, PvpPreset preset) {
+    public static void previewPreset(Player player, PvpPreset preset) {
         boolean owned = PvpPresetManager.canLoadFromBank(player, preset);
 
         player.sendMessage("<col=ffd700>" + preset.getDisplayName() + "</col> - " + preset.getDescription());

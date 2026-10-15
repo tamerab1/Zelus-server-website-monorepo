@@ -1,5 +1,7 @@
 package io.ruin.model.activities.inferno;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.cache.NPCType;
@@ -326,7 +328,7 @@ public class Inferno {
 					}
 					player.getInventory().addOrDrop(21295, 1);
 					player.getInventory().addOrDrop(6529, 16440);
-					Broadcast.GLOBAL.sendNews(player,
+					Broadcast.GLOBAL.sendNews(player, Icon.ACHIEVEMENT_TROPHY, null,
 							"Very impressive for a JalYt. " + player.getName() + " has even managed to defeat the Inferno!");
 					player.addToCollectionLog(new Item(21295, 1));
 				}

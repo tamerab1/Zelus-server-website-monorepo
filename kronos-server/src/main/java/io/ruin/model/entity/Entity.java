@@ -733,7 +733,7 @@ public abstract class Entity {
 			if (baseHit.attacker.player != null && baseHit.attackStyle != null) {
 				if (player != null) // important that this happens here for things that hit multiple targets
 					baseHit.attacker.player.getCombat().skull(player);
-				if (baseHit.attackSpell == null && baseHit.attackStyle != AttackStyle.CANNON)
+				if (baseHit.attackSpell == null && baseHit.attackStyle != AttackStyle.CANNON && !baseHit.fromPet)
 					CombatUtils.addXp(baseHit.attacker.player, this, baseHit.attackStyle, baseHit.attackType, totalDamage);
 			}
 

@@ -1,15 +1,10 @@
 package io.ruin.model.item.actions.impl.pet.perk;
 
-import io.ruin.cache.ObjType;
 import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.player.Player;
-import io.ruin.model.inter.handlers.OptionScroll;
-import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.actions.impl.pet.Pet;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /// Central lookup for the pet combat-perk system. A perk is active only while its owning
 /// pet is the player's currently-summoned follower (Player#pet, set/cleared by Pet#spawn and
@@ -106,71 +101,8 @@ public final class PetPerkHandler {
 		return (perk != null && perk.type == PerkType.PET_DROP_RATE_BOOST) ? (int) perk.value1 : 0;
 	}
 
-	// ::petperks guide -- same look as the ::bonds guide: a clickable category list, then a
-	// scroll page per category. Dark colours only (parchment background); lines stay short
-	// (~42 chars) because the scroll interface doesn't wrap text.
-	private static final String HEADER = "<col=800000>", CATEGORY = "<col=4a2600>", PET = "<col=000080>",
-			TEXT = "<col=1a1a1a>", ACTIVE = "<col=006600>", NONE = "<col=333333>";
-
-	private static final Object[][] CATEGORIES = {
-			{"Melee Pets", PerkType.PET_MELEE_BOOST},
-			{"Mage Pets", PerkType.PET_MAGE_BOOST},
-			{"Ranged Pets", PerkType.PET_RANGED_BOOST},
-			{"Utility Pets", PerkType.PET_UTILITY_BOOST},
-			{"Drop Rate Pets", PerkType.PET_DROP_RATE_BOOST},
-	};
-
-	/// ::petperks -- the player's active pet perk plus a clickable list of pet categories.
+	/// ::petperks -- the Pet Perks window (PetPerksInterface, interface 1141).
 	public static void openInterface(Player player) {
-		List<Option> options = new ArrayList<>();
-		Pet active = player.pet;
-		// The status row is fully colour-tagged so it does NOT light up on mouse-over (it isn't
-		// clickable); the category rows below have no tags, so clientscript 218's hover colour shows.
-		options.add(Option.info(active != null && active.perk != null
-				? ACTIVE + petName(active) + " (active): " + active.perk.describe() + "</col>"
-				: NONE + "No perk pet summoned right now</col>"));
-		for (Object[] category : CATEGORIES) {
-			String title = (String) category[0];
-			PerkType type = (PerkType) category[1];
-			int count = petsOf(type).size();
-			options.add(Option.info(" ")); // spacer row
-			options.add(new Option(title + " (" + count + " pet" + (count == 1 ? "" : "s") + ")",
-					p -> openCategory(p, title, type)));
-		}
-		// keepOpen, so clicking the status/spacer rows does nothing instead of closing the list.
-		OptionScroll.openKeepOpen(player, "Pet Perks", options);
-	}
-
-	private static void openCategory(Player player, String title, PerkType type) {
-		List<String> lines = new ArrayList<>();
-		lines.add("");
-		lines.add(TEXT + "A pet's perk works while it's summoned.");
-		for (Pet pet : petsOf(type)) {
-			lines.add("");
-			boolean isActive = player.pet == pet;
-			lines.add(PET + petName(pet) + "</col>" + (isActive ? ACTIVE + " (active)</col>" : ""));
-			for (String stat : pet.perk.describeLines())
-				lines.add(TEXT + io.ruin.model.content.bonds.BondGuide.BULLET + stat);
-		}
-		if (petsOf(type).isEmpty()) {
-			lines.add("");
-			lines.add(NONE + "(no pets in this category yet)");
-		}
-		io.ruin.model.content.bonds.BondGuide.openRows(player, title, lines,
-				io.ruin.model.content.bonds.BondGuide.BACK_PREFIX + "Back to all categories", PetPerkHandler::openInterface);
-	}
-
-	private static List<Pet> petsOf(PerkType type) {
-		List<Pet> pets = new ArrayList<>();
-		for (Pet pet : Pet.VALUES) {
-			if (pet.perk != null && pet.perk.type == type)
-				pets.add(pet);
-		}
-		return pets;
-	}
-
-	private static String petName(Pet pet) {
-		ObjType def = ObjType.get(pet.itemId);
-		return def != null && def.name != null ? def.name : pet.name();
+		PetPerksInterface.open(player);
 	}
 }

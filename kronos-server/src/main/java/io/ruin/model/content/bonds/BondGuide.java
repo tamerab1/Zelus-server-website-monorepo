@@ -94,7 +94,7 @@ public final class BondGuide {
 		return best > 0 ? OWNED + "Owned " + BondType.tierLabel(best) + " (not attuned)</col>" : NOT_OWNED + "Not owned</col>";
 	}
 
-	private static int highestOwned(Item[] items, BondType type) {
+	static int highestOwned(Item[] items, BondType type) {
 		int best = 0;
 		for (Item item : items) {
 			if (item == null)

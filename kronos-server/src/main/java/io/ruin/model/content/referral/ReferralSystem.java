@@ -1,5 +1,7 @@
 package io.ruin.model.content.referral;
 
+import io.ruin.cache.Icon;
+
 import discord.webhooks.logs.ReferralHook;
 import io.ruin.Server;
 import io.ruin.cache.ItemID;
@@ -57,6 +59,7 @@ public final class ReferralSystem {
 	}
 
 	public static void register() {
+		ReferralInterface.register();
 		LoginListener.register(player -> {
 			checkMilestone(player);
 			deliverPendingReward(player);
@@ -82,11 +85,23 @@ public final class ReferralSystem {
 
 		referred.referralRewardClaimed = true;
 
+		// Anti-farm: the link-time identity check can be dodged by linking first and only later playing both
+		// accounts from one machine. Re-check at payout (HWID always, IP when the referrer is online) and void it.
+		Player referrer = World.getPlayer(referred.referredBy);
+		if (!ReferralCommand.isIdentityCheckSkipped() && sharesIdentityNow(referred, referrer)) {
+			referred.sendMessage("<col=7f0000>Your referral was voided: your account shares a computer or network with "
+					+ referred.referredBy + "'s.");
+			if (referrer != null)
+				referrer.sendMessage("<col=7f0000>Your referral of " + referred.getName()
+						+ " was voided: the accounts share a computer or network.");
+			return;
+		}
+
 		giveOrBank(referred, REFERRED_XP_SCROLL_ITEM_ID, REFERRED_XP_SCROLL_AMOUNT);
 		giveOrBank(referred, REFERRED_MYSTERY_BOX_ITEM_ID, 1);
 		referred.sendMessage("<col=2e8b57>Your referral milestone is complete - enjoy your reward!");
+		ReferralLeaderboard.record(referred.referredBy, referred.getName());
 
-		Player referrer = World.getPlayer(referred.referredBy);
 		if (referrer != null) {
 			payoutReferrer(referrer, referred.getName());
 		} else {
@@ -94,8 +109,15 @@ public final class ReferralSystem {
 		}
 
 		ReferralHook.sendMilestoneCompletedToDiscord(referred.referredBy, referred.getName());
-		Broadcast.WORLD.sendNews(null, "Referral", referred.getName() + " reached the milestone! Both "
+		Broadcast.WORLD.sendNews(Icon.NEWCOMER_SMILE, "Referral", referred.getName() + " reached the milestone! Both "
 				+ referred.getName() + " and " + referred.referredBy + " have earned their referral rewards.");
+	}
+
+	private static boolean sharesIdentityNow(Player referred, Player onlineReferrer) {
+		if (onlineReferrer != null)
+			return ReferralCommand.sharesIdentity(referred, onlineReferrer.getIp(), onlineReferrer.hwid, onlineReferrer.hwids);
+		OfflineReferralLookup.Record record = OfflineReferralLookup.find(referred.referredBy);
+		return record != null && ReferralCommand.sharesIdentity(referred, null, record.hwid(), record.hwids());
 	}
 
 	private static void deliverPendingReward(Player referrer) {

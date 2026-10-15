@@ -16,7 +16,8 @@ public class VestasLongsword implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.equalsIgnoreCase("vesta's longsword") || name.equalsIgnoreCase("vesta's longsword (deg)");
+		return name.equalsIgnoreCase("vesta's longsword") || name.equalsIgnoreCase("vesta's longsword (deg)")
+			|| def.id == 31540; // Bloodletter longsword (Wilderness Forge)
 	}
 
 	@Override

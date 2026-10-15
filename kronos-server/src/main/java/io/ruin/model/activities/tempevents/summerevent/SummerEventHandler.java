@@ -97,7 +97,7 @@ public class SummerEventHandler {
 					if (item != null) {
 						player.getInventory().addOrDrop(item.getId(), item.getAmount());
 						if (item.lootBroadcast != null)
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.SERVER_EVENT, "<col=000000>" + player.getName(),
 								" received " + item.getDef().descriptiveName + " from a " + boss.getDef().name + "!");
 					}
 				} else if (boss.getId() == 17022) {
@@ -105,7 +105,7 @@ public class SummerEventHandler {
 					if (item != null) {
 						player.getInventory().addOrDrop(item.getId(), item.getAmount());
 						if (item.lootBroadcast != null)
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.SERVER_EVENT, "<col=000000>" + player.getName(),
 								" received " + item.getDef().descriptiveName + " from a " + boss.getDef().name + "!");
 					}
 				}

@@ -1,0 +1,116 @@
+package io.ruin.model.entity.npc.combatpet;
+
+import io.ruin.Server;
+import io.ruin.api.utils.Random;
+import io.ruin.model.combat.AttackStyle;
+import io.ruin.model.combat.CombatUtils;
+import io.ruin.model.combat.Hit;
+import io.ruin.model.entity.Entity;
+import io.ruin.model.entity.npc.NPC;
+import io.ruin.model.entity.npc.PetNPC;
+import io.ruin.model.entity.player.Player;
+import io.ruin.model.map.route.routes.DumbRoute;
+import io.ruin.model.map.route.routes.ProjectileRoute;
+
+/**
+ * Attack loop for combat pets: range/approach, attack cooldown, special rolls, and building the
+ * (capped, owner-credited) hits every profile uses.
+ */
+public final class CombatPetCombat {
+
+	/** Hard ceiling on any single pet hit, whatever a profile asks for. */
+	public static final int MAX_PET_HIT = 15;
+
+	/** Pet accuracy is clamped so it never fully whiffs on high-defence bosses nor always hits trash. */
+	private static final double MIN_ACCURACY = 0.15, MAX_ACCURACY = 0.85;
+
+	private CombatPetCombat() {
+	}
+
+	static void tick(CombatPet ctx) {
+		PetNPC pet = ctx.pet;
+		NPC target = ctx.target;
+		CombatPetProfile profile = ctx.profile;
+
+		if (!inRange(pet, target, profile.attackRange)) {
+			DumbRoute.step(pet, target, profile.attackRange);
+			return;
+		}
+		pet.getMovement().reset();
+		pet.face(target);
+
+		long now = Server.currentTick();
+		if (profile.specialIntervalTicks > 0 && ctx.ticksSinceLastSpecial >= profile.specialIntervalTicks) {
+			ctx.ticksSinceLastSpecial = 0;
+			ctx.nextAttackTick = now + profile.attackTicks;
+			profile.specialAttack(pet, ctx.owner, target);
+			return;
+		}
+		if (now < ctx.nextAttackTick)
+			return;
+		ctx.nextAttackTick = now + profile.attackTicks;
+
+		if (profile.specialChance > 0 && Random.get() < profile.specialChance)
+			profile.specialAttack(pet, ctx.owner, target);
+		else
+			profile.basicAttack(pet, ctx.owner, target);
+	}
+
+	private static boolean inRange(PetNPC pet, NPC target, int range) {
+		int gap = gap(pet, target);
+		if (gap > range)
+			return false;
+		if (range == 1)
+			return gap == 1;
+		return ProjectileRoute.allow(pet, target);
+	}
+
+	/**
+	 * Tiles between two entities' footprints (0 = overlapping, 1 = adjacent incl. diagonals).
+	 */
+	public static int gap(Entity a, Entity b) {
+		int dx = Math.max(0, Math.max(a.getAbsX() - (b.getAbsX() + b.getSize() - 1), b.getAbsX() - (a.getAbsX() + a.getSize() - 1)));
+		int dy = Math.max(0, Math.max(a.getAbsY() - (b.getAbsY() + b.getSize() - 1), b.getAbsY() - (a.getAbsY() + a.getSize() - 1)));
+		return Math.max(dx, dy);
+	}
+
+	/**
+	 * Rolls a pet hit against {@code target}: pet accuracy vs the target's real defence roll for
+	 * {@code style}, then 0..maxHit (capped at {@link #MAX_PET_HIT}). Returns null for player targets.
+	 */
+	static Hit roll(Player owner, Entity target, AttackStyle style, int maxHit, int accuracyRoll, double defenceMultiplier) {
+		if (target instanceof Player)
+			return null;
+		int max = Math.min(maxHit, MAX_PET_HIT);
+		double defenceRoll = CombatUtils.getDefenceBonus(target, style) * defenceMultiplier;
+		double chance = accuracyRoll > defenceRoll
+				? 1D - (defenceRoll + 2D) / (2D * (accuracyRoll + 1D))
+				: accuracyRoll / (2D * (defenceRoll + 1D));
+		chance = Math.max(MIN_ACCURACY, Math.min(MAX_ACCURACY, chance));
+		int damage = Random.get() < chance ? Random.get(1, max) : 0;
+		return fixed(owner, style, damage);
+	}
+
+	/**
+	 * A pre-rolled pet hit credited to the owner (kill credit/loot) but flagged {@link Hit#fromPet} so the
+	 * owner's weapon effects, hit listeners and xp are skipped.
+	 */
+	static Hit fixed(Player owner, AttackStyle style, int damage) {
+		return new Hit(owner, style)
+				.fromPet()
+				.ignoreDefence()
+				.fixedDamage(Math.min(damage, MAX_PET_HIT));
+	}
+
+	/**
+	 * Applies a pet hit. Single choke point that refuses anything but a live NPC.
+	 */
+	static int apply(Entity target, Hit hit) {
+		if (hit == null || target instanceof Player || !(target instanceof NPC npc))
+			return 0;
+		if (npc instanceof PetNPC || npc.isRemoved() || npc.getCombat() == null || npc.getCombat().isDead())
+			return 0;
+		return npc.hit(hit);
+	}
+
+}

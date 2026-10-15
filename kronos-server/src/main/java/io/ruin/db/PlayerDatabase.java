@@ -40,6 +40,9 @@ public final class PlayerDatabase {
 	public static boolean insertQueue(Player player) {
 		final String uuid = player.uuid();
 		final int index = player.getIndex();
+		// copy the saved varps/varbits (bank tab sizes, settings...) into savedConfigs: before, only a clean logout
+		// did this, so autosaves and the shutdown save wrote the values from the last logout
+		io.ruin.model.var.VarPlayerRepository.save(player);
 		final var attributes = PlayerAttributesRegistry.snapshot(index);
 
 		return db().insertQueue(uuid, player, () -> {

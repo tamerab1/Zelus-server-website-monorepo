@@ -31,9 +31,8 @@ public class SarcophagusObject {
 			player.doeRewardItems.forEach(reward -> {
 				player.getInventory().addOrDrop(reward);
 				if (reward.lootBroadcast != null) {
-					Broadcast.WORLD.sendNewsDropMessage(
-							player,
-							Icon.ADMINISTRATOR,
+					Broadcast.WORLD.sendNewsDropMessage(player,
+							Icon.YELLOW_KEY,
 							"<col=000000>".concat(player.getName()),
 							" has just received <shad>%s</shad> from Dominion of Echoes! (Chest: %s)"
 									.formatted(reward.getDef().name, player.dominionOfEchoesKills.getKills()));

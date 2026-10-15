@@ -89,6 +89,9 @@ public class Alchemy extends Spell {
 	}
 
 	private static boolean alchValidate(Player player, Level level, Item item, int value) {
+		if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "alchemised")) {
+			return false;
+		}
 		if (value == 0 || item.getId() == COINS_995) {
 			player.sendMessage("You can't alchemise this item.");
 			return false;

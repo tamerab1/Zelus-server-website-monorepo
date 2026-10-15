@@ -58,7 +58,7 @@ public class SummerMysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Summer Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+				Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Summer Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});
 	}
@@ -123,7 +123,7 @@ public class SummerMysteryBox {
 //        player.claimedBox = true;
 //        player.sendMessage("You get " + reward.getDef().descriptiveName + " from the Legendary Pet Mystery Box.");
 //        if (summerMboxLoot.getWeight(reward) < 7) {
-//            Broadcast.WORLD.sendNews(Icon.MYSTERY_BOX, "Legendary Pet Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+//            Broadcast.WORLD.sendNews(Icon.YELLOW_KEY, "Legendary Pet Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 //        }
 //        player.getBox().clear();
 //        if(player.isVisibleInterface(Interface.SUPER_MYSTERY_BOX))

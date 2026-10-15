@@ -1,5 +1,7 @@
 package io.ruin.model.content;
 
+import io.ruin.cache.Icon;
+
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.ruin.api.utils.Random;
@@ -422,7 +424,7 @@ public class UpgradeManager {
 			}
 			player.getInventory().add(getSelectedItem().itemid);
 			player.sendMessage(Color.DARK_GREEN.wrap("You have successfully upgraded a " + getSelectedItem().name + "."));
-			Broadcast.WORLD.sendNews(player.getName() + " has just successfully upgraded a " + getSelectedItem().name + "!");
+			Broadcast.WORLD.sendNews(Icon.UPGRADE_GEM,player.getName() + " has just successfully upgraded a " + getSelectedItem().name + "!");
 		} else {
 			if (!player.FailedUpgrades.containsKey(selectedItem.itemid)) {
 				player.FailedUpgrades.put(selectedItem.itemid, 1);

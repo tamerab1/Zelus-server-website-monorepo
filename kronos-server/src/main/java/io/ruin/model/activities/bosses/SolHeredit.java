@@ -884,7 +884,7 @@ public class SolHeredit extends NPCCombat {
 			else
 				message += reward.getDef().descriptiveName;
 			if (reward.lootBroadcast != null) {
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x " + reward.getDef().name.toLowerCase() + "</shad> from a " + npc.getDef().name.toLowerCase() + "! (<col=FC0101>" + (player.solHereditKills.getKills() + 1) + " KC<col=000000>)");
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x " + reward.getDef().name.toLowerCase() + "</shad> from a " + npc.getDef().name.toLowerCase() + "! (<col=FC0101>" + (player.solHereditKills.getKills() + 1) + " KC<col=000000>)");
 
 				RareDropHook.sendDiscordMessage(() -> {
 					var jsonObject = new JSONObject();

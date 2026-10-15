@@ -59,7 +59,9 @@ public class JournalTab {
 		PLAYER_INFO,
 		SERVER_INFO,
 		ACHIEVEMENT,
-		GROUP_IRON
+		GROUP_IRON,
+		/** One of the questtab.dashboard pages: they refresh themselves. */
+		DASHBOARD
 	}
 
 	@Getter
@@ -570,25 +572,6 @@ public class JournalTab {
 		sendAchievementProgressBar(player, eliteBarInterfaceHash, Achievements.AchievementTypes.ELITE);
 	}
 
-	private static void sendServerInformationTab(Player player) {
-		ScrollbarClientScript.create()
-				.interfaceId(848)
-				.containerId(2)
-				.scrollbarChildId(31)
-				.childrenCount(23)
-				.withDarkGraphics()
-				.build()
-				.send(player);
-		player.currentSection = Section.SERVER_INFO;
-		player.getPacketSender().openSubInterface(848, 629, 28, ClientInterfaceType.OVERLAY);
-		for (ComponentText componentText : ComponentText.VALUES) {
-			Object value = componentText.value.apply(player);
-			if (value != null) {
-				player.getPacketSender().sendString(848, componentText.childId, componentText.preText + value);
-			}
-		}
-	}
-
 	private static void sendAchievementBarColour(Player player, int interfaceHash, int progress) {
 		if (progress < 25)
 			player.getPacketSender().sendClientScript(10536, "I", interfaceHash);
@@ -609,12 +592,6 @@ public class JournalTab {
 			case ACHIEVEMENT:
 				sendAchievementTab(player);
 				break;
-			case PLAYER_INFO:
-				sendPlayerInfoTab(player);
-				break;
-			case SERVER_INFO:
-				sendServerInformationTab(player);
-				break;
 			default:
 				break;
 		}
@@ -622,120 +599,6 @@ public class JournalTab {
 		if (hooks.handle(new Hook.UpdateCurrentSection(player, section))) {
 			return;
 		}
-	}
-
-	public static void sendPlayerInfoTab(Player player) {
-		player.currentSection = JournalTab.Section.PLAYER_INFO;
-		player.getPacketSender().openSubInterface(1086, 629, 28, ClientInterfaceType.OVERLAY);
-		player.getPacketSender().setHidden(1086, 6, false);
-		player.getPacketSender().setHidden(1086, 19, false);
-		player.getPacketSender().setHidden(1086, 27, false);
-		player.getPacketSender().setHidden(1086, 39, true);
-		player.getPacketSender().setHidden(1086, 47, true);
-		player.getPacketSender().setHidden(1086, 101, false);
-
-		player.getPacketSender().sendString(1086, 11,
-				"<col=FFFFFF>Total playtime: <col=00ff00>" + TimeToText(player));
-		String difficulty = player.getDifficulty().toString().toLowerCase();
-		String diff = difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1);
-		player.getPacketSender().sendString(1086, 12, "<col=FFFFFF>Difficulty mode: <col=00ff00>" + diff);
-		player.getPacketSender().sendString(1086, 13,
-				"<col=FFFFFF>Zelus points: <col=00ff00>" + NumberUtils.formatNumber(player.getReasonPoints()));
-		player.getPacketSender().sendString(1086, 14,
-				"<col=FFFFFF>Achievement points: <col=00ff00>" + NumberUtils.formatNumber(player.getAchievementPoints()));
-		player.getPacketSender().sendString(1086, 15,
-				"<col=FFFFFF>Perk points: <col=00ff00>" + NumberUtils.formatNumber(player.perkPoints));
-		player.getPacketSender().sendString(1086, 16,
-				"<col=FFFFFF>Vote points: <col=00ff00>" + NumberUtils.formatNumber(player.getVotePoints()));
-		player.getPacketSender().sendString(1086, 17,
-				"<col=FFFFFF>Donator points: <col=00ff00>" + NumberUtils.formatNumber(player.getDonatorPoints()));
-		player.getPacketSender().sendString(1086, 18, "<col=FFFFFF>Total donated: <col=59CB04>$<col=00ff00>"
-				+ NumberUtils.formatNumber(player.getTotalDonated()) + ".00");
-		player.getPacketSender().sendString(1086, 102,
-				"<col=FFFFFF>Drop rate: <col=59CB04><col=00ff00>" + NumberUtils.formatNumber(player.calculateDropRate()) + "%");
-
-		String dialogue = player.currentPerkTask != null
-				? player.currentPerkTask.description.toLowerCase() + player.perkTaskCurrentAmount
-						+ player.currentPerkTask.description_2 + "."
-				: "No Task.";
-		player.getPacketSender().sendString(1086, 103, "<col=FFFFFF>Perk Task: <col=59CB04><col=00ff00>" + dialogue);
-
-		player.getPacketSender().sendString(1086, 24, "<col=FFFFFF>Slayer points: <col=00ff00>"
-				+ NumberUtils.formatNumber(VarPlayerRepository.SLAYER_POINTS.get(player)));
-		String slayerTask;
-		if (VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player) > 0)
-			slayerTask = "<col=FFFFFF>Task: <col=00ff00>" + VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player) + " "
-					+ SlayerUnlock.taskName(player, VarPlayerRepository.SLAYER_TASK.get(player));
-		else
-			slayerTask = "<col=FFFFFF>Task: <col=00ff00>No task assigned.";
-
-		String bossSlayerTask;
-		if (player.bossSlayerName != null)
-			bossSlayerTask = "<col=FFFFFF>Boss Task: <col=00ff00>" + player.currentBossSlayerAmount + " "
-					+ player.bossSlayerName;
-		else
-			bossSlayerTask = "<col=FFFFFF>Boss Task: <col=00ff00>No task assigned.";
-
-		player.getPacketSender().sendString(1086, 25, slayerTask);
-		player.getPacketSender().sendString(1086, 26, bossSlayerTask);
-
-		int doubleExpMinutes = (int) (player.getDoubleExpRemaining() / 100);
-		if (doubleExpMinutes < 0)
-			doubleExpMinutes = 0;
-		player.getPacketSender().sendString(1086, 32,
-				"<col=FFFFFF>Double exp timer: <col=00ff00>" + NumberUtils.formatNumber(doubleExpMinutes) + "m");
-
-		int doubleDropsMinutes = (int) (player.getDoubleDropsRemaining() / 100);
-
-		int delay = player.doubleDropBonus.remaining();
-		int minutes = delay / 100;
-		if (minutes < 1)
-			minutes = 0;
-		player.getPacketSender().sendString(1086, 33,
-				"<col=FFFFFF>Double drops timer: <col=00ff00>" + NumberUtils.formatNumber(minutes) + "m");
-
-		int damageBoostMinutes = (int) (player.getDamageBoostRemaining() / 100);
-		if (damageBoostMinutes < 0)
-			damageBoostMinutes = 0;
-		player.getPacketSender().sendString(1086, 34,
-				"<col=FFFFFF>Damage boost timer: <col=00ff00>" + NumberUtils.formatNumber(damageBoostMinutes) + "m");
-
-		int damageReductionMinutes = (int) (player.getDamageReductionBoostRemaining() / 100);
-		if (damageReductionMinutes < 0)
-			damageReductionMinutes = 0;
-		player.getPacketSender().sendString(1086, 35,
-				"<col=FFFFFF>Damage reduction timer: <col=00ff00>" + NumberUtils.formatNumber(damageReductionMinutes) + "m");
-		int brewImmunityMinutes = (int) (player.getBrewImmunityRemaining() / 100);
-		if (brewImmunityMinutes < 0)
-			brewImmunityMinutes = 0;
-
-		player.getPacketSender().sendString(1086, 36,
-				"<col=FFFFFF>Brew immunity timer: <col=00ff00>" + NumberUtils.formatNumber(brewImmunityMinutes) + "m");
-		int prayerBoostMinutes = (int) (player.getPrayerBoostBonusRemaining() / 100);
-		if (prayerBoostMinutes < 0)
-			prayerBoostMinutes = 0;
-		player.getPacketSender().sendString(1086, 37,
-				"<col=FFFFFF>Prayer drain reduction: <col=00ff00>" + NumberUtils.formatNumber(prayerBoostMinutes) + "m");
-		int dropRateBoostMinutes = (int) (player.getDropRateBoostRemaining() / 100);
-		if (dropRateBoostMinutes < 0)
-			dropRateBoostMinutes = 0;
-		player.getPacketSender().sendString(1086, 38,
-				"<col=FFFFFF>5% Drop rate timer: <col=00ff00>" + NumberUtils.formatNumber(dropRateBoostMinutes) + "m");
-	}
-
-	@RequiredArgsConstructor
-	enum ComponentText {
-		SERVER_TIME("Server time: ", 16, plr -> "<col=00FF00>" + Server.getTime()),
-		SERVER_UPTIME("Server uptime: ", 15, plr -> "<col=00FF00>" + Server.getUptime()),
-		STAFF_COUNT("Staff online: ", 18, plr -> "<col=00FF00>" + World.staffCount()),
-		PLAYER_COUNT("Players online: ", 17, plr -> "<col=00FF00>" + World.playerCount()),
-		WIKI_FORUM_OVERWRITE("Zelus Wiki ", 30, plr -> ""),
-		;
-
-		final String preText;
-		final int childId;
-		final Function<Player, Object> value;
-		public static final ComponentText[] VALUES = values();
 	}
 
 	private static String TimeToText(Player player) {
@@ -758,7 +621,18 @@ public class JournalTab {
 	}
 
 	public static void restore(Player player) {
-		swap(player, 1086);
+		player.openInterface(ToplevelComponent.QUEST_TAB_AREA);
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.openDefault(player);
+	}
+
+	/** Teleport to the current slayer task (Character dashboard "Slayer task" row). */
+	public static void teleportToSlayerTask(Player player) {
+		SLAYER_TASK_TELEPORT.handle(player);
+	}
+
+	/** Teleport to the current boss task (Character dashboard "Boss task" row). */
+	public static void teleportToBossTask(Player player) {
+		BOSS_TASK_TELEPORT.handle(player);
 	}
 
 	private static void openDailyTasks(Player player) {
@@ -766,170 +640,78 @@ public class JournalTab {
 		dailyTasksInterface.open(player);
 	}
 
+	private static final SimpleAction SLAYER_TASK_TELEPORT = player -> {
+		int left = VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player);
+		if (player.gauntlet != null && player.gauntlet.inGauntlet) {
+			player.sendMessage("You cannot use this while in the Gauntlet.");
+			return;
+		}
+		if (player.wildernessLevel > 20) {
+			player.sendMessage("This cannot be used above 20 wilderness!");
+			return;
+		}
+		if (left < 1) {
+			ModernTeleport.teleport(player, new Position(3105, 3489, 0));
+			return;
+		}
+		if (player.slayerTaskPosition == null) {
+			player.sendMessage("This task does not support this.");
+			return;
+		}
+		if (player.taskInWilderness) {
+			player.dialogue(new OptionsDialogue("Your task is in the wilderness, are you sure?",
+					new Option("Yes, teleport me.", () -> {
+						player.getMovement().teleport(player.slayerTaskPosition);
+					}),
+					new Option("Nevermind.")));
+		} else {
+			ModernTeleport.teleport(player, player.slayerTaskPosition);
+		}
+	};
+
+	private static final SimpleAction BOSS_TASK_TELEPORT = player -> {
+		if (player.gauntlet != null && player.gauntlet.inGauntlet) {
+			player.sendMessage("You cannot use this while in the Gauntlet.");
+			return;
+		}
+		if (player.wildernessLevel > 20) {
+			player.sendMessage("This cannot be used above 20 wilderness!");
+			return;
+		}
+		if (player.bossSlayerName == null) {
+			ModernTeleport.teleport(player, new Position(3104, 3489, 0));
+			return;
+		}
+		if (player.bossSlayerPosition == null) {
+			player.sendMessage("This task does not support this.");
+			return;
+		}
+		if (player.bossTaskInWildy) {
+			player.dialogue(new OptionsDialogue("Your task is in the wilderness, are you sure?",
+					new Option("Yes, teleport me.", () -> {
+						player.getMovement().teleport(player.bossSlayerPosition);
+					}),
+					new Option("Nevermind.")));
+		} else {
+			ModernTeleport.teleport(player, player.bossSlayerPosition);
+		}
+	};
+
 	public static void init() {
 		try {
 			InterfaceHandler.register(Interface.QUEST_TAB, interfaceHandler -> {
-				interfaceHandler.actions[3] = (SimpleAction) JournalTab::sendPlayerInfoTab;
-				interfaceHandler.actions[8] = (SimpleAction) JournalTab::sendServerInformationTab;
-				interfaceHandler.actions[13] = (SimpleAction) JournalTab::sendAchievementTab;
-			});
-			InterfaceHandler.register(848, interfaceHandler -> {
-				interfaceHandler.actions[22] = (SimpleAction) p -> p.getDropViewer().open(p);
-				interfaceHandler.actions[34] = (SimpleAction) JournalTab::openDailyTasks;
-				interfaceHandler.actions[23] = (SimpleAction) p -> p.getLootsViewer().updateInterface(p,
-						LootsTables.ADVANCED_MYSTERY_BOX);
-				interfaceHandler.actions[28] = (SimpleAction) player -> player.openUrl("Donation",
-						"https://zelusrsps.com/store");
-				interfaceHandler.actions[29] = (SimpleAction) player -> player.openUrl("Vote", "https://zelusrsps.com/vote");
-				interfaceHandler.actions[30] = (SimpleAction) player -> player.openUrl("Wiki",
-						"https://zelusrsps.com/wiki");
-				interfaceHandler.actions[31] = (SimpleAction) player -> player.openUrl("Discord",
-						"https://discord.gg/sVrcatBdyG");
+				// Character Summary / Server Info / Wilderness are the dashboards (questtab.dashboard), which
+				// replaced the old 1086 / 848 pages; Achievement Diaries is unchanged.
+				interfaceHandler.actions[io.ruin.model.inter.questtab.dashboard.QuestDashboards.TAB_CHARACTER] = (SimpleAction) p ->
+						io.ruin.model.inter.questtab.dashboard.QuestDashboards.show(p, io.ruin.model.inter.questtab.dashboard.DashboardLayout.CHARACTER);
+				interfaceHandler.actions[io.ruin.model.inter.questtab.dashboard.QuestDashboards.TAB_SERVER] = (SimpleAction) p ->
+						io.ruin.model.inter.questtab.dashboard.QuestDashboards.show(p, io.ruin.model.inter.questtab.dashboard.DashboardLayout.SERVER);
+				interfaceHandler.actions[io.ruin.model.inter.questtab.dashboard.QuestDashboards.TAB_WILDERNESS] = (SimpleAction) p ->
+						io.ruin.model.inter.questtab.dashboard.QuestDashboards.show(p, io.ruin.model.inter.questtab.dashboard.DashboardLayout.WILDERNESS);
+				interfaceHandler.actions[13] = (SimpleAction) p ->
+						io.ruin.model.inter.questtab.dashboard.QuestDashboards.show(p, io.ruin.model.inter.questtab.dashboard.DashboardLayout.ACHIEVEMENTS);
 			});
 			InterfaceHandler.register(1086, interfaceHandler -> {
-				interfaceHandler.actions[11] = (SimpleAction) player -> {
-					player.forceText("My current playtime is " + TimeToText(player));
-				};
-				interfaceHandler.actions[12] = (SimpleAction) player -> {
-					player.forceText("I am playing on " + player.getDifficulty().Name + " mode!");
-				};
-				interfaceHandler.actions[13] = (SimpleAction) player -> {
-					player
-							.forceText("I currently have " + NumberUtils.formatNumber(player.getReasonPoints()) + " Zelus points.");
-				};
-				interfaceHandler.actions[14] = (SimpleAction) player -> {
-					player.forceText(
-							"I currently have " + NumberUtils.formatNumber(player.getAchievementPoints()) + " achievement points.");
-				};
-				interfaceHandler.actions[15] = (SimpleAction) player -> {
-					player.forceText("I currently have " + NumberUtils.formatNumber(player.perkPoints) + " perk points.");
-				};
-				interfaceHandler.actions[16] = (SimpleAction) player -> {
-					player.forceText("I currently have " + NumberUtils.formatNumber(player.votePoints) + " vote points.");
-				};
-				interfaceHandler.actions[17] = (SimpleAction) player -> {
-					player.forceText("I currently have " + NumberUtils.formatNumber(player.donatorPoints) + " donator points.");
-				};
-				interfaceHandler.actions[24] = (SimpleAction) player -> {
-					player.forceText("I currently have " + NumberUtils.formatNumber(VarPlayerRepository.SLAYER_POINTS.get(player))
-							+ " slayer points.");
-				};
-				interfaceHandler.actions[32] = (SimpleAction) player -> {
-					if (player.getDoubleExpRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on my Double exp timer.");
-					else
-						player.forceText("I currently have " + NumberUtils.formatNumber(player.getDoubleExpRemaining() / 100)
-								+ " minutes left on my Double exp timer.");
-				};
-				interfaceHandler.actions[33] = (SimpleAction) player -> {
-
-					int delay = player.doubleDropBonus.remaining();
-					int minutes = delay / 100;
-					if (minutes < 0)
-						minutes = 0;
-					player.forceText(
-							"I currently have " + NumberUtils.formatNumber(minutes) + " minutes left on my Double drops timer.");
-
-				};
-				interfaceHandler.actions[34] = (SimpleAction) player -> {
-					if (player.getDropRateBoostRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on damage boost scroll.");
-					else
-						player.forceText("I currently have " + NumberUtils.formatNumber(player.getDamageBoostRemaining() / 100)
-								+ " minutes left on my damage boost scroll.");
-				};
-				interfaceHandler.actions[35] = (SimpleAction) player -> {
-					if (player.getDamageReductionBoostRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on my Damage reduction timer.");
-					else
-						player
-								.forceText(
-										"I currently have " + NumberUtils.formatNumber(player.getDamageReductionBoostRemaining() / 100)
-												+ " minutes left on my Damage reduction timer.");
-				};
-				interfaceHandler.actions[18] = (SimpleAction) player -> {
-					player.forceText(
-							"I currently have a total of $" + NumberUtils.formatNumber(player.totalDonated) + ".00 donated.");
-				};
-				interfaceHandler.actions[36] = (SimpleAction) player -> {
-					if (player.getBrewImmunityRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on my Brew immunity timer.");
-					else
-						player.forceText("I currently have " + NumberUtils.formatNumber(player.getBrewImmunityRemaining() / 100)
-								+ " minutes left on my Brew immunity timer.");
-				};
-				interfaceHandler.actions[37] = (SimpleAction) player -> {
-					if (player.getPrayerBoostBonusRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on my Prayer drain reduction timer.");
-					else
-						player.forceText("I currently have " + NumberUtils.formatNumber(player.getPrayerBoostBonusRemaining() / 100)
-								+ " minutes left on my Prayer drain reduction timer.");
-				};
-				interfaceHandler.actions[102] = (SimpleAction) player -> {
-					player.forceText("I have a drop rate bonus of " + NumberUtils.formatNumber(player.calculateDropRate()) + "%.");
-				};
-				interfaceHandler.actions[38] = (SimpleAction) player -> {
-					if (player.getDropRateBoostRemaining() <= 0)
-						player.forceText("I currently have 0 minutes left on my 5% Drop rate timer.");
-					else
-						player.forceText("I currently have " + NumberUtils.formatNumber(player.getDropRateBoostRemaining() / 100)
-								+ " minutes left on my 10% Drop rate timer.");
-				};
-				interfaceHandler.actions[25] = (SimpleAction) player -> {
-					int left = VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player);
-					if (player.gauntlet != null && player.gauntlet.inGauntlet) {
-						player.sendMessage("You cannot use this while in the Gauntlet.");
-						return;
-					}
-					if (player.wildernessLevel > 20) {
-						player.sendMessage("This cannot be used above 20 wilderness!");
-						return;
-					}
-					if (left < 1) {
-						ModernTeleport.teleport(player, new Position(3105, 3489, 0));
-						return;
-					}
-					if (player.slayerTaskPosition == null) {
-						player.sendMessage("This task does not support this.");
-						return;
-					}
-					if (player.taskInWilderness) {
-						player.dialogue(new OptionsDialogue("Your task is in the wilderness, are you sure?",
-								new Option("Yes, teleport me.", () -> {
-									player.getMovement().teleport(player.slayerTaskPosition);
-								}),
-								new Option("Nevermind.")));
-					} else {
-						ModernTeleport.teleport(player, player.slayerTaskPosition);
-					}
-				};
-				interfaceHandler.actions[26] = (SimpleAction) player -> {
-					if (player.gauntlet != null && player.gauntlet.inGauntlet) {
-						player.sendMessage("You cannot use this while in the Gauntlet.");
-						return;
-					}
-					if (player.wildernessLevel > 20) {
-						player.sendMessage("This cannot be used above 20 wilderness!");
-						return;
-					}
-					if (player.bossSlayerName == null) {
-						ModernTeleport.teleport(player, new Position(3104, 3489, 0));
-						return;
-					}
-					if (player.bossSlayerPosition == null) {
-						player.sendMessage("This task does not support this.");
-						return;
-					}
-					if (player.bossTaskInWildy) {
-						player.dialogue(new OptionsDialogue("Your task is in the wilderness, are you sure?",
-								new Option("Yes, teleport me.", () -> {
-									player.getMovement().teleport(player.bossSlayerPosition);
-								}),
-								new Option("Nevermind.")));
-					} else {
-						ModernTeleport.teleport(player, player.bossSlayerPosition);
-					}
-				};
 				interfaceHandler.actions[44] = (SimpleAction) JournalTab::openAchievementInterface;
 				interfaceHandler.actions[85] = (SimpleAction) player -> sendAchievementSection(player,
 						Achievements.AchievementTypes.ELITE);
@@ -941,7 +723,7 @@ public class JournalTab {
 						Achievements.AchievementTypes.EASY);
 			});
 			LoginListener.register(player -> {
-				setTab(player, Tab.SUMMARY);
+				io.ruin.model.inter.questtab.dashboard.QuestDashboards.openDefault(player);
 				player.addEvent(event -> {
 					while (true) {
 						updateCurrentTab(player);

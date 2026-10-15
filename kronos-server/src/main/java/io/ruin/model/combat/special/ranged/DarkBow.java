@@ -35,7 +35,7 @@ public class DarkBow implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dark bow") || name.contains("nightfall bow");
+		return name.contains("dark bow") || name.contains("nightfall bow") || def.id == 31534; // Eclipse bow (Wilderness Forge)
 	}
 
 	@Override

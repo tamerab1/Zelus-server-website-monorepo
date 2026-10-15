@@ -16,7 +16,7 @@ public class DragonDagger implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dragon dagger");
+		return name.contains("dragon dagger") || def.id == 31530; // Nightshade dagger(p++) (Wilderness Forge)
 	}
 
 	@Override

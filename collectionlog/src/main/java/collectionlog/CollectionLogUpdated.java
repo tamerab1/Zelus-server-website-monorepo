@@ -346,7 +346,7 @@ public class CollectionLogUpdated {
 			}
 		}
 		p.sendMessage("You have claimed your reward.");
-		Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR, "<col=000000>" + p.getName(),
+		Broadcast.WORLD.sendNewsDropMessage(p, Icon.COLLECTION_LOG, "<col=000000>" + p.getName(),
 				" has completed the " + logData.name + " collection log!");
 		p.claimedCollectionLogs.put(logData.name, true);
 		return true;

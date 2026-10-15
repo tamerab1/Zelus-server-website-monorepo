@@ -19,6 +19,7 @@ public final class StaticInit {
 		io.ruin.model.inter.handlers.TeleInterface.register();
 		io.ruin.model.inter.questtab.JournalTab.Tab.init();
 		io.ruin.model.inter.questtab.JournalTab.init();
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.register();
 		io.ruin.model.activities.DonationBossHandler.init();
 		io.ruin.model.activities.VoteBossHandler.init();
 		io.ruin.model.activities.VorathHandler.init(); // fixed position, no DynamicMap
@@ -165,6 +166,7 @@ public final class StaticInit {
 		io.ruin.model.activities.tempoross.TemporossActions.register();
 		io.ruin.model.activities.tempoross.TemporossRewards.register();
 		io.ruin.model.activities.tournament.TournamentHandler.register();
+		io.ruin.model.activities.tournament.TournamentMaster.register();
 		io.ruin.model.activities.warriorsguild.AnimatedArmor.register();
 		io.ruin.model.activities.warriorsguild.CyclopsRoom.register();
 		io.ruin.model.activities.warriorsguild.WarriorsGuild.register();
@@ -186,6 +188,12 @@ public final class StaticInit {
 		io.ruin.model.activities.wilderness.FountainOfRune.register();
 		io.ruin.model.activities.wilderness.GodwarsDungeon.register();
 		io.ruin.model.activities.wilderness.Hotspot.register();
+		io.ruin.model.activities.wilderness.EdgevillePvpRewards.register();
+		io.ruin.model.activities.scoreboard.Scoreboard.register();
+		io.ruin.model.content.rivals.DivisionRivalsInterfaceManager.register(); // Division Rivals interface 5120 (UI preview, 2026-10-15)
+		io.ruin.model.activities.lottery.Lottery.register();
+		io.ruin.model.content.donatordeals.DonatorDeals.register();
+		io.ruin.model.content.capeforge.CapeForge.register();
 		io.ruin.model.activities.wilderness.KingBlackDragon.register();
 		io.ruin.model.activities.wilderness.LavaMaze.register();
 		io.ruin.model.activities.wilderness.Lever.register();
@@ -222,6 +230,7 @@ public final class StaticInit {
 		io.ruin.model.content.UpgradeManager.register();
 		io.ruin.model.content.Voidwaker.register();
 		io.ruin.model.content.bonds.BondHandler.register();
+		io.ruin.model.content.bonds.BondInterface.register();
 		io.ruin.model.content.camelstatue.CamelStatueInterface.register();
 		io.ruin.model.inter.questtab.presets.Preset.register();
 		io.ruin.model.entity.player.presets.PresetManager.register();
@@ -234,6 +243,8 @@ public final class StaticInit {
 		io.ruin.model.content.itembreaking.ItemBreakPerkAttaching.register();
 		io.ruin.model.content.itembreaking.ItemUpgradeInterface.register();
 		io.ruin.model.content.upgradesystem.UpgradeSystemInterface.register();
+		io.ruin.model.content.wildernessforge.WildernessForge.register();
+		io.ruin.model.inter.handlers.ItemStatsViewer.register();
 		io.ruin.model.entity.doors.Alkharid.register();
 		io.ruin.model.entity.doors.DraynorSewers.register();
 		io.ruin.model.entity.doors.LeHarmless.register();
@@ -492,6 +503,8 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.boxes.mystery.SuperMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.ThirdAgeMysteryBox.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.VoteMysteryBox.register();
+		// after every box class: the Zelus Spinner takes over their Open option
+		io.ruin.model.item.actions.impl.boxes.mystery.MysteryBoxSpinner.registerMoreBoxes();
 		io.ruin.model.item.actions.impl.boxes.mystery.bundles.NormalBundle.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.bundles.SmallBundle.register();
 		io.ruin.model.item.actions.impl.boxes.mystery.bundles.UltraBundle.register();
@@ -561,6 +574,9 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.jewellery.SkillsNecklace.register();
 		io.ruin.model.item.actions.impl.jewellery.SlayerRing.register();
 		io.ruin.model.item.actions.impl.pet.Pet.register();
+		io.ruin.model.item.actions.impl.pet.perk.PetPerksInterface.register();
+		io.ruin.model.entity.npc.combatpet.CombatPetUpgrades.register();
+		io.ruin.model.entity.npc.combatpet.AscendedBestiary.register();
 		io.ruin.model.content.petexchange.PetRecolorExchange.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCard.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCardManager.register();

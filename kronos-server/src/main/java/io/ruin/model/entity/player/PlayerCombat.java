@@ -285,6 +285,11 @@ public class PlayerCombat extends Combat {
 		}
 
 		if (target.player != null) {
+			if (io.ruin.model.activities.tournament.TournamentHandler.blocksAttack(player, target.player)) {
+				if (message)
+					player.sendMessage("You cannot intervene in an ongoing tournament match.");
+				return false;
+			}
 			if (player.attackPlayerListener != null) {
 				if (!player.attackPlayerListener.allow(player, target.player, message))
 					return false;
@@ -746,6 +751,7 @@ public class PlayerCombat extends Combat {
 						player.currentKillSpree = 0;
 						player.bhKillstreak = 0;
 						boolean bhTarget2 = player.getBountyHunter().deathByTarget(pKiller);
+						killer.presetKill = true; // rental gear: no blood money for this kill
 						killer.reward(player, bhTarget2);
 						io.ruin.model.activities.wilderness.WantedManager.handleDeath(player, pKiller);
 					}
@@ -758,6 +764,10 @@ public class PlayerCombat extends Combat {
 				 * Rewards (Keep before items lost on death!)
 				 */
 				boolean bhTarget = player.getBountyHunter().deathByTarget(pKiller);
+				if (bhTarget && pKiller != null) {
+					// still at the death tile here: the hotspot check uses where the target died
+					io.ruin.model.activities.wilderness.EdgevillePvpRewards.onTargetKill(pKiller, player);
+				}
 				if (pKiller != null) {
 					killer.reward(player, bhTarget);
 					io.ruin.model.activities.wilderness.WantedManager.handleDeath(player, pKiller);
@@ -766,6 +776,10 @@ public class PlayerCombat extends Combat {
 					player.bhKillstreak = 0;
 				}
 
+				/**
+				 * Free spawned (phantom) items vanish before anything is dropped, kept or put in a loot key
+				 */
+				io.ruin.model.content.pvppreset.SpawnedItems.strip(player);
 				/**
 				 * Items lost on death
 				 */
@@ -3085,7 +3099,7 @@ public class PlayerCombat extends Combat {
 				return;
 			}
 
-			boolean hasScytheEquipped = weapon.id == 22325;
+			boolean hasScytheEquipped = weapon.id == 22325 || weapon.id == 31808; // + the Zelus Scythe of Vitur (charge-free)
 			if (hasScytheEquipped && target.isNpc()) {
 				attackWithScythe(player, target);
 				return;
@@ -5260,7 +5274,8 @@ public class PlayerCombat extends Combat {
 		}
 
 		/* twisted bow */
-		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626);
+		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626)
+				|| player.getEquipment().hasId(io.ruin.model.content.cosmetic.Stardust.CELESTIAL_TWISTED_BOW);
 		if (hit.attackStyle != null && hit.attackStyle.isRanged() && hasTwistedBow) {
 			double magicLevel = target.getCombat().getLevel(StatType.Magic);
 			// if we're fighting the Combat Dummy
@@ -5407,8 +5422,7 @@ public class PlayerCombat extends Combat {
 			int level = AttributeExtensions.getCharges(AttributeTypes.DRAGON_WRATH,
 					player.getEquipment().get(Equipment.SLOT_WEAPON));
 			int chance = 60 - (level * 10);
-			if (Random.get(chance) == 0 && player.dragonWrathDelay.remaining() < 1
-					|| player.getName().equalsIgnoreCase("Kal")) {
+			if (Random.get(chance) == 0 && player.dragonWrathDelay.remaining() < 1) {
 				ItemBreakPerkHandler.handleDragonWrath(player, target.npc);
 			}
 

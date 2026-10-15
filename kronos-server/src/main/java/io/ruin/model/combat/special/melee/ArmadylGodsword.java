@@ -15,14 +15,20 @@ import io.ruin.model.item.containers.Equipment;
 //37.5% more damage with double accuracy. (50%)
 public class ArmadylGodsword implements Special {
 
+	// Wilderness Forge upgrade. Its spec uses seq 14457: a copy of 7644 with the forced
+	// right-hand item (the regular AGS) stripped, so the wielded model shows.
+	private static final int TEMPEST_GODSWORD = 31524;
+	private static final int TEMPEST_SPEC_ANIM = 14457;
+
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.equalsIgnoreCase("armadyl godsword");
+		return name.equalsIgnoreCase("armadyl godsword") || def.id == TEMPEST_GODSWORD || def.id == 31784; // + AGS (celestial)
 	}
 
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
-		player.animate(player.getEquipment().getId(Equipment.SLOT_WEAPON) == 11802 ? 7644 : 7645);
+		int weaponId = player.getEquipment().getId(Equipment.SLOT_WEAPON);
+		player.animate(weaponId == 11802 ? 7644 : weaponId == TEMPEST_GODSWORD ? TEMPEST_SPEC_ANIM : 7645);
 		if (player.goldenArmadylGodsword) {
 			player.graphics(1747);
 		} else {

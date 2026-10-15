@@ -94,7 +94,7 @@ public enum WildernessObelisk {
 				ObjectAction.register(pillar.getId(), "activate", (player, obj) -> obelisk.activate(player, obelisk.randomObelisk()));
 				ObjectAction.register(pillar.getId(), "set destination", (player, obj) -> chooseDestination(player));
 				ObjectAction.register(pillar.getId(), "teleport to destination", (player, obj) -> {
-					if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111) {
+					if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111 || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 31642) {
 						if (player.obeliskDestination == null)
 							player.sendFilteredMessage("You need to set a destination before attempting to do this.");
 						else
@@ -108,7 +108,7 @@ public enum WildernessObelisk {
 	}
 
 	public static void chooseDestination(Player player) {
-		if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111) {
+		if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111 || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 31642) {
 			OptionScroll.open(player, "Select an Obelisk to teleport to",
 				new Option("Level 13 Wilderness", () -> setDestination(player, LEVEL_13, "level 13")),
 				new Option("Level 19 Wilderness", () -> setDestination(player, LEVEL_19, "level 19")),

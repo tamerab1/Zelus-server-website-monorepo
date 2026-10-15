@@ -160,7 +160,7 @@ public class ZelusChest {
 			Item loot = SUPER_RARE_LOOT[Random.get(SUPER_RARE_LOOT.length - 1)];
 			player.getInventory().addOrDrop(loot.getId(), loot.getAmount());
 			player.addToCollectionLog(loot);
-			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Zelus Chest on [Chest #" + player.zelusChestsOpened + "]!");
+			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.YELLOW_KEY, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Zelus Chest on [Chest #" + player.zelusChestsOpened + "]!");
 
 		} else if (Random.rollDie(225, 1)) {
 			/**
@@ -169,7 +169,7 @@ public class ZelusChest {
 			Item loot = VERY_RARE_LOOT[Random.get(VERY_RARE_LOOT.length - 1)];
 			player.getInventory().addOrDrop(loot.getId(), loot.getAmount());
 			player.addToCollectionLog(loot);
-			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Zelus Chest on [Chest #" + player.zelusChestsOpened + "]!");
+			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.YELLOW_KEY, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Zelus Chest on [Chest #" + player.zelusChestsOpened + "]!");
 
 		} else if (Random.rollDie(100, 1)) {
 			/**

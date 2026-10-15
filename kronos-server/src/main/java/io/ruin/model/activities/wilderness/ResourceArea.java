@@ -32,7 +32,7 @@ public class ResourceArea {
 			}
 			Item currency = player.getInventory().findItem(getCurrency());
 			ObjType wepDef = player.getEquipment().getDef(Equipment.SLOT_WEAPON);
-			boolean hasWildernessSword = wepDef != null && wepDef.id == 13111;
+			boolean hasWildernessSword = wepDef != null && (wepDef.id == 13111 || wepDef.id == 31642);
 			if ((currency == null || currency.getAmount() < getEntryFee()) && !hasWildernessSword) {
 				player.sendMessage("You need " + NumberUtils.formatNumber(getEntryFee()) + " " + getCurrencyName() + " to enter the Arena.");
 				return;

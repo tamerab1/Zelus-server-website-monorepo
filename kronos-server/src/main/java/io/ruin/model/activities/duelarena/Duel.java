@@ -832,6 +832,9 @@ public class Duel extends ItemContainer {
 	}
 
 	private void offer(Item item, int amount) {
+		if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "staked")) {
+			return;
+		}
 		if (stage != 2) {
 			/* not on the second screen! */
 			return;

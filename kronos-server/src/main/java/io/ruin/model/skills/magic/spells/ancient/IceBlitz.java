@@ -27,13 +27,13 @@ public class IceBlitz extends TargetSpell {
 	protected void beforeHit(Hit hit, Entity target) {
 		if (hit.attacker.player != null && hit.attacker.player.getEquipment().hasId(22647)) // zuriel's staff
 			hit.boostAttack(0.1);
-		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30522)) {
+		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30522) || hit.attacker.player.getEquipment().contains(31654)) {
 			hit.boostDamage(0.03);
 		}
-		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30521)) {
+		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30521) || hit.attacker.player.getEquipment().contains(31652)) {
 			hit.boostDamage(0.03);
 		}
-		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30523)) {
+		if (hit.attacker.player != null && hit.attacker.player.getEquipment().contains(30523) || hit.attacker.player.getEquipment().contains(31656)) {
 			hit.boostDamage(0.03);
 		}
 	}

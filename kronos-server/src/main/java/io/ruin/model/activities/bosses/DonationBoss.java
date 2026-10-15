@@ -90,7 +90,7 @@ public class DonationBoss extends NPCCombat {
 		player.perkPoints += perkPointReward;
 		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the donation boss!"));
 		if (reward.lootBroadcast != null)
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR,
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP,
 				"<col=000000>" + player.getName(),
 				" just received " + reward.getDef().descriptiveName + " from the donation boss!");
 	}

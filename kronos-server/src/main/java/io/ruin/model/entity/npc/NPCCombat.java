@@ -774,7 +774,7 @@ public abstract class NPCCombat extends Combat {
 		}
 		AttributeExtensions.setCharges(item, 10000);
 		this.dropItem(item, player);
-		Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+		Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(),
 				" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase() + "</shad> from a "
 						+ npc.getDef().name.toLowerCase() + "! (<col=FC0101>"
 						+ (npc.getDef().killCounter.apply(player).getKills() + 1) + " KC<col=000000>)");
@@ -2833,6 +2833,8 @@ public abstract class NPCCombat extends Combat {
 					if (respawnTicks > 30) {
 						respawnTicks = 12;
 					}
+					io.ruin.model.inter.questtab.dashboard.QuestDashboards.RESPAWN_AT.put(npc.getId(),
+							io.ruin.Server.currentTick() + respawnTicks);
 					event.delay(respawnTicks);
 					respawn();
 				}
@@ -2998,6 +3000,7 @@ public abstract class NPCCombat extends Combat {
 	 * @items - items to drop
 	 */
 	private void handleDrop(Killer killer, Position dropPosition, Player pKillerLastHit, List<Item> items) {
+		io.ruin.model.activities.scoreboard.Scoreboard.onNpcDrop(pKillerLastHit, items);
 
 		if (pKillerLastHit.getPosition().inBounds(Wildywars) && pKillerLastHit.wildernessLevel > 0) { // set the bounds
 
@@ -3289,11 +3292,11 @@ public abstract class NPCCombat extends Combat {
 			message += item.getDef().descriptiveName;
 		if (item.lootBroadcast != null) {
 			if (npc.getDef().killCounter == null || npc.getDef().killCounter.apply(pKiller.player) == null)
-				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.ADMINISTRATOR,
+				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.RARE_DROP,
 						"<col=000000>" + pKiller.player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 								+ item.getDef().name.toLowerCase() + "</shad> from a " + npc.getDef().name.toLowerCase() + "!");
 			else
-				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.ADMINISTRATOR,
+				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.RARE_DROP,
 						"<col=000000>" + pKiller.player.getName(),
 						" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase() + "</shad> from a "
 								+ npc.getDef().name.toLowerCase() + "! (<col=FC0101>"
@@ -3301,11 +3304,11 @@ public abstract class NPCCombat extends Combat {
 
 		} else {
 			if (npc.getDef().killCounter == null || npc.getDef().killCounter.apply(pKiller.player) == null)
-				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.ADMINISTRATOR,
+				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.RARE_DROP,
 						"<col=000000>" + pKiller.player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 								+ item.getDef().name.toLowerCase() + "</shad> from a " + npc.getDef().name.toLowerCase() + "!");
 			else
-				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.ADMINISTRATOR,
+				Broadcast.WORLD.sendNewsDropMessage(pKiller.player, Icon.RARE_DROP,
 						"<col=000000>" + pKiller.player.getName(),
 						" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase() + "</shad> from a "
 								+ npc.getDef().name.toLowerCase() + "! (<col=FC0101>"

@@ -238,7 +238,9 @@ public class Player extends PlayerAttributes {
 			4708, 4856, 4857, 4858, 4859, 4712, 4868, 4869, 4870, 4871,
 			4714, 4874, 4875, 4876, 4877, 4710, 4862, 4863, 4864, 4865,
 			4732, 4928, 4929, 4930, 4931, 4736, 4940, 4941, 4942, 4943,
-			4738, 4946, 4947, 4948, 4949, 4734, 4934, 4935, 4936, 4937, 22516);
+			4738, 4946, 4947, 4948, 4949, 4734, 4934, 4935, 4936, 4937, 22516,
+			// Wilderness Forge upgrades: Bloodrage Dharok's, Venomshot Karil's, Arcanist Ahrim's
+			31500, 31502, 31504, 31506, 31508, 31510, 31512, 31514, 31516, 31518, 31520, 31522);
 
 	public CustomXericRaid getCustomXericRaid() {
 		if (customXericRaid == null)
@@ -547,6 +549,7 @@ public class Player extends PlayerAttributes {
 		Loggers.logBond(player.getUserId(), player.getName(), player.getIp(),
 				"Total donated before change " + totalDonated);
 		totalDonated += amount;
+		io.ruin.model.activities.scoreboard.Scoreboard.record(player, io.ruin.model.activities.scoreboard.Scoreboard.Stat.DONATED, amount);
 		Loggers.logBond(player.getUserId(), player.getName(), player.getIp(), "Total donated after change " + totalDonated);
 	}
 
@@ -1534,6 +1537,20 @@ public class Player extends PlayerAttributes {
 		return actions[option - 1];
 	}
 
+	/** The client's canvas size, from its WindowStatus packets (login and every resize); 0 until the first one. */
+	public transient int canvasWidth, canvasHeight;
+
+	/**
+	 * Whether the 1.35x "large" screens (1142 presets, 1157 PvP loadouts: 691x451, opened in the world-map slot) fit
+	 * this client: resizable, with room for them beside the side panels. Otherwise the normal 512x334 version opens in
+	 * the main modal, which the client always keeps on screen -- a large one centred in a narrow window was pushed
+	 * off the left edge.
+	 */
+	public boolean fitsLargeInterface() {
+		return getToplevelType() != null && getToplevelType().isResizable()
+			&& (canvasWidth == 0 || (canvasWidth >= 960 && canvasHeight >= 520));
+	}
+
 	public void updateVarp(int id) {
 		if (updatedVarps[id]) {
 			return;
@@ -2158,7 +2175,11 @@ public class Player extends PlayerAttributes {
 		setAction(3, PlayerAction.TRADE);
 		setInvisibleAction(4, PlayerAction.TRADE);
 
-		sendMessage("Welcome to " + World.type.getWorldName() + ". A unique experience!");
+		// one branded welcome (shadowed so it reads on the parchment chatbox) + where to start
+		sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> <col=ffffff><shad=0>" + (newPlayer ? "Welcome to " + World.type.getWorldName() + ", "
+			: "Welcome back, ") + getName() + "!</shad></col>");
+		sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> Type <col=00ff00><shad=0>::help</shad></col> for commands, <col=ff981f><shad=0>::pit</shad></col>"
+			+ " for tournaments, or open your Quest Tab for profile stats.");
 		packetSender.sendDiscordPresence("Idle");
 
 		World.sendLoginMessages(this);
@@ -4033,9 +4054,7 @@ public class Player extends PlayerAttributes {
 		}
 		startEvent(p -> {
 			lock();
-			animate(714);
-			graphics(111);
-			p.delay(3);
+			io.ruin.model.skills.magic.spells.modern.ModernTeleport.playEffect(p, this);
 			getMovement().teleport(x, y, z);
 			animate(-1);
 			unlock();
@@ -4051,9 +4070,7 @@ public class Player extends PlayerAttributes {
 		}
 		startEvent(p -> {
 			lock();
-			animate(714);
-			graphics(111);
-			p.delay(3);
+			io.ruin.model.skills.magic.spells.modern.ModernTeleport.playEffect(p, this);
 			getMovement().teleport(pos);
 			animate(-1);
 			unlock();
@@ -4475,6 +4492,10 @@ public class Player extends PlayerAttributes {
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
 				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 25975)
 			specialRestoreMaxTick = 25;
+		// Sunbearer (Wilderness Forge upgrade of the lightbearer) restores special energy even faster.
+		if (player.getEquipment().get(Equipment.SLOT_RING) != null
+				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 31588)
+			specialRestoreMaxTick = 20;
 		specialRestoreMaxTick = io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler
 				.applySpecialRegenBoost(this, specialRestoreMaxTick);
 		specialRestoreMaxTick = io.ruin.model.content.bonds.BondPerks.specialRegenTicks(this, specialRestoreMaxTick);

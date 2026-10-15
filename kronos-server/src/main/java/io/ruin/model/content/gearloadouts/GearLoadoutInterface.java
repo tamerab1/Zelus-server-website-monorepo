@@ -1,15 +1,16 @@
 package io.ruin.model.content.gearloadouts;
 
-import io.ruin.cache.InterfaceDef;
+import io.ruin.model.content.equipmentpresets.GearPresetHandler;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.SecondaryGroup;
 import io.ruin.model.inter.InterfaceHandler;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.actions.SimpleAction;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
+import io.ruin.model.inter.handlers.EquipmentStats;
+import io.ruin.model.inter.questtab.dashboard.QuestDashboards;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.Item;
-import io.ruin.model.item.containers.Equipment;
 import io.ruin.model.skills.magic.SpellBook;
 import io.ruin.model.stat.StatType;
 
@@ -17,96 +18,71 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * PvP Loadouts: the PvP Mode version of the regular Equipment Presets screen. Interface 1156 (and 1157 for resizable,
+ * opened in the world-map slot like 1142) is a copy of 5900 with the same component ids, built by
+ * .dev/cache-restore-tool/src/BuildPvpLoadoutsInterface.java. Same layout and flow as the regular presets (gear preview
+ * with an inventory toggle, 6-row list with scrolling, Save / Update / Delete / Load), with the PvP features:
+ * <ul>
+ *     <li>each loadout's own combat levels (click a level to edit it) and combat level, plus its gear bonuses;</li>
+ *     <li>My loadouts / Free kits list switch; the loadout's spellbook (click to cycle);</li>
+ *     <li>Spawn Supplies (::spawn) and a Battle Presets switch.</li>
+ * </ul>
+ * Loadouts live in GearLoadoutStore, free kits in FreeGearLoadoutKits; all loading/saving goes through
+ * GearLoadoutHandler as before (it still calls {@link #selectPreset}, {@link #clearSelectionIf} and {@link #open}).
+ */
 public class GearLoadoutInterface {
 
-	private static final int INTERFACE_ID = 706;
+	public static final int INTERFACE_ID = 1156, LARGE_INTERFACE_ID = 1157;
 	private static final Map<String, GearLoadoutInterface> INTERFACES = new ConcurrentHashMap<>();
-	private static boolean registered;
-	private static final int PRESET_COUNT = 13;
-	private static final int CREATE_BUTTON = 47;
-	private static final int CREATE_BUTTON_BACKGROUND = 48;
-	private static final int CREATE_BUTTON_ICON = 52;
-	private static final int CLONE_BUTTON = 109;
-	private static final int CLONE_BUTTON_BACKGROUND = 110;
-	private static final int CLONE_BUTTON_ICON = 115;
-	private static final int LOAD_BUTTON = 119;
-	private static final int LOAD_BUTTON_BACKGROUND = 120;
-	private static final int LOAD_BUTTON_ICON = 125;
-	private static final int DELETE_BUTTON = 126;
-	private static final int DELETE_BUTTON_BACKGROUND = 127;
-	private static final int DELETE_ACTION_COMPONENT = 131;
-	private static final int DELETE_BUTTON_ICON = 132;
-	private static final int CURRENT_PRESET_NAME = 117;
-	private static final int STAT_PANEL = 172;
-	private static final int STAT_TITLE = 173;
-	private static final int SPELLBOOK_VALUE_TEXT = 181;
-	private static final int FREE_KIT_SELECTOR_BUTTON = 183;
-	private static final int FREE_KIT_SELECTOR_BORDER = 184;
-	private static final int FREE_KIT_SELECTOR_BACKGROUND = 185;
-	private static final int FREE_KIT_SELECTOR_TEXT = 186;
-	private static final int STAT_SPELLBOOK_ICON = 194;
-	private static final int PRESET_SELECTOR_BUTTON = 195;
-	private static final int PRESET_SELECTOR_BORDER = 196;
-	private static final int PRESET_SELECTOR_BACKGROUND = 197;
-	private static final int PRESET_SELECTOR_TEXT = 198;
-	private static final int REQUIRED_COMPONENT_COUNT = PRESET_SELECTOR_TEXT + 1;
 
-	private static final int[] PRESET_BUTTONS = { 71, 74, 77, 80, 83, 86, 89, 92, 95, 98, 101, 104, 107 };
-	private static final int[] PRESET_TEXTS = { 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108 };
-	// Each row of 4 must be ascending (left-to-right) to match slot order -- this used to be
-	// descending per row (136,135,134,133, ...), which mirrored every row in the preview so it
-	// no longer matched the preset's actual stored item order (confirmed by comparing a free
-	// kit's saved JSON against what actually spawns -- spawning already used plain slot order).
-	private static final int[] INVENTORY_COMPONENTS = {
-			133, 134, 135, 136,
-			137, 138, 139, 140,
-			141, 142, 143, 144,
-			145, 146, 147, 148,
-			149, 150, 151, 152,
-			153, 154, 155, 156,
-			157, 158, 159, 160
-	};
-	private static final int[] STAT_TEXTS = { 174, 175, 176, 177, 178, 179, 180 };
-	private static final int[] STAT_ICON_BUTTONS = { 187, 188, 189, 190, 191, 192, 193 };
-	private static final EquipmentPreview[] EQUIPMENT_PREVIEWS = {
-			new EquipmentPreview(Equipment.SLOT_HAT, 161, 34, 4732),
-			new EquipmentPreview(Equipment.SLOT_QUIVER, 182, -1, 4743),
-			new EquipmentPreview(Equipment.SLOT_CAPE, 168, 35, 4733),
-			new EquipmentPreview(Equipment.SLOT_AMULET, 162, 36, 4734),
-			new EquipmentPreview(Equipment.SLOT_AMMO, 169, 44, 4735),
-			new EquipmentPreview(Equipment.SLOT_WEAPON, 170, 37, 4736),
-			new EquipmentPreview(Equipment.SLOT_CHEST, 163, 38, 4737),
-			new EquipmentPreview(Equipment.SLOT_SHIELD, 171, 39, 4738),
-			new EquipmentPreview(Equipment.SLOT_LEGS, 164, 40, 4739),
-			new EquipmentPreview(Equipment.SLOT_HANDS, 167, 41, 4740),
-			new EquipmentPreview(Equipment.SLOT_FEET, 165, 42, 4741),
-			new EquipmentPreview(Equipment.SLOT_RING, 166, 43, 4742)
-	};
+	private static final int CLOSE_BUTTON = 7, TITLE = 5, STATS_HEADER = 8, PREVIEW_HEADER = 9, PANEL_HEADER = 10;
+	/** 5900's 16 stat lines: 20-26 the loadout's combat levels, 27 its combat level, 28-35 its gear bonuses. */
+	private static final int FIRST_LEVEL_LINE = 20, COMBAT_LINE = 27, FIRST_BONUS_LINE = 28;
+	/** Equipment bonus indexes shown on lines 28-35: stab/slash/crush/magic/range attack, melee/ranged str, magic dmg. */
+	private static final int[] SHOWN_BONUSES = {0, 1, 2, 3, 4, 10, 11, 12};
+	private static final int SPELLBOOK_BUTTON = 36, SPELLBOOK_TEXT = 38, LIST_BUTTON = 39, LIST_TEXT = 41,
+		SPAWN_BUTTON = 42, SPAWN_TEXT = 44, SELECTED_SUMMARY = 46, LOAD_BUTTON = 47, LOAD_TEXT = 49;
+	private static final int[] EQUIPMENT_COMPONENTS = {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80};
+	private static final int[] EQUIPMENT_PLACEHOLDERS = {63, 64, 65, 66, 67, 68, 69, 82, 83, 84, 85};
+	private static final int[] EQUIPMENT_BACKGROUNDS = {51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61};
+	private static final int EQUIPMENT_CONTAINER_START = 9320, INVENTORY_COMPONENT = 81, INVENTORY_CONTAINER = 9332,
+		INVENTORY_OUTLINE = 87, VIEW_TOGGLE_BACKGROUND = 62, VIEW_TOGGLE = 86, INVENTORY_SPRITE = 900, EQUIPMENT_SPRITE = 901;
+	private static final int[] ROW_BUTTONS = {90, 91, 92, 93, 94, 95};
+	private static final int[] ROW_TEXT = {102, 103, 104, 105, 106, 107};
+	private static final int[] ROW_SELECTION = {108, 109, 110, 111, 112, 113};
+	private static final int UPDATE_BUTTON = 114, UPDATE_TEXT = 116, DELETE_BUTTON = 117, DELETE_TEXT = 119,
+		SCROLL_TRACK = 120, SCROLL_THUMB = 121, SCROLL_UP = 122, SCROLL_UP_BACKGROUND = 123, SCROLL_UP_TEXT = 124,
+		SCROLL_DOWN = 125, SCROLL_DOWN_BACKGROUND = 126, SCROLL_DOWN_TEXT = 127, CREATE_BUTTON = 128, CREATE_TEXT = 130,
+		PAGE_TEXT = 131, PRESET_PANEL_FIRST = 90, PRESET_PANEL_LAST = 131, BATTLE_PRESETS = 132, BATTLE_PRESETS_TEXT = 133;
+	private static final int VISIBLE_ROWS = 6;
+
+	private static final String GOLD = "<col=ffd35a>", GREY = "<col=777777>", WHITE = "<col=ffffff>", RED = "<col=ff6a4a>",
+		GREEN = "<col=55ff55>", END = "</col>";
 
 	public GearLoadoutPreset currentPreset;
-	private boolean selectorOpen;
-	private boolean currentPresetIsFreeKit;
-	private PresetListMode listMode = PresetListMode.PRESETS;
+	boolean currentPresetIsFreeKit;
+	PresetListMode listMode = PresetListMode.PRESETS;
+	private int scrollOffset;
+	private boolean showingInventory;
+	/** The group actually open: 1156, or 1157 on resizable clients. */
+	private int ifId = INTERFACE_ID;
 
 	public static GearLoadoutInterface get(Player player) {
 		return INTERFACES.computeIfAbsent(interfaceKey(player), key -> new GearLoadoutInterface());
 	}
 
-	public static void open(Player player) {
-		if (!isInterfacePacked()) {
-			player.sendMessage("Gear loadouts interface " + INTERFACE_ID + " is missing from the cache. Copy the TOML patch and rebuild the cache.");
-			return;
+	/** The window shrank below the large screen's size: reopen on the normal-size screen. */
+	public static void shrinkIfOpen(Player player) {
+		if (player.isVisibleInterface(LARGE_INTERFACE_ID)) {
+			player.closeInterface(ToplevelComponent.WORLD_MAP);
+			open(player);
 		}
-		register();
-		get(player).openInterface(player);
 	}
 
-	private static boolean isInterfacePacked() {
-		return InterfaceDef.COUNTS != null
-				&& INTERFACE_ID >= 0
-				&& INTERFACE_ID < InterfaceDef.COUNTS.length
-				&& INTERFACE_ID < InterfaceHandler.HANDLERS.length
-				&& InterfaceDef.COUNTS[INTERFACE_ID] >= REQUIRED_COMPONENT_COUNT;
+	public static void open(Player player) {
+		register(); // the handlers are registered on first use (nothing registers them at startup)
+		get(player).openInterface(player);
 	}
 
 	private static String interfaceKey(Player player) {
@@ -115,10 +91,24 @@ public class GearLoadoutInterface {
 
 	private void openInterface(Player player) {
 		ensureSelection(player);
-		selectorOpen = false;
-		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		boolean large = player.fitsLargeInterface();
+		ifId = large ? LARGE_INTERFACE_ID : INTERFACE_ID;
+		if (large) {
+			player.closeInterface(ToplevelComponent.MAINMODAL);
+			player.openInterface(ToplevelComponent.WORLD_MAP, ifId);
+		} else {
+			player.openInterface(ToplevelComponent.MAINMODAL, ifId);
+		}
+		var ps = player.getPacketSender();
+		ps.sendString(ifId, TITLE, "PvP Loadouts");
+		ps.sendString(ifId, STATS_HEADER, "Loadout Stats");
+		ps.sendString(ifId, PREVIEW_HEADER, "Player Preview");
+		ps.sendString(ifId, SPAWN_TEXT, "Spawn Supplies");
+		ps.sendString(ifId, CREATE_TEXT, "+ Save Current Gear");
 		update(player);
 	}
+
+	/* ---------------- selection (kept API: GearLoadoutHandler calls these) ---------------- */
 
 	public void selectPreset(Player player, GearLoadoutPreset preset) {
 		selectPreset(player, preset, false);
@@ -136,7 +126,6 @@ public class GearLoadoutInterface {
 		currentPreset = preset;
 		currentPresetIsFreeKit = freeKit;
 		listMode = freeKit ? PresetListMode.FREE_KITS : PresetListMode.PRESETS;
-		selectorOpen = false;
 		update(player);
 	}
 
@@ -145,36 +134,6 @@ public class GearLoadoutInterface {
 			currentPreset = null;
 			currentPresetIsFreeKit = false;
 		}
-	}
-
-	public void cyclePreset(Player player) {
-		togglePresetDropdown(player);
-	}
-
-	public void toggleFreeKitDropdown(Player player) {
-		toggleSelector(player, PresetListMode.FREE_KITS);
-	}
-
-	public void togglePresetDropdown(Player player) {
-		toggleSelector(player, PresetListMode.PRESETS);
-	}
-
-	private void toggleSelector(Player player, PresetListMode mode) {
-		List<GearLoadoutPreset> list = presetsForMode(player, mode);
-		if (list.isEmpty()) {
-			selectorOpen = false;
-			update(player);
-			player.sendMessage(mode == PresetListMode.FREE_KITS ? "There aren't any free kits configured yet." : "You don't have any presets saved yet.");
-			return;
-		}
-		boolean sameMode = listMode == mode;
-		listMode = mode;
-		if (!currentSelectionMatches(player, mode)) {
-			currentPreset = list.get(0);
-			currentPresetIsFreeKit = mode == PresetListMode.FREE_KITS;
-		}
-		selectorOpen = sameMode ? !selectorOpen : true;
-		update(player);
 	}
 
 	public void cycleSpellBook(Player player) {
@@ -190,7 +149,7 @@ public class GearLoadoutInterface {
 		SpellBook next = SpellBook.VALUES[(currentPreset.getSpellBook().ordinal() + 1) % SpellBook.VALUES.length];
 		currentPreset.setSpellBook(next);
 		GearLoadoutStore.save(player);
-		sendSpellBook(player, currentPreset);
+		update(player);
 		player.sendMessage("Preset spellbook changed to " + formatSpellBookName(next) + ".");
 	}
 
@@ -230,10 +189,14 @@ public class GearLoadoutInterface {
 		return 5 + (group.id - SecondaryGroup.DONATOR.id);
 	}
 
-	private void update(Player player) {
+	void update(Player player) {
 		ensureSelection(player);
-		sendSelectors(player);
-		sendPreview(player);
+		if (!player.isVisibleInterface(ifId))
+			return;
+		sendStats(player);
+		sendOptions(player);
+		sendLoadoutView(player);
+		sendRows(player);
 	}
 
 	private void ensureSelection(Player player) {
@@ -245,57 +208,21 @@ public class GearLoadoutInterface {
 			}
 		}
 		List<GearLoadoutPreset> playerPresets = GearLoadoutStore.getPresets(player);
-		if (!currentPresetIsFreeKit && currentPreset != null && playerPresets.contains(currentPreset)) {
+		if (!currentPresetIsFreeKit && currentPreset != null && playerPresets.contains(currentPreset))
 			return;
-		}
-		if (!playerPresets.isEmpty()) {
+		if (listMode == PresetListMode.PRESETS && !playerPresets.isEmpty()) {
 			currentPreset = playerPresets.get(0);
 			currentPresetIsFreeKit = false;
-			listMode = PresetListMode.PRESETS;
 			return;
 		}
-		List<GearLoadoutPreset> freeKits = FreeGearLoadoutKits.getKits();
-		currentPreset = freeKits.isEmpty() ? null : freeKits.get(0);
-		currentPresetIsFreeKit = currentPreset != null;
-		listMode = currentPresetIsFreeKit ? PresetListMode.FREE_KITS : PresetListMode.PRESETS;
-	}
-
-	private void sendSelectors(Player player) {
-		int unlockedPresets = getUnlockedPresets(player);
-		player.getPacketSender().setHidden(INTERFACE_ID, 66, !selectorOpen);
-		setStatsHidden(player, selectorOpen);
-		player.getPacketSender().sendString(INTERFACE_ID, FREE_KIT_SELECTOR_TEXT, selectorText("Free Kits", listMode == PresetListMode.FREE_KITS));
-		player.getPacketSender().sendString(INTERFACE_ID, PRESET_SELECTOR_TEXT, selectorText("Presets", listMode == PresetListMode.PRESETS));
-		List<GearLoadoutPreset> visiblePresets = presetsForMode(player, listMode);
-		for (int i = 0; i < PRESET_COUNT; i++) {
-			boolean showRow = selectorOpen && shouldShowRow(i, visiblePresets.size(), unlockedPresets);
-			player.getPacketSender().setHidden(INTERFACE_ID, PRESET_BUTTONS[i], !showRow);
-			String text;
-			if (!showRow)
-				text = "";
-			else {
-				GearLoadoutPreset preset = visiblePresets.get(i);
-				preset.normalize();
-				text = preset == currentPreset ? "<col=ff981f>" + truncate(preset.presetName, 16) : "<col=e6804d>" + truncate(preset.presetName, 16);
-			}
-			player.getPacketSender().sendString(INTERFACE_ID, PRESET_TEXTS[i], text);
+		if (listMode == PresetListMode.FREE_KITS) {
+			List<GearLoadoutPreset> freeKits = FreeGearLoadoutKits.getKits();
+			currentPreset = freeKits.isEmpty() ? null : freeKits.get(0);
+			currentPresetIsFreeKit = currentPreset != null;
+			return;
 		}
-	}
-
-	private boolean shouldShowRow(int slot, int listSize, int unlockedPresets) {
-		if (listMode == PresetListMode.FREE_KITS)
-			return slot < listSize;
-		return slot < listSize && slot < unlockedPresets;
-	}
-
-	private List<GearLoadoutPreset> presetsForMode(Player player, PresetListMode mode) {
-		return mode == PresetListMode.FREE_KITS ? FreeGearLoadoutKits.getKits() : GearLoadoutStore.getPresets(player);
-	}
-
-	private boolean currentSelectionMatches(Player player, PresetListMode mode) {
-		if (mode == PresetListMode.FREE_KITS)
-			return currentPresetIsFreeKit && matchingFreeKit(currentPreset) != null;
-		return !currentPresetIsFreeKit && currentPreset != null && GearLoadoutStore.getPresets(player).contains(currentPreset);
+		currentPreset = null;
+		currentPresetIsFreeKit = false;
 	}
 
 	private GearLoadoutPreset matchingFreeKit(GearLoadoutPreset preset) {
@@ -308,89 +235,212 @@ public class GearLoadoutInterface {
 		return null;
 	}
 
-	private String selectorText(String label, boolean selected) {
-		return (selected ? "<col=ff981f>" : "<col=e6804d>") + label;
+	private List<GearLoadoutPreset> list(Player player) {
+		return listMode == PresetListMode.FREE_KITS ? FreeGearLoadoutKits.getKits() : GearLoadoutStore.getPresets(player);
 	}
 
-	private void setStatsHidden(Player player, boolean hidden) {
-		player.getPacketSender().setHidden(INTERFACE_ID, STAT_PANEL, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, STAT_TITLE, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, SPELLBOOK_VALUE_TEXT, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, STAT_SPELLBOOK_ICON, hidden);
-		for (int statText : STAT_TEXTS)
-			player.getPacketSender().setHidden(INTERFACE_ID, statText, hidden);
-		for (int statIcon : STAT_ICON_BUTTONS)
-			player.getPacketSender().setHidden(INTERFACE_ID, statIcon, hidden);
+	/* ---------------- rendering ---------------- */
+
+	/** Left column: the loadout's combat levels (editable on own loadouts), combat level and gear bonuses. */
+	private void sendStats(Player player) {
+		var ps = player.getPacketSender();
+		GearLoadoutPreset preset = currentPreset;
+		for (int i = 0; i < GearLoadoutPreset.COMBAT_STATS.length; i++) {
+			StatType type = GearLoadoutPreset.COMBAT_STATS[i];
+			String value = preset == null || preset.getCombatLevel(type) <= 0 ? "--" : String.valueOf(preset.getCombatLevel(type));
+			ps.sendString(ifId, FIRST_LEVEL_LINE + i, WHITE + type.name() + ": " + END
+				+ (preset != null && !currentPresetIsFreeKit ? RED : GREY) + value + END);
+		}
+		ps.sendString(ifId, COMBAT_LINE, GOLD + "Combat level: " + (preset == null ? "--" : BattlePresets.combatLevel(preset)) + END);
+		int[] bonuses = new int[EquipmentStats.Stat.VALUES.length];
+		if (preset != null) {
+			for (Item item : preset.getEquipmentItems()) {
+				if (item == null || item.getDef() == null || item.getDef().equipBonuses == null)
+					continue;
+				int[] itemBonuses = item.getDef().equipBonuses;
+				for (int b = 0; b < bonuses.length && b < itemBonuses.length; b++)
+					bonuses[b] += itemBonuses[b];
+			}
+		}
+		for (int line = 0; line < SHOWN_BONUSES.length; line++)
+			EquipmentStats.Stat.VALUES[SHOWN_BONUSES[line]].sendString(player, bonuses[SHOWN_BONUSES[line]], ifId, FIRST_BONUS_LINE + line);
 	}
 
-	private void sendPreview(Player player) {
+	/** Bottom-left buttons, the selected summary, Load, and the list action texts. */
+	private void sendOptions(Player player) {
+		var ps = player.getPacketSender();
+		boolean freeKits = listMode == PresetListMode.FREE_KITS;
+		ps.sendString(ifId, SPELLBOOK_TEXT, "Spellbook: " + GOLD + (currentPreset == null ? "-" : formatSpellBookName(currentPreset.getSpellBook())) + END);
+		ps.sendString(ifId, LIST_TEXT, "Showing: " + GOLD + (freeKits ? "Free kits" : "My loadouts") + END);
 		if (currentPreset == null) {
-			player.getPacketSender().sendString(INTERFACE_ID, CURRENT_PRESET_NAME, "None");
-			sendEquipment(player, null);
-			sendInventory(player, null);
-			sendStats(player, null);
-			sendSpellBook(player, null);
+			ps.sendString(ifId, SELECTED_SUMMARY, freeKits ? "No free kits configured." : "Save your current gear as a loadout.");
+			ps.setHidden(ifId, LOAD_BUTTON, true);
+		} else {
+			ps.sendString(ifId, SELECTED_SUMMARY, GOLD + currentPreset.presetName + END + "<br>"
+				+ formatSpellBookName(currentPreset.getSpellBook()) + " · CB " + BattlePresets.combatLevel(currentPreset)
+				+ (currentPresetIsFreeKit ? " · Free kit" : ""));
+			ps.setHidden(ifId, LOAD_BUTTON, false);
+			ps.sendString(ifId, LOAD_TEXT, currentPresetIsFreeKit ? "Spawn Kit" : "Load Loadout");
+		}
+		boolean own = currentPreset != null && !currentPresetIsFreeKit;
+		ps.sendString(ifId, UPDATE_TEXT, own ? "Update" : GREY + "Update" + END);
+		ps.sendString(ifId, DELETE_TEXT, own ? RED + "Delete" + END : GREY + "Delete" + END);
+	}
+
+	/** Right column: the selected loadout's gear (or inventory), like the regular presets' preview. */
+	private void sendLoadoutView(Player player) {
+		var ps = player.getPacketSender();
+		ps.sendString(ifId, PANEL_HEADER, showingInventory ? "Inventory / Options" : "Equipment / Options");
+		ps.setGraphic(ifId, VIEW_TOGGLE, showingInventory ? EQUIPMENT_SPRITE : INVENTORY_SPRITE);
+		ps.setHidden(ifId, VIEW_TOGGLE_BACKGROUND, false);
+		ps.setHidden(ifId, VIEW_TOGGLE, false);
+		for (int component : EQUIPMENT_BACKGROUNDS)
+			ps.setHidden(ifId, component, showingInventory);
+		for (int component : EQUIPMENT_COMPONENTS)
+			ps.setHidden(ifId, component, showingInventory);
+		for (int component : EQUIPMENT_PLACEHOLDERS)
+			ps.setHidden(ifId, component, showingInventory);
+		ps.setHidden(ifId, INVENTORY_COMPONENT, !showingInventory);
+		ps.setHidden(ifId, INVENTORY_OUTLINE, !showingInventory);
+		for (int component = PRESET_PANEL_FIRST; component <= PRESET_PANEL_LAST; component++)
+			ps.setHidden(ifId, component, showingInventory);
+
+		if (showingInventory) {
+			ps.sendClientScript(149, "IviiiIsssss", ifId << 16 | INVENTORY_COMPONENT, INVENTORY_CONTAINER, 4, 7, 0, -1, "", "", "", "", "");
+			Item[] items = currentPreset == null ? new Item[GearLoadoutPreset.INVENTORY_SIZE] : currentPreset.getInventoryItems();
+			ps.sendItems(INVENTORY_CONTAINER, copy(items));
 			return;
 		}
-
-		currentPreset.normalize();
-		player.getPacketSender().sendString(INTERFACE_ID, CURRENT_PRESET_NAME, currentPreset.presetName);
-		sendEquipment(player, currentPreset);
-		sendInventory(player, currentPreset);
-		sendStats(player, currentPreset);
-		sendSpellBook(player, currentPreset);
-	}
-
-	private void sendEquipment(Player player, GearLoadoutPreset preset) {
-		Item[] equipment = preset == null ? new Item[GearLoadoutPreset.EQUIPMENT_SIZE] : preset.getEquipmentItems();
-		for (EquipmentPreview preview : EQUIPMENT_PREVIEWS) {
-			Item item = preview.slot < equipment.length ? equipment[preview.slot] : null;
-			if (preview.placeholderComponent != -1)
-				player.getPacketSender().setHidden(INTERFACE_ID, preview.placeholderComponent, item != null);
-			sendItemToContainer(player, preview.containerId, preview.itemComponent, item);
+		Item[] equipment = currentPreset == null ? new Item[GearLoadoutPreset.EQUIPMENT_SIZE] : currentPreset.getEquipmentItems();
+		for (int index = 0; index < EQUIPMENT_COMPONENTS.length; index++) {
+			int slot = GearPresetHandler.EQUIPMENT_SLOTS[index];
+			Item item = slot < equipment.length ? equipment[slot] : null;
+			int container = EQUIPMENT_CONTAINER_START + index;
+			ps.sendClientScript(149, "IviiiIsssss", ifId << 16 | EQUIPMENT_COMPONENTS[index], container, 4, 7, 1, -1, "", "", "", "", "");
+			ps.sendItems(container, new Item[]{item == null ? null : item.copy()});
+			ps.setHidden(ifId, EQUIPMENT_PLACEHOLDERS[index], item != null);
 		}
 	}
 
-	private void sendInventory(Player player, GearLoadoutPreset preset) {
-		Item[] inventory = preset == null ? new Item[GearLoadoutPreset.INVENTORY_SIZE] : preset.getInventoryItems();
-		for (int slot = 0; slot < INVENTORY_COMPONENTS.length; slot++)
-			sendItemToContainer(player, 2732 + slot, INVENTORY_COMPONENTS[slot], inventory[slot]);
+	private static Item[] copy(Item[] items) {
+		Item[] out = new Item[items.length];
+		for (int i = 0; i < items.length; i++)
+			out[i] = items[i] == null ? null : items[i].copy();
+		return out;
 	}
 
-	private void sendStats(Player player, GearLoadoutPreset preset) {
-		for (int i = 0; i < GearLoadoutPreset.COMBAT_STATS.length; i++) {
-			StatType statType = GearLoadoutPreset.COMBAT_STATS[i];
-			String text = selectorOpen ? "" : formatStatText(statType, preset);
-			player.getPacketSender().sendString(INTERFACE_ID, STAT_TEXTS[i], text);
+	/** The 6-row list (own loadouts up to the unlocked count, or the free kits), scroll arrows and page text. */
+	private void sendRows(Player player) {
+		if (showingInventory)
+			return;
+		var ps = player.getPacketSender();
+		List<GearLoadoutPreset> list = list(player);
+		boolean freeKits = listMode == PresetListMode.FREE_KITS;
+		int unlocked = freeKits ? list.size() : getUnlockedPresets(player);
+		int max = maxScroll(list.size());
+		scrollOffset = Math.max(0, Math.min(scrollOffset, max));
+		for (int row = 0; row < VISIBLE_ROWS; row++) {
+			int index = scrollOffset + row;
+			GearLoadoutPreset preset = index < list.size() ? list.get(index) : null;
+			String text = preset == null ? GREY + (freeKits ? "-" : index < unlocked ? "Empty" : "Locked") + END
+				: index >= unlocked ? GREY + truncate(preset.presetName, 9) + END : truncate(preset.presetName, 9);
+			ps.sendString(ifId, ROW_TEXT[row], text);
+			ps.setHidden(ifId, ROW_SELECTION[row], preset == null || preset != currentPreset);
 		}
+		boolean scrollable = max > 0;
+		for (int component : new int[]{SCROLL_TRACK, SCROLL_THUMB, SCROLL_UP, SCROLL_UP_BACKGROUND, SCROLL_UP_TEXT,
+			SCROLL_DOWN, SCROLL_DOWN_BACKGROUND, SCROLL_DOWN_TEXT})
+			ps.setHidden(ifId, component, !scrollable);
+		if (scrollable)
+			ps.setAlignment(ifId, SCROLL_THUMB, 492, 246 + (12 * scrollOffset / max));
+		ps.sendString(ifId, PAGE_TEXT, list.isEmpty() ? (freeKits ? "No free kits" : "No saved loadouts")
+			: (scrollOffset + 1) + "-" + Math.min(scrollOffset + VISIBLE_ROWS, list.size()) + " of " + list.size()
+			+ (freeKits ? " kits" : " (" + unlocked + " slots)"));
 	}
 
-	private String formatStatText(StatType statType, GearLoadoutPreset preset) {
-		if (preset == null || preset.getCombatLevel(statType) <= 0)
-			return "--/--";
-		return preset.getCombatCurrentLevel(statType) + "/" + preset.getCombatLevel(statType);
+	private static int maxScroll(int size) {
+		return Math.max(0, size - VISIBLE_ROWS);
 	}
 
-	private void sendSpellBook(Player player, GearLoadoutPreset preset) {
-		String text = "None";
-		SpellBook spellBook = SpellBook.MODERN;
-		if (preset != null) {
-			spellBook = preset.getSpellBook();
-			text = formatSpellBookName(spellBook);
+	/* ---------------- actions ---------------- */
+
+	private void selectRow(Player player, int row) {
+		List<GearLoadoutPreset> list = list(player);
+		int index = scrollOffset + row;
+		if (index >= list.size()) {
+			player.sendMessage(listMode == PresetListMode.FREE_KITS ? "There isn't a free kit in this slot."
+				: "This slot is empty: press Save Current Gear to save a loadout.");
+			return;
 		}
-		int sprite = spellBookSprite(spellBook);
-		player.getPacketSender().setGraphic(INTERFACE_ID, STAT_SPELLBOOK_ICON, sprite);
-		player.getPacketSender().sendString(INTERFACE_ID, SPELLBOOK_VALUE_TEXT, selectorOpen ? "" : text);
+		if (listMode == PresetListMode.PRESETS && index >= getUnlockedPresets(player)) {
+			player.sendMessage("Preset locked, you'll get access to more preset slots depending on your donator rank.");
+			return;
+		}
+		selectPreset(player, list.get(index), listMode == PresetListMode.FREE_KITS);
 	}
 
-	private int spellBookSprite(SpellBook spellBook) {
-		return switch (spellBook) {
-			case MODERN -> 780;
-			case ANCIENT -> 1583;
-			case LUNAR -> 1584;
-			case ARCEUUS -> 1711;
-		};
+	private void toggleList(Player player) {
+		listMode = listMode == PresetListMode.FREE_KITS ? PresetListMode.PRESETS : PresetListMode.FREE_KITS;
+		scrollOffset = 0;
+		currentPreset = null;
+		currentPresetIsFreeKit = listMode == PresetListMode.FREE_KITS;
+		update(player);
 	}
+
+	private void load(Player player) {
+		if (currentPreset == null) {
+			player.sendMessage("You don't have a preset selected to load.");
+			return;
+		}
+		if (currentPresetIsFreeKit)
+			GearLoadoutHandler.spawnFreeKit(player, currentPreset);
+		else
+			GearLoadoutHandler.equipPreset(player, currentPreset);
+	}
+
+	private void create(Player player) {
+		if (GearLoadoutStore.getPresets(player).size() >= getUnlockedPresets(player)) {
+			player.sendMessage("You don't have anymore preset slots to save this to.");
+			return;
+		}
+		listMode = PresetListMode.PRESETS;
+		GearLoadoutHandler.saveGearPreset(player); // asks for a name, saves the current gear/stats/spellbook
+	}
+
+	private void updateSelected(Player player) {
+		if (currentPreset == null || currentPresetIsFreeKit) {
+			player.sendMessage(currentPreset == null ? "Select one of your loadouts first." : "Free kits can't be overwritten.");
+			return;
+		}
+		GearLoadoutPreset preset = currentPreset;
+		player.dialogue(new OptionsDialogue("Overwrite \"" + preset.presetName + "\" with your current gear, stats and spellbook?",
+			new Option("Yes, overwrite it.", () -> {
+				GearLoadoutHandler.cloneCurrentLoadout(player, preset);
+				open(player); // the dialogue closed the screen
+			}),
+			new Option("Nevermind.")));
+	}
+
+	private void deleteSelected(Player player) {
+		if (currentPreset == null || currentPresetIsFreeKit) {
+			player.sendMessage(currentPreset == null ? "Select one of your loadouts first." : "Free kits can't be deleted.");
+			return;
+		}
+		GearLoadoutPreset preset = currentPreset;
+		player.dialogue(new OptionsDialogue("Delete \"" + preset.presetName + "\"?",
+			new Option("Yes, delete it.", () -> GearLoadoutHandler.deleteGearPreset(player, preset)),
+			new Option("Nevermind.")));
+	}
+
+	private void scroll(Player player, int direction) {
+		int max = maxScroll(list(player).size());
+		if (max == 0)
+			return;
+		scrollOffset = Math.max(0, Math.min(max, scrollOffset + direction * 3));
+		update(player);
+	}
+
+	/* ---------------- helpers ---------------- */
 
 	private static String formatSpellBookName(SpellBook spellBook) {
 		String name = spellBook.name().toLowerCase();
@@ -400,163 +450,59 @@ public class GearLoadoutInterface {
 	private static String truncate(String text, int maxLength) {
 		if (text == null)
 			return "";
-		if (text.length() <= maxLength)
-			return text;
-		return text.substring(0, Math.max(0, maxLength - 2)) + "..";
+		return text.length() <= maxLength ? text : text.substring(0, Math.max(0, maxLength - 2)) + "..";
 	}
 
-	private void sendItemToContainer(Player player, int containerId, int componentId, Item item) {
-		if (!InterfaceDef.valid(INTERFACE_ID, componentId))
-			return;
-		player.getPacketSender().sendClientScript(
-				149, "IviiiIsssss",
-				INTERFACE_ID << 16 | componentId, containerId,
-				4, 7, 1, -1, "", "", "", "", ""
-		);
-		player.getPacketSender().sendItems(
-				-1,
-				componentId,
-				containerId,
-				item == null ? new Item[1] : new Item[] { item.copy() }
-		);
-	}
+	private static boolean registered;
 
 	public static synchronized void register() {
 		if (registered)
 			return;
-		if (!isInterfacePacked())
-			return;
-		InterfaceHandler.register(INTERFACE_ID, h -> {
-			SimpleAction createPreset = player -> {
-				if (GearLoadoutStore.getPresets(player).size() >= GearLoadoutInterface.get(player).getUnlockedPresets(player)) {
-					player.sendMessage("You don't have anymore preset slots to save this to.");
-					return;
-				}
-				// createBlankPreset() made an empty preset (no items, just combat stats) --
-				// saveGearPreset() captures the player's current inventory/equipment instead,
-				// which is what "Create" is actually meant to do here.
-				GearLoadoutHandler.saveGearPreset(player);
+		registered = true;
+		for (int id : new int[]{INTERFACE_ID, LARGE_INTERFACE_ID})
+			register(id);
+	}
+
+	private static void register(int interfaceId) {
+		InterfaceHandler.register(interfaceId, h -> {
+			h.actions[CLOSE_BUTTON] = (SimpleAction) p -> p.closeInterface(
+				interfaceId == LARGE_INTERFACE_ID ? ToplevelComponent.WORLD_MAP : ToplevelComponent.MAINMODAL);
+			h.actions[VIEW_TOGGLE] = (SimpleAction) p -> {
+				GearLoadoutInterface ui = get(p);
+				ui.showingInventory = !ui.showingInventory;
+				ui.update(p);
 			};
-			h.actions[CREATE_BUTTON] = createPreset;
-			h.actions[CREATE_BUTTON_BACKGROUND] = createPreset;
-			h.actions[CREATE_BUTTON_ICON] = createPreset;
-			SimpleAction clonePreset = player -> {
-				if (GearLoadoutInterface.get(player).currentPreset == null) {
-					player.sendMessage("Create or select a preset to clone into.");
-					return;
-				}
-				if (GearLoadoutInterface.get(player).isViewingFreeKit()) {
-					player.sendMessage("Free kits can't be overwritten. Select a saved preset first.");
-					return;
-				}
-				player.dialogue(new OptionsDialogue("Clone your current gear, inventory, stats, and spellbook into this preset?",
-						new Option("Yes, overwrite this preset.", () -> GearLoadoutHandler.cloneCurrentLoadout(player, GearLoadoutInterface.get(player).currentPreset)),
-						new Option("Nevermind.")));
+			h.actions[SPELLBOOK_BUTTON] = (SimpleAction) p -> get(p).cycleSpellBook(p);
+			h.actions[LIST_BUTTON] = (SimpleAction) p -> get(p).toggleList(p);
+			h.actions[SPAWN_BUTTON] = (SimpleAction) p -> {
+				if (QuestDashboards.requirePvpMode(p))
+					QuestDashboards.openSpawn.accept(p);
 			};
-			h.actions[CLONE_BUTTON] = clonePreset;
-			h.actions[CLONE_BUTTON_BACKGROUND] = clonePreset;
-			h.actions[CLONE_BUTTON_ICON] = clonePreset;
-			SimpleAction loadPreset = player -> {
-				if (GearLoadoutInterface.get(player).currentPreset == null) {
-					player.sendMessage("You don't have a preset selected to load.");
-					return;
-				}
-				if (GearLoadoutInterface.get(player).isViewingFreeKit())
-					GearLoadoutHandler.spawnFreeKit(player, GearLoadoutInterface.get(player).currentPreset);
-				else
-					GearLoadoutHandler.equipPreset(player, GearLoadoutInterface.get(player).currentPreset);
-			};
-			h.actions[LOAD_BUTTON] = loadPreset;
-			h.actions[LOAD_BUTTON_BACKGROUND] = loadPreset;
-			h.actions[LOAD_BUTTON_ICON] = loadPreset;
-			SimpleAction deletePreset = player -> {
-				if (GearLoadoutInterface.get(player).currentPreset == null) {
-					player.sendMessage("You don't have a preset selected to delete.");
-					return;
-				}
-				if (GearLoadoutInterface.get(player).isViewingFreeKit()) {
-					player.sendMessage("Free kits can't be deleted.");
-					return;
-				}
-				player.dialogue(new OptionsDialogue("Are you sure you want to delete this preset?",
-						new Option("Yes, delete this preset.", () -> GearLoadoutHandler.deleteGearPreset(player, GearLoadoutInterface.get(player).currentPreset)),
-						new Option("Nevermind.")));
-			};
-			h.actions[DELETE_BUTTON] = deletePreset;
-			h.actions[DELETE_BUTTON_BACKGROUND] = deletePreset;
-			h.actions[DELETE_ACTION_COMPONENT] = deletePreset;
-			h.actions[DELETE_BUTTON_ICON] = deletePreset;
-			SimpleAction cycleSpellBook = player -> GearLoadoutInterface.get(player).cycleSpellBook(player);
-			bind(h, STAT_SPELLBOOK_ICON, cycleSpellBook);
-			SimpleAction toggleFreeKitDropdown = player -> GearLoadoutInterface.get(player).toggleFreeKitDropdown(player);
-			bind(h, FREE_KIT_SELECTOR_BUTTON, toggleFreeKitDropdown);
-			bind(h, FREE_KIT_SELECTOR_BORDER, toggleFreeKitDropdown);
-			bind(h, FREE_KIT_SELECTOR_BACKGROUND, toggleFreeKitDropdown);
-			bind(h, FREE_KIT_SELECTOR_TEXT, toggleFreeKitDropdown);
-			SimpleAction togglePresetDropdown = player -> GearLoadoutInterface.get(player).togglePresetDropdown(player);
-			bind(h, PRESET_SELECTOR_BUTTON, togglePresetDropdown);
-			bind(h, PRESET_SELECTOR_BORDER, togglePresetDropdown);
-			bind(h, PRESET_SELECTOR_BACKGROUND, togglePresetDropdown);
-			bind(h, PRESET_SELECTOR_TEXT, togglePresetDropdown);
-			for (int i = 0; i < PRESET_BUTTONS.length; i++) {
-				int slot = i;
-				h.actions[PRESET_BUTTONS[i]] = (SimpleAction) player -> {
-					if (GearLoadoutInterface.get(player).listMode == PresetListMode.FREE_KITS) {
-						List<GearLoadoutPreset> freeKits = FreeGearLoadoutKits.getKits();
-						if (slot >= freeKits.size()) {
-							GearLoadoutInterface.get(player).selectorOpen = false;
-							GearLoadoutInterface.get(player).update(player);
-							player.sendMessage("There isn't a free kit in this slot.");
-							return;
-						}
-						GearLoadoutInterface.get(player).selectFreeKit(player, freeKits.get(slot));
-						return;
-					}
-					if (slot >= GearLoadoutInterface.get(player).getUnlockedPresets(player)) {
-						GearLoadoutInterface.get(player).selectorOpen = false;
-						GearLoadoutInterface.get(player).update(player);
-						player.sendMessage("Preset locked, you'll get access to more preset slots depending on your donator rank.");
-						return;
-					}
-					List<GearLoadoutPreset> presets = GearLoadoutStore.getPresets(player);
-					if (slot >= presets.size()) {
-						GearLoadoutInterface.get(player).selectorOpen = false;
-						GearLoadoutInterface.get(player).update(player);
-						player.sendMessage("You don't have a preset in this slot.");
-						return;
-					}
-					GearLoadoutInterface.get(player).selectPreset(player, presets.get(slot));
-				};
+			h.actions[LOAD_BUTTON] = (SimpleAction) p -> get(p).load(p);
+			for (int row = 0; row < ROW_BUTTONS.length; row++) {
+				int r = row;
+				h.actions[ROW_BUTTONS[row]] = (SimpleAction) p -> get(p).selectRow(p, r);
 			}
-			for (int i = 0; i < STAT_ICON_BUTTONS.length; i++) {
-				StatType statType = GearLoadoutPreset.COMBAT_STATS[i];
-				bind(h, STAT_ICON_BUTTONS[i], (SimpleAction) player -> GearLoadoutInterface.get(player).setPresetStat(player, statType));
+			h.actions[UPDATE_BUTTON] = (SimpleAction) p -> get(p).updateSelected(p);
+			h.actions[DELETE_BUTTON] = (SimpleAction) p -> get(p).deleteSelected(p);
+			h.actions[SCROLL_UP] = (SimpleAction) p -> get(p).scroll(p, -1);
+			h.actions[SCROLL_DOWN] = (SimpleAction) p -> get(p).scroll(p, 1);
+			h.actions[CREATE_BUTTON] = (SimpleAction) p -> get(p).create(p);
+			// on resizable this screen sits in the world-map slot, drawn over the modal Battle Presets opens in: close it first
+			h.actions[BATTLE_PRESETS] = (SimpleAction) p -> {
+				if (interfaceId == LARGE_INTERFACE_ID)
+					p.closeInterface(ToplevelComponent.WORLD_MAP);
+				BattlePresets.open(p);
+			};
+			for (int i = 0; i < GearLoadoutPreset.COMBAT_STATS.length; i++) {
+				StatType type = GearLoadoutPreset.COMBAT_STATS[i];
+				h.actions[FIRST_LEVEL_LINE + i] = (SimpleAction) p -> get(p).setPresetStat(p, type);
 			}
 		});
-		registered = true;
 	}
 
-	private static void bind(InterfaceHandler handler, int componentId, SimpleAction action) {
-		if (componentId >= 0 && componentId < handler.actions.length)
-			handler.actions[componentId] = action;
-	}
-
-	private enum PresetListMode {
+	enum PresetListMode {
 		FREE_KITS,
 		PRESETS
-	}
-
-	private static class EquipmentPreview {
-		private final int slot;
-		private final int itemComponent;
-		private final int placeholderComponent;
-		private final int containerId;
-
-		private EquipmentPreview(int slot, int itemComponent, int placeholderComponent, int containerId) {
-			this.slot = slot;
-			this.itemComponent = itemComponent;
-			this.placeholderComponent = placeholderComponent;
-			this.containerId = containerId;
-		}
 	}
 }

@@ -243,7 +243,7 @@ public class LoyaltyTitle {
 		p(30107, Category.SKILLING, "<col=ff7600>Alloy Alchemist </col>", "Obtain 200m Smithing Experience", 100000000);
 		s(30108, Category.PVM, "<col=C0C0C0>, the Echo's Silencer</col>", "Kill Phosani's Nightmare 250 times", 50000000);
 		s(30109, Category.PVM, "<col=C12006> of Vampyrium</col>", "Kill Vanstrom Klause 250 times", 50000000);
-		p(30110, Category.PVM, "<col=FF4500>Infernal Tamer </col>", "Kill Cerberus 250 times", 50000000);
+		p(30110, Category.PVM, "<col=FF4500>Hellhound's Bane </col>", "Kill Cerberus 250 times", 50000000);
 		s(30111, Category.PVP, "<col=FC3838> the Aggressive</col>", "100 Player Kills", 15000);
 		p(30112, Category.SKILLING, "<col=ff7600>Iron Innovator </col>", "Obtain 99 smithing", 50000000);
 		s(30113, Category.PVP, "<col=99a3a4> the Idiot</col>", "500 Player Kills", 10000);
@@ -330,5 +330,9 @@ public class LoyaltyTitle {
 		// Staff-only, non-purchasable -- granted manually via ::givetitle. Cyan to
 		// match the ZLUS donator title's color (30208).
 		p(30220, Category.GENERAL, "<col=00FFFF>CM </col>", "Awarded to the Zelus Community Manager", 0);
+		// Division Rivals shop titles (io.ruin.model.content.rivals.RivalsShop), unlocked there for Rivals Points
+		s(30221, Category.PVP, "<col=990000> the Rival</col>", "Bought from the Division Rivals shop", 0);
+		p(30222, Category.PVP, "<col=FFD700>Undefeated </col>", "Bought from the Division Rivals shop", 0);
+		p(30223, Category.PVP, "<col=8a0303>Weekly Warlord </col>", "A rare reward from the Division Rivals tier 2 weekly chest", 0);
 	}
 }

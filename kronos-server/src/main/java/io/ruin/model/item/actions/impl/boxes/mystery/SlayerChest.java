@@ -410,7 +410,7 @@ public class SlayerChest {
 						Item bossReward = null;
 						bossReward = bossLoot;
 						if (bossReward.lootBroadcast != null) {
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 								" has just received " + bossReward.getDef().name + "</shad> from the Slayer chest's boss table!");
 						}
 						player.getInventory().addOrDrop(bossLoot);
@@ -420,7 +420,7 @@ public class SlayerChest {
 						Item rareReward = null;
 						rareReward = veryRare;
 						if (rareReward.lootBroadcast != null) {
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 								" has just received " + rareReward.getDef().name + "</shad> from the Slayer chest's rare loot table!");
 						}
 						player.getInventory().addOrDrop(veryRare);
@@ -442,7 +442,7 @@ public class SlayerChest {
 						Item rareReward = null;
 						rareReward = veryRare;
 						if (rareReward.lootBroadcast != null) {
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 								" has just received " + rareReward.getDef().name + "</shad> from the Slayer chest's rare loot table!");
 						}
 						player.getInventory().addOrDrop(veryRare);
@@ -464,7 +464,7 @@ public class SlayerChest {
 						Item rareReward = null;
 						rareReward = veryRare;
 						if (rareReward.lootBroadcast != null) {
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 								" has just received " + rareReward.getDef().name + "</shad> from the Slayer chest's rare loot table!");
 						}
 						player.getInventory().addOrDrop(veryRare);
@@ -486,7 +486,7 @@ public class SlayerChest {
 						Item rareReward = null;
 						rareReward = veryRare;
 						if (rareReward.lootBroadcast != null) {
-							Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+							Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 								" has just received " + rareReward.getDef().name + "</shad> from the Slayer chest's rare loot table!");
 						}
 						player.getInventory().addOrDrop(veryRare);

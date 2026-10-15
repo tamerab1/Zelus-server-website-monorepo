@@ -26,32 +26,36 @@ public final class ReferralCommand {
 	// fires). Defaults to false - never leave this true anywhere near production; it exists purely
 	// so the milestone/reward path can be verified end-to-end before a second real machine is
 	// available. Remove this switch entirely once local multi-machine/beta testing replaces it.
-	private static boolean isIdentityCheckSkipped() {
+	static boolean isIdentityCheckSkipped() {
 		return ServerProperties.get("referral_skip_identity_check", false);
 	}
 
+	/** ::referfriend with no name opens the Zelus Referrals screen (ReferralInterface). */
 	public static boolean handle(Player player, String[] args) {
 		if (args.length < 1) {
-			player.sendMessage("Usage: ::referfriend <name>.");
+			ReferralInterface.open(player);
 			return true;
 		}
+		String error = tryLink(player, String.join(" ", args));
+		if (error != null)
+			player.sendMessage(error);
+		return true;
+	}
 
+	/** Links the player to targetName's referral. Returns null on success, or the reason it was refused. */
+	public static String tryLink(Player player, String targetName) {
 		// player.playTime is in game ticks, not real seconds - see ReferralSystem#checkMilestone.
-		if (player.playTime >= Server.toTicks(ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS)) {
-			player.sendMessage("Referral links can only be used within your first "
-					+ (ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS / 3600) + " hours of playtime.");
-			return true;
-		}
-		if (player.referredBy != null) {
-			player.sendMessage("You have already been referred by " + player.referredBy + ".");
-			return true;
-		}
+		if (player.playTime >= Server.toTicks(ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS))
+			return "Referral links can only be used within your first "
+					+ (ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS / 3600) + " hours of playtime.";
+		if (player.referredBy != null)
+			return "You have already been referred by " + player.referredBy + ".";
 
-		String targetName = String.join(" ", args);
-		if (targetName.equalsIgnoreCase(player.getName())) {
-			player.sendMessage("You cannot refer yourself.");
-			return true;
-		}
+		targetName = targetName.trim();
+		if (targetName.isEmpty())
+			return "Enter the name of the player who invited you.";
+		if (targetName.equalsIgnoreCase(player.getName()))
+			return "You cannot refer yourself.";
 
 		String referrerName;
 		String referrerReferredBy;
@@ -61,6 +65,8 @@ public final class ReferralCommand {
 
 		Player onlineReferrer = World.getPlayer(targetName);
 		if (onlineReferrer != null) {
+			if (onlineReferrer == player)
+				return "You cannot refer yourself.";
 			referrerName = onlineReferrer.getName();
 			referrerReferredBy = onlineReferrer.referredBy;
 			referrerIp = onlineReferrer.getIp();
@@ -68,24 +74,18 @@ public final class ReferralCommand {
 			referrerHwids = onlineReferrer.hwids;
 		} else {
 			OfflineReferralLookup.Record record = OfflineReferralLookup.find(targetName);
-			if (record == null) {
-				player.sendMessage("'" + targetName + "' does not exist.");
-				return true;
-			}
+			if (record == null)
+				return "'" + targetName + "' does not exist.";
 			referrerName = record.name();
 			referrerReferredBy = record.referredBy();
 			referrerHwid = record.hwid();
 			referrerHwids = record.hwids();
 		}
 
-		if (player.getName().equalsIgnoreCase(referrerReferredBy)) {
-			player.sendMessage("You cannot refer " + referrerName + " - they already referred you.");
-			return true;
-		}
-		if (!isIdentityCheckSkipped() && sharesIdentity(player, referrerIp, referrerHwid, referrerHwids)) {
-			player.sendMessage("Referral denied - that account shares this computer or network with yours.");
-			return true;
-		}
+		if (player.getName().equalsIgnoreCase(referrerReferredBy))
+			return "You cannot refer " + referrerName + " - they already referred you.";
+		if (!isIdentityCheckSkipped() && sharesIdentity(player, referrerIp, referrerHwid, referrerHwids))
+			return "Referral denied - that account shares this computer or network with yours.";
 
 		player.referredBy = referrerName;
 		player.referralLinkedAtPlayTime = player.playTime;
@@ -99,13 +99,13 @@ public final class ReferralCommand {
 		} else {
 			player.sendMessage("<col=ff9040>" + referrerName + " is currently offline, but the link is saved.");
 		}
-		return true;
+		return null;
 	}
 
 	// HWIDManager.isHwidValid() is required here: clients that can't report a real device
 	// name send back the same placeholder ("unknown", or null/empty) rather than something
 	// unique, which was matching unrelated players as "sharing" a computer.
-	private static boolean sharesIdentity(Player a, String referrerIp, String referrerHwid, Set<String> referrerHwids) {
+	static boolean sharesIdentity(Player a, String referrerIp, String referrerHwid, Set<String> referrerHwids) {
 		if (referrerIp != null && a.getIp() != null && a.getIp().equals(referrerIp))
 			return true;
 		if (HWIDManager.isHwidValid(a.hwid) && a.hwid.equals(referrerHwid))

@@ -326,7 +326,8 @@ public class ActionButtonHandler {
 		}
 		if (interfaceId != ComponentID.LOGIN_CLICK_TO_PLAY_GROUP_ID && player.inTutorial && interfaceId != Interface.LOGOUT
 				&& !dialogue && interfaceId != Interface.STARTER_INTERFACE
-				&& interfaceId != Interface.APPEARANCE_CUSTOMIZATION) {
+				&& interfaceId != Interface.APPEARANCE_CUSTOMIZATION
+				&& interfaceId != io.ruin.model.tutorial.StarterSelectInterface.INTERFACE) { // new-player path select
 			return;
 		}
 		if (option == 10 && interfaceId == 149 && itemId != -1) {
@@ -335,6 +336,7 @@ public class ActionButtonHandler {
 				return;
 			}
 			item.examine(player);
+			io.ruin.model.inter.handlers.ItemStatsViewer.open(player, item.getId());
 			return;
 		}
 		if (interfaceId == Interface.SERVER_TAB && childId >= 8 && player.journal != null) {

@@ -29,7 +29,7 @@ public class MysteryBox {
 		return player.getEquipment().get(slot) != null && player.getEquipment().get(slot).getId() == itemId;
 	}
 
-	private static int wearingChristmasItem(Player player) {
+	static int wearingChristmasItem(Player player) {
 		int boost = 0;
 		if (MysteryBox.wearingItem(player, ItemID.SLED, Equipment.SLOT_WEAPON))
 			boost += 2;
@@ -1225,25 +1225,25 @@ public class MysteryBox {
 				int random = Random.get(250);
 				if (random < 50) {
 					player.updateReasonPoints(100000);
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>100,000 Zelus points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>100,000 Zelus points </shad> from a point mystery box!");
 				}
 				if (random >= 50 && random < 100) {
 					player.updateAchievementPoints(10);
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>10 Achievement points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>10 Achievement points </shad> from a point mystery box!");
 
 				}
 				if (random >= 100 && random < 150) {
 					player.updateVotePoints(25);
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>25 vote points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>25 vote points </shad> from a point mystery box!");
 				}
 				if (random >= 150 && random < 200) {
 					VarPlayerRepository.SLAYER_POINTS.set(player, 1000 + VarPlayerRepository.SLAYER_POINTS.get(player));
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>1,000 slayer points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>1,000 slayer points </shad> from a point mystery box!");
 
 				}
 				if (random >= 200 && random <= 250) {
 					player.perkPoints += 15;
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>15 perk points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>15 perk points </shad> from a point mystery box!");
 
 				}
 			}
@@ -1252,6 +1252,12 @@ public class MysteryBox {
 
 
 	public static void register() {
+		registerBoxes();
+		// the main boxes open in the Zelus Spinner; registered after the instant-open handlers above, so it wins
+		MysteryBoxSpinner.register();
+	}
+
+	private static void registerBoxes() {
 		ItemAction donatorMysteryBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
@@ -1281,7 +1287,7 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a donator mystery box!");
 
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(30461), reward.getId());
@@ -1310,25 +1316,29 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a ToB mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the ToB mystery box!");
 		});
-		ItemAction.registerInventory(6199, "Open", (player, item) -> {
+		ItemAction mysteryBoxAction = (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward = null;
 			reward = MYSTERY_BOX_TABLE.rollItem();
 			item.remove();
 			player.getInventory().add(reward);
+			String boxName = item.getDef().name; // "Mystery box" or a themed copy like "Arcane mystery box"
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
-					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Mystery box!");
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+					+ reward.getDef().name.toLowerCase() + "</shad> reward from a " + boxName + "!");
 			player.addToCollectionLog(reward);
 			player.unlock();
-			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Mystery box!");
-		});
+			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the " + boxName + "!");
+		};
+		ItemAction.registerInventory(6199, "Open", mysteryBoxAction);
+		// Arcane mystery box: the animated-texture version (textured_items.txt), same loot for now.
+		ItemAction.registerInventory(31618, "Open", mysteryBoxAction);
 		ItemAction.registerInventory(30530, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();
@@ -1337,7 +1347,7 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a CoX mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the CoX mystery box!");
@@ -1350,7 +1360,7 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Wilderness mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Wilderness mystery box!");
@@ -1385,7 +1395,7 @@ public class MysteryBox {
 			}
 			player.getInventory().addOrDrop(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a enhanced superior slayer mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Enhanced superior slayer box!");
@@ -1398,7 +1408,7 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a gauntlet mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Gauntlet mystery box!");
@@ -1419,7 +1429,7 @@ public class MysteryBox {
 			player.getInventory().addOrDrop(reward);
 			if (reward.lootBroadcast != null) {
 				String formattedAmount = NumberUtils.formatNumber(reward.getAmount());
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(),
 					" received a <shad=D80808>" + formattedAmount + "x " + reward.getDef().name.toLowerCase() + "</shad> reward from an Ultra Mystery Box!");
 			}
 			player.unlock();
@@ -1433,7 +1443,7 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a GWD mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the GWD mystery box!");
@@ -1446,7 +1456,7 @@ public class MysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a nightmare mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Nightmare mystery box!");
@@ -1459,7 +1469,7 @@ public class MysteryBox {
 			reward = GALVEK_MYSTERY_BOX_TABLE.rollItem();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a galvek mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Galvek mystery box!");
@@ -1473,7 +1483,7 @@ public class MysteryBox {
 			player.getInventory().add(reward);
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Argentavis mystery box!");
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from an Argentavis mystery box!");
 			player.unlock();
 		});
@@ -1486,7 +1496,7 @@ public class MysteryBox {
 			player.getInventory().add(reward);
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Nex mystery box!");
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Nex mystery box!");
 			player.unlock();
 		});
@@ -1499,7 +1509,7 @@ public class MysteryBox {
 			player.getInventory().add(reward);
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Forgotten lockbox!");
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Forgotten lockbox!");
 			player.unlock();
 		});
@@ -1537,7 +1547,7 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a donator weapon box!");
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59524), reward.getId());
 
@@ -1580,7 +1590,7 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a spring mystery box!");
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
@@ -1618,7 +1628,7 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a summer mystery box!");
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(32000), reward.getId());
 
@@ -1662,7 +1672,7 @@ public class MysteryBox {
 			if (reward.lootBroadcast != null) {
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a donator armour box!");
 //				RareDropEmbedMessage.sendBoxDiscordMessage(player, message, new Item(59525), reward.getId());
 
@@ -1699,7 +1709,7 @@ public class MysteryBox {
 			player.getInventory().addOrDrop(reward);
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Vote Buff Streak Box!");
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a Vote Buff Streak Box!");
 			player.unlock();
 		});
@@ -1718,7 +1728,7 @@ public class MysteryBox {
 			}
 			player.getInventory().addOrDrop(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a slayer mystery box!");
 			player.unlock();
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Slayer mystery box!");
@@ -1739,7 +1749,7 @@ public class MysteryBox {
 			player.getInventory().addOrDrop(reward);
 			if (reward.lootBroadcast != null) {
 
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a low tier mystery box!");
 			}
 			player.unlock();
@@ -1761,7 +1771,7 @@ public class MysteryBox {
 			player.getInventory().addOrDrop(reward);
 			if (reward.lootBroadcast != null) {
 
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from a high tier mystery box!");
 			}
 			player.unlock();
@@ -1811,7 +1821,7 @@ public class MysteryBox {
 
 					RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 						+ reward.getDef().name.toLowerCase() + "</shad> reward from a donator mystery bag!");
 				}
 			}
@@ -1860,7 +1870,7 @@ public class MysteryBox {
 
 					RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 						+ reward.getDef().name.toLowerCase() + "</shad> reward from a donator mystery chest!");
 				}
 			}
@@ -1892,7 +1902,7 @@ public class MysteryBox {
 			player.getInventory().addOrDrop(reward);
 			player.sendMessage("You have received a " + reward.getDef().name.toLowerCase() + " from the Advanced mystery box!");
 			if (reward.lootBroadcast != null) {
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 					+ reward.getDef().name.toLowerCase() + "</shad> reward from an advanced donator mystery box!");
 				String message = player.getName() + " just received ";
 				message += reward.getDef().descriptiveName;
@@ -1963,7 +1973,7 @@ public class MysteryBox {
 
 					RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 						+ reward.getDef().name.toLowerCase() + "</shad> reward from an advanced donator mystery bag!");
 				}
 			}
@@ -2014,7 +2024,7 @@ public class MysteryBox {
 
 					RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>" + item.getAmount() + "x "
 						+ reward.getDef().name.toLowerCase() + "</shad> reward from an advanced donator mystery chest!");
 
 				}

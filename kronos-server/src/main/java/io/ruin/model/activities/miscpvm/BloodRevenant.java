@@ -1,5 +1,7 @@
 package io.ruin.model.activities.miscpvm;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.model.combat.AttackStyle;
@@ -27,7 +29,7 @@ public class BloodRevenant extends NPCCombat {
 	public void init() {
 		npc.deathEndListener = (DeathListener.SimpleKiller) killer -> {
            /* if(Random.rollDie(150,1)){
-                Broadcast.WORLD.sendNews(Color.RED.wrap(("<shad>") + " A superior revenant has been awoken at Wilderness Level: " + killer.player.wildernessLevel));
+                Broadcast.WORLD.sendNews(Icon.WILDY_SKULL,Color.RED.wrap(("<shad>") + " A superior revenant has been awoken at Wilderness Level: " + killer.player.wildernessLevel));
                 new NPC(REVENANT_BOSS).spawn(killer.player.getPosition().getX(),killer.player.getPosition().getY(),killer.player.getPosition().getZ(),5).getCombat().setAllowRespawn(false);
             }
 

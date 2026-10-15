@@ -35,15 +35,20 @@ public class BondHandler {
 	private static void registerId(int id) {
 		ItemAction.registerInventory(id, ATTUNE_OR_SEVER, BondHandler::attuneOrSever);
 		ItemAction.registerInventory(id, UPGRADE, BondHandler::upgrade);
-		ItemAction.registerInventory(id, INSPECT, BondHandler::inspect);
+		// Inspect and Overview open the Bonds & Auras window on this bond
+		ItemAction.registerInventory(id, INSPECT, (player, item) -> {
+			Variant v = BondType.variant(item.getId());
+			if (v != null)
+				BondInterface.open(player, BondInterface.PERKS, v.type());
+		});
 		ItemAction.registerInventory(id, OVERVIEW, (player, item) -> {
 			Variant v = BondType.variant(item.getId());
 			if (v != null)
-				BondGuide.openDetail(player, v.type());
+				BondInterface.open(player, BondInterface.OVERVIEW, v.type());
 		});
 	}
 
-	private static void attuneOrSever(Player player, Item item) {
+	static void attuneOrSever(Player player, Item item) {
 		Variant v = BondType.variant(item.getId());
 		if (v == null)
 			return;
@@ -63,7 +68,7 @@ public class BondHandler {
 	}
 
 	/** Unattuned T1 bonds of this type in the inventory, not counting {@code exclude} (the clicked item). */
-	private static int spareBaseBonds(Player player, BondType type, Item exclude) {
+	static int spareBaseBonds(Player player, BondType type, Item exclude) {
 		int count = 0;
 		for (Item i : player.getInventory().getItems()) {
 			if (i == null || i == exclude || i.hasAttributes())
@@ -74,7 +79,7 @@ public class BondHandler {
 		return count;
 	}
 
-	private static void upgrade(Player player, Item item) {
+	static void upgrade(Player player, Item item) {
 		Variant v = BondType.variant(item.getId());
 		if (v == null)
 			return;
@@ -134,26 +139,6 @@ public class BondHandler {
 		player.closeDialogue();
 		player.sendMessage(Color.DARK_GREEN.wrap("Your " + type.bondName + " has ascended to "
 				+ (next >= BondType.MAX_TIER ? "MAX" : "Tier " + next) + "!"));
-	}
-
-	private static void inspect(Player player, Item item) {
-		Variant v = BondType.variant(item.getId());
-		if (v == null)
-			return;
-		BondType type = v.type();
-		String state = v.attuned() ? "attuned -- its perks are active while it's in your inventory"
-				: "not attuned -- its perks are inactive";
-		String current = "Your " + type.bondName + " is currently " + (v.tier() >= BondType.MAX_TIER ? "MAX" : "Tier " + v.tier() + "/" + BondType.MAX_TIER)
-				+ " (" + state + ").<br>"
-				+ type.perks(v.tier());
-		String next;
-		if (v.tier() >= BondType.MAX_TIER) {
-			next = "This bond has reached maximum ascension and cannot be upgraded further.";
-		} else {
-			int cost = BondType.upgradeCost(v.tier());
-			next = BondType.tierLabel(v.tier() + 1) + " needs " + cost + " more " + type.displayName(1) + (cost == 1 ? "" : "s")
-					+ " (you have " + spareBaseBonds(player, type, item) + "): " + type.perks(v.tier() + 1);
-		}
-		player.dialogue(new ItemDialogue().one(item.getId(), current), new ItemDialogue().one(item.getId(), next));
+		BondInterface.refreshIfOpen(player);
 	}
 }

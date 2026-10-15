@@ -27,22 +27,22 @@ public enum WildernessKey {
 	public static void rollForPlayerKill(Player player, Player killed) {
 		if (Random.rollDie(200, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.ONE_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 1M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 1M Wilderness key by killing " + killed.getName() + "!");
 		} else if (Random.rollDie(1000, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.FIVE_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 5M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 5M Wilderness key by killing " + killed.getName() + "!");
 		} else if (Random.rollDie(2500, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.TEN_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 10M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 10M Wilderness key by killing " + killed.getName() + "!");
 		} else if (Random.rollDie(10000, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.TWENTY_FIVE_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 25M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 25M Wilderness key by killing " + killed.getName() + "!");
 		} else if (Random.rollDie(40000, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.FIFTY_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 50M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 50M Wilderness key by killing " + killed.getName() + "!");
 		} else if (Random.rollDie(70000, 1)) {
 			player.getInventory().addOrDrop(WildernessKey.ONE_HUNDRED_M.itemId, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 100M Wilderness key by killing " + killed.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 100M Wilderness key by killing " + killed.getName() + "!");
 		}
 	}
 
@@ -50,22 +50,22 @@ public enum WildernessKey {
 		if (npc.getId() == 6609 || npc.getId() == 6610 || npc.getId() == 6619 || npc.getId() == 6618 || npc.getId() == 2054 || npc.getId() == 6611) {
 			if (Random.rollDie(50, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.ONE_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 1M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 1M Wilderness key by killing " + npc.getDef().name + "!");
 			} else if (Random.rollDie(200, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.FIVE_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 5M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 5M Wilderness key by killing " + npc.getDef().name + "!");
 			} else if (Random.rollDie(500, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.TEN_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 10M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 10M Wilderness key by killing " + npc.getDef().name + "!");
 			} else if (Random.rollDie(2000, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.TWENTY_FIVE_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 25M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 25M Wilderness key by killing " + npc.getDef().name + "!");
 			} else if (Random.rollDie(5000, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.FIFTY_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 50M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 50M Wilderness key by killing " + npc.getDef().name + "!");
 			} else if (Random.rollDie(10000, 1)) {
 				player.getInventory().addOrDrop(WildernessKey.ONE_HUNDRED_M.itemId, 1);
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, player.getName() + " has just received a 100M Wilderness key by killing " + npc.getDef().name + "!");
+				Broadcast.WORLD.sendNews(Icon.WILDY_KEY, player.getName() + " has just received a 100M Wilderness key by killing " + npc.getDef().name + "!");
 			}
 		}
 	}

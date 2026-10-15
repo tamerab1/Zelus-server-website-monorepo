@@ -205,7 +205,7 @@ public class CrystalKeyChest {
 				player.getBank().deposit(loot.getId(), loot.getAmount());
 			else
 				player.getInventory().addOrDrop(loot.getId(), loot.getAmount());
-			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Crystal chest on [Chest #" + player.crystalChestsOpened + "]!");
+			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.YELLOW_KEY, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Crystal chest on [Chest #" + player.crystalChestsOpened + "]!");
 
 		}
 		else if (Random.rollDie(150, 1)) {

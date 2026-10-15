@@ -20,9 +20,9 @@ public class TradePostOffersDb {
 	public static Continuation.Void removeOffer(TradePostOffer offer) {
 		return Server.gameDb.exec(con -> {
 			try (var statement = con.prepareStatement(
-					"DELETE FROM tradepost_offers WHERE player_name = ? AND slot = ?")) {
-				statement.setString(1, offer.getOwner());
-				statement.setInt(2, offer.getSlot());
+					"DELETE FROM tradepost_offers WHERE id = ?")) {
+				// by id: two rows that ever shared a (player, slot) pair can never be deleted together
+				statement.setLong(1, offer.getId());
 				statement.executeUpdate();
 			} catch (Exception e) {
 				log.error("Unable to remove offer: " + offer, e);
@@ -85,7 +85,8 @@ public class TradePostOffersDb {
 			stmt.setInt(3, itemId);
 			stmt.setString(4, startAmount.toString(10));
 			stmt.setString(5, price.toString(10));
-			stmt.setLong(6, Instant.now().getEpochSecond());
+			var placedAt = Instant.now().getEpochSecond();
+			stmt.setLong(6, placedAt);
 			stmt.setBoolean(7, kind.isBuy());
 			stmt.setString(8, startAmount.toString(10));
 			stmt.execute();
@@ -105,6 +106,7 @@ public class TradePostOffersDb {
 			offer.amount = startAmount;
 			offer.kind = kind;
 			offer.owner = owner;
+			offer.timeStamp = placedAt;
 			return offer;
 		});
 	}
@@ -112,9 +114,8 @@ public class TradePostOffersDb {
 	public static Continuation.Void upsert(TradePostOffer offer) {
 		return Server.gameDb.exec(con -> {
 			try (var checkStatement = con.prepareStatement(
-					"SELECT COUNT(*) FROM tradepost_offers WHERE player_name = ? AND slot = ?")) {
-				checkStatement.setString(1, offer.getOwner());
-				checkStatement.setInt(2, offer.getSlot());
+					"SELECT COUNT(*) FROM tradepost_offers WHERE id = ?")) {
+				checkStatement.setLong(1, offer.getId());
 
 				try (var result = checkStatement.executeQuery()) {
 					if (result.next() && result.getInt(1) == 0) {
@@ -127,10 +128,9 @@ public class TradePostOffersDb {
 				}
 			}
 			try (var statement = con.prepareStatement(
-					"UPDATE tradepost_offers SET item_amount = ? WHERE player_name = ? AND slot = ?")) {
+					"UPDATE tradepost_offers SET item_amount = ? WHERE id = ?")) {
 				statement.setString(1, offer.amount.toString(10));
-				statement.setString(2, offer.getOwner());
-				statement.setInt(3, offer.getSlot());
+				statement.setLong(2, offer.getId());
 				statement.executeUpdate();
 			}
 		});

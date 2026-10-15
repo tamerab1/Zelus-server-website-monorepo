@@ -366,13 +366,10 @@ public class PlayerPerkHandler {
 			player.sendMessage("You don't have enough perk points to upgrade this perk.");
 			return;
 		}
-		if (player.getName().equalsIgnoreCase("Dan Gleebles")) {
-		} else {
-			if (Objects.requireNonNull(perkToUpgrade.getPerk(player)).getPerkLevel() >= Objects
-					.requireNonNull(perkToUpgrade.getPerk(player)).getPerkMaxLevel()) {
-				player.sendMessage("This perk cannot be upgraded again!");
-				return;
-			}
+		if (Objects.requireNonNull(perkToUpgrade.getPerk(player)).getPerkLevel() >= Objects
+				.requireNonNull(perkToUpgrade.getPerk(player)).getPerkMaxLevel()) {
+			player.sendMessage("This perk cannot be upgraded again!");
+			return;
 		}
 
 		player.ownedPerks.replace(perkToUpgrade.ordinal(), player.ownedPerks.get(perkToUpgrade.ordinal()) + 1);
@@ -441,14 +438,6 @@ public class PlayerPerkHandler {
 					"You added " + Objects.requireNonNull(perkToAdd.getPerk(player)).getPerkName() + " to your active perks");
 			updateActivePerkSets(player);
 		} else {
-			if (player.getName().equalsIgnoreCase("Dan Gleebles")) {
-				player.activePerks.put(perkToAdd.ordinal(), player.getOwnedPerks().get(perkToAdd.ordinal()));
-				player.activePerksList.add(perkToAdd);
-				player.sendFilteredMessage(
-						"You added " + Objects.requireNonNull(perkToAdd.getPerk(player)).getPerkName() + " to your active perks");
-				updateActivePerkSets(player);
-				return true;
-			}
 			player.sendMessage("You already have the maximum amount of perks active.");
 			return false;
 		}

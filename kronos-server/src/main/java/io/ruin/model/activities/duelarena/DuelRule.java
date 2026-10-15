@@ -46,7 +46,15 @@ public enum DuelRule {
 		this.childIds = ListUtils.toList(childIds);
 	}
 
+	/**
+	 * Extra rule source outside the Duel Arena: the Pit Championship's boxing format applies these same rules
+	 * (no food, drinks, magic, prayer...) during its bouts, so every existing rule check enforces them too.
+	 */
+	public static java.util.function.BiPredicate<Player, DuelRule> externalRules;
+
 	public boolean isToggled(Player player) {
+		if (externalRules != null && externalRules.test(player, this))
+			return true;
 		Duel duel = player.getDuel();
 		return duel.stage >= 3 && duel.isToggled(this);
 	}

@@ -73,11 +73,29 @@ public class ModernTeleport extends Spell {
 				player.sendMessage("The crystal of memories stores your last location as an available teleport.");
 				player.crystalMemoryPosition = player.getPosition().copy();
 			}
-			player.animate(714);
-			player.graphics(111, 92, 0);
 			player.publicSound(200);
-			e.delay(3);
+			playEffect(e, player);
 			player.getMovement().teleport(x, y, z);
 		});
+	}
+
+	/**
+	 * The server's main teleport effect: the Arceuus teleport (anim 8805 / 8807, gfx 1822 / 1823) recoloured cyan in
+	 * the cache as spotanims 4291 / 4292 (.dev/cache-restore-tool/teleport_cyan.txt).
+	 */
+	public static final int CYAN_TELEPORT_ANIM = 8805, CYAN_TELEPORT_GFX = 4291;
+	public static final int CYAN_ARRIVE_ANIM = 8807, CYAN_ARRIVE_GFX = 4292;
+
+	/**
+	 * The full Arceuus teleport, same timing as the original spell: the casting animation (5 ticks), then the
+	 * vanishing animation (3 ticks). Call from inside a teleport event, then move the player.
+	 */
+	public static void playEffect(io.ruin.process.event.Event e, Player player) {
+		player.animate(CYAN_TELEPORT_ANIM);
+		player.graphics(CYAN_TELEPORT_GFX, 92, 0);
+		e.delay(5);
+		player.animate(CYAN_ARRIVE_ANIM);
+		player.graphics(CYAN_ARRIVE_GFX, 92, 0);
+		e.delay(3);
 	}
 }

@@ -1,5 +1,7 @@
 package io.ruin.network.incoming.handlers.command;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.cache.*;
 import io.ruin.db.PlayerDatabase;
 import io.ruin.model.World;
@@ -74,7 +76,7 @@ public class CommandHandlerModeratorSenior {
 				World.doubleExpActive = !World.doubleExpActive; // Toggle between true and false
 				if (World.doubleExpActive) {
 					player.sendMessage("Double XP Weekend is now active.");
-					Broadcast.WORLD.sendNews(Icon.MYSTERY_BOX,
+					Broadcast.WORLD.sendNews(Icon.ADMINISTRATOR,
 							"  <col=000000>[Broadcast]</col> The <col=000000>Double XP Weekend Boost</col> has just been activated!");
 				} else {
 					player.sendMessage("Double XP Weekend is now inactive.");
@@ -92,7 +94,7 @@ public class CommandHandlerModeratorSenior {
 			case "doubleslayer": {
 				String message = World.toggleDoubleSlayer();
 				if (message != null && !message.isEmpty()) {
-					Broadcast.WORLD.sendNews(Icon.MYSTERY_BOX,
+					Broadcast.WORLD.sendNews(Icon.ADMINISTRATOR,
 							"<col=000000>  [Broadcast]</col> The <col=000000>Double Slayer Point Boost</col> has just been activated!");
 				} else {
 					player.sendMessage("The Double Slayer Point Boost has been deactivated.");

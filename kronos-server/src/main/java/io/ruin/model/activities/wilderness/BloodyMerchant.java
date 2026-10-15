@@ -109,7 +109,7 @@ public class BloodyMerchant {
 				p.getPacketSender().sendBroadcast(eventMessage);
 			}
 		}
-		Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Wilderness Event", eventMessage);
+		Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Wilderness Event", eventMessage);
 	}
 
 	private static void tradeMerchant(Player player) {
@@ -148,7 +148,7 @@ public class BloodyMerchant {
 			bloodyMerchantShop = null;
 			bloodyMerchant = null;
 			String despawnMessage = "The Bloody Merchant has left to collect more items.";
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Wilderness Event", despawnMessage);
+			Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Wilderness Event", despawnMessage);
 			broadcastEvent(despawnMessage);
 		}
 	}

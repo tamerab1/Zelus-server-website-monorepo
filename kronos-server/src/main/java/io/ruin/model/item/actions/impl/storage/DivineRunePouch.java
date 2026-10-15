@@ -25,7 +25,9 @@ public class DivineRunePouch extends ItemContainer {
 		for (Rune rune : Rune.values())
 			ItemItemAction.register(RUNE_POUCH, rune.getId(),
 					(player, pouchItem, runeItem) -> player.DivinerunePouch.deposit(runeItem, runeItem.getAmount()));
-		InterfaceHandler.register(1107, h -> {
+		// (interface 1107 was an old custom copy whose onLoad script 453 now gets 2 of its 8 component args, so it
+		// drew broken; the divine pouch now uses the rune pouch window 190 -- RunePouch's handlers route by DIVINE_OPEN_KEY)
+		if (false) InterfaceHandler.register(1107, h -> {
 			h.actions[8] = (DefaultAction) (p, option, slot, itemId) -> {
 				Item item = p.getInventory().get(slot, itemId);
 				if (item == null)
@@ -98,6 +100,9 @@ public class DivineRunePouch extends ItemContainer {
 	public void deposit(Item item, int amount) {
 		if (amount <= 0)
 			return;
+		if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "stored in a rune pouch")) {
+			return;
+		}
 		if (amount > item.getAmount())
 			amount = item.getAmount();
 		Rune rune = item.getDef().rune;
@@ -145,18 +150,25 @@ public class DivineRunePouch extends ItemContainer {
 			if (item != null)
 				item.move(item.getId(), item.getAmount(), bank ? player.getBank() : player.getInventory());
 		}
-		if (count == 0) {
+		// (the old check re-tested the count taken before moving, so it always said there was no space)
+		if (getCount() == 0) {
 			if (!bank)
 				player.sendMessage("You empty your rune pouch.");
 			return;
 		}
-		player.sendMessage("Not enough space in your inventory.");
+		player.sendMessage(bank ? "Not enough space in your bank." : "Not enough space in your inventory.");
 	}
 
 	@Override
 	public boolean sendUpdates() {
 		if (updatedCount == 0) {
 			return false;
+		}
+		// only the carried divine pouch owns the shared varbits
+		if (!player.getInventory().hasId(RUNE_POUCH)) {
+			java.util.Arrays.fill(updatedSlots, false);
+			updatedCount = 0;
+			return true;
 		}
 
 		if (updatedSlots[0]) {
@@ -184,20 +196,24 @@ public class DivineRunePouch extends ItemContainer {
 			player.sendFilteredMessage("You can't do this in combat.");
 			return;
 		}
-		if (player.isVisibleInterface(1107)) {
-			VarPlayerRepository.VARP_261.set(player, 4);
-			player.getPacketSender().sendClientScript(2524, -1, -1);
-			player.closeInterface(ToplevelComponent.INVENTORY_TAB_AREA);
-		}
-
-		player.getPacketSender().sendIfEvents(1107, 4, 0, 4, 1054 | 1 << 17 | 1 << 20);
-		player.getPacketSender().sendIfEvents(1107, 8, 0, 27, 1054);
-		player.openInterface(ToplevelComponent.MAINMODAL, 1107);
-		player.getPacketSender().sendItems(982);
+		player.set(RunePouch.DIVINE_OPEN_KEY, true);
+		forceDisplay();
+		VarPlayerRepository.VARP_261.set(player, 3);
+		player.getPacketSender().sendIfEvents(Interface.RUNE_POUCH, 4, 0, 3, 1054 | 1 << 17 | 1 << 20);
+		player.getPacketSender().sendIfEvents(Interface.RUNE_POUCH, 7, 0, 27, 1054);
+		player.openInterface(ToplevelComponent.MAINMODAL, Interface.RUNE_POUCH);
 
 	}
 
-	private void withdraw(Item item, int amount) {
+	/** Writes all 4 slots to the shared varbits. */
+	void forceDisplay() {
+		update(0, VarPlayerRepository.RUNE_POUCH_RUNE1, VarPlayerRepository.RUNE_POUCH_AMOUNT1);
+		update(1, VarPlayerRepository.RUNE_POUCH_RUNE2, VarPlayerRepository.RUNE_POUCH_AMOUNT2);
+		update(2, VarPlayerRepository.RUNE_POUCH_RUNE3, VarPlayerRepository.RUNE_POUCH_AMOUNT3);
+		update(3, VarPlayerRepository.RUNE_POUCH_RUNE4, VarPlayerRepository.RUNE_POUCH_AMOUNT4);
+	}
+
+	void withdraw(Item item, int amount) {
 		if (item.move(item.getId(), amount, player.getInventory()) > 0)
 			return;
 		player.sendMessage("Not enough space in your inventory.");

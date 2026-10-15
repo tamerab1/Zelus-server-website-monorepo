@@ -20,6 +20,8 @@ public class JournalTabHook {
 		InterfaceHandler.register(848, 24, (player) -> {
 			player.collectionLogUpdated().open(player);
 		});
+		// "Collection log" button on the Server Info dashboard (kronos-server can't depend on this module)
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.openCollectionLog = p -> p.collectionLogUpdated().open(p);
 	}
 
 	private static Result handle(JournalTab.Hook.OnSummaryClick ctx) {

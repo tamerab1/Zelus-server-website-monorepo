@@ -29,11 +29,22 @@ public class TeleInterface extends ItemContainer {
 	transient int maxPageNumber = 3;
 	transient boolean opened = false;
 	transient int currentComponentId = 0;
+	/** TeleportNexus (interface 1152) state: the category (default Bosses), the cards on screen, the last search. */
+	transient int nexusCategory = 2;
+	transient java.util.List<TeleportNexus.Entry> nexusRows;
+	transient ServerTeleports nexusSelected;
+	transient String nexusSearch;
 
 	public void init() {
 	}
 
 	public void open(Player player) {
+		// the Teleport Nexus (1152) replaced this paged interface (851); every opener (home nexus, ::teleport) lands here
+		TeleportNexus.open(player);
+	}
+
+	/** The old paged teleport interface (851), no longer opened; kept for reference until it is removed. */
+	public void openLegacy(Player player) {
 		if (opened) {
 			player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
 			sendFavourites(player);
@@ -412,7 +423,7 @@ public class TeleInterface extends ItemContainer {
 		}
 	}
 
-	private int getDynamicNpcId(ServerTeleports teleport) {
+	static int getDynamicNpcId(ServerTeleports teleport) {
 		switch (teleport) {
 			case KBD:           return 239;
 			case ARAXXOR:       return 13668;
@@ -1925,6 +1936,7 @@ public class TeleInterface extends ItemContainer {
 	}
 
 	public static void register() {
+		TeleportNexus.register();
 		InterfaceHandler.register(INTERFACE_ID, h -> {
 			h.actions[116] = (SimpleAction) (p) -> {
 				p.stringInput("Search teleports (name):", s -> {

@@ -337,7 +337,19 @@ public enum CustomShop2 {
 		9,
 		Currency.DONATOR,
 		new ShopItem[]{
-			// Line 1
+			// Top row: the Zelus donator exclusives (2026-10-15; no gloves), slots 0-9
+			new ShopItem(31794, 15000),  // Zelus Partyhat
+			new ShopItem(31796, 15000),  // Zelus H'ween Mask
+			new ShopItem(31798, 15000),  // Zelus Santa Hat
+			new ShopItem(31800, 8000),   // Zelus Relic Hood
+			new ShopItem(31802, 12000),  // Zelus Relic Coat
+			new ShopItem(31804, 12000),  // Zelus Relic Legs
+			new ShopItem(31806, 8000),   // Zelus Relic Boots
+			new ShopItem(31808, 35000),  // Zelus Scythe of Vitur
+			new ShopItem(31810, 20000),  // Zelus Cosmic Wings
+			new ShopItem(31812, 15000),  // Zelus Celestial Halo
+
+			// Line 1 (was the top row)
 			new ShopItem(11862, 10000),  // Black partyhat
 			new ShopItem(11847, 7500),   // Black h'ween mask
 			new ShopItem(13343, 7500),   // Black santa hat
@@ -1138,68 +1150,68 @@ public enum CustomShop2 {
 
 	public static void openCustomShopViaCmd(Player player) {
 		player.getPacketSender().sendString(891, 14, "Melee Store");
+		player.setShopIdentifier(1);
 		CustomShopInterface2.open(player, CustomShop2.get(1).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.MELEE_STORE);
-		player.setShopIdentifier(1);
 	}
 
 
 	public static void openIronmanShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Ironman Store");
+		player.setShopIdentifier(12);
 		CustomShopInterface2.open(player, CustomShop2.get(12).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.IRONMAN_SHOP);
-		player.setShopIdentifier(12);
 	}
 
 	public static void openSellBhEmblemsShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Sell Bounty Hunter Emblems");
+		player.setShopIdentifier(17);
 		CustomShopInterface2.open(player, CustomShop2.get(17).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.SELL_BH_EMBLEMS);
-		player.setShopIdentifier(17);
 	}
 
 	// Direct openers for the interface-891 tabs, used to replace the old newshop-framework/
 	// ShopManager entry points that used to open equivalent standalone shops.
 	public static void openPkpShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "PKP Shop");
+		player.setShopIdentifier(13);
 		CustomShopInterface2.open(player, CustomShop2.get(13).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.PKP_SHOP);
-		player.setShopIdentifier(13);
 	}
 
 	public static void openBhPointsShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Bounty Hunter Shop");
+		player.setShopIdentifier(6);
 		CustomShopInterface2.open(player, CustomShop2.get(6).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.BLOOD_MONEY_STORE);
-		player.setShopIdentifier(6);
 	}
 
 	public static void openZelusPointsShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Zelus Points Shop");
+		player.setShopIdentifier(14);
 		CustomShopInterface2.open(player, CustomShop2.get(14).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.ZELUS_POINTS_SHOP);
-		player.setShopIdentifier(14);
 	}
 
 	public static void openAchievementPointsShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Achievement Points Shop");
+		player.setShopIdentifier(15);
 		CustomShopInterface2.open(player, CustomShop2.get(15).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.ACHIEVEMENT_POINTS_SHOP);
-		player.setShopIdentifier(15);
 	}
 
 	public static void openDonatorStoreShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Donation Shop");
+		player.setShopIdentifier(9);
 		CustomShopInterface2.open(player, CustomShop2.get(9).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.DONATOR_STORE);
-		player.setShopIdentifier(9);
 	}
 
 	public static void openVoteStoreShop(Player player) {
 		player.getPacketSender().sendString(891, 14, "Voting Shop");
+		player.setShopIdentifier(10);
 		CustomShopInterface2.open(player, CustomShop2.get(10).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.VOTE_STORE);
-		player.setShopIdentifier(10);
 	}
 
 	public static void openPvmShop(Player player) {
@@ -1208,9 +1220,9 @@ public enum CustomShop2 {
 			return;
 		}
 		player.getPacketSender().sendString(891, 14, "PVM Point Shop");
+		player.setShopIdentifier(16);
 		CustomShopInterface2.open(player, CustomShop2.get(16).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.PVM_SHOP);
-		player.setShopIdentifier(16);
 	}
 
 //    public static void register() {

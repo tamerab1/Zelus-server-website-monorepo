@@ -18,6 +18,35 @@ public class CommandHandlerModerator {
 		if (!player.isModerator() && !player.isManager() && !player.isOwner() && !player.isAdmin())
 			return false;
 		switch (command) {
+			case "pitopen": {
+				player.sendMessage(io.ruin.model.activities.tournament.TournamentHandler.forceOpen());
+				return true;
+			}
+			case "pitstart": {
+				player.sendMessage(io.ruin.model.activities.tournament.TournamentHandler.forceStart());
+				return true;
+			}
+			case "pitcancel": {
+				player.sendMessage(io.ruin.model.activities.tournament.TournamentHandler.cancel());
+				return true;
+			}
+			case "pitladder": {
+				if (!player.isManager() && !player.isOwner() && !player.isAdmin()) {
+					player.sendMessage("Only admins can edit the Pit Championship ladder.");
+					return true;
+				}
+				player.sendMessage(io.ruin.model.activities.tournament.ChampionLadder.staffCommand(args));
+				return true;
+			}
+			case "pitformat": {
+				int index = -1;
+				try {
+					index = Integer.parseInt(args[0]);
+				} catch (Exception ignored) {
+				}
+				player.sendMessage(io.ruin.model.activities.tournament.TournamentHandler.setFormat(index));
+				return true;
+			}
 			case "unlock": {
 				forPlayer(player, query, "::unlock playerName", p2 -> {
 					if (!p2.isLocked()) {

@@ -117,8 +117,7 @@ public class BossMaster {
 				player.bossSlayerStartAmount = 0;
 				player.bossSlayerStreak++;
 				final int spree = player.bossSlayerStreak;
-				int basePoints = 35 * (World.doubleSlayer
-					&& !player.getName().equalsIgnoreCase("normal") ? 2 : 1)
+				int basePoints = 35 * (World.doubleSlayer ? 2 : 1)
 					+ DonatorBonus.BONUS_SLAYER_POINTS.handleBonus(player);
 				final int total = SlayerMaster.points(8, spree) + basePoints;
 				final int current = VarPlayerRepository.SLAYER_POINTS.get(player);

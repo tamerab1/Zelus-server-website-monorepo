@@ -131,6 +131,8 @@ public class CustomShopInterface2 {
 			};
 			// Component 30 -- new tab added to interface 891 for selling Antique emblems back for
 			// BH Points. Sell-only: no buy grid, see the sellAtListedPrice guard in buy() below.
+			h.actions[DEALS_BUTTON] = (DefaultAction) (player, option, slot, itemId) ->
+				io.ruin.model.content.donatordeals.DonatorDeals.open(player);
 			h.actions[30] = (DefaultAction) (player, option, slot, itemId) -> {
 				player.getPacketSender().sendString(891, 14, "Sell Bounty Hunter Emblems");
 				player.setShopIdentifier(17);
@@ -510,5 +512,26 @@ public class CustomShopInterface2 {
 		player.getPacketSender().sendIfEvents(891, 41, 0,
 			127, 1150);
 		player.getPacketSender().sendIfEvents(301, 0, 0, 27, 1086);
+		sendActiveTab(player);
+	}
+
+	/** Shop identifier of each category tab (tab layers 16, 18 .. 30), in tab order. */
+	private static final int[] TAB_SHOP_IDS = {13, 6, 14, 15, 9, 10, 16, 17};
+	/** Appended gold "selected" frames (AddShopTabFrames): tab t -> 114 + 2t (outer) and 115 + 2t (inner). */
+	private static final int FIRST_TAB_FRAME = 114;
+
+	/** "Deals" bezel button + label in the title row (AddShopDealsButton), shown on the Donation Shop tab only. */
+	static final int DEALS_BUTTON = 130;
+
+	/** Keeps the open category's tab framed in gold; the hover highlight stays as it was for the other tabs. */
+	private static void sendActiveTab(Player player) {
+		for (int t = 0; t < TAB_SHOP_IDS.length; t++) {
+			boolean active = player.getShopIdentifier() == TAB_SHOP_IDS[t];
+			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t, !active);
+			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t + 1, !active);
+		}
+		boolean donator = player.getShopIdentifier() == 9; // CustomShop2.DONATOR_STORE
+		player.getPacketSender().setHidden(891, DEALS_BUTTON, !donator);
+		player.getPacketSender().setHidden(891, DEALS_BUTTON + 1, !donator);
 	}
 }

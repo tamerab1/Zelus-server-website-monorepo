@@ -129,7 +129,7 @@ public class VoteBoss extends NPCCombat {
 		Item reward = table.rollItem();
 		new GroundItem(reward).owner(player).position(player.getPosition()).spawn();
 		if (reward.lootBroadcast != null)
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from the vote boss!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from the vote boss!");
 	}
 
 	List<Player> damagingPlayers = new ArrayList<>();

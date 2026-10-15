@@ -237,7 +237,7 @@ public enum UpgradeItems {
 			new Ingredient[]{new Ingredient(ItemID.IMBUED_HEART_MAGIC), new Ingredient(30502), new Ingredient(30503)},
 			80,
 			new Item(30554),
-			"This item is morphs all 3 imbued heart variants together to create the ultimate overloaded heart. It will provide stat boosts to all combat styles."
+			"Combines all 3 Imbued Heart variants to create the ultimate overloaded heart. It boosts every combat style."
 	),
 
 	SUPERIOR_OVERLOAD_HEART(
@@ -365,6 +365,45 @@ public enum UpgradeItems {
 
 	public static final UpgradeItems[] VALUES = values();
 
+	/* ---- read-only views for the Relic Forge screen (RelicForge.java); the rules below are unchanged ---- */
+
+	public Item outcome() {
+		return upgradeTo;
+	}
+
+	public Ingredient[] ingredientList() {
+		return ingredients;
+	}
+
+	public Item catalyst() {
+		return bindingItem;
+	}
+
+	public int baseRate() {
+		return successRate;
+	}
+
+	public String description() {
+		return description;
+	}
+
+	public int donatorBonus(Player player) {
+		return getOddsForPlayer(player);
+	}
+
+	/** The inventory item that satisfies this ingredient (same match as the upgrade itself), or null. */
+	public static Item ownedVariant(Player player, Ingredient ingredient) {
+		return findIngredient(player, ingredient);
+	}
+
+	/** Every ingredient and the catalyst are in the inventory (the same checks createItem makes, without messages). */
+	public boolean ready(Player player) {
+		for (var ingredient : ingredients)
+			if (findIngredient(player, ingredient) == null)
+				return false;
+		return player.getInventory().contains(bindingItem);
+	}
+
 	public static boolean canUpgrade(Player player, Ingredient[] ingredients) {
 		for (var ingredient : ingredients) {
 			var ingridientItem = findIngredient(player, ingredient);
@@ -446,14 +485,14 @@ public enum UpgradeItems {
 			if (random > getSuccessRate(player)) {
 				player.sendMessage("You have failed to upgrade your item.");
 				player.getInventory().remove(bindingItem);
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.UPGRADE_GEM, "<col=000000>" + player.getName(),
 						" has failed to craft a " + upgradeTo.getDef().name + " at the upgrade station!");
 				hookCreateItemPittySystem(player, false);
 				return;
 			}
 			removeItems(player, ingredients, bindingItem, upgradeTo);
 			player.sendMessage("You have successfully upgraded your item.");
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.UPGRADE_GEM, "<col=000000>" + player.getName(),
 					" has successfully crafted a " + upgradeTo.getDef().name + " at the upgrade station!");
 			hookCreateItemPittySystem(player, true);
 		} else {

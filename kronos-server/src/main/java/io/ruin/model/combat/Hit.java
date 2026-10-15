@@ -65,6 +65,15 @@ public class Hit {
 	public boolean resetActions = true;
 	public boolean removed;
 
+	/// Damage dealt by the attacker's combat pet (see CombatPet). The owner still gets kill credit and loot,
+	/// but their weapon effects, own hit listeners and combat xp are skipped.
+	public boolean fromPet;
+
+	public Hit fromPet() {
+		this.fromPet = true;
+		return this;
+	}
+
 	public Hit setResetActions(boolean resetActions) {
 		this.resetActions = resetActions;
 		return this;
@@ -382,7 +391,7 @@ public class Hit {
 			preDefend.accept(target);
 		if (target.hitListener != null && target.hitListener.preDefend != null)
 			target.hitListener.preDefend.accept(this);
-		if (attacker != null && attacker.hitListener != null && attacker.hitListener.preTargetDefend != null)
+		if (!fromPet && attacker != null && attacker.hitListener != null && attacker.hitListener.preTargetDefend != null)
 			attacker.hitListener.preTargetDefend.accept(this, target);
 
 		if (isNullified()) {
@@ -442,10 +451,10 @@ public class Hit {
 			postDefend.accept(target);
 		if (target.hitListener != null && target.hitListener.postDefend != null)
 			target.hitListener.postDefend.accept(this);
-		if (attacker != null && attacker.hitListener != null && attacker.hitListener.postTargetDefend != null)
+		if (!fromPet && attacker != null && attacker.hitListener != null && attacker.hitListener.postTargetDefend != null)
 			attacker.hitListener.postTargetDefend.accept(this, target);
 
-		if (attacker instanceof Player && target instanceof NPC) {
+		if (!fromPet && attacker instanceof Player && target instanceof NPC) {
 			if (attacker.player.getEquipment().get(Equipment.SLOT_WEAPON) != null) {
 				if (AttributeExtensions.hasAttribute(
 						attacker.player.getEquipment().get(Equipment.SLOT_WEAPON), AttributeTypes.HEALTH_SIPHON)) {
@@ -549,7 +558,7 @@ public class Hit {
 				target.hitListener.preDamage.accept(this);
 			}
 
-			if (attacker != null && attacker.hitListener != null && attacker.hitListener.preTargetDamage != null) {
+			if (!fromPet && attacker != null && attacker.hitListener != null && attacker.hitListener.preTargetDamage != null) {
 				attacker.hitListener.preTargetDamage.accept(this, target);
 			}
 
@@ -608,7 +617,7 @@ public class Hit {
 				target.hitListener.postDamage.accept(this);
 			}
 
-			if (attacker != null && attacker.hitListener != null && attacker.hitListener.postTargetDamage != null) {
+			if (!fromPet && attacker != null && attacker.hitListener != null && attacker.hitListener.postTargetDamage != null) {
 				attacker.hitListener.postTargetDamage.accept(this, target);
 			}
 

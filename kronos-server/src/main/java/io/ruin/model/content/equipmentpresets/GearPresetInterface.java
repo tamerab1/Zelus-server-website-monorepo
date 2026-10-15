@@ -22,6 +22,9 @@ import java.util.List;
 public class GearPresetInterface {
 
 	public static final int INTERFACE_ID = Interface.BANK_PRESET_INTERFACE;
+	/// 1.35x copy of 5900 for resizable clients, opened in the full-viewport world-map slot
+	/// (built by .dev/cache-restore-tool/src/ScaleInterface.java; same component ids).
+	public static final int LARGE_INTERFACE_ID = 1142;
 	public static final int VISIBLE_PRESETS = 6;
 
 	private static final int[] STAT_COMPONENTS = {
@@ -63,6 +66,7 @@ public class GearPresetInterface {
 	private static final int SCROLL_THUMB = 121;
 	private static final int SCROLL_UP = 122;
 	private static final int SCROLL_UP_BACKGROUND = 123;
+	private static final int CLOSE_BUTTON = 7;
 	private static final int SCROLL_UP_TEXT = 124;
 	private static final int SCROLL_DOWN = 125;
 	private static final int SCROLL_DOWN_BACKGROUND = 126;
@@ -78,6 +82,19 @@ public class GearPresetInterface {
 	private boolean showingInventory;
 	private boolean openedFromBank;
 	private Position accessPosition;
+	/// The group actually open for this player: 5900, or LARGE_INTERFACE_ID on resizable clients.
+	private int ifId = INTERFACE_ID;
+
+	/** The window shrank below the large screen's size: reopen the same state on the normal-size screen. */
+	public static void shrinkIfOpen(Player player) {
+		GearPresetInterface controller = player.getGearPresetInterface();
+		if (controller == null || controller.ifId != LARGE_INTERFACE_ID || !player.isVisibleInterface(LARGE_INTERFACE_ID))
+			return;
+		player.closeInterface(ToplevelComponent.WORLD_MAP);
+		controller.ifId = INTERFACE_ID;
+		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		controller.refresh(player);
+	}
 
 	public void open(Player player) {
 		if (!player.isVisibleInterface(Interface.BANK)) {
@@ -96,7 +113,14 @@ public class GearPresetInterface {
 		showingInventory = false;
 		openedFromBank = true;
 		accessPosition = player.getPosition().copy();
-		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
+		boolean large = player.fitsLargeInterface();
+		ifId = large ? LARGE_INTERFACE_ID : INTERFACE_ID;
+		if (large) {
+			player.closeInterface(ToplevelComponent.MAINMODAL); // the bank (5900 replaces it in the same slot)
+			player.openInterface(ToplevelComponent.WORLD_MAP, ifId);
+		} else {
+			player.openInterface(ToplevelComponent.MAINMODAL, ifId);
+		}
 		refresh(player);
 	}
 
@@ -118,7 +142,7 @@ public class GearPresetInterface {
 	private void refreshStats(Player player) {
 		int[] bonuses = player.getEquipment().bonuses;
 		for (int i = 0; i < STAT_COMPONENTS.length; i++)
-			EquipmentStats.Stat.VALUES[i].sendString(player, bonuses[i], INTERFACE_ID, STAT_COMPONENTS[i]);
+			EquipmentStats.Stat.VALUES[i].sendString(player, bonuses[i], ifId, STAT_COMPONENTS[i]);
 	}
 
 	private void refreshCurrentEquipment(Player player) {
@@ -131,7 +155,7 @@ public class GearPresetInterface {
 			int slot = EQUIPMENT_SLOTS[index];
 			Item item = preview == null ? player.getEquipment().getSafe(slot) : preview.getEquipment().get(slot);
 			player.getPacketSender().sendClientScript(149, "IviiiIsssss",
-				INTERFACE_ID << 16 | component, container, 4, 7, 1, -1,
+				ifId << 16 | component, container, 4, 7, 1, -1,
 				preview == null ? "Remove" : "", "", "", "", "");
 			/*
 			 * Modern clients only accept inventory updates with the sentinel combined widget id.
@@ -140,14 +164,14 @@ public class GearPresetInterface {
 			 */
 			player.getPacketSender().sendItems(container,
 				new Item[]{item == null ? null : item.copy()});
-			player.getPacketSender().setHidden(INTERFACE_ID, EQUIPMENT_PLACEHOLDERS[index], item != null);
+			player.getPacketSender().setHidden(ifId, EQUIPMENT_PLACEHOLDERS[index], item != null);
 		}
 	}
 
 	private void refreshCurrentInventory(Player player) {
 		GearPreset preview = selected(player);
 		player.getPacketSender().sendClientScript(149, "IviiiIsssss",
-			INTERFACE_ID << 16 | INVENTORY_COMPONENT, INVENTORY_CONTAINER, 4, 7, 0, -1,
+			ifId << 16 | INVENTORY_COMPONENT, INVENTORY_CONTAINER, 4, 7, 0, -1,
 			"", "", "", "", "");
 		/* Use the sentinel widget id required by the current protocol implementation. */
 		Item[] items = preview == null ? player.getInventory().getItems() : preview.getInventory().toArray(new Item[0]);
@@ -155,22 +179,22 @@ public class GearPresetInterface {
 	}
 
 	private void refreshLoadoutView(Player player) {
-		player.getPacketSender().sendString(INTERFACE_ID, PANEL_HEADER,
+		player.getPacketSender().sendString(ifId, PANEL_HEADER,
 			showingInventory ? "Inventory / Options" : "Equipment / Options");
-		player.getPacketSender().setGraphic(INTERFACE_ID, VIEW_TOGGLE,
+		player.getPacketSender().setGraphic(ifId, VIEW_TOGGLE,
 			showingInventory ? EQUIPMENT_SPRITE : INVENTORY_SPRITE);
-		player.getPacketSender().setHidden(INTERFACE_ID, VIEW_TOGGLE_BACKGROUND, false);
-		player.getPacketSender().setHidden(INTERFACE_ID, VIEW_TOGGLE, false);
+		player.getPacketSender().setHidden(ifId, VIEW_TOGGLE_BACKGROUND, false);
+		player.getPacketSender().setHidden(ifId, VIEW_TOGGLE, false);
 
 		for (int component : EQUIPMENT_BACKGROUNDS)
-			player.getPacketSender().setHidden(INTERFACE_ID, component, showingInventory);
+			player.getPacketSender().setHidden(ifId, component, showingInventory);
 		for (int component : EQUIPMENT_COMPONENTS)
-			player.getPacketSender().setHidden(INTERFACE_ID, component, showingInventory);
+			player.getPacketSender().setHidden(ifId, component, showingInventory);
 		for (int component : EQUIPMENT_PLACEHOLDERS)
-			player.getPacketSender().setHidden(INTERFACE_ID, component, showingInventory);
+			player.getPacketSender().setHidden(ifId, component, showingInventory);
 
-		player.getPacketSender().setHidden(INTERFACE_ID, INVENTORY_COMPONENT, !showingInventory);
-		player.getPacketSender().setHidden(INTERFACE_ID, INVENTORY_OUTLINE, !showingInventory);
+		player.getPacketSender().setHidden(ifId, INVENTORY_COMPONENT, !showingInventory);
+		player.getPacketSender().setHidden(ifId, INVENTORY_OUTLINE, !showingInventory);
 		setPresetPanelHidden(player, showingInventory);
 		if (showingInventory)
 			refreshCurrentInventory(player);
@@ -180,7 +204,7 @@ public class GearPresetInterface {
 
 	private void setPresetPanelHidden(Player player, boolean hidden) {
 		for (int component = PRESET_PANEL_FIRST; component <= PRESET_PANEL_LAST; component++)
-			player.getPacketSender().setHidden(INTERFACE_ID, component, hidden);
+			player.getPacketSender().setHidden(ifId, component, hidden);
 	}
 
 	private void toggleLoadoutView(Player player) {
@@ -192,29 +216,29 @@ public class GearPresetInterface {
 
 	private void refreshOptions(Player player) {
 		int book = GearPresetHandler.activeSpellBook(player);
-		player.getPacketSender().sendString(INTERFACE_ID, SPELLBOOK_TEXT,
+		player.getPacketSender().sendString(ifId, SPELLBOOK_TEXT,
 			"Current spellbook: <col=ffd35a>" + displayName(SpellBook.VALUES[book]) + "</col>");
-		player.getPacketSender().sendString(INTERFACE_ID, RESTORE_STATS_TEXT,
+		player.getPacketSender().sendString(ifId, RESTORE_STATS_TEXT,
 			"Restore stats: " + toggleText(editingRestoreStats));
-		player.getPacketSender().sendString(INTERFACE_ID, RESTORE_SPEC_TEXT,
+		player.getPacketSender().sendString(ifId, RESTORE_SPEC_TEXT,
 			"Restore spec: " + toggleText(editingRestoreSpecialAttack));
 
 		GearPreset selected = selected(player);
 		if (selected == null) {
-			player.getPacketSender().sendString(INTERFACE_ID, SELECTED_SUMMARY,
+			player.getPacketSender().sendString(ifId, SELECTED_SUMMARY,
 				"Select a saved preset.");
-			player.getPacketSender().sendString(INTERFACE_ID, UPDATE_TEXT, "<col=777777>Update Preset</col>");
-			player.getPacketSender().sendString(INTERFACE_ID, DELETE_TEXT, "<col=777777>Delete Preset</col>");
-			player.getPacketSender().setHidden(INTERFACE_ID, LOAD_BUTTON, true);
+			player.getPacketSender().sendString(ifId, UPDATE_TEXT, "<col=777777>Update Preset</col>");
+			player.getPacketSender().sendString(ifId, DELETE_TEXT, "<col=777777>Delete Preset</col>");
+			player.getPacketSender().setHidden(ifId, LOAD_BUTTON, true);
 		} else {
 			SpellBook savedBook = SpellBook.VALUES[selected.getSpellBook()];
-			player.getPacketSender().sendString(INTERFACE_ID, SELECTED_SUMMARY,
+			player.getPacketSender().sendString(ifId, SELECTED_SUMMARY,
 				"<col=ffd35a>" + selected.getPresetName() + "</col><br>" + displayName(savedBook)
 					+ " | Stats:" + onOff(selected.isRestoreStats())
 					+ " | Spec:" + onOff(selected.isRestoreSpecialAttack()));
-			player.getPacketSender().sendString(INTERFACE_ID, UPDATE_TEXT, "Update Preset");
-			player.getPacketSender().sendString(INTERFACE_ID, DELETE_TEXT, "<col=ff7777>Delete Preset</col>");
-			player.getPacketSender().setHidden(INTERFACE_ID, LOAD_BUTTON, false);
+			player.getPacketSender().sendString(ifId, UPDATE_TEXT, "Update Preset");
+			player.getPacketSender().sendString(ifId, DELETE_TEXT, "<col=ff7777>Delete Preset</col>");
+			player.getPacketSender().setHidden(ifId, LOAD_BUTTON, false);
 		}
 	}
 
@@ -223,27 +247,27 @@ public class GearPresetInterface {
 		for (int visual = 0; visual < VISIBLE_PRESETS; visual++) {
 			int actual = visiblePresetIndex(scrollOffset, visual, presets.size());
 			GearPreset preset = actual < 0 ? null : presets.get(actual);
-			player.getPacketSender().sendString(INTERFACE_ID, PRESET_TEXT[visual],
+			player.getPacketSender().sendString(ifId, PRESET_TEXT[visual],
 				preset == null ? "<col=777777>Preset</col>" : preset.getPresetName());
 			boolean selected = preset != null && preset.getId().equals(selectedPresetId);
-			player.getPacketSender().setHidden(INTERFACE_ID, PRESET_SELECTION[visual], !selected);
+			player.getPacketSender().setHidden(ifId, PRESET_SELECTION[visual], !selected);
 		}
 
 		int maxOffset = maxScrollOffset(presets.size());
 		boolean scrollable = maxOffset > 0;
 		for (int component : new int[]{SCROLL_TRACK, SCROLL_THUMB, SCROLL_UP, SCROLL_UP_BACKGROUND,
 			SCROLL_UP_TEXT, SCROLL_DOWN, SCROLL_DOWN_BACKGROUND, SCROLL_DOWN_TEXT})
-			player.getPacketSender().setHidden(INTERFACE_ID, component, !scrollable);
+			player.getPacketSender().setHidden(ifId, component, !scrollable);
 		if (scrollable) {
 			int thumbY = 246 + (12 * scrollOffset / maxOffset);
-			player.getPacketSender().setAlignment(INTERFACE_ID, SCROLL_THUMB, 492, thumbY);
+			player.getPacketSender().setAlignment(ifId, SCROLL_THUMB, 492, thumbY);
 		}
 		if (presets.isEmpty()) {
-			player.getPacketSender().sendString(INTERFACE_ID, PAGE_TEXT, "No saved presets");
+			player.getPacketSender().sendString(ifId, PAGE_TEXT, "No saved presets");
 		} else {
 			int first = scrollOffset + 1;
 			int last = Math.min(scrollOffset + VISIBLE_PRESETS, presets.size());
-			player.getPacketSender().sendString(INTERFACE_ID, PAGE_TEXT,
+			player.getPacketSender().sendString(ifId, PAGE_TEXT,
 				first + "-" + last + " of " + presets.size());
 		}
 	}
@@ -273,7 +297,7 @@ public class GearPresetInterface {
 			return;
 		}
 		player.stringInput("Enter a preset name (max " + GearPresetHandler.MAX_NAME_LENGTH + " characters):", input -> {
-			if (!player.isVisibleInterface(INTERFACE_ID))
+			if (!player.isVisibleInterface(ifId))
 				return;
 			String name = GearPresetHandler.sanitizeName(input);
 			if (name == null) {
@@ -323,7 +347,7 @@ public class GearPresetInterface {
 	private void deleteConfirmed(Player player, String identity) {
 		/* Can't use canEdit() here -- the "Yes, delete it." OptionsDialogue this runs from
 		 * already closed the presets interface (and the bank underneath it), same as any
-		 * dialogue, so isVisibleInterface(INTERFACE_ID) is guaranteed false by this point. That
+		 * dialogue, so isVisibleInterface(ifId) is guaranteed false by this point. That
 		 * previously made every delete silently no-op. Only the real safety checks apply now. */
 		if (player.isLocked() || player.getCombat().isDead() || !takeAction(player))
 			return;
@@ -371,7 +395,7 @@ public class GearPresetInterface {
 	}
 
 	private boolean canEdit(Player player) {
-		if (!openedFromBank || !player.isVisibleInterface(INTERFACE_ID) || accessPosition == null)
+		if (!openedFromBank || !player.isVisibleInterface(ifId) || accessPosition == null)
 			return false;
 		if (player.getPosition().getDistance(accessPosition) > 4) {
 			player.sendMessage("Move back to the bank to use equipment presets.");
@@ -476,7 +500,7 @@ public class GearPresetInterface {
 
 	/** Called from Equipment.sendUpdates so bonuses/items/model stay live while open. */
 	public static void refreshEquipmentState(Player player) {
-		if (player.isVisibleInterface(INTERFACE_ID)) {
+		if (isOpen(player)) {
 			GearPresetInterface controller = player.getGearPresetInterface();
 			controller.refreshStats(player);
 			if (!controller.showingInventory)
@@ -486,15 +510,26 @@ public class GearPresetInterface {
 
 	/** Called from Inventory.sendUpdates so the alternate loadout view remains live. */
 	public static void refreshInventoryState(Player player) {
-		if (player.isVisibleInterface(INTERFACE_ID)) {
+		if (isOpen(player)) {
 			GearPresetInterface controller = player.getGearPresetInterface();
 			if (controller.showingInventory)
 				controller.refreshCurrentInventory(player);
 		}
 	}
 
+	private static boolean isOpen(Player player) {
+		return player.isVisibleInterface(player.getGearPresetInterface().ifId);
+	}
+
 	public static void register() {
-		InterfaceHandler.register(INTERFACE_ID, handler -> {
+		for (int id : new int[]{INTERFACE_ID, LARGE_INTERFACE_ID})
+			register(id);
+	}
+
+	private static void register(int interfaceId) {
+		InterfaceHandler.register(interfaceId, handler -> {
+			handler.actions[CLOSE_BUTTON] = (SimpleAction) player -> player.closeInterface(
+				interfaceId == LARGE_INTERFACE_ID ? ToplevelComponent.WORLD_MAP : ToplevelComponent.MAINMODAL);
 			handler.actions[VIEW_TOGGLE] = (SimpleAction) player ->
 				player.getGearPresetInterface().toggleLoadoutView(player);
 			handler.actions[36] = (SimpleAction) player -> player.getGearPresetInterface().cycleSpellBook(player);

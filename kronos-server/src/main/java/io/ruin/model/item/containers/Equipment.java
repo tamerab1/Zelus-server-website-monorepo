@@ -100,6 +100,8 @@ public class Equipment extends ItemContainer {
 
 	public void equip(Item selectedItem) {
 		ObjType selectedDef = selectedItem.getDef();
+		if (!io.ruin.model.activities.tournament.TournamentHandler.mayEquip(player, selectedDef))
+			return;
 		int equipSlot = selectedDef.equipSlot;
 		if (equipSlot == -1 || selectedDef.equipOption == -1) {
 			player.sendMessage("You can't wear this item.");
@@ -298,7 +300,7 @@ public class Equipment extends ItemContainer {
 						+ Achievements.ALL_THIS_FROM_A_SEED.getAchievementName());
 
 		}
-		if (selectedItem.getId() == 25975)
+		if (selectedItem.getId() == 25975 || selectedItem.getId() == 31588) // Lightbearer / Sunbearer
 			player.specialRestoreTicks = 0;
 		if(selectedItem.getId() == 7927) {
 			if (player.isLocked()) {
@@ -379,7 +381,7 @@ public class Equipment extends ItemContainer {
 			}
 			equipped.remove();
 			inventory.set(freeSlot, equipped);
-			if (equipped.getId() == 25975)
+			if (equipped.getId() == 25975 || equipped.getId() == 31588) // Lightbearer / Sunbearer
 				player.specialRestoreTicks = 0;
 		}
 		if(equipped.getId() == 7927) {
@@ -501,11 +503,13 @@ public class Equipment extends ItemContainer {
 	public boolean wearsAmuletOfTheDamned() {
 		return getItemIdForSlot(SLOT_AMULET) == 12851 ||
 			getItemIdForSlot(SLOT_AMULET) == 12853 ||
+			getItemIdForSlot(SLOT_AMULET) == 31644 || // Amulet of the forsaken
 			getItemIdForSlot(SLOT_HANDS) == 30380; // Gloves of the damned
 	}
 
 	public boolean wearsTormentedBracelet() {
-		return getItemIdForSlot(SLOT_HANDS) == 19544 || getItemIdForSlot(SLOT_HANDS) == 23444;
+		return getItemIdForSlot(SLOT_HANDS) == 19544 || getItemIdForSlot(SLOT_HANDS) == 23444
+				|| getItemIdForSlot(SLOT_HANDS) == 31590; // Wraithbound bracelet
 	}
 
 	public boolean wearsStaffOfTheDead() {
@@ -554,7 +558,8 @@ public class Equipment extends ItemContainer {
 	}
 
 	public boolean wearsOcculNecklace() {
-		return getItemIdForSlot(SLOT_AMULET) == 12002 || getItemIdForSlot(SLOT_AMULET) == 19720;
+		return getItemIdForSlot(SLOT_AMULET) == 12002 || getItemIdForSlot(SLOT_AMULET) == 19720
+				|| getItemIdForSlot(SLOT_AMULET) == 31544; // Eldritch necklace
 	}
 
 	public boolean wearsSmokeBattleStaff() {
@@ -571,7 +576,8 @@ public class Equipment extends ItemContainer {
 
 	public boolean wearsAhrimStaff() {
 		int weaponId = getItemIdForSlot(SLOT_WEAPON);
-		return weaponId == 4710 || weaponId == 4862 || weaponId == 4863 || weaponId == 4864 || weaponId == 4865;
+		return weaponId == 4710 || weaponId == 4862 || weaponId == 4863 || weaponId == 4864 || weaponId == 4865
+				|| weaponId == 31518; // Arcanist Ahrim's staff
 	}
 
 	public boolean wearsEliteVoid() {
@@ -584,7 +590,8 @@ public class Equipment extends ItemContainer {
 	public boolean wearsImbuedGodCape() {
 		int capeId = getItemIdForSlot(SLOT_CAPE);
 		return capeId == 21776 || capeId == 21780 || capeId == 21784
-				|| capeId == 21791 || capeId == 21793 || capeId == 21795;
+				|| capeId == 21791 || capeId == 21793 || capeId == 21795
+				|| capeId == 31558; // Cape of chaos
 	}
 
 	public boolean wearsNightmareStaff() {
@@ -597,9 +604,9 @@ public class Equipment extends ItemContainer {
 		int hatId = getItemIdForSlot(SLOT_HAT);
 		int bodyId = getItemIdForSlot(SLOT_CHEST);
 		int legsId = getItemIdForSlot(SLOT_LEGS);
-		return (hatId == 4708 || hatId == 4856 || hatId == 4857 || hatId == 4858 || hatId == 4859) &&
-				(bodyId == 4712 || bodyId == 4868 || bodyId == 4869 || bodyId == 4870 || bodyId == 4871) &&
-				(legsId == 4717 || legsId == 4874 || legsId == 4875 || legsId == 4876 || legsId == 4877);
+		return (hatId == 4708 || hatId == 4856 || hatId == 4857 || hatId == 4858 || hatId == 4859 || hatId == 31516) &&
+				(bodyId == 4712 || bodyId == 4868 || bodyId == 4869 || bodyId == 4870 || bodyId == 4871 || bodyId == 31520) &&
+				(legsId == 4714 || legsId == 4874 || legsId == 4875 || legsId == 4876 || legsId == 4877 || legsId == 31522);
 	}
 
 	private boolean prospectorEquipped() {

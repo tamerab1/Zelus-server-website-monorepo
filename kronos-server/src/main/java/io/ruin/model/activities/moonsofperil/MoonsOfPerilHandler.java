@@ -301,7 +301,7 @@ public class MoonsOfPerilHandler {
 						item);
 				if (item.lootBroadcast != null) {
 					String message = player.getName() + " just received " + item.getDef().name + " ";
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(),
 							" just received " + item.getDef().descriptiveName + " from the Moons of Peril!");
 
 					RareDropHook.sendDiscordMessage(() -> {

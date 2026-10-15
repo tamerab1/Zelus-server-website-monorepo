@@ -155,7 +155,19 @@ public enum RingOfSuffering {
 		));
 	}
 
+	/** Ring of retribution (Wilderness Forge upgrade of the ring of suffering (i)): permanent recoil, no charges. */
+	public static final int RING_OF_RETRIBUTION = 31586;
+
 	public static void check(Player player, Hit hit) {
+		Item worn = player.getEquipment().get(Equipment.SLOT_RING);
+		if (worn != null && worn.getId() == RING_OF_RETRIBUTION) {
+			if (hit.attacker == null || hit.attackStyle == null)
+				return;
+			int recoil = (int) Math.ceil(hit.damage * 0.10);
+			if (recoil > 0)
+				hit.attacker.hit(new Hit().fixedDamage(recoil));
+			return;
+		}
 		if (!player.ringOfSufferingEffect)
 			return;
 		if (hit.attacker == null || hit.attackStyle == null)

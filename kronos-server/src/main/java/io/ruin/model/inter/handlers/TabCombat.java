@@ -102,7 +102,7 @@ public class TabCombat {
 			return null;
 		if (staffId == 28266 || staffId == 28260 || staffId == 4675 || staffId == 27624 || staffId == 28264 || staffId == 28262) //ancient staff + sceptre + smoke sceptre + ice sceptre
 			return SpellBook.ANCIENT.isActive(player) ? 4675 : null;
-		if (amuletId == 12853 && staffId == 4710) //ahrims ancients
+		if ((amuletId == 12853 || amuletId == 31644) && (staffId == 4710 || staffId == 31518)) //ahrims ancients
 			return SpellBook.ANCIENT.isActive(player) ? 4675 : staffId;
 		if (staffId == 6914 || staffId == 20560) { //master wand
 			if (SpellBook.MODERN.isActive(player)) {

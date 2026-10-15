@@ -26,6 +26,16 @@ public class PlayerPerkInterface {
 
 	RepositoryType repositoryType;
 
+	/** PerkHub (interface 1151) state: the browse tab, the rows on screen, the selected perk/set, a pending confirm. */
+	int hubTab;
+	List<Object> hubRows;
+	Object hubSelected;
+	String hubConfirm;
+	/** The Combos Browser is open over the selected set's overview. */
+	boolean hubCombos;
+	/** Active list search (lower case), or null: filters perks and sets by name across every tab. */
+	String hubSearch;
+
 	enum RepositoryType {
 		PERK,
 		PERK_SET
@@ -419,7 +429,7 @@ public class PlayerPerkInterface {
 		return count;
 	}
 
-	private void savePreset(Player player, int slot) {
+	void savePreset(Player player, int slot) {
 		player.stringInput("Enter a name for your preset:", name -> {
 			if (name.length() > 12) {
 				player.sendMessage("Your preset name must be 12 characters or less.");
@@ -459,7 +469,7 @@ public class PlayerPerkInterface {
 			 * via openDialogue's closeInterfaces(true)) -- reopen it so the save is visible
 			 * instead of leaving the player dumped back at the game screen. Mirrors loadPreset,
 			 * which already does this correctly. */
-			player.getPerkInterface().openPlayerPerkHomeSection(player);
+			PerkHub.open(player);
 		});
 	}
 
@@ -545,7 +555,7 @@ public class PlayerPerkInterface {
 		}
 		player.closeInterfaces();
 		player.getPlayerPerkHandler().updateActivePerkSets(player);
-		player.getPerkInterface().openPlayerPerkHomeSection(player);
+		PerkHub.open(player);
 	}
 
 	public Perks getPerkByOrdinal(int ordinal) {
@@ -584,13 +594,9 @@ public class PlayerPerkInterface {
 
 
 	private void sendUpgradePerkWarning(Player player) {
-		if (player.getName().equalsIgnoreCase("Dan Gleebles")) {
-
-		} else {
-			if (currentPerk.getPerk(player).perkLevel >= 5) {
-				player.sendMessage("You can't upgrade this perk any further.");
-				return;
-			}
+		if (currentPerk.getPerk(player).perkLevel >= 5) {
+			player.sendMessage("You can't upgrade this perk any further.");
+			return;
 		}
 		player.getPacketSender().setHidden(1096, 458, false);
 		player.getPacketSender().sendString(1096, 476, "This will cost you " + currentPerk.getUpgradePrice() * Objects.requireNonNull(currentPerk.getPerk(player)).perkLevel + " perk points, are you sure?");
@@ -641,6 +647,7 @@ public class PlayerPerkInterface {
 	}
 
 	public static void register() {
+		PerkHub.register();
 		InterfaceHandler.register(1097, h -> {
 			for (int i = 23; i < 274; i += 5) {
 				int finalI = i;

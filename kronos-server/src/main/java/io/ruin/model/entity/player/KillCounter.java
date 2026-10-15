@@ -499,6 +499,7 @@ public class KillCounter {
 	public void increment(Player player) {
 		kills++;
 		streak++;
+		io.ruin.model.activities.scoreboard.Scoreboard.onBossKill(player, name);
 		combatAchievementKillCheck(player);
 		io.ruin.model.content.loyaltytitles.LoyaltyTitleManager.checkAllUnlocks(player);
 		if (messageOnKill)

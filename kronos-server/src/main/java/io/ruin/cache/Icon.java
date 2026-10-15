@@ -49,6 +49,23 @@ public enum Icon {
 	// not a skull -- confirmed wrong in-game. 76 is the id already live in WantedManager's
 	// WANTED bounty broadcasts and other wilderness news messages.
 	PVP_MODE_SKULL(76),
+	// Gold trophy appended to the chat icon sheet (sprite 423, frame 104) by AppendGoldTrophyIcon: The Pit's announcements.
+	PIT_TROPHY(104),
+
+	// One icon per kind of broadcast (chat icon sheet, sprite 423), so a message's icon always matches what it announces.
+	RARE_DROP(63),          // ruby: rare boss / monster / raid drops
+	COLLECTION_LOG(38),     // gold star
+	PET_DROP(20),           // paw print
+	PK_SWORDS(31),          // crossed swords: kill-streak shutdowns
+	WANTED_SKULL(75),       // red skull: WANTED bounties, bounty contracts
+	WILDY_KEY(39),          // gold key: wilderness keys
+	SERVER_EVENT(73),       // scroll: server events
+	SERVER_RATES(15),       // info: XP / PKP / blood money rate changes
+	VOTE_STAR(36),          // orange star: votes
+	UPGRADE_GEM(68),        // diamond: item upgrades
+	SKILL_STAR(37),         // silver star: skill milestones
+	NEWCOMER_SMILE(32),     // smiley: welcomes, referrals
+	ACHIEVEMENT_TROPHY(30), // red trophy: Inferno and other completions
 	;
 
 	public final int imgId;

@@ -71,9 +71,9 @@ public class PetMysteryBox {
 				player.dialogue(new ItemDialogue().one(pet.itemId, "You have unlocked " + descriptiveName + "."));
 				if (World.isLive()) {
 					if (potentialPets.size() == 1)
-						Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Pet Mystery Box", player.getName() + " has just unlocked every pet!");
+						Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Pet Mystery Box", player.getName() + " has just unlocked every pet!");
 					else
-						Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Pet Mystery Box", player.getName() + " has just received " + descriptiveName + ".");
+						Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Pet Mystery Box", player.getName() + " has just received " + descriptiveName + ".");
 				}
 			}));
 		});

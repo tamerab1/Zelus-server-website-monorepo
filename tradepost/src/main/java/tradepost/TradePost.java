@@ -5,6 +5,7 @@ package tradepost;
 import java.math.BigInteger;
 import com.google.errorprone.annotations.CheckReturnValue;
 import core.task.Continuation;
+import core.task.Continuations;
 import io.ruin.HooksV2;
 import io.ruin.api.utils.MathUtils;
 import io.ruin.cache.ObjType;
@@ -18,9 +19,19 @@ import tradepost.TradePostOffer.Kind;
 import tradepost.db.TradePostHistoriesDb;
 import tradepost.db.TradePostOffersDb;
 import tradepost.hook.Attributes;
+import tradepost.inter.ZelusMarket;
 
 import static core.task.api.API.*;
 
+/**
+ * The Zelus Market engine (formerly Reason's trade post).
+ *
+ * <p>Concurrency model: every method here runs on the game thread inside a continuation, which only yields at an
+ * {@code await()} (a database round trip) or {@code sleep}. Each state change is therefore done in ONE synchronous
+ * block with no await in between: validate, take the payment, mark the offer sold / detach it, and pay both sides.
+ * The database writes are scheduled AFTER that block, so a double click, two buyers on the same listing, or a slow or
+ * failed database can never let the same stock or coins be handed out twice.
+ */
 @Slf4j
 @ExtensionMethod(Attributes.class)
 public class TradePost {
@@ -63,6 +74,15 @@ public class TradePost {
 		});
 	}
 
+	/** Redraws whichever market screen the player has open (the new one, or a legacy screen). */
+	public static void refreshViews(Player player) {
+		if (player == null || !player.isOnline()) {
+			return;
+		}
+		player.tradePost().inter.refresh(player);
+		ZelusMarket.refresh(player);
+	}
+
 	@CheckReturnValue
 	public static Continuation<TradePostOffer> placeOffer(Player player, int _item, int _amount,
 			long priceEach,
@@ -80,8 +100,13 @@ public class TradePost {
 			TradePostOffer.Kind kind) {
 
 		return () -> {
-			if (itemAmount < 0) {
-				player.sendMessage("Are you serious?");
+			if (itemAmount < 1) {
+				player.sendMessage("You must offer at least 1.");
+				return null;
+			}
+
+			if (MathUtils.lt(priceEach, BigInteger.ONE)) {
+				player.sendMessage("The price must be at least 1 coin.");
 				return null;
 			}
 
@@ -105,8 +130,19 @@ public class TradePost {
 				return null;
 			}
 
-			var price = priceEach.multiply(amount);
-			var offer = insert(player, itemIdUnnoted, slot, price, player.uuid(), amount, kind).await();
+			// Reserve the slot across the insert's await: a second offer placed meanwhile must not pick the same slot
+			// (two rows in one slot would share every later update and delete).
+			pTradePost.reserved[slot] = true;
+			TradePostOffer offer;
+			try {
+				var price = priceEach.multiply(amount);
+				offer = insert(player, itemIdUnnoted, slot, price, player.uuid(), amount, kind).await();
+			} catch (RuntimeException e) {
+				log.error("Unable to insert an offer: player = {} slot = {}", player.uuid(), slot, e);
+				offer = null;
+			} finally {
+				pTradePost.reserved[slot] = false;
+			}
 			if (offer == null) {
 				log.warn("Unable to insert an offer: player = {} slot = {}", player.uuid(), slot);
 				rollbackItemsForOffer(player, itemId, kind, priceEach, amount);
@@ -117,7 +153,7 @@ public class TradePost {
 			TradePostProcess.queueAdd(offer);
 
 			pTradePost.offers[offer.slot] = offer;
-			pTradePost.inter.refresh(player);
+			refreshViews(player);
 			return offer;
 		};
 	}
@@ -147,8 +183,18 @@ public class TradePost {
 					return false;
 				}
 
+				// remove(id, amount, acceptNoted) only matches attribute-free stacks, so an upgraded copy of the same
+				// item id is never taken by mistake.
 				var amountInt = amount.intValueExact();
-				if (inv.remove(item.id, amountInt, true) != amountInt) {
+				if (inv.count(item.id, true) < amountInt) {
+					player.sendMessage("You do not have enough items to place this offer.");
+					return false;
+				}
+				var removed = inv.remove(item.id, amountInt, true);
+				if (removed != amountInt) {
+					if (removed > 0) {
+						inv.addOrSendToBank(item.id, removed);
+					}
 					player.sendMessage("You do not have enough items to place this offer.");
 					return false;
 				}
@@ -177,12 +223,13 @@ public class TradePost {
 			case Buy -> {
 				var totalPrice = priceEach.multiply(amount);
 				inv.addCoinsOrPlatTokens(totalPrice);
-				player.sendMessage("You have been given back the items.");
+				player.sendMessage("The market could not take your offer; your coins have been returned.");
 			}
 
 			case Sell -> {
 				var amountInt = amount.intValueExact();
 				inv.addOrSendToBank(item.id, amountInt);
+				player.sendMessage("The market could not take your offer; your items have been returned.");
 			}
 
 			default -> {
@@ -231,87 +278,114 @@ public class TradePost {
 	public static Continuation.Void abort(Player player, TradePostOffer offer) {
 		return () -> {
 			if (offer.isEmpty()) {
-				player.sendMessage("Someone traded this offer, check the coffer.");
+				player.sendMessage("That offer has already completed; check your collection box.");
+				return;
+			}
+			if (!offer.owner.equalsIgnoreCase(player.uuid())) {
+				player.sendMessage("That is not your offer.");
 				return;
 			}
 
-			var pInv = player.getInventory();
-
-			if (offer.isBuy()) {
-				var remainingCoins = offer.priceEach().multiply(offer.amount);
-				pInv.addCoinsOrPlatTokens(remainingCoins);
-			} else {
-				var notedId = ObjType.notedId(offer.getItemId());
-				pInv.addOrSendToBank(notedId, offer.amount);
-			}
-
+			// Detach first (amount -> 0, out of the cache and the slot), then refund: a second abort or a buyer arriving
+			// in the same tick sees an empty offer.
 			var amount = offer.amount;
 			var priceEach = offer.priceEach();
-			remove(offer).await();
-			player.tradePost().inter.refresh(player);
+			detach(offer);
 
-			hooks.handle(new Hook.OfferAborted(player, offer, amount, priceEach));
-		};
-	}
-
-	// Removes the offer from the trade post completelly along with temporary
-	// player slotted attribute for that offer.
-	@CheckReturnValue
-	public static Continuation.Void remove(TradePostOffer offer) {
-		return () -> {
-			var player = World.getPlayer(offer.owner);
-			if (player != null) {
-				var pTradePost = player.tradePost();
-				pTradePost.offers[offer.slot] = null;
+			if (offer.isBuy()) {
+				player.getInventory().addCoinsOrPlatTokens(priceEach.multiply(amount));
+			} else {
+				giveItem(player, offer.getItemId(), amount.intValueExact(), "your cancelled listing");
 			}
 
-			offer.remove();
-			TradePostCache.remove(offer);
+			hooks.handle(new Hook.OfferAborted(player, offer, amount, priceEach));
+			refreshViews(player);
 			TradePostOffersDb.removeOffer(offer).await();
 		};
 	}
 
-	// Tries to exchange the coins for an existing offer (aka buy without placing an
-	// actual offer).
+	// Removes the offer from the trade post completely along with temporary
+	// player slotted attribute for that offer.
+	@CheckReturnValue
+	public static Continuation.Void remove(TradePostOffer offer) {
+		return () -> {
+			detach(offer);
+			TradePostOffersDb.removeOffer(offer).await();
+		};
+	}
+
+	/** The synchronous half of {@link #remove}: empties the offer and takes it out of the cache and its slot. */
+	private static void detach(TradePostOffer offer) {
+		var player = World.getPlayer(offer.owner);
+		if (player != null) {
+			var pTradePost = player.tradePost();
+			if (pTradePost.offers[offer.slot] == offer) {
+				pTradePost.offers[offer.slot] = null;
+			}
+		}
+
+		offer.remove();
+		TradePostCache.remove(offer);
+		TradePostFeatured.unfeature(offer);
+	}
+
+	/** Legacy screen entry point (interface 1132): buys through {@link #buyNow}. */
 	@CheckReturnValue
 	public static Continuation.Void exchange(Player buyer, TradePostOffer offer, int _amount) {
+		return () -> buyNow(buyer, offer, _amount);
+	}
 
-		return () -> {
+	/**
+	 * Instant buy from a sell listing. Runs entirely on the game thread with no await before the hand-over: the
+	 * listing is re-validated, the buyer's coins are taken and the stock is marked sold BEFORE any item or coin is
+	 * granted, so double clicks and simultaneous buyers can only ever buy what is really left.
+	 *
+	 * @return the amount bought (0 if nothing happened)
+	 */
+	public static int buyNow(Player buyer, TradePostOffer offer, int requested) {
+		if (offer == null || offer.kind != Kind.Sell) {
+			buyer.sendMessage("That listing is not for sale.");
+			return 0;
+		}
+		if (offer.isEmpty() || !TradePostCache.contains(offer)) {
+			buyer.sendMessage("That listing has already been sold or cancelled.");
+			return 0;
+		}
+		if (offer.owner.equalsIgnoreCase(buyer.uuid())) {
+			buyer.sendMessage("You cannot buy your own listing.");
+			return 0;
+		}
+		if (requested < 1) {
+			buyer.sendMessage("You must buy at least 1.");
+			return 0;
+		}
 
-			if (offer.kind != Kind.Sell) {
-				buyer.sendMessage("Oops... I don't think i can do that.");
-				return;
+		var amount = MathUtils.min(BigInteger.valueOf(requested), offer.amount);
+		var priceEach = offer.priceEach();
+		var totalPrice = priceEach.multiply(amount);
+		if (!buyer.getInventory().removeCoinsOrPlatTokens(totalPrice)) {
+			buyer.sendMessage("You need " + ZelusMarket.coins(totalPrice) + " coins (or platinum tokens) in your inventory for that.");
+			return 0;
+		}
+
+		// Mark the stock sold (and detach a sold-out listing) in the same tick the coins were taken.
+		offer.amount = offer.amount.subtract(amount);
+		var soldOut = offer.isEmpty();
+		if (soldOut) {
+			detach(offer);
+		}
+
+		exchanged(buyer.uuid(), offer.owner, offer.itemId, amount, BigInteger.ZERO, priceEach,
+				TradePostTaxing.apply(totalPrice));
+
+		Continuations.schedule(() -> {
+			if (soldOut) {
+				TradePostOffersDb.removeOffer(offer).await();
+			} else {
+				TradePostOffersDb.upsert(offer).await();
 			}
-
-			if (offer.isEmpty()) {
-				buyer.sendMessage("That offer has already been sold.");
-				return;
-			}
-
-			var amount = BigInteger.valueOf(_amount);
-			var maximumAmount = amount;
-			if (offer.amount.compareTo(amount) <= 0) {
-				maximumAmount = offer.amount;
-			}
-
-			var priceEach = offer.priceEach();
-			var totalPrice = maximumAmount.multiply(offer.priceEach());
-			if (!buyer.inventory.removeCoinsOrPlatTokens(totalPrice)) {
-				return;
-			}
-
-			var totalCoinsAmount = TradePostTaxing.apply(totalPrice);
-
-			offer.amount = offer.amount.subtract(amount);
-			TradePostOffersDb.upsert(offer).await();
-
-			if (offer.isEmpty()) {
-				remove(offer).await();
-			}
-
-			exchanged(buyer.uuid(), offer.owner,
-					offer.itemId, maximumAmount, BigInteger.ZERO, priceEach, totalCoinsAmount);
-		};
+		});
+		return amount.intValueExact();
 	}
 
 	// Exchanges two valid offers with each other
@@ -352,6 +426,10 @@ public class TradePost {
 				amountTransacted = buy.amount;
 			}
 
+			if (MathUtils.lt(amountTransacted, BigInteger.ONE)) {
+				return;
+			}
+
 			var priceEach = buy.priceEach();
 			if (MathUtils.lt(sell.priceEach(), buy.priceEach())) {
 				priceEach = sell.priceEach();
@@ -364,23 +442,34 @@ public class TradePost {
 			sell.amount = sell.amount.subtract(amountTransacted);
 			buy.amount = buy.amount.subtract(amountTransacted);
 
-			TradePostOffersDb.upsert(buy).await();
-			TradePostOffersDb.upsert(sell).await();
+			// The seller is paid for what was really transacted (not the requested amount).
+			var totalCoinsAmount = finalCoinsAmount(amountTransacted, priceEach);
 
-			var totalCoinsAmount = finalCoinsAmount(amount, priceEach);
-
-			if (buy.isEmpty()) {
-				remove(buy).await();
+			var buyEmpty = buy.isEmpty();
+			var sellEmpty = sell.isEmpty();
+			if (buyEmpty) {
+				detach(buy);
 			}
-
-			if (sell.isEmpty()) {
-				remove(sell).await();
+			if (sellEmpty) {
+				detach(sell);
 			}
 
 			exchanged(
 					buy.owner, sell.owner,
 					sell.itemId, amountTransacted, buyerRemainder, priceEach,
 					totalCoinsAmount);
+
+			// Persist after both sides are settled in memory.
+			if (buyEmpty) {
+				TradePostOffersDb.removeOffer(buy).await();
+			} else {
+				TradePostOffersDb.upsert(buy).await();
+			}
+			if (sellEmpty) {
+				TradePostOffersDb.removeOffer(sell).await();
+			} else {
+				TradePostOffersDb.upsert(sell).await();
+			}
 		};
 	}
 
@@ -400,15 +489,8 @@ public class TradePost {
 		TradePostHistoriesDb.append(buyerUid, sellerUid, TradePostOffer.Kind.Sell, item, priceEach);
 		TradePostHistoriesDb.append(sellerUid, buyerUid, TradePostOffer.Kind.Buy, item, priceEach);
 
-		var pBuyer = World.getPlayer(buyerUid);
-		if (pBuyer != null) {
-			pBuyer.tradePost().inter.refresh(pBuyer);
-		}
-
-		var pSeller = World.getPlayer(sellerUid);
-		if (pSeller != null) {
-			pSeller.tradePost().inter.refresh(pSeller);
-		}
+		refreshViews(World.getPlayer(buyerUid));
+		refreshViews(World.getPlayer(sellerUid));
 	}
 
 	private static BigInteger finalCoinsAmount(BigInteger itemAmount, BigInteger priceEach) {
@@ -421,9 +503,42 @@ public class TradePost {
 		TradePostCoffer.addCoins(sellerUid, totalCoinsAmount);
 	}
 
+	/** Online buyers get the items straight away (inventory, then bank); anyone else gets them in the collection box. */
 	private static void giveItemsToBuyer(String buyerUid, int item, BigInteger amount,
 			BigInteger coinsRemainder) {
-		TradePostCoffer.addCoins(buyerUid, coinsRemainder);
-		TradePostCoffer.add(buyerUid, item, amount);
+		if (MathUtils.gt(coinsRemainder, BigInteger.ZERO)) {
+			TradePostCoffer.addCoins(buyerUid, coinsRemainder);
+		}
+		var buyer = World.getPlayer(buyerUid);
+		if (buyer != null && buyer.isOnline()) {
+			giveItem(buyer, item, amount.intValueExact(), "your market purchase");
+		} else {
+			TradePostCoffer.add(buyerUid, item, amount);
+		}
+	}
+
+	/**
+	 * Inventory (noted when more than one), then bank, then the persistent collection box: items are never dropped on
+	 * the floor and never lost to a full inventory / bank.
+	 */
+	public static void giveItem(Player player, int itemId, int amount, String what) {
+		var unnotedId = ObjType.unnotedId(itemId);
+		var def = ObjType.get(unnotedId);
+		var invId = amount > 1 && !def.stackable ? ObjType.notedId(unnotedId) : unnotedId;
+		var remaining = amount;
+		var toInventory = player.getInventory().add(invId, remaining);
+		remaining -= toInventory;
+		if (remaining > 0) {
+			var banked = player.getBank().deposit(unnotedId, remaining);
+			if (banked > 0) {
+				player.sendMessage(banked + " x " + def.name + " from " + what + " went to your bank.");
+			}
+			remaining -= banked;
+		}
+		if (remaining > 0) {
+			TradePostCoffer.add(player.uuid(), unnotedId, BigInteger.valueOf(remaining));
+			player.sendMessage(ZelusMarket.TAG + remaining + " x " + def.name + " from " + what
+					+ " is waiting in your collection box (My Shop).");
+		}
 	}
 }

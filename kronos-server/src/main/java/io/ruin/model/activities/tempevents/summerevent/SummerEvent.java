@@ -61,10 +61,8 @@ public class SummerEvent {
 			if (player.pet != null && player.familiarNPC != null) {
 				Pet.pickup(player, player.familiarNPC, player.pet, true);
 			}
-			player.animate(3864);
-			player.graphics(1039);
 			player.privateSound(200, 0, 10);
-			event.delay(2);
+			io.ruin.model.skills.magic.spells.modern.ModernTeleport.playEffect(event, player);
 			player.getMovement().teleport(map.convertX(2900), map.convertY(3616), 0);
 		});
 	}

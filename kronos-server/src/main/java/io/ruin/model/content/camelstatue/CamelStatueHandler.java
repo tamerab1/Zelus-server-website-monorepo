@@ -119,13 +119,13 @@ public class CamelStatueHandler {
 				.formatted(NumberUtils.formatNumber(totalDonated.get())));
 
 		if (amount > 50_000_000)
-			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+			Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Camel Statue",
 					broadcastPrefix + "%s has donated %s coins to the Camel Statue at home!"
 							.formatted(player.getName(), NumberUtils.formatNumber(amount)));
 
 		if (amountSinceLastUpdate.get() >= 250_000_000) {
 			amountSinceLastUpdate.set(0);
-			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+			Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Camel Statue",
 					broadcastPrefix + "Another 250,000,000 coins have been donated to the Camel Statue at home!");
 		}
 	}
@@ -150,7 +150,7 @@ public class CamelStatueHandler {
 				donatedPerReward.values().forEach(donated -> donated.set(0));
 				activeRewards.clear();
 				log.info("Well cleared at midnight.");
-				Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+				Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Camel Statue",
 						"A new day has started and the camel statue has been wiped!");
 			} catch (Exception e) {
 				log.error("Error clearing well", e);
@@ -172,7 +172,7 @@ public class CamelStatueHandler {
 				return;
 
 			activeRewards.add(reward);
-			Broadcast.GLOBAL.sendNews(Icon.ADMINISTRATOR, "Camel Statue",
+			Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Camel Statue",
 				"The Camel Statue at home has been upgraded and is now giving " +
 					reward.getName().toLowerCase() + "!");
 

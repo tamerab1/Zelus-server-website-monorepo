@@ -48,6 +48,12 @@ public class DisplayHandler implements Incoming, MessageConsumer<Player, WindowS
 	}
 
 	private void handle(Player player, int displayMode, int canvasWidth, int canvasHeight) {
+		player.canvasWidth = canvasWidth;
+		player.canvasHeight = canvasHeight;
+		if (player.started && !player.fitsLargeInterface()) {
+			io.ruin.model.content.equipmentpresets.GearPresetInterface.shrinkIfOpen(player);
+			io.ruin.model.content.gearloadouts.GearLoadoutInterface.shrinkIfOpen(player);
+		}
 		if (!player.started) {
 			PlayerDisplayMode.refresh(player);
 			player.start();

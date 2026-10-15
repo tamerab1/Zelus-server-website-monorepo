@@ -50,6 +50,7 @@ public class RevenantMaledictusManager extends TemporaryEvent {
 	int spawnRateDivision = 3;
 
 	NPC maledictus;
+	String spawnLocation;
 
 	private static final Bounds REV_CAVE = new Bounds(3138, 10050, 3261, 10237, -1);
 
@@ -64,6 +65,20 @@ public class RevenantMaledictusManager extends TemporaryEvent {
 	}
 
 
+	/** For the journal Wilderness dashboard. */
+	public boolean isBossAlive() {
+		return alive && maledictus != null && !maledictus.isRemoved();
+	}
+
+	/** Cave side the boss spawned at ("north", "south" ...), or null. */
+	public String bossLocation() {
+		return isBossAlive() ? spawnLocation : null;
+	}
+
+	public NPC boss() {
+		return isBossAlive() ? maledictus : null;
+	}
+
 	private SpawnPositions getSpawnPosition() {
 		return Random.get(SpawnPositions.values());
 	}
@@ -74,13 +89,14 @@ public class RevenantMaledictusManager extends TemporaryEvent {
 		alive = true;
 		aliveTimer.delaySeconds(600);
 		SpawnPositions spawnPositions = getSpawnPosition();
+		spawnLocation = spawnPositions.location;
 		totalCombatOfSlainRevs = 0;
 		Position spawnPos = spawnPositions.position;
 		maledictus = new NPC(MALEDICTUS).spawn(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(),
 			Direction.SOUTH, 0);
 		maledictus.deathEndListener = this::handleDeath;
 
-		Broadcast.WORLD.sendNews(Icon.WILDERNESS, "</col>[<shad=8A0011>Wilderness</shad>] <shad=9B9B9B>The Revenant Maledictus has spawned towards the " +
+		Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "</col>[<shad=8A0011>Wilderness</shad>] <shad=9B9B9B>The Revenant Maledictus has spawned towards the " +
 			spawnPositions.location + " of the revenant cave!");
 
 	}
@@ -127,7 +143,7 @@ public class RevenantMaledictusManager extends TemporaryEvent {
 		if (alive && !maledictus.getCombat().isDefending(17)) {
 			alive = false;
 			maledictus.remove();
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, "</col>[<shad=8A0011>Wilderness</shad>] <shad=9B9B9B>The Revenant Maledictus has grown bored of waiting around and has left the area.");
+			Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "</col>[<shad=8A0011>Wilderness</shad>] <shad=9B9B9B>The Revenant Maledictus has grown bored of waiting around and has left the area.");
 		}
 	}
 

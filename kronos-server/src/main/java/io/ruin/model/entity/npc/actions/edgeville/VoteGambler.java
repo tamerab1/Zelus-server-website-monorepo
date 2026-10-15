@@ -1,5 +1,7 @@
 package io.ruin.model.entity.npc.actions.edgeville;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.Server;
 import io.ruin.api.utils.StringUtils;
 import io.ruin.cache.Color;
@@ -22,7 +24,7 @@ public class VoteGambler {
 	private static boolean isFirstRaffle = true; // Added variable to track the first raffle
 
 	private static final int VOTE_TICKET_ID = 30602;
-	private static final int NPC_ID = 4058;
+	private static final int NPC_ID = 1188; // the Vote Point Store
 	private static final int REWARD_ID = 30461;
 
 	private static Set<String> entries = new HashSet<>();
@@ -192,7 +194,7 @@ public class VoteGambler {
 	}
 
 	private static void sendBroadcast(String message) {
-		Broadcast.WORLD.sendNews("[Vote Lottery] " + message);
+		Broadcast.WORLD.sendNews(Icon.VOTE_STAR,"[Vote Lottery] " + message);
 	}
 
 	private static void sendMessage(Player player, String message) {

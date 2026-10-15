@@ -53,8 +53,7 @@ public class Commands implements CommandHandler.Hook {
 						reward.getDef().getName()));
 
 						if (reward.lootBroadcast != null)
-							Broadcast.WORLD.sendNewsDropMessage(
-							player,
+							Broadcast.WORLD.sendNewsDropMessage(player,
 							Icon.ADMINISTRATOR,
 							"<col=000000>".concat(player.getName()),
 							" has just received <shad>%s</shad> from Dominion of Echoes! (Simulation)"

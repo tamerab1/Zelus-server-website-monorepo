@@ -267,10 +267,6 @@ public class Gamble extends ItemContainer {
 			player.sendMessage("Ironmen stand alone.");
 			return;
 		}
-		if (player.getName().equalsIgnoreCase("99")) {
-			player.sendMessage("Your better judgement stops you from doing this.");
-			return;
-		}
 		if (target.getGameMode().isIronMan() && !player.isAdmin()) {
 			player.sendMessage(target.getName() + " is an ironman and so cannot gamble.");
 			return;
@@ -339,6 +335,9 @@ public class Gamble extends ItemContainer {
 	}
 
 	public void offer(Item item, int amount) {
+		if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "gambled")) {
+			return;
+		}
 		if (item.getId() == ItemID.BLOOD_MONEY) {
 			player.sendMessage("You can't stake this item.");
 			return;

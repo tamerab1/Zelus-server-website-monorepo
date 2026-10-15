@@ -21,7 +21,7 @@ public class Ballista implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 19478 || def.id == 19481;
+		return def.id == 19478 || def.id == 19481 || def.id == 31536; // 31536 = Thunderstrike ballista (Wilderness Forge)
 	}
 
 	@Override

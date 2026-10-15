@@ -292,7 +292,7 @@ public class AbyssalSire extends NPCCombat {
 		respiratorySystemNPCs.add(new NPC(5914).spawn(seResp));
 
 		AttackNpcListener attackListener = (player, npc1, message) -> {
-			if (World.type == WorldType.ECO && !Slayer.isTask(player, npc) && !player.getName().equalsIgnoreCase("Kal")) { // slayer-only, single boss despite being in multi
+			if (World.type == WorldType.ECO && !Slayer.isTask(player, npc) && !player.isAdmin()) { // slayer-only, single boss despite being in multi
 				if (message)
 					player.sendMessage("The Sire takes no interest in you.");
 				return false;

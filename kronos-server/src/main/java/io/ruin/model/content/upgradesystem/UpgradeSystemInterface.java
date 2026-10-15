@@ -15,10 +15,19 @@ public class UpgradeSystemInterface {
 	final int INTERFACE_ID = 1110;
 	UpgradeItems currentSection;
 
+	/** The Relic Forge's category tab (0 weapons, 1 armour, 2 utility). */
+	int forgeCategory;
+	/** Active recipe search (lower case), or null: matches outcome and ingredient names across every category. */
+	String forgeSearch;
+
+	/** Opens The Zelus Relic Forge (1158), which replaced this legacy screen (1110); same recipes and rules. */
 	public void open(Player player) {
-		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
-		sendCategories(player);
-		sendItemSection(player, UpgradeItems.VALUES[0]);
+		RelicForge.open(player);
+	}
+
+	/** Reopens the forge on the recipe that was showing (used when returning from the item stats viewer). */
+	public void reopen(Player player) {
+		RelicForge.open(player);
 	}
 
 	private void sendCategories(Player player) {
@@ -134,42 +143,43 @@ public class UpgradeSystemInterface {
 	}
 
 	public static void register() {
-		ObjectAction.register(60015, "operate", (player, obj) -> { // Zelus Upgrader (was 46241)
-			player.getUpgradeSystemInterface().open(player);
-		});
+		RelicForge.register();
+		// Zelus Upgrader (was 46241): option 1 "Item Upgrader" -> the Relic Forge, option 2 "Wilderness Upgrader"
+		ObjectAction.register(60015, 1, (player, obj) -> player.getUpgradeSystemInterface().open(player));
+		ObjectAction.register(60015, 2, (player, obj) -> io.ruin.model.content.wildernessforge.WildernessForge.open(player));
 		InterfaceHandler.register(1110, h -> {
 			h.actions[405] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {
 					case 10:
-						player.sendMessage("" + new Item(itemId).getDef().examine);
+						io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 						break;
 				}
 			};
 			h.actions[393] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {
 					case 10:
-						player.sendMessage("" + new Item(itemId).getDef().examine);
+						io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 						break;
 				}
 			};
 			h.actions[397] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {
 					case 10:
-						player.sendMessage("" + new Item(itemId).getDef().examine);
+						io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 						break;
 				}
 			};
 			h.actions[401] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {
 					case 10:
-						player.sendMessage("" + new Item(itemId).getDef().examine);
+						io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 						break;
 				}
 			};
 			h.actions[414] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {
 					case 10:
-						player.sendMessage("" + new Item(itemId).getDef().examine);
+						io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 						break;
 				}
 			};
@@ -177,7 +187,7 @@ public class UpgradeSystemInterface {
 				h.actions[i] = (DefaultAction) (player, option, slot, itemId) -> {
 					switch (option) {
 						case 10:
-							player.sendMessage("" + new Item(itemId).getDef().examine);
+							io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> player.getUpgradeSystemInterface().reopen(player));
 							break;
 					}
 				};

@@ -73,6 +73,10 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
 		NPCType def = NPCType.get(id);
 		if (def == null)
 			return;
+		if (io.ruin.model.entity.npc.combatpet.AscendedBestiary.examineNpc(player, id))
+			return;
+		if (io.ruin.model.activities.tournament.TournamentMaster.examine(player, id))
+			return;
 
 		player.openInterface(ToplevelComponent.MAINMODAL, 855);
 		DropViewer.loot.calculate(def.id, player);

@@ -10,13 +10,20 @@ import io.ruin.model.combat.special.Special;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.player.Player;
 
+import java.util.Set;
+
 //Energy Drain: Deal an attack with 25% increased
 //accuracy that siphons 10% of your target's run energy. (50%)
 public class AbyssalWhip implements Special {
 
+	// Custom whip progression line (recoloured Abyssal whips, items 31418-31432).
+	private static final Set<String> CUSTOM_WHIPS = Set.of(
+		"iron whip", "steel whip", "mithril whip", "adamant whip", "rune whip",
+		"volcanic whip", "cosmic whip", "void whip");
+
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("abyssal whip") || name.contains("rainbow whip");
+		return name.contains("abyssal whip") || name.contains("rainbow whip") || CUSTOM_WHIPS.contains(name);
 	}
 
 	@Override

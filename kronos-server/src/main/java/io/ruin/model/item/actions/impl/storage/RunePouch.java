@@ -31,6 +31,9 @@ public class RunePouch extends ItemContainer {
 					(player, pouchItem, runeItem) -> player.getRunePouch().deposit(runeItem, runeItem.getAmount()));
 		}
 
+		// whichever pouch is carried owns the shared display varbits from login on
+		io.ruin.model.entity.shared.listeners.LoginListener.register(RunePouch::refreshDisplay);
+
 		InterfaceHandler.register(Interface.RUNE_POUCH, h -> {
 			h.actions[11] = (DefaultAction) (p, option, slot, itemId) -> RUNE_POUCH_ADD_AMOUNT.set(p, 0); // Make 1
 			h.actions[12] = (DefaultAction) (p, option, slot, itemId) -> RUNE_POUCH_ADD_AMOUNT.set(p, 1); // Make 5
@@ -41,56 +44,71 @@ public class RunePouch extends ItemContainer {
 				Item item = p.getInventory().get(slot, itemId);
 				if (item == null)
 					return;
+				int amount = -1;
 				if (RUNE_POUCH_ADD_AMOUNT.get(p) > 0) {
-					int opt = RUNE_POUCH_ADD_AMOUNT.get(p);
-					switch (opt) {
-						case 1 -> p.getRunePouch().deposit(item, 5);
-						case 2 -> p.getRunePouch().deposit(item, item.getAmount());
-						case 3 -> p.integerInput("Enter amount:", amt -> p.getRunePouch().deposit(item, amt));
+					switch (RUNE_POUCH_ADD_AMOUNT.get(p)) {
+						case 1 -> amount = 5;
+						case 2 -> amount = item.getAmount();
+						case 3 -> {
+							p.integerInput("Enter amount:", amt -> deposit(p, item, amt));
+							return;
+						}
 					}
-				}
-				else if (option == 1)
-					p.getRunePouch().deposit(item, 1);
+				} else if (option == 1)
+					amount = 1;
 				else if (option == 3)
-					p.getRunePouch().deposit(item, 5);
+					amount = 5;
 				else if (option == 2) // All changed
-					p.getRunePouch().deposit(item, item.getAmount());
-				else if (option == 4)
-					p.integerInput("Enter amount:", amt -> p.getRunePouch().deposit(item, amt));
-				else
+					amount = item.getAmount();
+				else if (option == 4) {
+					p.integerInput("Enter amount:", amt -> deposit(p, item, amt));
+					return;
+				} else {
 					item.examine(p);
+					return;
+				}
+				if (amount > 0)
+					deposit(p, item, amount);
 			};
 			h.actions[4] = new InterfaceAction() {
 
 				@Override
 				public void handleClick(Player p, int option, int slot, int itemId) {
-					Item item = p.getRunePouch().get(slot, itemId);
+					ItemContainer pouch = openPouch(p);
+					Item item = pouch.get(slot, itemId);
 					if (item == null)
 						return;
+					int amount = -1;
 					if (RUNE_POUCH_ADD_AMOUNT.get(p) > 0) {
-						int opt = RUNE_POUCH_ADD_AMOUNT.get(p);
-						switch (opt) {
-							case 1 -> p.getRunePouch().withdraw(item, 5);
-							case 2 -> p.getRunePouch().withdraw(item, item.getAmount());
-							case 3 -> p.integerInput("Enter amount:", amt -> p.getRunePouch().withdraw(item, amt));
+						switch (RUNE_POUCH_ADD_AMOUNT.get(p)) {
+							case 1 -> amount = 5;
+							case 2 -> amount = item.getAmount();
+							case 3 -> {
+								p.integerInput("Enter amount:", amt -> withdraw(p, item, amt));
+								return;
+							}
 						}
-					}
-					else if (option == 1)
-						p.getRunePouch().withdraw(item, 1);
+					} else if (option == 1)
+						amount = 1;
 					else if (option == 3)
-						p.getRunePouch().withdraw(item, 5);
+						amount = 5;
 					else if (option == 2) // All Changed
-						p.getRunePouch().withdraw(item, item.getAmount());
-					else if (option == 4)
-						p.integerInput("Enter amount:", amt -> p.getRunePouch().withdraw(item, amt));
-					else
+						amount = item.getAmount();
+					else if (option == 4) {
+						p.integerInput("Enter amount:", amt -> withdraw(p, item, amt));
+						return;
+					} else {
 						item.examine(p);
+						return;
+					}
+					if (amount > 0)
+						withdraw(p, item, amount);
 				}
 
 				@Override
 				public void handleDrag(Player player, int fromSlot, int fromItemId, int toInterfaceId, int toChildId,
 						int toSlot, int toItemId) {
-					RunePouch pouch = player.getRunePouch();
+					ItemContainer pouch = openPouch(player);
 
 					Item from = pouch.get(fromSlot);
 					Item to = pouch.get(toSlot);
@@ -105,6 +123,38 @@ public class RunePouch extends ItemContainer {
 
 			};
 		});
+	}
+
+	/** Key of the pouch the open window (190) belongs to: the divine pouch uses the same window. */
+	static final String DIVINE_OPEN_KEY = "rune_pouch_divine_open";
+
+	static ItemContainer openPouch(Player p) {
+		return p.<Boolean>get(DIVINE_OPEN_KEY, false) ? p.DivinerunePouch : p.getRunePouch();
+	}
+
+	private static void deposit(Player p, Item item, int amount) {
+		if (p.<Boolean>get(DIVINE_OPEN_KEY, false))
+			p.DivinerunePouch.deposit(item, amount);
+		else
+			p.getRunePouch().deposit(item, amount);
+	}
+
+	private static void withdraw(Player p, Item item, int amount) {
+		if (p.<Boolean>get(DIVINE_OPEN_KEY, false))
+			p.DivinerunePouch.withdraw(item, amount);
+		else
+			p.getRunePouch().withdraw(item, amount);
+	}
+
+	/**
+	 * Both pouches share the client's pouch varbits (types 29/1622/1623/14285, amounts 1624/1625/1626/14286), which
+	 * the pouch window and the spellbook's rune check read: the carried divine pouch owns them, else the rune pouch.
+	 */
+	public static void refreshDisplay(Player p) {
+		if (p.getInventory().hasId(DivineRunePouch.RUNE_POUCH))
+			p.DivinerunePouch.forceDisplay();
+		else
+			p.getRunePouch().forceDisplay();
 	}
 
 	public static void destroy(Player player, Item item) {
@@ -124,6 +174,9 @@ public class RunePouch extends ItemContainer {
 
 	public void deposit(Item item, int amount) {
 		if (amount <= 0) {
+			return;
+		}
+		if (io.ruin.model.content.pvppreset.SpawnedItems.refuse(player, item, "stored in a rune pouch")) {
 			return;
 		}
 
@@ -181,18 +234,25 @@ public class RunePouch extends ItemContainer {
 			if (item != null)
 				item.move(item.getId(), item.getAmount(), bank ? player.getBank() : player.getInventory());
 		}
-		if (count == 0) {
+		// (the old check re-tested the count taken before moving, so it always said there was no space)
+		if (getCount() == 0) {
 			if (!bank)
 				player.sendMessage("You empty your rune pouch.");
 			return;
 		}
-		player.sendMessage("Not enough space in your inventory.");
+		player.sendMessage(bank ? "Not enough space in your bank." : "Not enough space in your inventory.");
 	}
 
 	@Override
 	public boolean sendUpdates() {
 		if (updatedCount == 0) {
 			return false;
+		}
+		// a carried divine pouch owns the shared varbits
+		if (player.getInventory().hasId(DivineRunePouch.RUNE_POUCH)) {
+			java.util.Arrays.fill(updatedSlots, false);
+			updatedCount = 0;
+			return true;
 		}
 
 		if (updatedSlots[0]) {
@@ -217,13 +277,24 @@ public class RunePouch extends ItemContainer {
 			return;
 		}
 
+		player.set(DIVINE_OPEN_KEY, false);
+		forceDisplay();
 		VarPlayerRepository.VARP_261.set(player, 3);
 		player.getPacketSender().sendIfEvents(Interface.RUNE_POUCH, 4, 0, 2, 1054 | 1 << 17 | 1 << 20);
 		player.getPacketSender().sendIfEvents(Interface.RUNE_POUCH, 7, 0, 27, 1054);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.RUNE_POUCH);
 	}
 
-	private void withdraw(Item item, int amount) {
+	/** Writes all 3 slots to the shared varbits (and clears the divine pouch's 4th). */
+	void forceDisplay() {
+		update(0, VarPlayerRepository.RUNE_POUCH_LEFT_TYPE, VarPlayerRepository.RUNE_POUCH_LEFT_AMOUNT);
+		update(1, VarPlayerRepository.RUNE_POUCH_MIDDLE_TYPE, VarPlayerRepository.RUNE_POUCH_MIDDLE_AMOUNT);
+		update(2, VarPlayerRepository.RUNE_POUCH_RIGHT_TYPE, VarPlayerRepository.RUNE_POUCH_RIGHT_AMOUNT);
+		VarPlayerRepository.RUNE_POUCH_RUNE4.set(player, 0);
+		VarPlayerRepository.RUNE_POUCH_AMOUNT4.set(player, 0);
+	}
+
+	void withdraw(Item item, int amount) {
 		if (item.move(item.getId(), amount, player.getInventory()) > 0)
 			return;
 		player.sendMessage("Not enough space in your inventory.");

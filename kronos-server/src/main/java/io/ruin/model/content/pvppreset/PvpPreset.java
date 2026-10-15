@@ -40,9 +40,11 @@ public enum PvpPreset {
         @Override
         public Item[] buildInventory() {
             return new Item[]{
-                new Item(12695, 2),  // Super combat potion(4) x2
+                new Item(2436,  1),  // Super attack(4)
+                new Item(2440,  1),  // Super strength(4)
+                new Item(2442,  1),  // Super defence(4)
                 new Item(6685,  8),  // Saradomin brew(4) x8
-                new Item(3024,  6),  // Super restore(4) x6
+                new Item(10925,  6),  // Sanfew serum(4) x6
                 new Item(385,   4),  // Shark x4
             };
         }
@@ -86,7 +88,7 @@ public enum PvpPreset {
                 new Item(2440,  3),  // Super strength(4) x3
                 new Item(2436,  2),  // Super attack(4) x2
                 new Item(6685,  6),  // Saradomin brew(4) x6
-                new Item(3024,  4),  // Super restore(4) x4
+                new Item(10925,  4),  // Sanfew serum(4) x4
                 new Item(385,   5),  // Shark x5
             };
         }
@@ -134,7 +136,7 @@ public enum PvpPreset {
                 new Item(2440,  2),  // Super strength(4) x2
                 new Item(2436,  1),  // Super attack(4) x1
                 new Item(6685,  6),  // Saradomin brew(4) x6
-                new Item(3024,  4),  // Super restore(4) x4
+                new Item(10925,  4),  // Sanfew serum(4) x4
                 new Item(385,   5),  // Shark x5
             };
         }
@@ -177,7 +179,7 @@ public enum PvpPreset {
         public Item[] buildInventory() {
             return new Item[]{
                 new Item(6685,  8),   // Saradomin brew(4) x8
-                new Item(3024,  6),   // Super restore(4) x6
+                new Item(10925,  6),   // Sanfew serum(4) x6
                 new Item(2444,  2),   // Ranging potion(4) x2
                 new Item(4675),       // Ancient staff
                 new Item(9185),       // Rune crossbow
@@ -223,9 +225,11 @@ public enum PvpPreset {
         @Override
         public Item[] buildInventory() {
             return new Item[]{
-                new Item(12695, 2),  // Super combat potion(4) x2
+                new Item(2436,  1),  // Super attack(4)
+                new Item(2440,  1),  // Super strength(4)
+                new Item(2442,  1),  // Super defence(4)
                 new Item(6685,  8),  // Saradomin brew(4) x8
-                new Item(3024,  6),  // Super restore(4) x6
+                new Item(10925,  6),  // Sanfew serum(4) x6
                 new Item(385,   4),  // Shark x4
             };
         }
@@ -543,7 +547,7 @@ public enum PvpPreset {
         public Item[] buildInventory() {
             return new Item[]{
                 new Item(6685,  1),  // Saradomin brew(4) x1
-                new Item(3024,  2),  // Super restore(4) x2
+                new Item(10925,  2),  // Sanfew serum(4) x2
                 new Item(2440,  1),  // Super strength(4) x1
                 new Item(2436,  1),  // Super attack(4) x1
                 new Item(2503,  1),  // Black d-hide body

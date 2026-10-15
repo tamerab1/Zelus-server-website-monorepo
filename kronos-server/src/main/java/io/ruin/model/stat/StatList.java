@@ -180,6 +180,10 @@ public class StatList {
 		if (player.experienceLock) {
 			return;
 		}
+		// no XP of any kind while a Division Rivals kit is on (the kit's levels are temporary)
+		if (io.ruin.model.content.rivals.RivalsSnapshot.active(player)) {
+			return;
+		}
 
 		if (type.isCombat()) {
 			if (player.getEquipment().get(Equipment.SLOT_WEAPON) != null && useMultiplier) {
@@ -270,6 +274,7 @@ public class StatList {
 		double newXp = stat.experience + amount;
 		if (newXp > Stat.MAX_XP)
 			newXp = Stat.MAX_XP;
+		io.ruin.model.activities.scoreboard.Scoreboard.onXp(player, type, newXp - stat.experience, useMultiplier);
 
 		if (newXp >= 200_000_000 && stat.experience < 200_000_000) {
 			player.sendMessage(Color.ORANGE_RED.tag() + "Congratulations on achieving 200M experience in " + type.name()
@@ -277,7 +282,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward()
 				+ " Zelus points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward());
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 200M experience in " + type.name() + " on "
 					+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode!");
 		}
@@ -287,7 +292,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward2()
 				+ " Zelus points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward2());
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 500M experience in " + type.name() + " on "
 					+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode!");
 		}
@@ -297,7 +302,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward3()
 				+ " Zelus points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward3());
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 1B experience in " + type.name() + " on "
 					+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode!");
 		}
@@ -329,11 +334,11 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxLevelRewardBonus()
 				+ " Zelus points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxLevelRewardBonus());
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved level 99 in " + type.name() + " on "
 					+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode!");
 			if (player.getStats().total99s >= 22) {
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(),
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 					" has just achieved level 99 in every skill on "
 						+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode!");
 				player.updateReasonPoints(player.getDifficulty().GetMaxLevelRewardBonus() * 5);

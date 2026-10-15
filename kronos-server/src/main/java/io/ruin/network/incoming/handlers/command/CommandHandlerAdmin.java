@@ -1,5 +1,7 @@
 package io.ruin.network.incoming.handlers.command;
 
+import io.ruin.cache.Icon;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.gson.GsonBuilder;
@@ -107,6 +109,68 @@ public class CommandHandlerAdmin {
 		switch (command) {
 
 			case "test": {
+				return true;
+			}
+
+			// ::starterui -- preview the new-player path-select screen (1150); Confirm does nothing on a set-up account
+			case "starterui": {
+				io.ruin.model.tutorial.StarterSelectInterface.open(player);
+				return true;
+			}
+
+			// ::givetp <amount> [player name] -- Pit Championship tournament points (negative removes); no name = yourself
+			case "givetp": {
+				int amount;
+				try {
+					amount = Integer.parseInt(args[0]);
+				} catch (Exception e) {
+					player.sendMessage("Usage: ::givetp <amount> [player name]");
+					return true;
+				}
+				Player target = player;
+				if (args.length > 1) {
+					String name = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+					target = World.getPlayer(name);
+					if (target == null) {
+						player.sendMessage("<col=ff0000>No online player named '" + name + "'. No points were given.");
+						return true;
+					}
+				}
+				target.tournamentPoints = (int) Math.max(0, Math.min(Integer.MAX_VALUE, (long) target.tournamentPoints + amount));
+				player.sendMessage("Gave " + amount + " tournament points to " + target.getName() + " (now " + target.tournamentPoints + ").");
+				if (target != player)
+					target.sendMessage("You received " + amount + " tournament points.");
+				return true;
+			}
+
+			// ::giveperkpoints / ::addperkpoints <amount> [player name] -- perk points (negative removes); no name = yourself
+			case "giveperkpoints":
+			case "addperkpoints": {
+				int amount;
+				try {
+					amount = Integer.parseInt(args[0]);
+				} catch (Exception e) {
+					player.sendMessage("Usage: ::giveperkpoints <amount> [player name]");
+					return true;
+				}
+				Player target = player;
+				if (args.length > 1) {
+					String name = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+					target = World.getPlayer(name);
+					if (target == null) {
+						player.sendMessage("<col=ff0000>No online player named '" + name + "'. No points were given.");
+						return true;
+					}
+				}
+				target.perkPoints = (int) Math.max(0, Math.min(Integer.MAX_VALUE, (long) target.perkPoints + amount));
+				player.sendMessage("Gave " + amount + " perk points to " + target.getName() + " (now " + target.perkPoints + ").");
+				if (target != player)
+					target.sendMessage("You received " + amount + " perk points.");
+				return true;
+			}
+
+			case "forge": {
+				io.ruin.model.content.wildernessforge.WildernessForge.open(player);
 				return true;
 			}
 
@@ -885,6 +949,11 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "reloaddeals": {
+				io.ruin.model.content.donatordeals.DonatorDeals.reload(player);
+				return true;
+			}
+
 			case "reloadnpcs": {
 				World.npcsNonNull().forEach(n -> {
 					if (n.getCombat() != null)
@@ -1101,6 +1170,33 @@ public class CommandHandlerAdmin {
 
 			case "debug": {
 				player.sendMessage("Debug: " + ((player.debug = !player.debug) ? "ON" : "OFF"));
+				return true;
+			}
+
+			case "testbroadcasts":
+			case "testbroadcast": {
+				// one sample of every broadcast kind, to this player only
+				io.ruin.utility.Broadcast.preview(player);
+				return true;
+			}
+
+			case "testlootkey":
+			case "givelootkey": {
+				// ::testlootkey [1-3]: a wilderness key loaded with simulated PvP spoils (higher tier = richer)
+				int tier = 2;
+				if (args != null && args.length > 0) {
+					try {
+						tier = Integer.parseInt(args[0]);
+					} catch (NumberFormatException e) {
+						player.sendMessage("Usage: ::testlootkey [1-3]");
+						return true;
+					}
+				}
+				if (tier < 1 || tier > 3) {
+					player.sendMessage("Usage: ::testlootkey [1-3] (tier must be 1, 2 or 3)");
+					return true;
+				}
+				io.ruin.model.item.actions.impl.wilderness_keys.WildernessKeyHandler.giveTestKey(player, tier);
 				return true;
 			}
 
@@ -1637,12 +1733,6 @@ public class CommandHandlerAdmin {
 				item.putAttribute(AttributeTypes.ACCURSED_BOW, 1);
 				player.getInventory().add(item);
 				player.sendMessage("Spawned the Accursed Bow.");
-				return true;
-			}
-
-			case "giveperkpoints": {
-				forPlayer(player, query, "::giveperkpoints playerName",
-						p2 -> p2.perkPoints += args[0] == null ? 10_000 : Integer.parseInt(args[0]));
 				return true;
 			}
 
@@ -2345,6 +2435,16 @@ public class CommandHandlerAdmin {
 				if (args.length > 1)
 					delay = Integer.parseInt(args[1]);
 				player.animate(id, delay);
+				return true;
+			}
+
+			case "petanim": { // ::petanim <seq> -- plays an animation on your follower (checking combat-pet anims)
+				var follower = player.familiarNPC;
+				if (follower == null || follower.isRemoved()) {
+					player.sendMessage("You need a pet following you.");
+					return true;
+				}
+				follower.animate(Integer.parseInt(args[0]));
 				return true;
 			}
 

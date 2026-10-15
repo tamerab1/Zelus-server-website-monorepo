@@ -137,7 +137,7 @@ public class SecurityPin {
 			player.startEvent(p -> {
 				if (i == player.getSecurityPin()) {
 					player.lastHwid = player.hwid;
-					player.dialogue(new NPCDialogue(8047, "Thank you, have fun playing Zelus."));
+					player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, "Thank you, have fun playing Zelus."));
 					p.waitForDialogue(player);
 					setVerified(player, true);
 					allowAccountAccess(player);
@@ -155,7 +155,7 @@ public class SecurityPin {
 						return;
 					}
 
-					player.dialogue(new NPCDialogue(8047,
+					player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC,
 							"You have entered the incorrect 4 digit PIN, try again. <col=ff0000>" + attempts + " tries remaining!"));
 					p.waitForDialogue(player);
 
@@ -184,7 +184,7 @@ public class SecurityPin {
 		};
 
 		player.startEvent(p -> {
-			player.dialogue(new NPCDialogue(8047, message));
+			player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, message));
 			p.waitForDialogue(player);
 			player.integerInput("Enter a 4 digit security PIN. (1-9)", (i) -> {
 				String number = String.valueOf(i);
@@ -226,14 +226,14 @@ public class SecurityPin {
 			if (tempSecurityPin == pin) {
 				player.securityPin = pin;
 				player.startEvent(p -> {
-					player.dialogue(new NPCDialogue(8047, "Thank you, your security PIN is now " + player.securityPin + "."));
+					player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, "Thank you, your security PIN is now " + player.securityPin + "."));
 					p.waitForDialogue(player);
 					setVerified(player, true);
 					allowAccountAccess(player);
 				});
 			} else {
 				enterAgainAttempts++;
-				player.dialogue(new NPCDialogue(8047, "That was incorrect, try again."));
+				player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, "That was incorrect, try again."));
 				EnterPinAgain(player);
 			}
 		});

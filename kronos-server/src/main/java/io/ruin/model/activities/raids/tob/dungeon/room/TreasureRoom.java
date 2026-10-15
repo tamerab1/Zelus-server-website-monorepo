@@ -118,7 +118,7 @@ public class TreasureRoom extends TheatreRoom {
 					if (uniques.contains(item.getId())) {
 						int kills = p.theatreOfBloodKills.getKills();
 						p.addToCollectionLog(item);
-						Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR, "<col=000000>" + p.getName(),
+						Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP, "<col=000000>" + p.getName(),
 								" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase()
 										+ "</shad> from The Theatre of Blood" + "! (<col=FC0101>" + kills + " KC<col=000000>)");
 						String message = p.getName() + " just received ";
@@ -164,7 +164,7 @@ public class TreasureRoom extends TheatreRoom {
 					if (uniques.contains(item.getId())) {
 						int kills = p.theatreOfBloodKills.getKills();
 						p.addToCollectionLog(item);
-						Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR, "<col=000000>" + p.getName(),
+						Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP, "<col=000000>" + p.getName(),
 								" received <shad=D80808>" + item.getAmount() + "x " + item.getDef().name.toLowerCase()
 										+ "</shad> from The Theatre of Blood" + "! (<col=FC0101>" + kills + " KC<col=000000>)");
 						String message = p.getName() + " just received ";

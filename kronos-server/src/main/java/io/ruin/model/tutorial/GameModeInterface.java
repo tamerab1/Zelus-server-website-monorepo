@@ -40,7 +40,7 @@ public class GameModeInterface {
 		GROUP_IRONMAN("Group IM", AccountMode.GROUP_IRONMAN, 10541, new Item(26156), new Item(26158),	new Item(26166)),
 		HARDCORE_GROUP_IRONMAN("Hardcore Group IM", AccountMode.HARDCORE_GROUP_IRONMAN, 10540, new Item(26170), new Item(26172), new Item(26180));
 
-		private String name;
+		final String name;
 		private AccountMode accountMode;
 		private int scriptId;
 		Item helmet;
@@ -64,8 +64,8 @@ public class GameModeInterface {
 		HARD(Color.ORANGE.wrap("Hard"), Difficulty.HARD),
 		EXTREME(Color.RED.wrap("Extreme"), Difficulty.EXTREME);
 
-		private String name;
-		private Difficulty difficulty;
+		final String name;
+		final Difficulty difficulty;
 
 		DifficultyType(String name, Difficulty difficulty) {
 			this.name = name;
@@ -208,6 +208,7 @@ public class GameModeInterface {
 	}
 
 	public static void register() {
+		StarterSelectInterface.register();
 		InterfaceHandler.register(IRONMAN_MODE_INTERFACE, h -> {
 			h.actions[125] = (SimpleAction) p -> p.getGameModeInterface().confirmIronmanSettings(p);
 			h.actions[118] = (SimpleAction) p -> p.getGameModeInterface().dismissContinueIronmanWindow(p);
@@ -249,6 +250,16 @@ public class GameModeInterface {
 						}
 					}
 				}
+			}
+		});
+
+		// PvP Mode is always Easy (presets give instant stats, so no drop-rate difficulty); accounts made before
+		// that rule are moved to Easy once, on login.
+		LoginListener.register(p -> {
+			if (p.getPlayMode() == PlayMode.PVP_MODE && p.getDifficulty() != null && p.getDifficulty() != Difficulty.EASY) {
+				io.ruin.api.utils.ServerWrapper.log("PvP Mode difficulty standardized: " + p.getName() + " " + p.getDifficulty() + " -> EASY");
+				p.setDifficulty(Difficulty.EASY);
+				p.sendMessage("<col=ff981f>[Notice]</col> <col=ffffff>PvP Mode difficulty has been standardized to Easy (base drop rates).</col>");
 			}
 		});
 	}
@@ -363,6 +374,8 @@ public class GameModeInterface {
 				player.setPlayMode(PlayMode.PVM_MODE);
 				break;
 			case PVP_MODE:
+				// presets give instant stats, so PvP Mode never gets a drop-rate difficulty: always Easy (1.0)
+				player.setDifficulty(Difficulty.EASY);
 				GameMode.changeForumsGroup(player, GameMode.STANDARD.groupId);
 				player.setPlayMode(PlayMode.PVP_MODE);
 				break;
@@ -599,7 +612,7 @@ public class GameModeInterface {
 		return null;
 	}
 
-	private void getModeItems() {
+	void getModeItems() {
 		items.clear();
 		if (currentAccountType == AccountType.PVP_MODE) {
 			// Preview for PVP_MODE's actual starter kit -- see

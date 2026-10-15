@@ -133,7 +133,7 @@ public enum RangedAmmo {
 	}
 
 	public static RangedAmmo getByItemId(int itemId, int weaponId) {
-		if (weaponId == 27610) { // Venator bow
+		if (weaponId == 27610 || weaponId == 31650) { // Venator bow / Skyhunter bow
 			List<RangedAmmo> venatorAmmo = Arrays.asList(V_BRONZE_ARROW, V_IRON_ARROW, V_STEEL_ARROW, V_BROAD_ARROW, V_MITHRIL_ARROW, V_ADAMANT_ARROW, V_RUNE_ARROW, V_AMETHYST_ARROW, V_DRAGON_ARROW);
 			for (RangedAmmo ammo : venatorAmmo) {
 				if (ammo.itemId == itemId) {

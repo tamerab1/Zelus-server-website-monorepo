@@ -205,6 +205,11 @@ public abstract class ItemContainerG<I extends Item> {
 		return add(id, amount, null);
 	}
 
+	/** True when the only attribute is the spawned-item (phantom) flag: such items may stack. */
+	public static boolean stacksWithAttributes(Map<String, String> attributes) {
+		return attributes != null && attributes.size() == 1 && "1".equals(attributes.get("phantom"));
+	}
+
 	public int add(int id, int amount, Map<String, String> attributes) {
 
 		if (amount <= 0) {
@@ -225,6 +230,21 @@ public abstract class ItemContainerG<I extends Item> {
 
 		if (hasAttributes) {
 			stack = false;
+		}
+
+		// Free spawned (phantom-flagged) items stack like the plain item: 5,000 spawned runes are one stack, and a bank
+		// holds a spawned stack in one slot. Only the phantom flag qualifies (charged items keep their own rules).
+		if (hasAttributes && (def.stackable || forceStack) && stacksWithAttributes(attributes)) {
+			I stackItem = findItem(id, attributes);
+			if (stackItem != null) {
+				return stackItem.incrementAmount(amount);
+			}
+			int freeSlot = freeSlot();
+			if (freeSlot == -1) {
+				return 0;
+			}
+			set(freeSlot, newItem(id, amount, attributes));
+			return amount;
 		}
 
 		if (stack) {

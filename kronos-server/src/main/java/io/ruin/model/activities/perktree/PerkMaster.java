@@ -28,8 +28,8 @@ public class PerkMaster {
 				})));
 
 		});
-		ItemAction.registerInventory(30035, "claim", (player, item) -> player.getPerkInterface().openPlayerPerkHomeSection(player));
-		NPCAction.register(7958, 2, (player, npc) -> player.getPerkInterface().openPlayerPerkHomeSection(player));
+		ItemAction.registerInventory(30035, "claim", (player, item) -> PerkHub.open(player));
+		NPCAction.register(7958, 2, (player, npc) -> PerkHub.open(player));
 		NPCAction.register(7958, 1, (player, npc) -> {
 			player.dialogue(new OptionsDialogue("What do you need?",
 				new Option("Can I have a perk crystal?", () -> player.getInventory().addOrDrop(new Item(30496))),

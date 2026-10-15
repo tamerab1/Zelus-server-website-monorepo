@@ -339,7 +339,7 @@ public class Promopackage extends ItemContainer {
 			player.getInventory().add(30185);
 
 			if (reward.lootBroadcast != null)
-				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Promotion Crate", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+				Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Promotion Crate", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});
 	}

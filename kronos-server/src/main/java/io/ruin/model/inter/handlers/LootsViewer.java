@@ -92,6 +92,13 @@ public class LootsViewer {
 		return 1;
 	}
 
+	/** Opens a table under a custom title (e.g. the examined box's own name). */
+	public void updateInterface(Player player, LootsTables tables, String title) {
+		updateInterface(player, tables);
+		if (title != null)
+			player.getPacketSender().sendString(855, 2799, title);
+	}
+
 	public void updateInterface(Player player, LootsTables tables) {
 
 		player.inMonsterViewer = false;

@@ -1,137 +1,92 @@
 package io.ruin.model.content.loyaltytitles;
 
-import io.ruin.cache.Icon;
-import io.ruin.cache.InterfaceDef;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.InterfaceHandler;
-import io.ruin.model.inter.Subcomponent;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.actions.SimpleAction;
+import io.ruin.network.PacketSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Zelus Titles (interface 1160, built by .dev/cache-restore-tool/src/BuildTitlesInterface.java): the title list and the
+ * selected title's details in one window. It replaced the old pair (5105 list in the main window + 5106 details in the
+ * chatbox). Unlocking, buying and equipping are unchanged and stay in {@link LoyaltyTitleManager}.
+ * <ul>
+ *     <li>title row: owned count, "ZELUS TITLES", close; 9 category tabs (gold frame on the active one);</li>
+ *     <li>12 cards (2 x 6): a status square (owned / donor / locked), the title in its colour, its requirement;</li>
+ *     <li>Prev / page / Next, Clear, Apply (or Buy & Apply for a purchasable title);</li>
+ *     <li>details: header + equipped, a live preview with the player's name, the full requirement; category, status, cost.</li>
+ * </ul>
+ */
 public class LoyaltyTitleInterface {
 
-	public static final int INTERFACE_ID = 5105;
-	public static final int CHATBOX_ID = 5106;
+	public static final int INTERFACE_ID = 1160;
 
-	private static final int MIN_COMPONENT_COUNT = 118;
-	private static final int MIN_CHATBOX_COMPONENT_COUNT = 12;
+	private static final int CLOSE = 2, TITLE = 3, OWNED = 4;
+	/** Tabs: box (hover), border, gold frame x2, icon, label. */
+	private static final int FIRST_TAB = 5, TAB_STRIDE = 6, TAB_FRAME = 2, TAB_LABEL = 5;
+	/** The title list scrolls (12 cards of 48px in 2 columns). */
+	private static final int SCROLL = 59, SCROLLBAR = 60, SCROLL_HEIGHT = 146, CARD_PITCH = 52, LIST_TOP = 8;
+	/** Cards: layer, box (hover), border, selected frame x3, price icon (item), "$" glyph, price text, title, requirement. */
+	private static final int FIRST_CARD = 61, CARD_STRIDE = 11, CARD_BOX = 1, CARD_FRAME = 3, CARD_FRAMES = 3,
+		CARD_PRICE_ICON = 6, CARD_PRICE_GLYPH = 7, CARD_PRICE_TEXT = 8, CARD_TITLE = 9, CARD_REQUIREMENT = 10, ROWS_PER_PAGE = 12;
+	private static final int PREV = 193, PAGE = 195, NEXT = 196, CLEAR = 198, APPLY = 200;
+	private static final int DETAILS_HEADER = 209, DETAILS_PREVIEW = 210, DETAILS_REQUIREMENT = 211, DETAILS_CATEGORY = 212,
+		DETAILS_STATUS = 213, DETAILS_COST = 214;
+	/** Clientscript 10753 set_object_nonum(component, item, amount) (AddOpBaseScript): the item icon without a stack number. */
+	private static final int SET_OBJECT_NONUM = 10753;
+	private static final int COINS = 995;
 
-	private static final int CLOSE = 3;
-	private static final int HEADING_TEXT = 4;
-	private static final int SUMMARY_TEXT = 5;
+	private static final String[] TAB_LABELS = {"All", "Owned", "Locked", "Gen", "Elite", "PvM", "PvP", "Skill", "Donor"};
+	// index into TAB_LABELS for the "Donor" tab (see filteredTitles()'s case 8 -> DONATOR)
+	private static final int DONATOR_TAB = 8;
 
-	private static final int[] TAB_IDS = {9, 10, 11, 12, 13, 14, 15, 16, 115};
-	private static final int[] TAB_ICON_IDS = {17, 18, 19, 20, 21, 22, 23, 24, 116};
-	private static final int[] TAB_LABEL_IDS = {25, 26, 27, 28, 29, 30, 31, 32, 117};
-	private static final String[] TAB_LABELS = {"All", "Owned", "Locked", "Gen", "Elite", "PvM", "PvP", "Skill", Icon.DONATOR_ICON.tag() + "Donor"};
+	/** Status square fills: owned (green), donor / purchasable (gold), locked (dark red). */
+	private static final int OWNED_FILL = 0x1f4a1c, DONOR_FILL = 0x5a4510, LOCKED_FILL = 0x4a1c1c;
 
-	private static final int ROW_BG_START = 33;
-	private static final int ROW_ICON_START = 45;
-	private static final int ROW_TITLE_START = 57;
-	private static final int ROW_META_START = 69;
-	private static final int ROW_STATUS_START = 81;
-	private static final int ROW_COIN_START = 93;
-	private static final int ROWS_PER_PAGE = 12;
-
-	private static final int PREVIEW_LABEL = 105;
-	private static final int PREVIEW = 106;
-	private static final int CLEAR = 107;
-	private static final int PREV_PAGE = 108;
-	private static final int PREV_PAGE_LABEL = 109;
-	private static final int PAGE_TEXT = 110;
-	private static final int NEXT_PAGE = 111;
-	private static final int NEXT_PAGE_LABEL = 112;
-	private static final int APPLY = 113;
-	private static final int APPLY_LABEL = 114;
-
-	private static final int DETAILS_TITLE = 3;
-	private static final int DETAILS_PREVIEW = 4;
-	private static final int DETAILS_CATEGORY = 5;
-	private static final int DETAILS_STATUS = 6;
-	private static final int DETAILS_REQUIREMENT_LABEL = 7;
-	private static final int DETAILS_REQUIREMENT = 8;
-	private static final int DETAILS_COST = 9;
-	private static final int DETAILS_CURRENT = 10;
-	private static final int DETAILS_HINT = 11;
+	private static final String GOLD = "<col=ffc35a>", ORANGE = "<col=ff981f>", GREY = "<col=a0a0a0>", WHITE = "<col=ffffff>",
+		GREEN = "<col=3ca433>", RED = "<col=c42b00>", END = "</col>";
 
 	private static boolean registered;
 
 	public static synchronized void register() {
-		if (registered || !areInterfacesPacked())
+		if (registered)
 			return;
 		InterfaceHandler.register(INTERFACE_ID, h -> {
-			h.simpleAction(CLOSE, LoyaltyTitleInterface::close);
-			for (int i = 0; i < TAB_IDS.length; i++) {
+			h.simpleAction(CLOSE, p -> p.closeInterface(ToplevelComponent.MAINMODAL));
+			for (int i = 0; i < TAB_LABELS.length; i++) {
 				int filter = i;
-				SimpleAction action = p -> {
+				h.simpleAction(FIRST_TAB + i * TAB_STRIDE, p -> {
 					p.loyaltyTitleFilter = filter;
 					p.loyaltyTitlePage = 0;
 					p.loyaltyTitleSelectedId = null;
-					openDetails(p);
-					render(p);
-				};
-				h.simpleAction(TAB_IDS[i], action);
-				h.simpleAction(TAB_ICON_IDS[i], action);
-				h.simpleAction(TAB_LABEL_IDS[i], action);
+					render(p, true);
+				});
 			}
 			for (int i = 0; i < ROWS_PER_PAGE; i++) {
 				int rowIndex = i;
-				SimpleAction action = p -> onRowSelect(p, rowIndex);
-				h.simpleAction(ROW_BG_START + i, action);
-				h.simpleAction(ROW_ICON_START + i, action);
-				h.simpleAction(ROW_TITLE_START + i, action);
-				h.simpleAction(ROW_META_START + i, action);
-				h.simpleAction(ROW_STATUS_START + i, action);
-				h.simpleAction(ROW_COIN_START + i, action);
+				h.simpleAction(FIRST_CARD + i * CARD_STRIDE + CARD_BOX, p -> onRowSelect(p, rowIndex));
 			}
+			h.simpleAction(PREV, p -> {
+				if (p.loyaltyTitlePage > 0) {
+					p.loyaltyTitlePage--;
+					render(p, true);
+				}
+			});
+			h.simpleAction(NEXT, p -> {
+				if ((p.loyaltyTitlePage + 1) * ROWS_PER_PAGE < filteredTitles(p).size()) {
+					p.loyaltyTitlePage++;
+					render(p, true);
+				}
+			});
 			h.simpleAction(CLEAR, LoyaltyTitleInterface::onClear);
-			h.simpleAction(PREV_PAGE, p -> {
-				if (p.loyaltyTitlePage > 0) {
-					p.loyaltyTitlePage--;
-					openDetails(p);
-					render(p);
-				}
-			});
-			h.simpleAction(PREV_PAGE_LABEL, p -> {
-				if (p.loyaltyTitlePage > 0) {
-					p.loyaltyTitlePage--;
-					openDetails(p);
-					render(p);
-				}
-			});
-			h.simpleAction(NEXT_PAGE, p -> {
-				if ((p.loyaltyTitlePage + 1) * ROWS_PER_PAGE < filteredTitles(p).size()) {
-					p.loyaltyTitlePage++;
-					openDetails(p);
-					render(p);
-				}
-			});
-			h.simpleAction(NEXT_PAGE_LABEL, p -> {
-				if ((p.loyaltyTitlePage + 1) * ROWS_PER_PAGE < filteredTitles(p).size()) {
-					p.loyaltyTitlePage++;
-					openDetails(p);
-					render(p);
-				}
-			});
 			h.simpleAction(APPLY, LoyaltyTitleInterface::onApply);
-			h.simpleAction(APPLY_LABEL, LoyaltyTitleInterface::onApply);
-			h.closedAction = (p, i) -> {
-				p.loyaltyTitleSelectedId = null;
-				closeChatbox(p);
-			};
-		});
-		InterfaceHandler.register(CHATBOX_ID, h -> {
-			h.closedAction = (p, i) -> {
-			};
+			h.closedAction = (p, i) -> p.loyaltyTitleSelectedId = null;
 		});
 		registered = true;
 	}
-
-	// index into TAB_IDS/TAB_LABELS for the "Donor" tab (see filteredTitles()'s case 8 -> DONATOR)
-	private static final int DONATOR_TAB = 8;
 
 	public static void open(Player player) {
 		open(player, 0);
@@ -142,43 +97,13 @@ public class LoyaltyTitleInterface {
 	}
 
 	private static void open(Player player, int initialFilter) {
-		if (!areInterfacesPacked()) {
-			player.sendMessage("The titles interfaces are missing from the cache. Rebuild the cache after adding the 5105/5106 TOML patches.");
-			return;
-		}
 		register();
 		player.loyaltyTitleFilter = initialFilter;
 		player.loyaltyTitlePage = 0;
 		player.loyaltyTitleSelectedId = null;
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
-		openDetails(player);
-		render(player);
-	}
-
-	private static void close(Player player) {
-		player.closeInterface(ToplevelComponent.MAINMODAL);
-		closeChatbox(player);
-	}
-
-	private static void closeChatbox(Player player) {
-		player.closeDialogue();
-		player.getPacketSender().removeSubtoplevelInterface(ToplevelComponent.CHATBOX, Subcomponent.DIALOGUE);
-		player.getPacketSender().removeSubtoplevelInterface(ToplevelComponent.CHATBOX, Subcomponent.YES_NO_DIALOGUE);
-	}
-
-	private static void openDetails(Player player) {
-		player.closeDialogue();
-		player.getPacketSender().sendToplevelSubInterface(CHATBOX_ID, Subcomponent.DIALOGUE, ToplevelComponent.CHATBOX);
-	}
-
-	private static boolean areInterfacesPacked() {
-		return InterfaceDef.COUNTS != null
-			&& INTERFACE_ID < InterfaceDef.COUNTS.length
-			&& CHATBOX_ID < InterfaceDef.COUNTS.length
-			&& INTERFACE_ID < InterfaceHandler.HANDLERS.length
-			&& CHATBOX_ID < InterfaceHandler.HANDLERS.length
-			&& InterfaceDef.COUNTS[INTERFACE_ID] >= MIN_COMPONENT_COUNT
-			&& InterfaceDef.COUNTS[CHATBOX_ID] >= MIN_CHATBOX_COMPONENT_COUNT;
+		player.getPacketSender().sendString(INTERFACE_ID, TITLE, ORANGE + "ZELUS TITLES" + END);
+		render(player, true);
 	}
 
 	private static List<LoyaltyTitle> filteredTitles(Player player) {
@@ -202,65 +127,110 @@ public class LoyaltyTitleInterface {
 	}
 
 	private static void render(Player player) {
+		render(player, false);
+	}
+
+	/** listChanged: open / tab / page -- only then is the scrollbar script sent (it resets the list's scroll to the top). */
+	private static void render(Player player, boolean listChanged) {
+		if (!player.isVisibleInterface(INTERFACE_ID))
+			return;
+		PacketSender ps = player.getPacketSender();
 		List<LoyaltyTitle> titles = filteredTitles(player);
 		int pageCount = Math.max(1, (titles.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
 		if (player.loyaltyTitlePage >= pageCount)
 			player.loyaltyTitlePage = pageCount - 1;
 
-		renderChrome(player, titles.size(), pageCount);
+		ps.sendString(INTERFACE_ID, OWNED, GOLD + unlockedCount(player) + END + GREY + " / " + LoyaltyTitle.all().size() + " owned" + END);
+		for (int i = 0; i < TAB_LABELS.length; i++) {
+			int tab = FIRST_TAB + i * TAB_STRIDE;
+			boolean active = player.loyaltyTitleFilter == i;
+			ps.setHidden(INTERFACE_ID, tab + TAB_FRAME, !active);
+			ps.setHidden(INTERFACE_ID, tab + TAB_FRAME + 1, !active);
+			ps.sendString(INTERFACE_ID, tab + TAB_LABEL, (active ? GOLD : WHITE) + TAB_LABELS[i] + END);
+		}
 
 		int start = player.loyaltyTitlePage * ROWS_PER_PAGE;
 		for (int i = 0; i < ROWS_PER_PAGE; i++) {
+			int card = FIRST_CARD + i * CARD_STRIDE;
 			int index = start + i;
-			if (index >= titles.size()) {
-				setRowHidden(player, i, true);
+			LoyaltyTitle title = index < titles.size() ? titles.get(index) : null;
+			ps.setHidden(INTERFACE_ID, card, title == null);
+			if (title == null)
 				continue;
-			}
-			LoyaltyTitle title = titles.get(index);
 			boolean unlocked = LoyaltyTitleManager.isUnlocked(player, title);
 			boolean selected = player.loyaltyTitleSelectedId != null && player.loyaltyTitleSelectedId == title.id;
-
-			setRowHidden(player, i, false);
-			player.getPacketSender().sendString(INTERFACE_ID, ROW_STATUS_START + i, statusMarker(title, unlocked));
-			player.getPacketSender().sendString(INTERFACE_ID, ROW_TITLE_START + i, shortPreview(title, player));
-			player.getPacketSender().setHidden(INTERFACE_ID, ROW_COIN_START + i, true);
-
-			if (unlocked) {
-				player.getPacketSender().sendString(INTERFACE_ID, ROW_META_START + i, selected ? "<col=f2ce45>Selected</col>" : categoryName(title.category));
-			} else if (title.isPurchasable()) {
-				player.getPacketSender().sendString(INTERFACE_ID, ROW_META_START + i, selected ? "<col=f2ce45>Selected</col>" : formatAmount(title.cost) + " " + title.currency.label);
-			} else {
-				player.getPacketSender().sendString(INTERFACE_ID, ROW_META_START + i, selected ? "<col=f2ce45>Selected</col>" : "<col=9f9f9f>" + truncate(title.requirement, 27) + "</col>");
-			}
+			for (int f = 0; f < CARD_FRAMES; f++)
+				ps.setHidden(INTERFACE_ID, card + CARD_FRAME + f, !selected);
+			boolean forSale = !unlocked && title.isPurchasable();
+			// price icon: a red "$" only for donator points, a coins stack only for gold; nothing for other titles
+			boolean dollar = forSale && title.currency == LoyaltyTitle.Currency.DONATOR_POINTS;
+			boolean coins = forSale && title.currency == LoyaltyTitle.Currency.COINS;
+			ps.sendString(INTERFACE_ID, card + CARD_PRICE_GLYPH, dollar ? "$" : "");
+			ps.setHidden(INTERFACE_ID, card + CARD_PRICE_ICON, !coins);
+			// coins: the real stack (its pile art follows the amount) drawn WITHOUT the stack number, and the price in
+			// its own yellow text under it -- the number never sits on the sprite
+			if (coins)
+				ps.sendClientScript(SET_OBJECT_NONUM, "Iii", INTERFACE_ID << 16 | (card + CARD_PRICE_ICON), COINS, Math.max(1, title.cost));
+			ps.sendString(INTERFACE_ID, card + CARD_PRICE_TEXT, coins ? "<shad=000000>" + formatAmount(title.cost) + "</shad>" : "");
+			ps.sendString(INTERFACE_ID, card + CARD_TITLE, truncateTagged(displayText(title), 26));
+			ps.sendString(INTERFACE_ID, card + CARD_REQUIREMENT, unlocked ? GREEN + "Owned" + END
+				: forSale ? GOLD + formatAmount(title.cost) + " " + title.currency.label + END
+				: RED + "Locked" + END + GREY + " - " + END + wrapText(title.requirement, 30, 2));
 		}
-		renderPreview(player);
+
+		int shown = Math.min(ROWS_PER_PAGE, Math.max(0, titles.size() - start));
+		int contentHeight = LIST_TOP + ((shown + 1) / 2) * CARD_PITCH - 4;
+		int count = contentHeight <= SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - SCROLL_HEIGHT / 3D) / 15D);
+		if (listChanged)
+			io.ruin.model.ScrollbarClientScript.create().interfaceId(INTERFACE_ID).containerId(SCROLL).scrollbarChildId(SCROLLBAR)
+				.childrenCount(count).withDarkGraphics().build().send(player);
+		ps.sendString(INTERFACE_ID, PREV + 1, player.loyaltyTitlePage > 0 ? "Prev" : GREY + "Prev" + END);
+		ps.sendString(INTERFACE_ID, NEXT + 1, player.loyaltyTitlePage + 1 < pageCount ? "Next" : GREY + "Next" + END);
+		ps.sendString(INTERFACE_ID, PAGE, titles.isEmpty() ? "0 / 0" : (player.loyaltyTitlePage + 1) + " / " + pageCount);
+		ps.sendString(INTERFACE_ID, CLEAR + 1, LoyaltyTitleManager.getEquipped(player) != null ? "Clear" : GREY + "Clear" + END);
+		renderDetails(player);
 	}
 
-	private static void renderChrome(Player player, int filteredCount, int pageCount) {
-		player.getPacketSender().sendString(INTERFACE_ID, HEADING_TEXT, "Zelus Titles");
-		player.getPacketSender().sendString(INTERFACE_ID, SUMMARY_TEXT, "<col=f2ce45>" + unlockedCount(player) + "</col><col=b9aa83>/" + LoyaltyTitle.all().size() + "</col>");
-		for (int i = 0; i < TAB_IDS.length; i++) {
-			String color = player.loyaltyTitleFilter == i ? "f2ce45" : "b9aa83";
-			player.getPacketSender().sendString(INTERFACE_ID, TAB_LABEL_IDS[i], "<col=" + color + ">" + TAB_LABELS[i] + "</col>");
+	/** The details panel: the selected title (else the equipped one). */
+	private static void renderDetails(Player player) {
+		PacketSender ps = player.getPacketSender();
+		LoyaltyTitle equipped = LoyaltyTitleManager.getEquipped(player);
+		LoyaltyTitle title = selected(player);
+		ps.sendString(INTERFACE_ID, DETAILS_HEADER, ORANGE + "Title Details" + END + "   " + GREY + "Equipped: "
+			+ (equipped == null ? "None" : truncateTagged(displayText(equipped), 26)) + END);
+		if (title == null) {
+			ps.sendString(INTERFACE_ID, DETAILS_PREVIEW, WHITE + "Preview: " + END + GREY + "None" + END);
+			ps.sendString(INTERFACE_ID, DETAILS_REQUIREMENT, ORANGE + "Requirement: " + END + GREY + "Select a title above." + END);
+			ps.sendString(INTERFACE_ID, DETAILS_CATEGORY, GREY + "Category: -" + END);
+			ps.sendString(INTERFACE_ID, DETAILS_STATUS, "");
+			ps.sendString(INTERFACE_ID, DETAILS_COST, "");
+			ps.sendString(INTERFACE_ID, APPLY + 1, GREY + "Apply" + END);
+			return;
 		}
-		player.getPacketSender().setHidden(INTERFACE_ID, PREVIEW_LABEL, true);
-		player.getPacketSender().setHidden(INTERFACE_ID, PREVIEW, true);
-		player.getPacketSender().sendString(INTERFACE_ID, PREVIEW_LABEL, "");
-		player.getPacketSender().sendString(INTERFACE_ID, PREVIEW, "");
-		player.getPacketSender().sendString(INTERFACE_ID, CLEAR, "Clear");
-		player.getPacketSender().sendString(INTERFACE_ID, PREV_PAGE_LABEL, "Prev");
-		player.getPacketSender().sendString(INTERFACE_ID, NEXT_PAGE_LABEL, "Next");
-		player.getPacketSender().sendString(INTERFACE_ID, APPLY_LABEL, "Apply");
-		player.getPacketSender().sendString(INTERFACE_ID, PAGE_TEXT, filteredCount == 0 ? "0 / 0" : (player.loyaltyTitlePage + 1) + " / " + pageCount);
+		boolean unlocked = LoyaltyTitleManager.isUnlocked(player, title);
+		boolean isEquipped = equipped != null && equipped.id == title.id;
+		ps.sendString(INTERFACE_ID, DETAILS_PREVIEW, WHITE + "Preview: " + END + truncateTagged(title.preview(player.getName()), 40));
+		ps.sendString(INTERFACE_ID, DETAILS_REQUIREMENT, ORANGE + "Requirement: " + END + wrapText(requirementText(title, unlocked), 52, 3));
+		ps.sendString(INTERFACE_ID, DETAILS_CATEGORY, GREY + "Category: " + END + categoryName(title.category));
+		ps.sendString(INTERFACE_ID, DETAILS_STATUS, GREY + "Status: " + END + (isEquipped ? GREEN + "Owned / Active" + END
+			: unlocked ? GREEN + "Owned" + END : title.isPurchasable() ? GOLD + "Purchasable" + END : RED + "Locked" + END));
+		ps.sendString(INTERFACE_ID, DETAILS_COST, title.isPurchasable() && !unlocked
+			? GREY + "Cost: " + END + GOLD + formatAmount(title.cost) + " " + title.currency.label + END : "");
+		String apply = isEquipped ? GREY + "Applied" + END : unlocked ? GREEN + "Apply" + END
+			: title.isPurchasable() ? GOLD + "Buy & Apply" + END : GREY + "Apply" + END;
+		ps.sendString(INTERFACE_ID, APPLY + 1, apply);
 	}
 
-	private static void setRowHidden(Player player, int rowIndex, boolean hidden) {
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_BG_START + rowIndex, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_ICON_START + rowIndex, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_TITLE_START + rowIndex, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_META_START + rowIndex, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_STATUS_START + rowIndex, hidden);
-		player.getPacketSender().setHidden(INTERFACE_ID, ROW_COIN_START + rowIndex, true);
+	/**
+	 * The title's own text for the list / header: suffix titles are authored with their joining ", " (", the Regal
+	 * Ravager") so the in-game name reads "Name, the Regal Ravager" -- shown on its own, the leading comma is dropped.
+	 */
+	private static String displayText(LoyaltyTitle title) {
+		return title.text.trim().replaceFirst("^((?:<[^>]+>)*)\\s*,\\s*", "$1");
+	}
+
+	private static void setColour(Player player, int component, int colour) {
+		player.getPacketSender().sendClientScript(45, "", INTERFACE_ID << 16 | component, colour);
 	}
 
 	private static void onRowSelect(Player player, int rowIndex) {
@@ -269,55 +239,17 @@ public class LoyaltyTitleInterface {
 		if (index >= titles.size())
 			return;
 		player.loyaltyTitleSelectedId = titles.get(index).id;
-		openDetails(player);
 		render(player);
 	}
 
-	private static void renderPreview(Player player) {
-		LoyaltyTitle title = selectedOrEquipped(player);
-		renderDetails(player, title);
-	}
-
-	private static void renderDetails(Player player, LoyaltyTitle title) {
-		if (player.hasDialogue())
-			return;
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_TITLE, "Title Details");
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_CURRENT, currentTitleText(player));
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_HINT, "");
-		if (title == null) {
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_PREVIEW, "Preview: " + player.getName());
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_CATEGORY, "Category: None");
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_STATUS, "Status: Select a title");
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_REQUIREMENT_LABEL, "Requirement");
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_REQUIREMENT, "Choose a title from the list above.");
-			player.getPacketSender().sendString(CHATBOX_ID, DETAILS_COST, "");
-			return;
-		}
-		boolean unlocked = LoyaltyTitleManager.isUnlocked(player, title);
-		boolean selected = player.loyaltyTitleSelectedId != null && player.loyaltyTitleSelectedId == title.id;
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_PREVIEW, "Preview: " + truncateTagged(title.preview(player.getName()), 56));
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_CATEGORY, "Category: " + categoryName(title.category));
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_STATUS, "Status: " + statusText(title, unlocked, selected));
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_REQUIREMENT_LABEL, "Requirement");
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_REQUIREMENT, wrapText(requirementText(title, unlocked), 66, 2));
-		player.getPacketSender().sendString(CHATBOX_ID, DETAILS_COST, title.isPurchasable() ? "Cost: <col=f2ce45>" + formatAmount(title.cost) + " " + title.currency.label + "</col>" : "");
-	}
-
-	private static LoyaltyTitle selectedOrEquipped(Player player) {
+	private static LoyaltyTitle selected(Player player) {
 		if (player.loyaltyTitleSelectedId != null) {
 			LoyaltyTitle selected = LoyaltyTitle.get(player.loyaltyTitleSelectedId);
 			if (selected != null)
 				return selected;
 			player.loyaltyTitleSelectedId = null;
 		}
-		return LoyaltyTitleManager.getEquipped(player);
-	}
-
-	private static String currentTitleText(Player player) {
-		LoyaltyTitle equipped = LoyaltyTitleManager.getEquipped(player);
-		if (equipped == null)
-			return "Equipped: None";
-		return "Equipped: " + truncateTagged(equipped.preview(player.getName()), 48);
+		return null;
 	}
 
 	private static void onApply(Player player) {
@@ -329,8 +261,7 @@ public class LoyaltyTitleInterface {
 		if (selected == null)
 			return;
 		LoyaltyTitleManager.select(player, selected);
-		if (player.hasInterfaceOpen(INTERFACE_ID, ToplevelComponent.MAINMODAL))
-			render(player);
+		render(player);
 	}
 
 	private static void onClear(Player player) {
@@ -355,31 +286,13 @@ public class LoyaltyTitleInterface {
 
 	private static String categoryName(LoyaltyTitle.Category category) {
 		return switch (category) {
-			case GENERAL -> "General title";
-			case PVM -> "PvM title";
-			case PVP -> "PvP title";
-			case MASTERY -> "Elite title";
-			case SKILLING -> "Skilling title";
-			case DONATOR -> "Donator title";
+			case GENERAL -> "General";
+			case PVM -> "PvM";
+			case PVP -> "PvP";
+			case MASTERY -> "Elite";
+			case SKILLING -> "Skilling";
+			case DONATOR -> "Donator";
 		};
-	}
-
-	private static String statusMarker(LoyaltyTitle title, boolean unlocked) {
-		if (unlocked)
-			return "<col=44d43a>X</col>";
-		if (title.isPurchasable())
-			return "<col=f2ce45>$</col>";
-		return "<col=777777>X</col>";
-	}
-
-	private static String statusText(LoyaltyTitle title, boolean unlocked, boolean selected) {
-		if (selected)
-			return "<col=f2ce45>Selected</col>";
-		if (unlocked)
-			return "<col=44d43a>Owned</col>";
-		if (title.isPurchasable())
-			return "<col=f2ce45>Purchasable</col>";
-		return "<col=e15c48>Locked</col>";
 	}
 
 	private static String requirementText(LoyaltyTitle title, boolean unlocked) {
@@ -388,10 +301,6 @@ public class LoyaltyTitleInterface {
 		if (unlocked)
 			return "Unlocked: " + title.requirement;
 		return title.requirement;
-	}
-
-	private static String shortPreview(LoyaltyTitle title, Player player) {
-		return truncateTagged(title.preview(player.getName()), 24);
 	}
 
 	private static String formatAmount(int amount) {

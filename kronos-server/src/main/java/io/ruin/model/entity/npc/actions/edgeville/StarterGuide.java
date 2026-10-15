@@ -1,5 +1,8 @@
 package io.ruin.model.entity.npc.actions.edgeville;
 
+import io.ruin.cache.Icon;
+
+import io.ruin.model.tutorial.StarterSelectInterface;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,6 +61,12 @@ public class StarterGuide {
 	// starter kit (500k coins, thousands of runes, etc). Capped so alt-account farming can't be
 	// used to funnel unlimited free starter wealth into a main account via trading.
 	public static final int MAX_STARTER_CLAIMS_PER_IP = 5;
+	/**
+	 * Onboarding faces (cache NPC defs rebranded 2026-10-14): the Zelus Guide (was King Arthur 8047, Santa hat + black
+	 * elegant) hands out the starter kit; the Zelus Security Warden (was King Arthur 3531, Justiciar + Elysian) gives the
+	 * home tour and sets up the Security PIN (SecurityPin uses the same id).
+	 */
+	public static final int GUIDE_NPC = 8047, WARDEN_NPC = 3531;
 	public static java.util.Map<String, Integer> ipClaimCounts = new java.util.HashMap<>();
 
 	// Accounts under this playtime are still plausibly "just registered" -- used only to gate
@@ -143,6 +152,8 @@ public class StarterGuide {
 	// interfaces (100 ticks = 60s) -- long enough for genuine customization, but bounded so
 	// a stuck/unresponsive client can't leave the new account locked indefinitely.
 	private static final int MAX_INTERFACE_WAIT_TICKS = 100;
+	/** The path-select screen (account type + difficulty in one) gets longer: 500 ticks = 5 minutes. */
+	private static final int MAX_PATH_SELECT_WAIT_TICKS = 500;
 
 	@SneakyThrows
 	public static void ecoTutorial(Player player) {
@@ -170,12 +181,12 @@ public class StarterGuide {
 			}
 
 			if (actuallyNew) {
-				player.getGameModeInterface().openIronmanSettingsInterface(player);
+				StarterSelectInterface.open(player);
 				int waitTicks = 0;
-				while (player.isVisibleInterface(1100) && waitTicks++ < MAX_INTERFACE_WAIT_TICKS) {
+				while (player.isVisibleInterface(StarterSelectInterface.INTERFACE) && waitTicks++ < MAX_PATH_SELECT_WAIT_TICKS) {
 					event.delay(1);
 				}
-				if (player.isVisibleInterface(1100)) {
+				if (player.isVisibleInterface(StarterSelectInterface.INTERFACE)) {
 					player.closeInterfaces();
 				}
 			}
@@ -226,22 +237,21 @@ public class StarterGuide {
 			}
 
 			if (player.getGameMode().isIronMan()) {
-				player.dialogue(new NPCDialogue(3525, text),
-						new NPCDialogue(3525, "Before you start, I'll give you items to start your ironman adventure."),
-						new NPCDialogue(3525, "And you're all set, good luck on your journey!"));
+				player.dialogue(new NPCDialogue(GUIDE_NPC, text),
+						new NPCDialogue(GUIDE_NPC, "Before you start, I'll give you items to start your ironman adventure."),
+						new NPCDialogue(GUIDE_NPC, "And you're all set, good luck on your journey!"));
 			} else {
-				player.dialogue(new NPCDialogue(3525, text),
-						new NPCDialogue(3525, "Before you start, I'll give you some items to start your adventure."),
-						new NPCDialogue(3525, "If you need any other items, be sure to check out the shops!"));
+				player.dialogue(new NPCDialogue(GUIDE_NPC, text),
+						new NPCDialogue(GUIDE_NPC, "Before you start, I'll give you some items to start your adventure."),
+						new NPCDialogue(GUIDE_NPC, "If you need any other items, be sure to check out the shops!"));
 			}
 
 			event.waitForDialogue(player);
-			Broadcast.WORLD.sendNews(player.getName() + " has just joined " + World.type.getWorldName()
-					+ ". For an early boost, use code ::zelus!");
-			// Direct message to the new player themselves -- the world broadcast above
-			// announces them to everyone else, but is easy for the new player to miss in
-			// a scrolling chatbox and reads as third-person, not an instruction to them.
-			player.sendMessage("<col=FF9900>Don't forget to type <col=FF0000>::zelus<col=FF9900> to claim your referral rewards!");
+			// One clean announcement for everyone (no ::zelus here -- that's for the new player only)...
+			Broadcast.WORLD.sendNews(Icon.NEWCOMER_SMILE,"<col=005f9e><shad=0>[Welcome]</shad></col> <col=ffffff><shad=0>" + player.getName()
+					+ "</shad></col> <col=005f9e>has just joined " + World.type.getWorldName() + "! Welcome them to the realm!</col>");
+			// ...and a personal tip, since the broadcast is easy to miss and reads as third-person.
+			player.sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> Type <col=00ff00><shad=0>::zelus</shad></col> to claim your exclusive starter referral rewards!");
 			// checkAllUnlocks otherwise only runs on kill/logout, so without this a
 			// launch-window player wouldn't see DAY ONE unlock until one of those --
 			// sweep it here too so eligible titles are visible right after tutorial.
@@ -256,12 +266,14 @@ public class StarterGuide {
 			PlayerCreation.createAnsSendWebhookMessageWithEmbed(dto);
 
 			if (startTutorial.get()) {
-				player.dialogue(new NPCDialogue(3531,
-						"Ah, I've been expecting you, " + player.getName() + "! Welcome to " + World.type.getWorldName()
-								+ " I can give you a quick tutorial, or you can just start playing if you'd prefer!"),
-						new OptionsDialogue("Show the tutorial?",
-								new Option("Show me the ropes.", () -> introCutscene(player)),
-								new Option("I've got this!", () -> {
+				player.dialogue(new NPCDialogue(WARDEN_NPC,
+						"Welcome to Zelus! Let me walk you through our core features and protect your account with a"
+								+ " Security PIN."),
+						new NPCDialogue(WARDEN_NPC, "I can show you around home in a quick tour, or you can jump straight"
+								+ " in. Type ::help any time for commands."),
+						new OptionsDialogue("Take the home tour?",
+								new Option("Show me around.", () -> introCutscene(player)),
+								new Option("I'll explore on my own.", () -> {
 									player.closeDialogue();
 									player.logoutListener = null;
 									VarPlayerRepository.ESCAPE_CLOSES.toggle(player);
@@ -280,82 +292,81 @@ public class StarterGuide {
 		player.startEvent((e) -> {
 			player.getPacketSender().sendClientScript(39, "i", 100);
 			VarPlayerRepository.LOCK_CAMERA.set(player, 1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Welcome to Zelus, where you'll embark on an unforgettable journey! Expect nothing less than an unparalleled experience. Best of luck on your adventure!"));
 			e.waitForDialogue(player);
 
 			player.getMovement().teleport(3089, 3511, 0);
 			e.delay(1);
 
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Starting off with Zelus's main bank! Here, you can take care of all your banking needs."));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3115, 3486, 0);
 			e.delay(2);
-			player.dialogue(new NPCDialogue(3531,
-					"Exhibit two, the Trading Post & Upgrade Station! This bustling marketplace is where players can buy and sell all kinds of items.<br>"
-							+
-							"Think of it as Zelus's version of the Grand Exchange."));
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Exhibit two, the Zelus Market and the Zelus Upgrader! The market is where players buy and sell all kinds"
+								+ " of items (::market works too), and the upgrader forges your gear into stronger versions."));
 			e.waitForDialogue(player);
-			player.dialogue(new NPCDialogue(3531,
-					"Right next to the Upgrade Station is the Item Workbench, where you will be able to place perks onto your equipment with minerals and enhancers from breaking down items."));
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Right next to the Upgrader is the Item Workbench, where you will be able to place perks onto your equipment with minerals and enhancers from breaking down items."));
 			e.waitForDialogue(player);
 			e.delay(2);
 			// construction portal
 			player.getMovement().teleport(3089, 3475, 0);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Now to make you feel at home... the POH portal! This is where you can begin building your dream estate. Visit the estate agent to purchase a house..."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
 			player.getMovement().teleport(3096, 3512, 0);
 
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Zelus's central shops! Here you'll find all the basic shops to assist your journey. Ironman players also have access to some of the shops, so be sure to explore everything this marketplace has to offer."));
 			e.waitForDialogue(player);
 			e.delay(2);
 
 			player.getMovement().teleport(3090, 3486, 0);
 
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Here, we have the Zelus teleport nexus.<br>" +
 							"Interacting with the nexus will open the teleport menu. Once the menu is open, select one of the many options and you'll be transported there."));
 			e.waitForDialogue(player);
 			e.delay(2);
 			player.getMovement().teleport(3105, 3513, 0);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Right behind you is the healing pool! This pool will rid you of any status conditions and heal you completely. You'll also be healed when you teleport home."));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3105, 3488, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Feeling belligerent already? Look no further than the Slayer Masters, who can assign you tasks. You can also loot the crystal, larran's, brimstone, and slayer chests here."));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3116, 3487, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"This is where you will find the perk master. Talk to him for information about obtaining and equipping perks! Perks play a huge role in Zelus, so check them out."));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3083, 3502, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"A little fairy magic here. Take full advantage of this resource!"));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3094, 3463, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Here is the Camel Statue, where certain boosts can be activated by offering gold. Note: These are global boosts. There is also a thieving area to the left!"));
 			e.waitForDialogue(player);
 			player.getMovement().teleport(3078, 3484, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"And finally, here are the point store NPCs! Spend your various points here."));
 			e.waitForDialogue(player);
 			e.delay(1);
 
 			player.getMovement().teleport(3123, 3479, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"And here's the gambling zone! Feeling lucky? Step inside and try your hand -- just remember, gambling carries the risk of losing whatever you stake."));
 			e.waitForDialogue(player);
 			e.delay(1);
@@ -377,7 +388,7 @@ public class StarterGuide {
 			player.getMovement().teleport(3092, 3494, 0);
 			player.getPacketSender().moveCameraToLocation(3092, 3494, 450, 0, 12);
 			player.getPacketSender().turnCameraToLocation(3092, 3494, 400, 0, 30);
-			player.dialogue(new NPCDialogue(3531,
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"Looks like you're ready to begin your adventure, good luck!"));
 			e.waitForDialogue(player);
 			e.delay(3);

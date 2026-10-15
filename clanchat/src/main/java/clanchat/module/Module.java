@@ -27,5 +27,11 @@ public class Module implements IModule {
 		FriendListHook.register();
 		ChatHook.register();
 		TickHook.register();
+		// Bounty Hunter never pairs members of the same clan chat (the public "help" channel doesn't count)
+		io.ruin.model.activities.wilderness.BountyHunter.clanLink = (a, b) -> {
+			String chat = Attributes.clan(a).joinedName;
+			return chat != null && !chat.isEmpty() && !chat.equalsIgnoreCase("help")
+				&& chat.equalsIgnoreCase(Attributes.clan(b).joinedName);
+		};
 	}
 }

@@ -18,16 +18,22 @@ import io.ruin.model.stat.StatType;
 //drains one of your target's Combat stats by the damage dealt. (65%)
 public class BandosGodsword implements Special {
 
+	// Wilderness Forge upgrade. Its spec uses seq 14458: a copy of 7642 with the forced
+	// right-hand item (the regular BGS) stripped, so the wielded model shows.
+	private static final int WARBRINGER_GODSWORD = 31576;
+	private static final int WARBRINGER_SPEC_ANIM = 14458;
+
 	private static StatType[] DRAIN_ORDER = {StatType.Defence, StatType.Strength, StatType.Attack, StatType.Prayer, StatType.Magic, StatType.Ranged};
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.equalsIgnoreCase("bandos godsword");
+		return name.equalsIgnoreCase("bandos godsword") || def.id == WARBRINGER_GODSWORD;
 	}
 
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
-		player.animate(player.getEquipment().getId(Equipment.SLOT_WEAPON) == 11804 ? 7642 : 7643);
+		int weaponId = player.getEquipment().getId(Equipment.SLOT_WEAPON);
+		player.animate(weaponId == 11804 ? 7642 : weaponId == WARBRINGER_GODSWORD ? WARBRINGER_SPEC_ANIM : 7643);
 		if (player.goldenBandosGodsword == true) {
 			player.graphics(1748);
 		} else {

@@ -46,8 +46,7 @@ public class ToAObjects {
 	private static boolean allRoomsCompleted(Player player) {
 		if (player.getCurrentToARaid() == null)
 			return false;
-		if (player.getName().equalsIgnoreCase("Kal") || player.getName().equalsIgnoreCase("rogero47")
-				|| player.getName().equalsIgnoreCase("Deathless"))
+		if (player.isAdmin()) // testing: admins can skip to the final room
 			return true;
 		return player.getCurrentToARaid().getRooms().get("baba").roomCompleted &&
 				player.getCurrentToARaid().getRooms().get("zebak").roomCompleted &&
@@ -161,7 +160,7 @@ public class ToAObjects {
 	}
 
 	private static void enterElidinisRoom(Player player, GameObject gameObject) {
-		if (!allRoomsCompleted(player) && !player.getName().equalsIgnoreCase("Kal1234")) {
+		if (!allRoomsCompleted(player)) {
 			player.dialogue(new PlayerDialogue("You must complete all rooms before entering the final boss room."));
 			return;
 		}
@@ -893,7 +892,7 @@ public class ToAObjects {
 						continue;
 					if (uniqueDrops.contains(item.getId()) && Objects.nonNull(p.getCurrentToARaid())) {
 						String message = p.getName() + " just received " + item.getDef().name + " ";
-						Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR, "<col=000000>" + p.getName(),
+						Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP, "<col=000000>" + p.getName(),
 								" just received " + item.getDef().descriptiveName + " from Tombs of Amascut ("
 										+ p.getCurrentToARaid().getInvocationLevel() + ")");
 
@@ -927,7 +926,7 @@ public class ToAObjects {
 						continue;
 					if (uniqueDrops.contains(item.getId())) {
 						String message = p.getName() + " just received " + item.getDef().name + " ";
-						Broadcast.WORLD.sendNewsDropMessage(p, Icon.ADMINISTRATOR, "<col=000000>" + p.getName(),
+						Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP, "<col=000000>" + p.getName(),
 								" just received " + item.getDef().descriptiveName + " from Tombs of Amascut ("
 										+ p.getCurrentToARaid().getInvocationLevel() + ")");
 

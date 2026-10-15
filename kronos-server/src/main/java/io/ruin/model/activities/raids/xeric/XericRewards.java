@@ -212,7 +212,7 @@ public class XericRewards {
 					p.getRaidRewards().add(item);
 					Loggers.logRaidsUnique(p.getName(), item.getDef().name, p.chambersofXericKills.getKills());
 
-					Broadcast.GLOBAL.sendNewsDropMessage(p, Icon.ADMINISTRATOR, p.getName(),
+					Broadcast.GLOBAL.sendNewsDropMessage(p, Icon.RARE_DROP, p.getName(),
 							" has just received " + Color.DARK_RED.wrap(item.getDef().name) + " from Chambers of Xeric!");
 //					RareDropEmbedMessage.sendDiscordMessage(p, message, item.getDef().name + " from Chambers of Xeric",
 //							item.getId(), p.chambersofXericKills.getKills());
@@ -238,7 +238,7 @@ public class XericRewards {
 						if (Random.get(100) == 0 && !bookRolled) {
 							Item item = new Item(30548, 1);
 							String message = p.getName() + " just received ";
-							Broadcast.GLOBAL.sendNewsDropMessage(p, Icon.ADMINISTRATOR, p.getName(), " has just received "
+							Broadcast.GLOBAL.sendNewsDropMessage(p, Icon.RARE_DROP, p.getName(), " has just received "
 									+ Color.DARK_RED.wrap(new Item(30548, 1).getDef().name) + " from Chambers of Xeric!");
 
 							RareDropHook.sendDiscordMessage(() -> {

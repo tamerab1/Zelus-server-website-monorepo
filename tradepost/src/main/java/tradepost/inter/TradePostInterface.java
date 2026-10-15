@@ -62,7 +62,7 @@ public class TradePostInterface {
 				return;
 			}
 
-			pTradePostInter.openTradePost(player);
+			ZelusMarket.open(player);
 		});
 
 		ObjectAction.register(46240, 2, (player, obj) -> {
@@ -79,9 +79,7 @@ public class TradePostInterface {
 				player.sendMessage("Your gamemode prevents you from accessing the trading post!");
 				return;
 			}
-			player.stringInput("Enter the name of the item you wish to search for.", s -> {
-				pTradePostInter.sendPageFromSearch(player, s);
-			});
+			ZelusMarket.open(player, 0);
 		});
 
 		NPCAction.register("Grand Exchange Clerk", "Exchange", (player, npc) -> {
@@ -99,7 +97,7 @@ public class TradePostInterface {
 				return;
 			}
 
-			pTradePostInter.openTradePost(player);
+			ZelusMarket.open(player);
 		});
 
 		ObjectAction.register(46240, "Collect Items", (player, obj) -> {
@@ -110,11 +108,16 @@ public class TradePostInterface {
 			TradePostCoffer.collectCoins(player);
 		});
 
+		ZelusMarket.register();
+
 		InterfaceHandler.register(MY_OFFERS_INVENTORY_WIDGET, handler -> {
 			handler.actions[0] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {
 					Item item = player.getInventory().get(slot);
+					if (item == null) {
+						return;
+					}
 					if (item.hasAttributes()) {
 						player.sendMessage("You can't offer upgraded items on the trading post.");
 						return;

@@ -13,6 +13,7 @@ import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.npc.PetNPC;
+import io.ruin.model.entity.npc.combatpet.AscendedBestiary;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.LockType;
 import io.ruin.model.inter.dialogue.*;
@@ -552,6 +553,30 @@ public enum Pet {
 	AGGY(34042, 16317, false), // Mad Angel pet
 	SYLVAROTH_SPROUT(60330, 30558, false), // Sylvaroth pet
 	BABY_DRACO(60391, 30566, false, 870), // Draco pet (David npc mining minigame), 1/870 from Draco kills
+	// Textured pet versions (textured_r4_pets.txt): npc copies 30573-30575 with animated textures
+	SERAPHIC_AGGY(31704, 30573, false),
+	BLOOMFIRE_SPROUT(31706, 30574, false),
+	EMBERSCALE_DRACO(31708, 30575, false),
+	// Tiered combat pets (.dev/cache-restore-tool/tier_pets.txt): T1 bronze/iron, T2 cobalt/cyan,
+	// T3 obsidian + cosmic texture. Combat + upgrades: combatpet.CombatPets / CombatPetUpgrades
+	DOUBT_T1(31710, 30576, false),
+	DOUBT_T2(31712, 30577, false),
+	DOUBT_T3(31714, 30578, false),
+	LUKE_T1(31716, 30579, false),
+	LUKE_T2(31718, 30580, false),
+	LUKE_T3(31720, 30581, false),
+	MALEDICTUS_T1(31722, 30582, false),
+	MALEDICTUS_T2(31724, 30583, false),
+	MALEDICTUS_T3(31726, 30584, false),
+	REANIMATED_TZHAAR_T1(31728, 30585, false),
+	REANIMATED_TZHAAR_T2(31730, 30586, false),
+	REANIMATED_TZHAAR_T3(31732, 30587, false),
+	JAL_XIL_T1(31734, 30588, false),
+	JAL_XIL_T2(31736, 30589, false),
+	JAL_XIL_T3(31738, 30590, false),
+	XAMPHUR_T1(31740, 30591, false),
+	XAMPHUR_T2(31742, 30592, false),
+	XAMPHUR_T3(31744, 30593, false),
 	;
 
 	public final int itemId, npcId, metaId;
@@ -640,8 +665,10 @@ public enum Pet {
 					e.delay(1);
 					continue;
 				}
-				if (player.callPet || !npc.getPosition().isWithinDistance(player.getPosition(), 8)
-						|| stuckBehindWallsTicks >= 25) {
+				// a fighting combat pet does its own movement (and leash) in CombatPetCombat
+				var fighting = npc.combatPet != null && npc.combatPet.isEngaged();
+				if (player.callPet || !fighting && (!npc.getPosition().isWithinDistance(player.getPosition(), 8)
+						|| stuckBehindWallsTicks >= 25)) {
 					player.callPet = false;
 					npc.getMovement().teleport(player.getAbsX(), player.getAbsY(), player.getHeight());
 					stuckBehindWallsTicks = 0;
@@ -657,6 +684,11 @@ public enum Pet {
 				if (player.showPet) {
 					player.showPet = false;
 					npc.setHidden(false);
+					e.delay(1);
+					continue;
+				}
+				if (fighting) {
+					stuckBehindWallsTicks = 0;
 					e.delay(1);
 					continue;
 				}
@@ -755,7 +787,7 @@ public enum Pet {
 			kc = " (<col=FC0101>" + nDef.killCounter.apply(player.player).getKills() + " KC<col=000000>)";
 		}
 
-		Broadcast.WORLD.sendNewsDropMessage(player.player, Icon.ADMINISTRATOR, "<col=000000>" + player.player.getName(),
+		Broadcast.WORLD.sendNewsDropMessage(player.player, Icon.PET_DROP, "<col=000000>" + player.player.getName(),
 				" received <shad=D80808>" + "a drop: " + StringUtils.capitalizeFirst(ObjType.get(itemId).name.toLowerCase())
 						+ "." + kc);
 
@@ -799,6 +831,10 @@ public enum Pet {
 			 */
 
 			ItemAction.registerInventory(pet.itemId, "drop", (player, item) -> {
+				if (AscendedBestiary.required(pet) && !AscendedBestiary.carries(player)) {
+					player.sendMessage(AscendedBestiary.MISSING_MESSAGE);
+					return;
+				}
 				if (player.wildernessLevel > 0) {
 					player.sendMessage(Color.RED.wrap("You cannot bring battle pets to the wilderness!"));
 					return;

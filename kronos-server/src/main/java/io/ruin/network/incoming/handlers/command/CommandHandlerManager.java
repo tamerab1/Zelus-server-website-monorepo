@@ -1,5 +1,7 @@
 package io.ruin.network.incoming.handlers.command;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.cache.*;
 import io.ruin.db.PlayerDatabase;
 import io.ruin.model.VoteHandler;

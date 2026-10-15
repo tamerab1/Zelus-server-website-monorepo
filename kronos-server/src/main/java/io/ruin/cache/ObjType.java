@@ -138,6 +138,17 @@ public class ObjType {
 
 	public String examine;
 
+	/**
+	 * The examine text to show players: item_info.json holds a "Name - Examine not set." placeholder for ~2.8k items
+	 * (and some have none), which read as broken in chat -- those fall back to a plain line naming the item.
+	 */
+	public String examineText() {
+		if (examine == null || examine.isEmpty() || examine.contains("Examine not set"))
+			return "It's " + (name != null && !name.isEmpty() && "aeiouAEIOU".indexOf(name.charAt(0)) >= 0 ? "an " : "a ")
+				+ (name == null ? "item" : name) + ".";
+		return examine;
+	}
+
 	public double weightInventory, weightEquipment;
 
 	public String descriptiveName;

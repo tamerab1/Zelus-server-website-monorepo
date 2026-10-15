@@ -28,6 +28,7 @@ public class EmblemTrader {
 		NPCAction.register(308, "Coffer", (player, npc) -> {
 			player.dialogue(new NPCDialogue(npc, "You have nothing in your coffer at this current time."));
 		});
+		NPCAction.register(308, "upgrade", (player, npc) -> io.ruin.model.content.wildernessforge.WildernessForge.open(player));
 		int[][] ancientArtifacts = {
 			{ ARCHAIC_EMBLEM_TIER_1, 500_000 },//Emblem
 			{ ARCHAIC_EMBLEM_TIER_2, 500_000 },//Emblem

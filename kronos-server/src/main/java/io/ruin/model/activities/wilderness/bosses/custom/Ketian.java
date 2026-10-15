@@ -1,5 +1,7 @@
 package io.ruin.model.activities.wilderness.bosses.custom;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.api.utils.StringUtils;
 import io.ruin.cache.Color;
@@ -29,7 +31,7 @@ public class Ketian extends NPCCombat {
 		npc.hitListener = new HitListener().postDefend(this::postDefend);
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			if (npc.getCombat().isDead()) {
-				Broadcast.WORLD.sendNews(Color.DARK_RED.wrap(("<shad>") + StringUtils.fixCaps(killer.player.getName() + " has Killed superior walker at Wilderness Level: " + killer.player.wildernessLevel)));
+				Broadcast.WORLD.sendNews(Icon.WILDY_SKULL,Color.DARK_RED.wrap(("<shad>") + StringUtils.fixCaps(killer.player.getName() + " has Killed superior walker at Wilderness Level: " + killer.player.wildernessLevel)));
 				npc.remove();
 			}
 		};

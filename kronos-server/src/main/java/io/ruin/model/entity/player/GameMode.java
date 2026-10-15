@@ -86,8 +86,6 @@ public enum GameMode {
 			return;
 		}
 
-		if (player.getName().equalsIgnoreCase("Dan Gleebles"))
-			return;
 		if (player.getPosition().regionId() == 11576) {
 			return;
 		}

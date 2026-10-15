@@ -1,5 +1,7 @@
 package io.ruin.model.activities.wilderness;
 
+import io.ruin.cache.Icon;
+
 import com.google.common.collect.Lists;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.Random;
@@ -529,7 +531,7 @@ public class Wilderness {
 				message += NumberUtils.formatNumber(drop.getAmount()) + " x " + drop.getDef().name;
 			else
 				message += drop.getDef().name;
-			Broadcast.WORLD.sendNews(player, message + " from " + npc.getDef().descriptiveName + "!");
+			Broadcast.WORLD.sendNews(player, Icon.RARE_DROP, null, message + " from " + npc.getDef().descriptiveName + "!");
 			player.sendMessage("You have been skulled and tele-blocked because of your loot!");
 			player.getCombat().skullNormal();
 			player.getCombat().teleblock();

@@ -13,7 +13,8 @@ import java.util.List;
 public class FreeGearLoadoutKits {
 
 	private static final String SOURCE_PLAYER = "333";
-	private static final int KIT_LIMIT = 4;
+	/** The Battle Presets screen (1155) shows a 2 x 3 grid. */
+	private static final int KIT_LIMIT = 6;
 
 	private static String cachedPath = "";
 	private static long cachedLastModified = Long.MIN_VALUE;

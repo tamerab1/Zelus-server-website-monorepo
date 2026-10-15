@@ -355,7 +355,14 @@ public class Item {
 		boolean stack;
 		int moved;
 		int hash = getAttributeHash();
-		if (hash == 0) {
+		// a spawned (phantom-only) stack moves as a stack, like a plain one (was: 1 moved, whole stack deleted)
+		boolean phantomStack = hash != 0 && ItemContainerG.stacksWithAttributes(attributes)
+			&& (container.forceStack || getDef().stackable);
+		if (phantomStack) {
+			stack = true;
+			amount = Math.min(amount, this.amount);
+			moved = toContainer.add(addId, amount, attributes);
+		} else if (hash == 0) {
 			if ((stack = container.forceStack || getDef().stackable))
 				amount = Math.min(amount, this.amount);
 			else
@@ -420,18 +427,9 @@ public class Item {
 		ObjType def = ObjType.get(id);
 		if (def == null)
 			return;
-		String examine = def.examine == null ? "This item has no examine" : def.examine;
+		String examine = def.examineText();
 		if (amount >= 100000)
 			examine = "" + StringUtils.formatNumber(amount) + "x " + def.name + ".";
-		if (id == 32000) {
-			player.getLootsViewer().updateInterface(player, LootsTables.HOLIDAY_MYSTERY_BOX);
-		}
-		if(id == 32002) {
-			player.getLootsViewer().updateInterface(player, LootsTables.SUMMER_MYSTERY_BOX);
-		}
-		if(id == 30763) {
-			player.getLootsViewer().updateInterface(player, LootsTables.FORGOTTEN_LOCKBOX);
-		}
 		if (AttributeExtensions.hasAttribute(this, AttributeTypes.ASTRADOX_WAND)) {
 			examine = "The Astradox Wand. A raid-exclusive wand humming with residual magic power.";
 		} else if (AttributeExtensions.hasAttribute(this, AttributeTypes.ACCURSED_BOW)) {
@@ -456,15 +454,9 @@ public class Item {
 				player.sendMessage("This item is augmented with a " + StringUtils.getFormattedEnumName(type) + " augment.");
 			}
 		}
-		if (id == 30430) {
-			player.getLootsViewer().updateInterface(player, LootsTables.REASON_ULTRA_POINT_BOX);
-		}
-		if (id == 30461 || id == 30446 || id == 4810) {
-			player.getLootsViewer().updateInterface(player, LootsTables.REGULAR_MYSTERY_BOX);
-		}
-		if (id == 30462 || id == 30449 || id == 30448) {
-			player.getLootsViewer().updateInterface(player, LootsTables.REGULAR_MYSTERY_BOX);
-		}
+		LootsTables boxLoot = LootsTables.forBox(id);
+		if (boxLoot != null)
+			player.getLootsViewer().updateInterface(player, boxLoot, def.name);
 		if (player.debug) {
 			player.sendMessage("Attributes: " + Joiner.on(",").withKeyValueSeparator("=").join(attributes));
 			player.sendMessage("Attribute hash: " + getAttributeHash());

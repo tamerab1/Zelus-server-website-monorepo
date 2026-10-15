@@ -1,5 +1,7 @@
 package io.ruin.network.incoming.handlers.command;
 
+import io.ruin.model.skills.magic.spells.modern.ModernTeleport;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -243,10 +245,8 @@ public class CommandHandler {
 		}
 		player.getMovement().startTeleport(event -> {
 			event.setCancelCondition(() -> player.teleportListener != null && !player.teleportListener.allow(player));
-			player.animate(3864);
-			player.graphics(1039);
 			player.privateSound(200, 0, 10);
-			event.delay(2);
+			ModernTeleport.playEffect(event, player);
 			player.getMovement().teleport(x, y, z);
 		});
 	}
@@ -262,10 +262,8 @@ public class CommandHandler {
 				player.sendMessage("The crystal of memories stores your last location as an available teleport.");
 				player.crystalMemoryPosition = player.getPosition().copy();
 			}
-			player.animate(3864);
-			player.graphics(1039);
 			player.privateSound(200, 0, 10);
-			event.delay(2);
+			ModernTeleport.playEffect(event, player);
 			player.getMovement().teleport(x, y, z);
 		});
 	}

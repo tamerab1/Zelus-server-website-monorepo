@@ -1,5 +1,7 @@
 package economy.protection.bounty;
 
+import io.ruin.cache.Icon;
+
 import economy.protection.antifarm.IdentityGuard;
 import economy.protection.audit.AuditLogger;
 import io.ruin.HooksV2.Result;
@@ -118,7 +120,7 @@ public class BountyContractsManager {
 
 		String display = DISPLAY_NAMES.get(bossName);
 		setter.sendMessage("[Bounty] You added " + pkpAmount + " PKP to the bounty on " + display + " (pool: " + contract.pkpAmount + " PKP).");
-		Broadcast.GLOBAL.sendPlain("[Bounty] A " + pkpAmount + " PKP bounty has been placed on " + display + "!");
+		Broadcast.GLOBAL.sendPlain(Icon.WANTED_SKULL.tag() + " " + "[Bounty] A " + pkpAmount + " PKP bounty has been placed on " + display + "!");
 		return true;
 	}
 
@@ -163,7 +165,7 @@ public class BountyContractsManager {
 
 		killer.PvmPoints += pvmPoints;
 		killer.sendMessage("[Bounty] Contract fulfilled! +" + pvmPoints + " PVM Points from the " + npcName + " bounty.");
-		Broadcast.GLOBAL.sendPlain("[Bounty] " + killer.getName() + " has fulfilled the bounty contract on " + npcName + "!");
+		Broadcast.GLOBAL.sendPlain(Icon.WANTED_SKULL.tag() + " " + "[Bounty] " + killer.getName() + " has fulfilled the bounty contract on " + npcName + "!");
 	}
 
 	/** True if any bounty contributor shares an HWID or /24 subnet with {@code killer} (self-funded farming). */

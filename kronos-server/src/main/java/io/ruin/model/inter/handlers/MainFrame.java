@@ -40,6 +40,8 @@ public class MainFrame {
 				}
 			};
 			h.actions[35] = (SimpleAction) p -> p.getCombat().toggleSpecial();// 45 is wiki
+			// 54-58: the Teleports orb (AddTeleportOrb); 57 is its click layer
+			h.actions[57] = (SimpleAction) TeleportNexus::openAnywhere;
 		});
 		InterfaceHandler.register(Interface.CHAT_BAR, h -> {
 			h.actions[7] = (OptionAction) (player, option) -> {

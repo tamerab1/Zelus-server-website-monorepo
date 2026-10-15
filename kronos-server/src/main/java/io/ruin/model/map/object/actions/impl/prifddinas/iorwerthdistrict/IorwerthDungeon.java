@@ -1,5 +1,7 @@
 package io.ruin.model.map.object.actions.impl.prifddinas.iorwerthdistrict;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.model.entity.npc.NPC;
@@ -31,7 +33,7 @@ public class IorwerthDungeon {
 			if (npc.getPosition().getRegion().id == 12994 || npc.getPosition().getRegion().id == 12738 || npc.getPosition().getRegion().id == 12993) {
 				npc.deathEndListener = (DeathListener.SimpleKiller) killer -> {
 					if (Random.rollDie(250, 1)) {
-						Broadcast.WORLD.sendNews(Color.RED.wrap(("<shad>") + killer.player.getName() + " Has recieved a hunllef spawn!"));
+						Broadcast.WORLD.sendNews(Icon.SERVER_EVENT,Color.RED.wrap(("<shad>") + killer.player.getName() + " Has recieved a hunllef spawn!"));
 						new NPC(HUNLLEF).spawn(killer.player.getPosition().getX(), killer.player.getPosition().getY(), killer.player.getPosition().getZ(), 5).getCombat().setAllowRespawn(false);
 					}
 				};

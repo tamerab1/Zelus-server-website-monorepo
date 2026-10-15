@@ -59,6 +59,7 @@ public class TabEquipment {
 			return;
 		if (option == 10) {
 			item.examine(player);
+			ItemStatsViewer.open(player, item.getId());
 			return;
 		}
 		int i = option - 1;

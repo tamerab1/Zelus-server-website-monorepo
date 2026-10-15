@@ -43,6 +43,8 @@ public class BankInterface {
 				}
 			};
 			h.actions[120] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
+			// The old "?" tutorial button (script 3369 repointed to the Presets icon/option in the cache)
+			h.actions[4] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
 			h.actions[13] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {

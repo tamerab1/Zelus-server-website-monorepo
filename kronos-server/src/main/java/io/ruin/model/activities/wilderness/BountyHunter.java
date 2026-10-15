@@ -63,6 +63,12 @@ public class BountyHunter {
 	private static final Bounds EDGEVILLE_BOUNDS = new Bounds(2993, 3523, 3124, 3597, -1);
 
 	/**
+	 * Social links that must never be paired (win-trading / target boosting): set by the friendlist and clanchat modules
+	 * at start-up (core can't see them). friendLink(a, b) = a has b as a friend; clanLink(a, b) = same clan chat.
+	 */
+	public static volatile java.util.function.BiPredicate<Player, Player> friendLink = (a, b) -> false, clanLink = (a, b) -> false;
+
+	/**
 	 * Register Event & Interface.
 	 */
 
@@ -151,6 +157,8 @@ public class BountyHunter {
 	public transient Player target;
 	protected transient int returnTicks;
 	private transient int returnTimeoutTicks;
+	/** The last overlay lines sent, so the 12s refresh only resends what changed (no HUD flicker / spam). */
+	private transient String sentName, sentInfo;
 
 	public Targeting targeting = Targeting.ALL;
 	private TimedList recentTargets = new TimedList();
@@ -361,7 +369,15 @@ public class BountyHunter {
 			return false;
 		if (player.getIpInt() == searching.getIpInt())
 			return false;
-		if (Math.abs(player.getCombat().getLevel() - searching.getCombat().getLevel()) > 5)
+		// friends (either way) or clan-mates
+		if (friendLink.test(player, searching) || friendLink.test(searching, player) || clanLink.test(player, searching))
+			return false;
+		// same computer (alts on another connection)
+		if (player.hwid != null && !player.hwid.isEmpty() && player.hwid.equals(searching.hwid))
+			return false;
+		// combat bracket by depth: the shallower of the two Wilderness levels, between 3 and 15
+		int bracket = Math.max(3, Math.min(15, Math.min(player.wildernessLevel, searching.wildernessLevel)));
+		if (Math.abs(player.getCombat().getLevel() - searching.getCombat().getLevel()) > bracket)
 			return false;
 		if (target != null)
 			return false;
@@ -432,8 +448,7 @@ public class BountyHunter {
 		} else {
 			wild = "Safe";
 		}
-		player.getPacketSender().sendString(Interface.WILDERNESS_OVERLAY, 47, skullImg + target.getName());
-		player.getPacketSender().sendString(Interface.WILDERNESS_OVERLAY, 48, distanceColor + wild + ", Cmb " + target.getCombat().getLevel());
+		sendOverlay(skullImg + target.getName(), distanceColor + wild + ", Cmb " + target.getCombat().getLevel());
 
 		/**
 		 * Target wealth
@@ -465,16 +480,25 @@ public class BountyHunter {
 		VarPlayerRepository.BOUNTY_HUNTER_EMBLEM.set(player, highestEmblem == null ? 0 : emblemTier(highestEmblem.getId()) + 1);
 	}
 
+	private void sendOverlay(String name, String info) {
+		if (!name.equals(sentName)) {
+			player.getPacketSender().sendString(Interface.WILDERNESS_OVERLAY, 47, name);
+			sentName = name;
+		}
+		if (!info.equals(sentInfo)) {
+			player.getPacketSender().sendString(Interface.WILDERNESS_OVERLAY, 48, info);
+			sentInfo = info;
+		}
+	}
+
 	private void clearTargetInfo() {
-		player.getPacketSender().sendString(90, 47, "None");
-		player.getPacketSender().sendString(90, 48, "Level: -----");
+		sendOverlay("None", "Level: -----");
 		VarPlayerRepository.BOUNTY_HUNTER_RISK.set(player, 0);
 		VarPlayerRepository.BOUNTY_HUNTER_EMBLEM.set(player, 0);
 	}
 
 	private void updatePenaltyInfo(long minutes) {
-		player.getPacketSender().sendString(90, 47, "<col=ff0000>---</col>");
-		player.getPacketSender().sendString(90, 48, minutes + " " + (minutes > 1 ? "mins" : "min"));
+		sendOverlay("<col=ff0000>---</col>", minutes + " " + (minutes > 1 ? "mins" : "min"));
 		VarPlayerRepository.BOUNTY_HUNTER_RISK.set(player, 0);
 		VarPlayerRepository.BOUNTY_HUNTER_EMBLEM.set(player, 0);
 	}

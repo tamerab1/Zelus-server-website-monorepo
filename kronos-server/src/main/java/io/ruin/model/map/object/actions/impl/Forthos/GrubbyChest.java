@@ -1,5 +1,7 @@
 package io.ruin.model.map.object.actions.impl.Forthos;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.model.World;
 import io.ruin.model.item.Item;
@@ -87,7 +89,7 @@ public class GrubbyChest {
 					 */
 					Item loot = RARE_LOOT[Random.get(RARE_LOOT.length - 1)];
 					player.getInventory().add(loot.getId(), loot.getAmount());
-					Broadcast.GLOBAL.sendNews(player.getName() + " just received " + loot.getDef().descriptiveName + " from the Grubby Chest!");
+					Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY,player.getName() + " just received " + loot.getDef().descriptiveName + " from the Grubby Chest!");
 				} else {
 					/**
 					 * Regular loot

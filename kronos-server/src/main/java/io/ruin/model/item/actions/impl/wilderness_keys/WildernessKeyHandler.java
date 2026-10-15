@@ -31,7 +31,12 @@ public class WildernessKeyHandler {
 		ItemAction.registerInventory(KEY_ID, "Check", WildernessKeyHandler::check);
 		ItemAction.registerInventory(KEY_ID, "Destroy", WildernessKeyHandler::destroyKey);
 		ItemObjectAction.register(43484, KEY_ID, (player, item, obj) -> open(player, item));
+		// the spawned chest is the multiloc 43486 (shows as 43484 "Loot Chest"): using a key on it picks that key
+		ItemObjectAction.register(43486, KEY_ID, (player, item, obj) -> open(player, item));
+		// the Edgeville Loot Chest is a coffer (HomeHandler): using a key on it opens that key
+		ItemObjectAction.register(29087, KEY_ID, (player, item, obj) -> open(player, item));
 		LoginListener.register(WildernessKeyHandler::setSkull);
+		LootKeyInterface.register();
 	}
 
 	public static boolean handlePlayerKill(Player player, List<Item> lostItems) {
@@ -52,11 +57,43 @@ public class WildernessKeyHandler {
 		return true;
 	}
 
+	/** ::testlootkey [1-3]: a key loaded with simulated PvP spoils, to test the Loot Key window and its claims. */
+	public static void giveTestKey(Player player, int tier) {
+		List<Item> spoils = new ArrayList<>();
+		spoils.add(new Item(13307, tier * 50_000));     // Blood money
+		spoils.add(new Item(385, 10));                  // Sharks
+		spoils.add(new Item(6685, 4));                  // Saradomin brew(4)
+		spoils.add(new Item(12695, 2));                 // Super combat potion(4)
+		spoils.add(new Item(4151, 1));                  // Abyssal whip
+		if (tier >= 2) {
+			spoils.add(new Item(13652, 1));             // Dragon claws
+			spoils.add(new Item(9244, 200));            // Dragon bolts (e)
+			spoils.add(new Item(11828, 1));             // Armadyl chestplate
+		}
+		if (tier >= 3) {
+			spoils.add(new Item(11802, 1));             // Armadyl godsword
+			spoils.add(new Item(11830, 1));             // Armadyl chainskirt
+			spoils.add(new Item(21003, 1));             // Elder maul
+			spoils.add(new Item(12825, 1));             // Arcane spirit shield
+		}
+		if (!handlePlayerKill(player, spoils)) {
+			player.sendMessage("No test key given: you need a standard game mode account, a free inventory slot and fewer than 5 keys.");
+			return;
+		}
+		player.sendMessage("Test loot key (tier " + tier + ", " + spoils.size() + " stacks) added: Check it, or use it on a Loot Chest.");
+	}
+
 	private static void destroyKey(Player player, Item key) {
 		player.dialogue(new OptionsDialogue("Are you sure you want to destroy the key and its contents?",
 			new Option("Yes, destroy the key.", () -> {
-				key.remove();
 				int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
+				if (!player.getInventory().contains(key))
+					return;
+				key.remove();
+				if (!LootKeyInterface.validIndex(player, keyIndex)) {
+					setSkull(player);
+					return;
+				}
 				List<Item> itemsToLose = List.of(player.wildernessKeyItems[keyIndex]);
 				player.wildernessKeyItems[keyIndex] = null;
 				setSkull(player);
@@ -84,35 +121,41 @@ public class WildernessKeyHandler {
 			new Option("Nevermind.")));
 	}
 
+	/** Check: the Loot Key window with Bank All / Take to Inventory (claims are refused in the Wilderness or combat). */
 	private static void check(Player player, Item key) {
-		int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
-		if (keyIndex == -1)
+		if (player.getGameMode() != GameMode.STANDARD) {
+			player.sendMessage("You can't open wilderness keys on this game mode.");
 			return;
-		List<Item> items = List.of(player.wildernessKeyItems[keyIndex]);
-		for (Item item : items) {
-			player.sendMessage(item.getAmount() + "x " + item.getDef().name);
 		}
+		LootKeyInterface.open(player, AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key), true);
 	}
 
 	public static boolean handleDyingWithKey(Player player, Player dead, Item key) {
 		if (key.getId() != KEY_ID)
 			return false;
 		key.remove();
-		if (getFreeKeyIndex(player) == -1) {
+		if (!LootKeyInterface.validIndex(dead, AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key)))
+			return true;
+		if (getFreeKeyIndex(player) == -1 || !player.getInventory().hasRoomFor(KEY_ID, 1)) { // no slot: the loot drops for the killer
 			int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
 			for (Item item : dead.wildernessKeyItems[keyIndex]) {
-				new GroundItem(item).owner(player).position(dead.getPosition()).spawn();
+				if (item != null)
+					new GroundItem(item).owner(player).position(dead.getPosition()).spawn();
 			}
 			dead.wildernessKeyItems[keyIndex] = null;
 			return true;
 		}
-		int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
+		int deadIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
 		List<Item> lostItems = new ArrayList<>();
-		for (Item item : dead.wildernessKeyItems[keyIndex]) {
+		for (Item item : dead.wildernessKeyItems[deadIndex]) {
 			if (item == null)
 				continue;
 			lostItems.add(item);
 		}
+		dead.wildernessKeyItems[deadIndex] = null;
+		// the killer's key takes one of the KILLER's free slots: reusing the dead player's slot number overwrote
+		// the loot of a key the killer already held in that slot (and left two keys pointing at one stash)
+		int keyIndex = getFreeKeyIndex(player);
 		player.wildernessKeyItems[keyIndex] = lostItems.toArray(new Item[0]);
 
 		Item k = new Item(KEY_ID, 1);
@@ -176,37 +219,7 @@ public class WildernessKeyHandler {
 			player.sendMessage("You can't open wilderness keys on this game mode.");
 			return false;
 		}
-		int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
-		List<Item> lootedItems = List.of(player.wildernessKeyItems[keyIndex]);
-//		RareDropEmbedMessage.openWildernessKeyLog(player, lootedItems);
-
-		var items = new JSONArray();
-		for (Item item : lootedItems) {
-			var itemJson = new JSONObject();
-				itemJson.put("id", item.getId());
-				itemJson.put("name", item.getDef().getName());
-				itemJson.put("amount", item.getAmount());
-			items.put(itemJson);
-		}
-
-		var jsonObject = new JSONObject();
-			jsonObject.put("player", player.getName());
-			jsonObject.put("looted_items", items);
-
-		WildernessKeyHook.openWildernessKeyLog(jsonObject);
-
-		for (Item item : player.wildernessKeyItems[keyIndex]) {
-			int added = player.getBank().add(item.getId(), item.getAmount());
-			if (added <= 0) {
-				new GroundItem(item).owner(player).position(player.getPosition()).spawn();
-				player.sendMessage("Dropped " + item.getAmount() + "x " + item.getDef().name + " to the ground as you don't have space.");
-			} else {
-				player.sendMessage("Added " + item.getAmount() + "x " + item.getDef().name + " to your bank.");
-			}
-		}
-		key.remove();
-		player.wildernessKeyItems[keyIndex] = null;
-		setSkull(player);
+		LootKeyInterface.open(player, AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key), true);
 		return true;
 	}
 
@@ -220,51 +233,32 @@ public class WildernessKeyHandler {
 		return null;
 	}
 
+	/**
+	 * The overhead skull: loot keys first, then the combat skull (kill-spree / high-risk / Forinthry, as set by
+	 * PlayerCombat), then a red skull for an active WANTED bounty. Runs every tick from depleteSkull, so it only sends an
+	 * appearance update when the icon actually changes (it used to resend every tick and flatten the spree and
+	 * high-risk skulls to the plain one).
+	 */
 	public static void setSkull(Player player) {
-		int keyCount = countKeys(player);
-		if (keyCount > 5)
-			keyCount = 5;
-		if (keyCount > 0) {
-			player.getAppearance().setSkullIcon(14 + keyCount);
-		} else player.getAppearance().setSkullIcon(player.getCombat().isSkulled() ? 0 : -1);
+		int keyCount = Math.min(5, countKeys(player));
+		var combat = player.getCombat();
+		int icon;
+		if (keyCount > 0)
+			icon = 14 + keyCount;
+		else if (combat.highRiskSkull || combat.skullDelay > 0)
+			icon = io.ruin.model.combat.KillingSpree.overheadId(player);
+		else if (combat.forinthySkullDelay > 0)
+			icon = 3;
+		else if (player.wantedBountyAmount > 0)
+			icon = 1;
+		else
+			icon = -1;
+		if (player.getAppearance().getSkullIcon() != icon)
+			player.getAppearance().setSkullIcon(icon);
 	}
 
 
 	public static boolean open(Player player) {
-		Item key = getKey(player);
-		if (key == null)
-			return false;
-		int keyIndex = AttributeExtensions.getCharges(AttributeTypes.WILDERNESS_KEY, key);
-		List<Item> lootedItems = List.of(player.wildernessKeyItems[keyIndex]);
-		for (Item item : player.wildernessKeyItems[keyIndex]) {
-			int added = player.getBank().add(item.getId(), item.getAmount());
-			if (added <= 0) {
-				new GroundItem(item).owner(player).position(player.getPosition()).spawn();
-				player.sendMessage("Dropped " + item.getAmount() + "x " + item.getDef().name + " to the ground as you don't have space.");
-			} else {
-				player.sendMessage("Added " + item.getAmount() + "x " + item.getDef().name + " to your bank.");
-			}
-		}
-//		RareDropEmbedMessage.openWildernessKeyLog(player, lootedItems);
-
-		var items = new JSONArray();
-		for (Item item : lootedItems) {
-			var itemJson = new JSONObject();
-				itemJson.put("id", item.getId());
-				itemJson.put("name", item.getDef().getName());
-				itemJson.put("amount", item.getAmount());
-			items.put(itemJson);
-		}
-
-		var jsonObject = new JSONObject();
-			jsonObject.put("player", player.getName());
-			jsonObject.put("looted_items", items);
-
-		WildernessKeyHook.openWildernessKeyLog(jsonObject);
-
-		key.remove();
-		player.wildernessKeyItems[keyIndex] = null;
-		setSkull(player);
-		return true;
+		return open(player, getKey(player));
 	}
 }

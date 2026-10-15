@@ -154,7 +154,7 @@ public class VoteMysteryBox {
 		player.claimedBox = true;
 		player.sendMessage("You get " + reward.getDef().descriptiveName + " from the Vote Mystery Box.");
 		if (reward.lootBroadcast != null)
-			Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Voting Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+			Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Voting Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 		player.getBox().clear();
 		if (player.isVisibleInterface(Interface.SUPER_MYSTERY_BOX))
 			player.closeInterface(ToplevelComponent.MAINMODAL);

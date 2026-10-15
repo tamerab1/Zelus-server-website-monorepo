@@ -96,12 +96,16 @@ public class VenatorBow {
 	}
 
 
+	public static final int SKYHUNTER_BOW = 31650;
+
 	public static void handlePassiveEffect(Player player, NPC target) {
 		Item weapon = player.getEquipment().get(Equipment.SLOT_WEAPON);
-		if (weapon == null || weapon.getId() != 27610)
+		if (weapon == null || (weapon.getId() != 27610 && weapon.getId() != SKYHUNTER_BOW))
 			return;
-		if (AttributeExtensions.hasAttribute(weapon, AttributeTypes.CHARGES)) {
-			int charges = AttributeExtensions.getCharges(AttributeTypes.CHARGES, weapon);
+		// Skyhunter bow (Wilderness Forge upgrade) bounces without needing ancient essence charges.
+		boolean skyhunter = weapon.getId() == SKYHUNTER_BOW;
+		if (skyhunter || AttributeExtensions.hasAttribute(weapon, AttributeTypes.CHARGES)) {
+			int charges = skyhunter ? 1 : AttributeExtensions.getCharges(AttributeTypes.CHARGES, weapon);
 			if (charges < 1)
 				return;
 			if (player.inMulti()) {

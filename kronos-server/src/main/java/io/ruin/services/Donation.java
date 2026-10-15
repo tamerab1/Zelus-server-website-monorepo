@@ -1,5 +1,7 @@
 package io.ruin.services;
 
+import io.ruin.cache.Icon;
+
 
 import io.ruin.Server;
 import io.ruin.cache.Color;
@@ -55,28 +57,28 @@ public class Donation implements Runnable {
 					case 1065: // 10 bond
 						player.getInventory().add(30279, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 10$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 10$ Bond!");
 						//player.storeAmountSpent += 10 * quantity;
 
 						break;
 					case 1066: // 25 bond
 						player.getInventory().add(30282, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 25$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 25$ Bond!");
 						//player.storeAmountSpent += 25 * quantity;
 
 						break;
 					case 1067: // 50 bond
 						player.getInventory().add(30285, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 50$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 50$ Bond!");
 						//player.storeAmountSpent += 50 * quantity;
 
 						break;
 					case 1068: // 100 bond
 						player.getInventory().add(30288, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 100$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 100$ Bond!");
 						//player.storeAmountSpent += 100 * quantity;
 
 
@@ -84,14 +86,14 @@ public class Donation implements Runnable {
 					case 1069: // 250 bond
 						player.getInventory().add(30291, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 250$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 250$ Bond!");
 						//player.storeAmountSpent += 250 * quantity;
 
 						break;
 					case 1070: // 500 bond
 						player.getInventory().add(30294, quantity);
 						player.sendMessage("Thank you for donating, Your items have been placed in your Inventory");
-						Broadcast.WORLD.sendNews("[News]" + player.getName() + " has purchased " + quantity + "x 500$ Bond!");
+						Broadcast.WORLD.sendNews(Icon.DONATOR_ICON,"[News]" + player.getName() + " has purchased " + quantity + "x 500$ Bond!");
 						//player.storeAmountSpent += 500 * quantity;
 
 
@@ -108,8 +110,8 @@ public class Donation implements Runnable {
 					World.startEvent(e -> {
 						for (int i = 0; i < (paid / 100); i++) {
 							new NPC(1).spawn(1777, 3572, 0, Direction.WEST, 1).getCombat().setAllowRespawn(false);
-							Broadcast.GLOBAL.sendNews("<shad=000000>" + "Judge of yama Has just spawned! use ::donboss to get there!</shad>");
-							Broadcast.GLOBAL.sendNews("<shad=000000>" + "Multiple donation bosses pending! 5 minutes until the next one spawns!</shad>");
+							Broadcast.GLOBAL.sendNews(Icon.DONATOR_ICON,"<shad=000000>" + "Judge of yama Has just spawned! use ::donboss to get there!</shad>");
+							Broadcast.GLOBAL.sendNews(Icon.DONATOR_ICON,"<shad=000000>" + "Multiple donation bosses pending! 5 minutes until the next one spawns!</shad>");
 							amount = 100;
 							e.delay(500);
 						}
@@ -118,7 +120,7 @@ public class Donation implements Runnable {
 					amount -= paid;
 					if (amount <= 0) {
 						new NPC(1).spawn(1777, 3572, 0, Direction.WEST, 1).getCombat().setAllowRespawn(false);
-						Broadcast.GLOBAL.sendNews("<shad=000000>" + "Judge of yama Has just spawned! use ::donboss to get there!</shad>");
+						Broadcast.GLOBAL.sendNews(Icon.DONATOR_ICON,"<shad=000000>" + "Judge of yama Has just spawned! use ::donboss to get there!</shad>");
 						amount = 100;
 					}
 				}

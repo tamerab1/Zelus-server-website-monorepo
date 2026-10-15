@@ -37,7 +37,7 @@ public class ThirdAgeMysteryBox {
 			item.remove();
 			player.getInventory().add(reward);
 			player.sendFilteredMessage(Color.DARK_GREEN.wrap("You open the mystery box to find a " + reward.getDef().name + "."));
-			Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "3rd Age Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+			Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "3rd Age Mystery Box", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});
 

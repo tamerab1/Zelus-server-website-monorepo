@@ -93,7 +93,7 @@ public class SummerBoss extends NPCCombat {
 		player.getInventory().addOrDrop(reward.getId(), reward.getAmount());
 
 		if (reward.lootBroadcast != null)
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR,
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP,
 					"<col=000000>" + player.getName(),
 					" just received " + reward.getDef().descriptiveName + " from the " + npc.getDef().name + "!");
 		player.summerPoints += Random.get(10, 20);

@@ -80,28 +80,28 @@ public class DonatorBond {
 	public static void checkDonatorStatus(Player player) {
 		if (player.totalDonated >= 10 && player.totalDonated < 50 && !player.isGroups(SecondaryGroup.DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.DONATOR_ICON, "<col=db5b58><shad=383737>" + player.getName(), "<col=db5b58><shad=383737> has just become a donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=db5b58><shad=383737>" + player.getName(), "<col=db5b58><shad=383737> has just become a donator!");
 		} else if (player.totalDonated >= 50 && player.totalDonated < 100 && !player.isGroups(SecondaryGroup.SUPER_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.SUPER_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SUPER_DONATOR, "<col=1E90FF><shad=383737>" + player.getName(), "<col=1E90FF><shad=383737> has just become a super donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=1E90FF><shad=383737>" + player.getName(), "<col=1E90FF><shad=383737> has just become a super donator!");
 		} else if (player.totalDonated >= 100 && player.totalDonated < 250 && !player.isGroups(SecondaryGroup.ELITE_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.ELITE_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.ELITE_DONATOR, "<col=27ae60><shad=383737>" + player.getName(), "<col=27ae60><shad=383737> has just become an elite donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=27ae60><shad=383737>" + player.getName(), "<col=27ae60><shad=383737> has just become an elite donator!");
 		} else if (player.totalDonated >= 250 && player.totalDonated < 400 && !player.isGroups(SecondaryGroup.NOBLE_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.NOBLE_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.NOBLE_DONATOR, "<col=8D501B><shad=383737>" + player.getName(), "<col=8D501B><shad=383737> has just become a noble donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=8D501B><shad=383737>" + player.getName(), "<col=8D501B><shad=383737> has just become a noble donator!");
 		} else if (player.totalDonated >= 400 && player.totalDonated < 700 && !player.isGroups(SecondaryGroup.GOLD_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.GOLD_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.GOLD_DONATOR, "<col=F7E521><shad=383737>" + player.getName(), "<col=F7E521><shad=383737> has just become a gold donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=F7E521><shad=383737>" + player.getName(), "<col=F7E521><shad=383737> has just become a gold donator!");
 		} else if (player.totalDonated >= 700 && player.totalDonated < 1000 && !player.isGroups(SecondaryGroup.PLATINUM_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.PLATINUM_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.PLATINUM_DONATOR, "<col=78757A><shad=383737>" + player.getName(), "<col=78757A><shad=383737> has just become a platinum donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=78757A><shad=383737>" + player.getName(), "<col=78757A><shad=383737> has just become a platinum donator!");
 		} else if (player.totalDonated >= 1000 && player.totalDonated < 1750 && !player.isGroups(SecondaryGroup.LEGENDARY_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.LEGENDARY_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.LEGENDARY_DONATOR, "<col=E121F7><shad=383737>" + player.getName(), "<col=E121F7><shad=383737> has just become a legendary donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=E121F7><shad=383737>" + player.getName(), "<col=E121F7><shad=383737> has just become a legendary donator!");
 		} else if (player.totalDonated >= 1750 && !player.isGroups(SecondaryGroup.SUPREME_DONATOR)) {
 			player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.SUPREME_DONATOR.id));
-			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SUPREME_DONATOR, "<col=FC7306><shad=383737>" + player.getName(), "<col=FC7306><shad=383737> has just become a supreme donator!");
+			Broadcast.WORLD.sendNewsDropMessage(player, Icon.BOND, "<col=FC7306><shad=383737>" + player.getName(), "<col=FC7306><shad=383737> has just become a supreme donator!");
 		}
 	}
 }

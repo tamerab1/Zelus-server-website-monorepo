@@ -50,7 +50,7 @@ public class StaffBounty {
         });
         EVENT_ACTIVE = true;
         player.sendMessage("The staff bounty event has been toggled on and all support, moderator and administrator deaths have been reset.");
-        Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Staff Bounty", "The hunt has begun! Staff members will now be worth additional bounties. Good luck, everyone!");
+        Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Staff Bounty", "The hunt has begun! Staff members will now be worth additional bounties. Good luck, everyone!");
     }
 
     private static int supportDeaths;
@@ -72,7 +72,7 @@ public class StaffBounty {
         player.sendMessage("The staff bounty event has been toggled off.");
         updateDeathCounters();
         int staffBounty = (supportDeaths *= SUPPORT_KILL_VALUE) + (moderatorDeaths *= MODERATOR_KILL_VALUE) + (administratorDeaths *= ADMINISTRATOR_KILL_VALUE);
-        Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Staff Bounty", "The staff hunt has ended. There was a total of " + NumberUtils.formatNumber(staffBounty) + " blood money made collectively. Well done, everyone!");
+        Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Staff Bounty", "The staff hunt has ended. There was a total of " + NumberUtils.formatNumber(staffBounty) + " blood money made collectively. Well done, everyone!");
     }
 
     private static void updateDeathCounters() {

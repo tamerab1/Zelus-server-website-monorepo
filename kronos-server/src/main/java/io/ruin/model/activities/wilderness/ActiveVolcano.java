@@ -73,7 +73,7 @@ public class ActiveVolcano {
 					}
 					ACTIVE = next;
 					String eventMessage = "There's been a disturbance reported at the Volcano!";
-					Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Wilderness Event", eventMessage);
+					Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Wilderness Event", eventMessage);
 					broadcastEvent(eventMessage);
 					addBoulder();
 					/* stop event after 15 minutes */
@@ -176,11 +176,11 @@ public class ActiveVolcano {
 			boulder = null;
 			if (success) {
 				String successMessage = "The Volcano has been subdued! Well done everyone!";
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Wilderness Event", successMessage);
+				Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Wilderness Event", successMessage);
 				broadcastEvent(successMessage);
 			} else {
 				String failedMessage = "The Volcano has erupted! Help subdue it next time for blood money!";
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS, "Wilderness Event", failedMessage);
+				Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "Wilderness Event", failedMessage);
 				broadcastEvent(failedMessage);
 			}
 		}

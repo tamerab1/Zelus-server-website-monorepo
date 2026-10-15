@@ -1,5 +1,7 @@
 package io.ruin.model.activities.wilderness;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.api.utils.StringUtils;
 import io.ruin.cache.Color;
@@ -66,7 +68,7 @@ public class WalkerSpawnHandler {
 						chancemod = 150;
 					}
 					if (Random.rollDie(chancemod, 1)) {
-						Broadcast.WORLD.sendNews(Color.DARK_RED.wrap(("<shad>") + StringUtils.fixCaps(killer.player.getName() + " has got a superior walker at Wilderness Level: " + killer.player.wildernessLevel)));
+						Broadcast.WORLD.sendNews(Icon.WILDY_SKULL,Color.DARK_RED.wrap(("<shad>") + StringUtils.fixCaps(killer.player.getName() + " has got a superior walker at Wilderness Level: " + killer.player.wildernessLevel)));
 						new NPC(SUPERIOR_WALKER).spawn(killer.player.getPosition().getX(), killer.player.getPosition().getY(), killer.player.getPosition().getZ(), 5).getCombat().setAllowRespawn(false);
 					}
 				};

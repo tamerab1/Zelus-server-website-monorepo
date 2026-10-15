@@ -47,7 +47,7 @@ public interface NexDropI {
 					rolled.getId() == 26378 ||
 					rolled.getId() == 26380 ||
 					rolled.getId() == 30545) {
-				Broadcast.WORLD.sendNewsDropMessage(plr, Icon.ADMINISTRATOR, "<col=000000>%s".formatted(plr.getName()),
+				Broadcast.WORLD.sendNewsDropMessage(plr, Icon.RARE_DROP, "<col=000000>%s".formatted(plr.getName()),
 						" received <shad=D80808>%dx %s</shad> from a %s! (<col=FC0101>%d KC<col=000000>)"
 								.formatted(
 										rolled.getAmount(),

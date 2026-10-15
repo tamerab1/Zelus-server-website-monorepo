@@ -13,6 +13,10 @@ public class DifficultyChanger {
 	public static final int MAX_DIFFICULTY_CHANGES = 3;
 
 	public static void HandleDifficultyChangeDialogue(Player player) {
+		if (player.getPlayMode() == PlayMode.PVP_MODE) {
+			player.dialogue(new NPCDialogue(PARTY_PETE, "PvP Mode accounts always play on the base rate, so I can't change your difficulty."));
+			return;
+		}
 		if (player.getDifficultyChangeCount() >= MAX_DIFFICULTY_CHANGES) {
 			player.dialogue(new NPCDialogue(PARTY_PETE, "You are unable to change your game mode on this account as you have reached the maximum number of changes."));
 			return;
@@ -48,6 +52,10 @@ public class DifficultyChanger {
 
 	public static void HandleDifficultyChange(Player player, Difficulty mode) {
 		player.startEvent(event -> {
+			if (player.getPlayMode() == PlayMode.PVP_MODE && mode != Difficulty.EASY) {
+				player.dialogue(new NPCDialogue(PARTY_PETE, "PvP Mode accounts always play on the base rate, so I can't change your difficulty."));
+				return;
+			}
 			if (player.getDifficultyChangeCount() >= MAX_DIFFICULTY_CHANGES) {
 				player.dialogue(new NPCDialogue(PARTY_PETE, "You are unable to change your game mode on this account as you have reached the maximum number of changes."));
 				return;

@@ -1,6 +1,7 @@
 package tradepost.module;
 
 import core.module.api.IModule;
+import tradepost.TradePostFeatured;
 import tradepost.TradePostProcess;
 import tradepost.hook.Attributes;
 import tradepost.hook.Commands;
@@ -17,6 +18,7 @@ public class Module implements IModule {
 	public void start() {
 		Attributes.register();
 		PlayerHook.register();
+		TradePostFeatured.load();
 		TradePostInterface.register();
 		TradePostProcess.register();
 		TradePostNotifyGame.register();

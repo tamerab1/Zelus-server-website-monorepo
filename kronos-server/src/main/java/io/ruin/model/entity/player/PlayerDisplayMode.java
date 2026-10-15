@@ -93,7 +93,8 @@ public class PlayerDisplayMode {
 		player.openInterface(ToplevelComponent.EQUIPMENT_TAB_AREA);
 		player.openInterface(ToplevelComponent.PRAYER_TAB_AREA);
 		player.openInterface(ToplevelComponent.SPELLBOOK_TAB_AREA);
-		player.openInterface(ToplevelComponent.ACCOUNT_MANAGEMENT_TAB_AREA);
+		// the Account Management tab slot holds the PK Hub (questtab.dashboard)
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.openPkHub(player);
 
 		var socialComponent = VarPlayerRepository.FRIENDS_AND_IGNORE_TOGGLE.get(player) == 0
 				? Interface.FRIENDS_LIST
@@ -111,6 +112,7 @@ public class PlayerDisplayMode {
 		player.openInterface(ToplevelComponent.EMOTE_TAB_AREA);
 		player.openInterface(ToplevelComponent.COMBAT_TAB_AREA);
 		player.openInterface(ToplevelComponent.QUEST_TAB_AREA);
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.openDefault(player);
 		player.openInterface(ToplevelComponent.MUSIC_TAB_AREA);
 
 		updateDisplayEvents(player);

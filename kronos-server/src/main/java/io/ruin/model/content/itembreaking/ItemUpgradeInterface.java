@@ -27,7 +27,10 @@ public class ItemUpgradeInterface {
 		perkAttachmentActive = false;
 		if (perk == null)
 			perk = ItemBreakPerks.VALUES[0];
-		player.openInterface(ToplevelComponent.MAINMODAL, 1126);
+		// 1153 replaced the old 1126 screen. Re-opening it (e.g. after every upgrade) re-sent the scrollbar script,
+		// which jumps the recipe list back to the top: when it's already showing, just redraw in place.
+		if (!player.isVisibleInterface(WorkbenchHub.INTERFACE))
+			WorkbenchHub.openFrame(player);
 		player.openInterface(ToplevelComponent.SIDEMODAL, 1128);
 		player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1128 << 16, 93, 4, 7, 0, -1,
 				"Select", "", "", "", "");
@@ -66,12 +69,25 @@ public class ItemUpgradeInterface {
 		}
 		selectedItem = item;
 		update(player);
+		sendPerkAttachment(player);
 	}
 
-	private void selectPerk(Player player, ItemBreakPerks perk) {
+	void selectPerk(Player player, ItemBreakPerks perk) {
 		this.perk = perk;
-		selectedItem = null;
+		resetSession();
 		update(player);
+	}
+
+	/**
+	 * Ends the current attachment: no item, no ingredients, out of "attachment" mode. Without this, picking another
+	 * recipe left perkAttachmentActive set, so every inventory click was treated as an ingredient and no new item could
+	 * be selected (the screen looked stuck until it was closed).
+	 */
+	private void resetSession() {
+		selectedItem = null;
+		perkAttachmentActive = false;
+		minimumIngredientsAdded = false;
+		itemsInPerkAttachment.clear();
 	}
 
 	public static String getItemAttachments(Item item) {
@@ -137,74 +153,13 @@ public class ItemUpgradeInterface {
 	}
 
 	private void update(Player player) {
-		// System.out.println("Updating interface");
-		for (int i = 0; i < 3; i++) {
-			player.getPacketSender().sendClientScript(
-					149, "IviiiIsssss",
-					1126 << 16 | 24 + i, 524 + i,
-					4, 7, 1, -1, "", "", "", "", "");
-			player.getPacketSender().sendItems(
-					-1,
-					24 + i,
-					524 + i,
-					new Item(-1));
-		}
-		if (perk == null) {
-			player.getPacketSender().setHidden(1126, 72, true);
-			player.getPacketSender().setHidden(1126, 24, true);
-			player.getPacketSender().setHidden(1126, 19, true);
-		} else {
-			player.getPacketSender().setHidden(1126, 72, false);
-			player.getPacketSender().setHidden(1126, 24, false);
-			player.getPacketSender().setHidden(1126, 19, false);
-			player.getPacketSender().sendString(1126, 119, perk.name);
-			player.getPacketSender().sendString(1126, 118,
-					ItemBreakPerks.getDescription(perk) + calculateBaseLevelChances(perk));
-			StringBuilder cost = new StringBuilder();
-			for (int i = 0; i < perk.cost.size(); i++) {
-				player.getPacketSender().sendClientScript(
-						149, "IviiiIsssss",
-						1126 << 16 | 24 + i, 524 + i,
-						4, 7, 1, -1, "", "", "", "", "");
-				player.getPacketSender().sendItems(
-						-1,
-						24 + i,
-						524 + i,
-						perk.cost.get(i));
-			}
-		}
-		if (selectedItem != null) {
-			player.getPacketSender().setHidden(1126, 23, false);
-			player.getPacketSender().sendString(1126, 23, getItemAttachments(selectedItem));
-			player.getPacketSender().sendClientScript(
-					149, "IviiiIsssss",
-					1126 << 16 | 33, 343,
-					4, 7, 1, -1, "", "", "", "", "");
-			player.getPacketSender().sendItems(
-					-1,
-					33,
-					343,
-					selectedItem);
-			player.getPacketSender().sendString(1126, 28,
-					"Item Upgrades " + getTotalAttachments(selectedItem) + "/" + getMaxAttachments(selectedItem));
-		} else {
-			player.getPacketSender().setHidden(1126, 23, true);
-			player.getPacketSender().sendClientScript(
-					149, "IviiiIsssss",
-					1126 << 16 | 31, 343,
-					4, 7, 1, -1, "", "", "", "", "");
-			player.getPacketSender().sendItems(
-					-1,
-					31,
-					343,
-					new Item(-1));
-		}
+		WorkbenchHub.refresh(player);
 	}
 
 	List<Item> itemsInPerkAttachment = new ArrayList<>();
 	boolean perkAttachmentActive = false;
 
-	private void sendPerkAttachment(Player player) {
+	void sendPerkAttachment(Player player) {
 		if (selectedItem == null) {
 			player.sendMessage("You must select an item to attach a perk to.");
 			return;
@@ -218,9 +173,6 @@ public class ItemUpgradeInterface {
 		minimumIngredientsAdded = false;
 		itemsInPerkAttachment.clear();
 		refreshPerkAttachment(player, true);
-
-		player.getPacketSender().sendString(1126, 162, calculateBaseLevelChance(perk));
-		player.getPacketSender().setHidden(1126, 122, false);
 	}
 
 	static String calculateBaseLevelChance(ItemBreakPerks perk) {
@@ -243,51 +195,11 @@ public class ItemUpgradeInterface {
 	}
 
 	private void refreshPerkAttachment(Player player, boolean clear) {
-		if (clear) {
-			player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | 148, 832, 4, 7, 0, -1,
-					"", "", "", "", "");
-			player.getPacketSender().sendItems(-1, 148, 832, new Item(-1));
-			player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | 152, 833, 4, 7, 0, -1,
-					"", "", "", "", "");
-			player.getPacketSender().sendItems(-1, 152, 833, new Item(-1));
-			player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | 156, 834, 4, 7, 0, -1,
-					"", "", "", "", "");
-			player.getPacketSender().sendItems(-1, 156, 834, new Item(-1));
-			player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | 161, 835, 4, 7, 0, -1,
-					"", "", "", "", "");
-			player.getPacketSender().sendItems(-1, 161, 835, new Item(-1));
-		} else {
-			int startingComponent = 148;
-			int startingContainer = 832;
-			for (Item item : itemsInPerkAttachment) {
-				if (item.getId() == OLD_ENHANCER || item.getId() == MODERN_ENHANCER || item.getId() == INNOVATIVE_ENHANCER) {
-					player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | 161, 835, 4, 7, 0, -1,
-							"", "", "", "", "");
-					player.getPacketSender().sendItems(-1, 161, 835, item);
-				} else {
-					player.getPacketSender().sendClientScript(149, "IviiiIsssss", 1126 << 16 | startingComponent,
-							startingContainer, 4, 7, 1, -1,
-							"", "", "", "", "");
-					player.getPacketSender().sendItems(-1, startingComponent, startingContainer, item);
-					startingComponent += 4;
-					startingContainer++;
-				}
-			}
-		}
+		WorkbenchHub.refresh(player);
 	}
 
 	private void refreshLevelChances(Player player) {
-		int levelTwoChance = ItemBreakPerks.getChance(player, perk.level2Chance, perk.cost, itemsInPerkAttachment);
-		int levelThreeChance = ItemBreakPerks.getChance(player, perk.level3Chance, perk.cost, itemsInPerkAttachment);
-		int levelFourChance = ItemBreakPerks.getChance(player, perk.level4Chance, perk.cost, itemsInPerkAttachment);
-		int levelFiveChance = ItemBreakPerks.getChance(player, perk.level5Chance, perk.cost, itemsInPerkAttachment);
-		StringBuilder chances = new StringBuilder();
-		chances.append("Lv. 1: ").append("100").append("%<br>");
-		chances.append("Lv. 2: ").append(levelTwoChance).append("%<br>");
-		chances.append("Lv. 3: ").append(levelThreeChance).append("%<br>");
-		chances.append("Lv. 4: ").append(levelFourChance).append("%<br>");
-		chances.append("Lv. 5: ").append(levelFiveChance).append("%<br>");
-		player.getPacketSender().sendString(1126, 162, chances.toString());
+		WorkbenchHub.refresh(player);
 	}
 
 	private int getEnhancersNeeded(ItemBreakPerks perk) {
@@ -322,7 +234,7 @@ public class ItemUpgradeInterface {
 
 	boolean minimumIngredientsAdded = false;
 
-	private void addMinimumIngredients(Player player) {
+	void addMinimumIngredients(Player player) {
 		if (minimumIngredientsAdded)
 			return;
 		if (!ItemBreakPerks.canUpgrade(player, perk)) {
@@ -346,7 +258,7 @@ public class ItemUpgradeInterface {
 	private void closePerkAttachment(Player player) {
 		perkAttachmentActive = false;
 		minimumIngredientsAdded = false;
-		player.getPacketSender().setHidden(1126, 122, true);
+		WorkbenchHub.refresh(player);
 	}
 
 	private void offerIngredients(Player player, Item item) {
@@ -484,7 +396,7 @@ public class ItemUpgradeInterface {
 		return mineralsInPerkAttachment;
 	}
 
-	private void confirmUpgrade(Player player) {
+	void confirmUpgrade(Player player) {
 		if (this.selectedItem == null) {
 			player.sendMessage("Please select the item first.");
 			return;
@@ -560,13 +472,10 @@ public class ItemUpgradeInterface {
 						ItemBreakPerks.getChance(player, perk.level3Chance, perk.cost, itemsInPerkAttachment),
 						ItemBreakPerks.getChance(player, perk.level2Chance, perk.cost, itemsInPerkAttachment)
 					);
-					// Clear the item in the perk attachment
-					itemsInPerkAttachment.clear();
-					// Refresh and reopen the UI
-					refreshPerkAttachment(player, true);
+					// Done: clear the session (item, ingredients, attachment mode) and reopen ready for the next upgrade;
+					// the recipe stays selected, so the next item click starts a fresh attachment
+					resetSession();
 					open(player, false);
-					sendPerkAttachment(player);
-					addMinimumIngredients(player);
 				}),
 				new Option("Nevermind.")));
 
@@ -609,6 +518,7 @@ public class ItemUpgradeInterface {
 	}
 
 	public static void register() {
+		WorkbenchHub.register();
 		InterfaceHandler.register(1128, (interfaceHandler -> {
 			interfaceHandler.actions[0] = new InterfaceAction() {
 

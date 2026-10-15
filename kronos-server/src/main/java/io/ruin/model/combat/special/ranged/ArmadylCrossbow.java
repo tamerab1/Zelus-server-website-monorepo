@@ -21,7 +21,7 @@ public class ArmadylCrossbow implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("armadyl crossbow");
+		return name.contains("armadyl crossbow") || def.id == 31574; // Skyfall crossbow (Wilderness Forge)
 	}
 
 	@Override

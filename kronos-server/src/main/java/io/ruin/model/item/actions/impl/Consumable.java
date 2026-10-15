@@ -283,6 +283,7 @@ public class Consumable {
 		registerPotion(PotionDrink.DIVINE_MAGIC, p -> {
 			p.getStats().get(StatType.Magic).boost(4, 0);
 		});
+		registerPotion(PotionDrink.DIVINE_WRATH, Consumable::wrathBoost);
 		registerPotion(PotionDrink.DIVINE_BATTLEMAGE, p -> {
 			p.getStats().get(StatType.Magic).boost(4, 0);
 			p.getStats().get(StatType.Defence).boost(5, 0.15);
@@ -818,6 +819,8 @@ public class Consumable {
 			divineRange(player, potion);
 		if (potion == PotionDrink.DIVINE_MAGIC || potion == PotionDrink.DIVINE_BATTLEMAGE)
 			divineMagic(player, potion);
+		if (potion == PotionDrink.DIVINE_WRATH)
+			divineWrath(player);
 		return true;
 	}
 
@@ -876,6 +879,31 @@ public class Consumable {
 					player.getStats().get(StatType.Defence).boost(5, 0.15);
 					event.delay(25);
 				}
+			}
+		});
+	}
+
+	/** Divine wrath potion boosts: well above divine super combat (5 + 15%) and divine ranging (4 + 10%). */
+	private static void wrathBoost(Player player) {
+		player.getStats().get(StatType.Attack).boost(8, 0.20);
+		player.getStats().get(StatType.Strength).boost(8, 0.20);
+		player.getStats().get(StatType.Defence).boost(8, 0.20);
+		player.getStats().get(StatType.Ranged).boost(7, 0.18);
+		player.getStats().get(StatType.Magic).boost(5, 0.10);
+	}
+
+	private static void divineWrath(Player player) {
+		if (player.getHp() <= 10) {
+			player.sendMessage("You need over 10 Hitpoints before you can drink this.");
+			return;
+		}
+		World.startEvent(event -> {
+			player.graphics(560);
+			player.hit(new Hit().fixedDamage(10));
+			event.delay(1);
+			for (int i = 0, n = io.ruin.model.content.bonds.BondPerks.boostCycles(player, 20); i < n; i++) {
+				wrathBoost(player);
+				event.delay(25);
 			}
 		});
 	}

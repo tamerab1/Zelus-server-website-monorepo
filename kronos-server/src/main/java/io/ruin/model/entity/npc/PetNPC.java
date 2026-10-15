@@ -1,6 +1,8 @@
 package io.ruin.model.entity.npc;
 
 import io.ruin.model.combat.Hit;
+import io.ruin.model.entity.npc.combatpet.CombatPet;
+import io.ruin.model.entity.npc.combatpet.CombatPets;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.actions.impl.pet.Pet;
 import net.rsprot.protocol.game.outgoing.info.AvatarPriority;
@@ -11,16 +13,24 @@ public class PetNPC extends NPC {
 
 	public Pet petType;
 
+	/// Assist-combat state when this pet type is registered in CombatPets, otherwise null.
+	public final CombatPet combatPet;
+
 	public PetNPC(Player owner, Pet pet) {
 		super(pet.npcId);
 		this.owner = owner;
 		this.petType = pet;
 		init();
+		this.combatPet = CombatPets.create(this);
 	}
 
 	@Override
 	public void process() {
 		super.process();
+		if (combatPet != null) {
+			combatPet.process();
+			return;
+		}
 		if (petType.ordinal() < 25) {
 			if (getCombat() != null && (owner.wildernessLevel > 1 || getCombat().getTarget() != null && getCombat().getTarget().getPosition().distance(getPosition()) > 28)) {
 				getCombat().reset();

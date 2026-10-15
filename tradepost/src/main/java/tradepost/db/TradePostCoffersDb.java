@@ -21,16 +21,75 @@ public class TradePostCoffersDb {
 	public static record CofferEntry(int id, int itemId, int itemAmount) {
 	}
 
+	/** Login: loads the coin balance (the database is the source of truth; memory is only for display). */
 	public static void loadCoffer(Player player) {
-		var pTradePost = player.tradePost();
-		Server.gameDb.execute(con -> {
-			try (var statement = con.prepareStatement("SELECT * FROM tradepost_coffer WHERE username = ?")) {
-				statement.setString(1, player.getName());
-				statement.execute();
-				var results = statement.getResultSet();
-				if (results.next()) {
-					pTradePost.cofferCoins = BigInteger.valueOf(results.getLong("amount"));
+		Continuations.schedule(() -> {
+			var amount = fetchCoins(player.uuid()).await();
+			if (amount != null && player.isOnline()) {
+				player.tradePost().cofferCoins = BigInteger.valueOf(amount);
+			}
+		});
+	}
+
+	public static Continuation<Long> fetchCoins(String owner) {
+		return Server.gameDb.exec(con -> {
+			try (var statement = con.prepareStatement("SELECT amount FROM tradepost_coffer WHERE username = ?")) {
+				statement.setString(1, owner);
+				try (var results = statement.executeQuery()) {
+					return results.next() ? Math.max(0L, results.getLong("amount")) : 0L;
 				}
+			} catch (Exception e) {
+				log.error("Unable to read coffer coins for: " + owner, e);
+				return null;
+			}
+		});
+	}
+
+	/**
+	 * Atomic withdrawal: only succeeds when the stored balance covers it (one conditional UPDATE), so two claims,
+	 * a stale in-memory balance or a sale landing mid-claim can never pay out more than was really earned.
+	 */
+	public static Continuation<Boolean> withdrawCoins(String owner, long amount) {
+		return Server.gameDb.exec(con -> {
+			try (var statement = con.prepareStatement(
+					"UPDATE tradepost_coffer SET amount = amount - ? WHERE username = ? AND amount >= ?")) {
+				statement.setLong(1, amount);
+				statement.setString(2, owner);
+				statement.setLong(3, amount);
+				return statement.executeUpdate() == 1;
+			} catch (Exception e) {
+				log.error("Unable to withdraw " + amount + " coffer coins for: " + owner, e);
+				return false;
+			}
+		});
+	}
+
+	public static Continuation.Void addCoinsCont(String owner, BigInteger amount) {
+		return Server.gameDb.exec(con -> {
+			try (var statement = con.prepareStatement(
+					"INSERT INTO tradepost_coffer (username, amount) VALUES (?, ?) " +
+							"ON DUPLICATE KEY UPDATE amount = amount + ?")) {
+				statement.setString(1, owner);
+				statement.setLong(2, amount.longValueExact());
+				statement.setLong(3, amount.longValueExact());
+				statement.executeUpdate();
+			} catch (Exception e) {
+				log.error("Unable to add " + amount + " coffer coins for: " + owner, e);
+			}
+		});
+	}
+
+	/** Deletes one collection-box row; true only if this call really removed it (so it is paid out exactly once). */
+	public static Continuation<Boolean> deleteEntry(String owner, CofferEntry entry) {
+		return Server.gameDb.exec(con -> {
+			try (var statement = con.prepareStatement(
+					"DELETE FROM tradepost_collections WHERE player_name = ? AND id = ?")) {
+				statement.setString(1, owner);
+				statement.setInt(2, entry.id());
+				return statement.executeUpdate() == 1;
+			} catch (Exception e) {
+				log.error("Unable to delete coffer entry " + entry + " for " + owner, e);
+				return false;
 			}
 		});
 	}

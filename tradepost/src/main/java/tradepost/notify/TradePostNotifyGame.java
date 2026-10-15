@@ -7,6 +7,7 @@ import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
 import tradepost.*;
+import tradepost.inter.ZelusMarket;
 
 public class TradePostNotifyGame {
 
@@ -42,12 +43,8 @@ public class TradePostNotifyGame {
 			return;
 		}
 		var itemDef = new Item(item).getDef();
-		if (MathUtils.gt(1, amount)) {
-			owner.sendMessage("[Trade Post] You have sold " + amount + " x "
-					+ itemDef.name + " for " + price + " each.");
-		} else {
-			owner.sendMessage("[Trade Post] You have sold " + itemDef.name + " for " + price + ".");
-		}
+		owner.sendMessage(ZelusMarket.TAG + "Sold " + (MathUtils.gt(amount, BigInteger.ONE) ? amount + " x " : "")
+				+ itemDef.name + " for " + ZelusMarket.coins(price) + " each. Collect your coins in My Shop.");
 	}
 
 	private static void notifyBought(String ownerUid, int item, BigInteger amount,
@@ -57,27 +54,19 @@ public class TradePostNotifyGame {
 			return;
 		}
 		var itemDef = new Item(item).getDef();
+		owner.sendMessage(ZelusMarket.TAG + "Bought " + (MathUtils.gt(amount, BigInteger.ONE) ? amount + " x " : "")
+				+ itemDef.name + " for " + ZelusMarket.coins(priceEach) + " each.");
 
-		if (MathUtils.gt(1, amount)) {
-			owner.sendMessage("[Trade Post] You have bought " + amount + " x	" + itemDef.name + " for "
-					+ priceEach + " each.");
-		} else {
-			owner.sendMessage("[Trade Post] You have bought " + itemDef.name
-					+ " for " + priceEach + ".");
-		}
-
-		if (MathUtils.gt(0, remainder)) {
-			owner.sendMessage(
-					"[Trade Post] Remainder of " + remainder + " coins have been added to the coffer.");
+		if (MathUtils.gt(remainder, BigInteger.ZERO)) {
+			owner.sendMessage(ZelusMarket.TAG + "The unused " + ZelusMarket.coins(remainder)
+					+ " coins from your buy offer are in your collection box.");
 		}
 	}
 
 	public static void notifyAdded(Player player, TradePostOffer offer) {
 		var itemDef = new Item(offer.getItemId()).getDef();
-		var coinsAmtTxt = NumberUtils.formatNumber(offer.priceEach());
-		var itemAmtTxt = NumberUtils.formatNumber(offer.amount);
-		player.sendMessage(
-				"[Trade Post] Listed item for buy: " + itemAmtTxt + " x " + itemDef.name +
-						" for " + coinsAmtTxt + " coins.");
+		player.sendMessage(ZelusMarket.TAG + (offer.isSell() ? "Listed " : "Placed a buy offer for ")
+				+ NumberUtils.formatNumber(offer.amount) + " x " + itemDef.name + " at "
+				+ ZelusMarket.coins(offer.priceEach()) + " each.");
 	}
 }

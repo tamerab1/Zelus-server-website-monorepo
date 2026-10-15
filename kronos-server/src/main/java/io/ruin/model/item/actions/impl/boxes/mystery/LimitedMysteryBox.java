@@ -59,7 +59,7 @@ public class LimitedMysteryBox extends ItemContainer {
 			item.remove();
 			player.getInventory().add(reward);
 			if (reward.lootBroadcast != null)
-				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Limited Mystery Box",
+				Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Limited Mystery Box",
 					"" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});

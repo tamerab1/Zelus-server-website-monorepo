@@ -821,6 +821,28 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int PCPoints;
 	public int storeAmountSpent;
 	public int tournamentWins = 0;
+	/** Real combat stats while a Pit Championship has changed them ({fixed, current, xp} per TournamentFormat.COMBAT_STATS). */
+	public int[][] pitSavedStats;
+	/* ---- Division Rivals (io.ruin.model.content.rivals, 2026-10-15): ranked profile ---- */
+	public int rivalsRating = 1000, rivalsWins, rivalsLosses, rivalsStreak, rivalsBestStreak;
+	/** Division 10..1, 0 = Elite; progress steps in the current division; secured checkpoint step (0 = none). */
+	public int rivalsDivision = 10, rivalsProgress, rivalsCheckpoint;
+	public long rivalsPoints;
+	public int rivalsWeeklyWins;
+	public String rivalsWeek;
+	public boolean rivalsWeeklyClaimed;
+	/** Tier 1 weekly chest (4 wins) claimed this week; rivalsWeeklyClaimed is the tier 2 chest (8 wins). */
+	public boolean rivalsWeeklyClaimedT1;
+	/** Rivals kit inventory layouts by bracket key: the item id per slot, -1 empty (RivalsLayout). */
+	public java.util.HashMap<String, int[]> rivalsLayouts = new java.util.HashMap<>();
+	/**
+	 * The real loadout while a Rivals match has swapped in its kit. Persisted on purpose (unlike the transient PvP
+	 * preset fields): if the server stops mid-match, the next login restores it (RivalsSnapshot.recover).
+	 */
+	public Item[] rivalsSavedInventory, rivalsSavedEquipment, rivalsSavedRunePouch;
+	public int[][] rivalsSavedStats;
+	public int rivalsSavedSpellbook = -1, rivalsSavedSpecial = -1;
+	public int[] rivalsReturnPosition;
 	public int[] preTournyAttack;
 	public int[] preTournyStrength;
 	public int[] preTournyDefence;
@@ -846,6 +868,11 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int wildernessPoints;
 	public int wintertodtstorePoints;
 	public int tournamentPoints;
+	/** Teleport Nexus favourites (ServerTeleports names, max 5), saved; loaded into teleportFavourites on login. */
+	public List<String> teleportFavouriteNames;
+	/** A Zelus Spinner reward rolled but not yet paid (paid when the spin ends, or on the next login). */
+	public int pendingSpinItemId;
+	public int pendingSpinAmount;
 	public int guaranteedMysteryBoxLoot = 1;
 	public int[] dailyTaskProgress = new int[3];
 	public int dailyTasksCompleted;

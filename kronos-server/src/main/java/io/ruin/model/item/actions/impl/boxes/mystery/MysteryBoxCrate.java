@@ -223,7 +223,7 @@ public class MysteryBoxCrate {
 			player.getInventory().add(reward2);
 			player.getInventory().add(reward3);
 			if (reward.lootBroadcast != null)
-				Broadcast.GLOBAL.sendNews(Icon.MYSTERY_BOX, "Mystery Crate", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
+				Broadcast.GLOBAL.sendNews(Icon.YELLOW_KEY, "Mystery Crate", "" + player.getName() + " just received " + reward.getDef().descriptiveName + "!");
 			player.unlock();
 		});
 

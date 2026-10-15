@@ -101,7 +101,7 @@ public class LarransChest {
 			player.lock();
 			player.sendFilteredMessage("You unlock the Larran's chest with your key");
 			if (player.larranChestsOpened % ANNOUNCE_INTERVAL == 0) {
-				Broadcast.WORLD.sendNews(Icon.WILDERNESS,
+				Broadcast.WORLD.sendNews(Icon.YELLOW_KEY,
 					"</col>[<shad=8A0011>Wilderness</shad>] Larran's Chest has just been opened by " + player.getName() + "!");
 			}
 			player.larranChestsOpened++;
@@ -115,6 +115,7 @@ public class LarransChest {
 				larranKey.remove(1);
 			player.animate(536);
 			Item loot = new LarranChestLoot().rollItem();
+			io.ruin.model.activities.scoreboard.Scoreboard.record(player, io.ruin.model.activities.scoreboard.Scoreboard.Stat.WILDY_CHESTS, 1);
 			player.getInventory().addOrDrop(loot);
 			player.addToCollectionLog(loot);
 			event.delay(1);

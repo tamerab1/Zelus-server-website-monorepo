@@ -2,7 +2,6 @@ package io.ruin.model.activities.wilderness;
 
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
-import io.ruin.data.impl.Help;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.questtab.QuestTabEntry;
@@ -88,12 +87,12 @@ public class Hotspot {
 
 		@Override
 		public void send(Player player) {
-			send(player, "Hotspot", ACTIVE.name, Color.RED);
+			send(player, "Hotspot", "Edgeville (::pvprewards)", Color.RED);
 		}
 
 		@Override
 		public void select(Player player) {
-			Help.open(player, "hotspots");
+			EdgevillePvpRewards.open(player);
 		}
 
 	}

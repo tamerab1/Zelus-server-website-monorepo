@@ -44,6 +44,9 @@ public class WantedManager {
      */
     public static final int MAX_BOUNTY = 2_000_000;
 
+    /** Cap on the stacked total on one player. */
+    public static final int MAX_TOTAL = 2_000_000_000;
+
     // ─────────────────────────────────────────────────────────────────────────
     // Registration
     // ─────────────────────────────────────────────────────────────────────────
@@ -125,7 +128,7 @@ public class WantedManager {
     private static void promptBountyAmount(Player player, Player target) {
         int currentBm = getBloodMoney(player);
         player.integerInput(
-            "How much Blood Money to place on <col=cc0000>" + target.getName() + "</col>'s head?<br>" +
+            "How much Blood Money to place on <col=b00000>" + target.getName() + "</col>'s head?<br>" +
             "Min: " + MIN_BOUNTY + "  |  Max: " + MAX_BOUNTY + "<br>" +
             "You have: " + currentBm + " BM in your inventory.",
             amount -> validateAndConfirm(player, target, amount)
@@ -166,8 +169,8 @@ public class WantedManager {
 
         player.dialogue(
             new MessageDialogue(
-                "Place a bounty of <col=cc0000>" + amount + " Blood Money</col> on " +
-                "<col=cc0000>" + target.getName() + "</col>?" + existingNote +
+                "Place a bounty of <col=b00000>" + amount + " Blood Money</col> on " +
+                "<col=b00000>" + target.getName() + "</col>?" + existingNote +
                 "<br>The BM is deducted now. The killer collects it all."
             ).lineHeight(20),
             new OptionsDialogue(
@@ -194,22 +197,37 @@ public class WantedManager {
             return;
         }
 
-        // Deduct BM from the placer
-        player.getInventory().remove(BLOOD_MONEY, amount);
+        // The stacked total can't pass MAX_TOTAL (an int would overflow negative)
+        if ((long) target.wantedBountyAmount + amount > MAX_TOTAL) {
+            player.sendMessage("The bounty on " + target.getName() + " is already at the maximum.");
+            player.closeDialogue();
+            return;
+        }
+
+        // Deduct BM from the placer (and make sure it really came out)
+        int taken = player.getInventory().remove(BLOOD_MONEY, amount);
+        if (taken < amount) {
+            if (taken > 0)
+                player.getInventory().addOrDrop(BLOOD_MONEY, taken); // give back a partial removal
+            player.sendMessage("You no longer have enough Blood Money.");
+            player.closeDialogue();
+            return;
+        }
 
         // Stack onto any existing bounty on this target
         target.wantedBountyAmount += amount;
         target.wantedByName      = player.getName();
 
         player.closeDialogue();
+        io.ruin.model.item.actions.impl.wilderness_keys.WildernessKeyHandler.setSkull(target); // the WANTED skull
 
         // Feedback to both parties
         player.sendMessage(
-            "<col=cc0000>[WANTED]</col> You placed a bounty of <col=ffd700>" + amount +
+            "<col=b00000>[WANTED]</col> You placed a bounty of <col=7f0000>" + amount +
             " BM</col> on " + target.getName() + "."
         );
         target.sendMessage(
-            "<col=cc0000>[WANTED]</col> A bounty of <col=ffd700>" + amount +
+            "<col=b00000>[WANTED]</col> A bounty of <col=7f0000>" + amount +
             " Blood Money</col> has been placed on your head by " + player.getName() + "!" +
             (target.wantedBountyAmount > amount
                 ? " Total bounty: " + target.wantedBountyAmount + " BM."
@@ -217,11 +235,10 @@ public class WantedManager {
         );
 
         // World broadcast
-        Broadcast.WORLD.sendNews(
-            Icon.WILDERNESS,
+        Broadcast.WORLD.sendNews(Icon.WANTED_SKULL,
             "WANTED",
-            "<col=ffffff>" + player.getName() + " has placed a <col=cc0000>WANTED</col>" +
-            " bounty of <col=ffd700>" + target.wantedBountyAmount + " BM</col>" +
+            "<col=000080>" + player.getName() + " has placed a <col=b00000>WANTED</col>" +
+            " bounty of <col=7f0000>" + target.wantedBountyAmount + " BM</col>" +
             " on " + target.getName() + "!"
         );
     }
@@ -258,13 +275,14 @@ public class WantedManager {
         // Clear the bounty immediately so it cannot be double-awarded
         victim.wantedBountyAmount = 0;
         victim.wantedByName       = "";
+        io.ruin.model.item.actions.impl.wilderness_keys.WildernessKeyHandler.setSkull(victim);
 
         if (killer == null) {
             // Died to an NPC or environment — bounty is lost.
             // Swap to:  victim.getInventory().addOrDrop(BLOOD_MONEY, reward);
             // if you want to refund it to the victim instead.
             victim.sendMessage(
-                "<col=cc0000>[WANTED]</col> The bounty of <col=ffd700>" + reward +
+                "<col=b00000>[WANTED]</col> The bounty of <col=7f0000>" + reward +
                 " BM</col> on your head was lost as you died without a player killer."
             );
             return;
@@ -274,20 +292,19 @@ public class WantedManager {
         killer.getInventory().addOrDrop(BLOOD_MONEY, reward);
 
         killer.sendMessage(
-            "<col=cc0000>[WANTED]</col> You claimed the WANTED bounty on " +
-            victim.getName() + " and received <col=ffd700>" + reward + " Blood Money</col>!"
+            "<col=b00000>[WANTED]</col> You claimed the WANTED bounty on " +
+            victim.getName() + " and received <col=7f0000>" + reward + " Blood Money</col>!"
         );
         victim.sendMessage(
-            "<col=cc0000>[WANTED]</col> Your bounty (placed by " + placedBy +
+            "<col=b00000>[WANTED]</col> Your bounty (placed by " + placedBy +
             ") was claimed by " + killer.getName() + "."
         );
 
         // World broadcast
-        Broadcast.WORLD.sendNews(
-            Icon.WILDERNESS,
+        Broadcast.WORLD.sendNews(Icon.WANTED_SKULL,
             "WANTED",
-            "<col=ffffff>" + killer.getName() + " claimed the <col=cc0000>WANTED</col>" +
-            " bounty of <col=ffd700>" + reward + " BM</col>" +
+            "<col=000080>" + killer.getName() + " claimed the <col=b00000>WANTED</col>" +
+            " bounty of <col=7f0000>" + reward + " BM</col>" +
             " on " + victim.getName() + "!"
         );
     }

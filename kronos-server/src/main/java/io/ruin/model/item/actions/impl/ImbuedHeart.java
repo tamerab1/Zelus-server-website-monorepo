@@ -9,10 +9,16 @@ import io.ruin.model.var.VarPlayerRepository;
 public class ImbuedHeart {
 
 	public static void register() {
-		ItemAction.registerInventory(20724, 1, (player, item) -> init(player));
+		ItemAction.registerInventory(20724, 1, (player, item) -> init(player, 1));
+		// Saturated heart (Wilderness Forge upgrade of the imbued heart): same cooldown, bigger boost.
+		ItemAction.registerInventory(27641, 1, (player, item) -> init(player, 4));
 	}
 
 	public static void init(Player player) {
+		init(player, 1);
+	}
+
+	public static void init(Player player, int baseBoost) {
 		if (DuelRule.NO_DRINKS.isToggled(player)) {
 			player.sendMessage("You cannot use an Imbued Heart with drinks disabled.");
 			return;
@@ -30,7 +36,7 @@ public class ImbuedHeart {
 			player.graphics(1316);
 			VarPlayerRepository.IMBUED_HEART_COOLDOWN.set(player, 70);
 			player.magicImbueHeartCooldown.delay(700);
-			player.getStats().get(StatType.Magic).boost(1, 0.1);
+			player.getStats().get(StatType.Magic).boost(baseBoost, 0.1);
 			if (player.overloadHeartCooldown.isDelayed()) {
 				finished(player);
 			}

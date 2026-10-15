@@ -202,7 +202,7 @@ public class EnhancedCrystalKeyChest {
 			else
 				player.getInventory().addOrDrop(loot.getId(), loot.getAmount());
 			player.addToCollectionLog(loot);
-			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Enhanced crystal chest on [Chest #" + player.enhancedCrystalChestsOpened + "]!");
+			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.YELLOW_KEY, player.getName(), " just received " + loot.getDef().descriptiveName + " from the Enhanced crystal chest on [Chest #" + player.enhancedCrystalChestsOpened + "]!");
 
 		} else if (Random.rollDie(100, 1)) {
 			/**

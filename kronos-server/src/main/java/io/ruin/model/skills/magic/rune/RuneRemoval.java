@@ -46,15 +46,17 @@ public class RuneRemoval {
 				if (item != null)
 					pItems.add(item);
 			}
-			if (player.getInventory().hasId(DivineRunePouch.RUNE_POUCH)) {
-				for (Item item : player.getRunePouch().getItems()) {
-					if (item != null)
-						pItems.add(item);
-				}
-				for (Item item : player.getTournamentRunePouch().getItems()) {
-					if (item != null)
-						pItems.add(item);
-				}
+		}
+		// The divine pouch has its own 4-slot container; it used to be checked only when a regular
+		// pouch was also carried, and then read the regular pouch's runes instead of its own.
+		if (player.getInventory().hasId(DivineRunePouch.RUNE_POUCH)) {
+			for (Item item : player.DivinerunePouch.getItems()) {
+				if (item != null)
+					pItems.add(item);
+			}
+			for (Item item : player.getTournamentRunePouch().getItems()) {
+				if (item != null)
+					pItems.add(item);
 			}
 		}
 //        if(player.getInventory().hasId(GrandRunePouch.GRAND_RUNE_POUCH)) {

@@ -18,7 +18,7 @@ public class DragonWarhammer implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dragon warhammer");
+		return name.contains("dragon warhammer") || def.id == 31538; // Sunforged warhammer (Wilderness Forge)
 	}
 
 	@Override

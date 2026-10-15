@@ -98,7 +98,7 @@ public class ForthosDungeon {
 		ObjType wepDef = player.getEquipment().getDef(Equipment.SLOT_WEAPON);
 		if (wepDef != null && wepDef.sharpWeapon) {
 			knife = false;
-			wildernessSword = wepDef.id == 13111;
+			wildernessSword = wepDef.id == 13111 || wepDef.id == 31642;
 		} else {
 			if (!player.getInventory().hasId(KNIFE)) {
 				player.sendMessage("Only a sharp blade can cut through this sticky web.");

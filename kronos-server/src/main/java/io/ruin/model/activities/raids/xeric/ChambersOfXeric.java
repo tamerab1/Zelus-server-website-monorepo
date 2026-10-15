@@ -673,17 +673,13 @@ public class ChambersOfXeric {
 								player.sendMessage("You cannot scale the raid with less than 0 players.");
 								return;
 							}
-							boolean hasSkip = player.getName().equals("Dan Gleebles") || player.getName().equals("Deathless")
-									|| player.getName().equalsIgnoreCase("Angry Camel")
-									|| player.getName().equalsIgnoreCase("Gim But Dale");
-							if (input > 4 && !hasSkip) {
+							// admins may scale past 4 for testing (up to 10); no per-name overrides
+							if (input > 4 && !player.isAdmin()) {
 								player.sendMessage("You cannot scale the raid with more than 4 players.");
 								return;
 							}
-							if (player.getName().equalsIgnoreCase("gim but dale")) {
-								if (input > 10)
-									input = 10;
-							}
+							if (input > 10)
+								input = 10;
 							raid.scaleAddition = input;
 							player.sendMessage("You have scaled the raid with " + input + " fake players.");
 						});

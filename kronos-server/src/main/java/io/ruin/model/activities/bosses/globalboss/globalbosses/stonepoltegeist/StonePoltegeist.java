@@ -97,7 +97,7 @@ public class StonePoltegeist extends NPCCombat {
 			Item reward = table.rollItem();
 			new GroundItem(reward).owner(player).position(player.getPosition()).spawn();
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from a Blood Reaper!");
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from a Blood Reaper!");
 		}
 	}
 

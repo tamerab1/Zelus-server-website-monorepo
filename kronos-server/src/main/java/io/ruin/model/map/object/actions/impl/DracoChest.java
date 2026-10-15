@@ -73,7 +73,7 @@ public class DracoChest {
 			boolean common = loot.getId() == 995 || loot.getId() == 386;
 			player.sendMessage("You unlock the Draco Chest and find " + (common ? loot.getAmount() + " x " + loot.getDef().name : loot.getDef().descriptiveName) + ".");
 			if (!common)
-				Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, player.getName(),
+				Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.YELLOW_KEY, player.getName(),
 					" just received " + loot.getDef().descriptiveName + " from the Draco Chest!");
 		});
 	}

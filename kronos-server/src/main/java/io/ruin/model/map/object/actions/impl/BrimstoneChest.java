@@ -1,5 +1,7 @@
 package io.ruin.model.map.object.actions.impl;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.api.utils.Random;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
@@ -119,7 +121,7 @@ public class BrimstoneChest {
 					Item loot = RARE.rollItem();
 					player.getInventory().addOrDrop(loot.getId(), loot.getAmount());
 					player.addToCollectionLog(loot);
-					Broadcast.WORLD.sendNews(player.getName() + " just received " + loot.getDef().descriptiveName + " from the Brimstone chest on [Chest #" + player.brimstoneChestsOpened + "]!");
+					Broadcast.WORLD.sendNews(Icon.YELLOW_KEY,player.getName() + " just received " + loot.getDef().descriptiveName + " from the Brimstone chest on [Chest #" + player.brimstoneChestsOpened + "]!");
 				} else {
 					/**
 					 * Regular loot

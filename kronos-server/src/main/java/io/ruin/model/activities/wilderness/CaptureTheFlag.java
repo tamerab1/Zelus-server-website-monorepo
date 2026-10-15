@@ -59,7 +59,7 @@ public class CaptureTheFlag {
 					}
 					ACTIVE = next;
 					String eventMessage = "Capture the flag has started!";
-					Broadcast.WORLD.sendNews(Icon.WILDERNESS, "News", eventMessage);
+					Broadcast.WORLD.sendNews(Icon.WILDY_SKULL, "News", eventMessage);
 					broadcastEvent(eventMessage);
 					addFlag();
 				}
@@ -90,7 +90,7 @@ public class CaptureTheFlag {
 		p.getInventory().add(8970, 1);
 		p.getCombat().teleblock();
 		p.sendMessage(Color.RED.wrap("You have been skulled and Teleblocked!"));
-		Broadcast.WORLD.sendNews(p.getName() + " Has captured the flag! At - " + p.wildernessLevel + " Wilderness!");
+		Broadcast.WORLD.sendNews(Icon.WILDY_SKULL,p.getName() + " Has captured the flag! At - " + p.wildernessLevel + " Wilderness!");
 	}
 
 

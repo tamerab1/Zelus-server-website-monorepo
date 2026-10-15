@@ -239,7 +239,7 @@ public enum ItemBreakPerks {
 			level = 1;
 		}
 		if (level == 5) {
-			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " has upgraded their " + perk.name + " to level 5 on their " + selectedItem.getDef().name + "!");
+			Broadcast.GLOBAL.sendNewsDropMessage(player, Icon.UPGRADE_GEM, "<col=000000>" + player.getName(), " has upgraded their " + perk.name + " to level 5 on their " + selectedItem.getDef().name + "!");
 //			ItemPerkWebhook.sendTierFiveUpgrade(player, selectedItem, perk);
 
 			ItemPerkHook.sendTierFiveUpgrade(

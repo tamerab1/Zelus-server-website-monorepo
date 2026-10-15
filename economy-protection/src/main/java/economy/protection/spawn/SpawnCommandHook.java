@@ -26,6 +26,8 @@ public class SpawnCommandHook {
 
 	public static void register() {
 		CommandHandler.hooks.register(CommandHandler.Hook.Handle.class, SpawnCommandHook::handle);
+		// "Spawn" button on the PK Hub (the server can't depend on this module, so it exposes a hook)
+		io.ruin.model.inter.questtab.dashboard.QuestDashboards.openSpawn = SpawnCommandHook::openSearch;
 	}
 
 	static Result handle(CommandHandler.Hook.Handle ctx) {
@@ -63,7 +65,7 @@ public class SpawnCommandHook {
 
 	private static final String DEFAULT_PROMPT = "Enter the name of the item you wish to spawn: ";
 
-	private static void openSearch(Player player) {
+	static void openSearch(Player player) {
 		openSearch(player, DEFAULT_PROMPT);
 	}
 

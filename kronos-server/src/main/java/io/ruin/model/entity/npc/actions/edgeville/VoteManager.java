@@ -16,7 +16,7 @@ public class VoteManager {
 	private static int voteMysteryBoxesClaimed = 0;
 
 	public static void register() {
-		NPCAction.register(4058, "vote", (player, npc) -> {
+		NPCAction.register(1188, 2, (player, npc) -> { // Vote Point Store's "Vote" option
 			player.dialogue(
 				new OptionsDialogue("What would you like to do?",
 					new Option("Vote for " + World.type.getWorldName(), () -> player.openUrl("Voting Page", VOTE_URL)),
@@ -29,7 +29,7 @@ public class VoteManager {
 			while (true) {
 				e.delay(3000); //30 minutes
 				if (voteMysteryBoxesClaimed > 1) {
-					Broadcast.WORLD.sendNews(Icon.ANNOUNCEMENT, "Another " + voteMysteryBoxesClaimed + " players have claimed their Voting Box! Type ::vote and claim yours now!");
+					Broadcast.WORLD.sendNews(Icon.VOTE_STAR, "Another " + voteMysteryBoxesClaimed + " players have claimed their Voting Box! Type ::vote and claim yours now!");
 					voteMysteryBoxesClaimed = 0;
 				}
 			}

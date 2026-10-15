@@ -145,7 +145,7 @@ public class GauntletRewards {
 						|| reward.getId() == 23931 || reward.getId() == 23929 || reward.getId() == 23927) {
 						String gauntlet = corrupted ? "Corrupted Gauntlet" : "Gauntlet";
 						int kills = corrupted ? player.theCorruptedGauntletKills.getKills() : player.theGauntletKills.getKills();
-						Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x " + reward.getDef().name.toLowerCase() + "</shad> from The " + gauntlet + "! (<col=FC0101>" + kills + " KC<col=000000>)");
+						Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " received <shad=D80808>" + reward.getAmount() + "x " + reward.getDef().name.toLowerCase() + "</shad> from The " + gauntlet + "! (<col=FC0101>" + kills + " KC<col=000000>)");
 
 						RareDropHook.sendDiscordMessage(() -> {
 							var jsonObject = new JSONObject();

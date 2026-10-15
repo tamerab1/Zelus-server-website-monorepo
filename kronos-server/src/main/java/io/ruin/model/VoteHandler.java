@@ -115,6 +115,7 @@ public class VoteHandler {
 		addHwid(player.hwid);
 		player.votePoints += points;
 		player.votesClaimed += newlyClaimed;
+		io.ruin.model.activities.scoreboard.Scoreboard.record(player, io.ruin.model.activities.scoreboard.Scoreboard.Stat.VOTES, newlyClaimed);
 		player.claimedVotes++;
 		player.lastVoteClaimInEpoch = Instant.now().getEpochSecond();
 		if (player.claimedVotes == Achievements.THIRD_PART_CANDIDATE.getCompletionAmount())

@@ -85,6 +85,7 @@ public class CommandHandlerRegular {
 					player.sendMessage("This command is for donators and staff only.");
 					return true;
 				}
+				// same gate as the minimap Teleports orb (TeleportNexus.openAnywhere)
 				// Every click handler for interface 851 (TeleInterface.register(), see
 				// h.actions[22..114]) is wired to the persistent per-player instance
 				// player.teleportInterface, not a fresh object -- constructing a new
@@ -433,10 +434,11 @@ public class CommandHandlerRegular {
 				});
 				return true;
 
+			case "help":
 			case "commands": {
 				player.sendScroll("<col=800000>Commands</col>",
 						"<col=800000>Teleport Commands:</col>",
-						"::home/::edge", "::train/sandcrabs", "::vb/::gb/::db/::malakar", "::dz",
+						"::home/::edge", "::train", "::sandcrabs", "::vb/::gb/::db/::malakar", "::dz",
 						"::slayer/::slay", "::shops",
 						"::cox/raids/tob", "::gwd", "::mining", "::miningguild", "::mlm/motherloadmine",
 						"::wcguild", "::abyss", "::zmi", "::astrals", "::bloods", "::wraths", "::puropuro", "::fremslayer",
@@ -536,8 +538,15 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "itemstats":
+			case "stats": {
+				io.ruin.model.inter.handlers.ItemStatsViewer.search(player);
+				return true;
+			}
 			case "upgrade": {
-				player.getUpgradeSystemInterface().open(player);
+				player.dialogue(new io.ruin.model.inter.dialogue.OptionsDialogue("Which upgrade system would you like to open?",
+					new io.ruin.model.inter.utils.Option("Item Upgrade", () -> player.getUpgradeSystemInterface().open(player)),
+					new io.ruin.model.inter.utils.Option("Wilderness Upgrade", () -> io.ruin.model.content.wildernessforge.WildernessForge.open(player))));
 				return true;
 			}
 			case "votestreak":
@@ -559,6 +568,33 @@ public class CommandHandlerRegular {
 				io.ruin.model.content.casino.CasinoBlackjackInterface.open(player);
 				return true;
 			}
+			case "scoreboard":
+			case "scores": {
+				io.ruin.model.activities.scoreboard.Scoreboard.open(player);
+				return true;
+			}
+			case "lottery":
+			case "lotto": {
+				io.ruin.model.activities.lottery.Lottery.open(player);
+				return true;
+			}
+			case "deals":
+			case "donatordeals": {
+				io.ruin.model.content.donatordeals.DonatorDeals.open(player);
+				return true;
+			}
+			case "capeforge": {
+				io.ruin.model.content.capeforge.CapeForge.open(player);
+				return true;
+			}
+			case "pvprewards":
+			case "edgepvp":
+			case "hotspot":
+			case "bhrewards": {
+				io.ruin.model.activities.wilderness.EdgevillePvpRewards.open(player);
+				return true;
+			}
+			case "title":
 			case "titles": {
 				io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player);
 				return true;
@@ -634,6 +670,11 @@ public class CommandHandlerRegular {
 					"ref": {
 				return ReferralCommand.handle(player, args);
 			}
+			case "referrals",
+					"referral": {
+				io.ruin.model.content.referral.ReferralInterface.open(player);
+				return true;
+			}
 
 			case "cas": {
 				player.getCombatAchievementInterface().open(player);
@@ -688,6 +729,12 @@ public class CommandHandlerRegular {
 			}
 			case "home": {
 				teleportHome(player, 3087, 3496, 0);
+				return true;
+			}
+			case "pit":
+			case "tournament":
+			case "tournaments": {
+				io.ruin.model.activities.tournament.TournamentHub.open(player);
 				return true;
 			}
 
@@ -1213,7 +1260,8 @@ public class CommandHandlerRegular {
 					player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
 							+ NewcomerTasks.MISSING_HOME.getFormattedName() + "!");
 
-				teleport(player, ServerTeleports.SAND_CRABS.getTeleportPos());
+				// ::train -> the custom training area (region 10835, 2026-10-15); ::sandcrabs still goes to Sand Crabs
+				teleport(player, command.equals("train") ? new Position(2707, 5348, 0) : ServerTeleports.SAND_CRABS.getTeleportPos());
 				return true;
 			}
 
@@ -1400,7 +1448,7 @@ public class CommandHandlerRegular {
 
 			case "bonds":
 			case "auras": {
-				io.ruin.model.content.bonds.BondGuide.open(player);
+				io.ruin.model.content.bonds.BondInterface.open(player);
 				return true;
 			}
 

@@ -85,6 +85,12 @@ public class HomeHandler {
 		ObjectAction.register(60003, 3322, 4754, 0, 1, devouringForgeAction);
 		var bhChest = GameObject.spawn(60001, 3094, 3516, 0, 10, 0);
 		ObjectAction.register(bhChest, 1, (player, obj) -> io.ruin.model.activities.wilderness.WantedManager.openMenu(player));
+		// Loot Chest for wilderness loot keys: a coffer (29087, "Use") facing west; only this one opens keys
+		var lootChest = GameObject.spawn(29087, 3102, 3518, 0, 10, 1);
+		ObjectAction.register(lootChest, 1, (player, obj) -> {
+			if (!io.ruin.model.item.actions.impl.wilderness_keys.WildernessKeyHandler.open(player))
+				player.sendMessage("You need a wilderness loot key to open this chest. Kill players in the Wilderness to earn one.");
+		});
 		//var tradingPost = GameObject.spawn(46240, 3094, 3495, 0, 10, 1);
 		//var tradingPost2 = GameObject.spawn(46240, 3098, 3499, 0, 10, 2);
 		var elvenChest = GameObject.spawn(36582, 3093, 3506, 0, 10, 0);
@@ -343,8 +349,9 @@ public class HomeHandler {
 		NPCAction.register(9053, "Trade", (player, npc) -> ShopManager.openIfExists(player, "347ca8b3-dd43-4a46-bf05-3a452e5e1f3c"));
 		NPCAction.register(5523, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openDonatorStoreShop(player));
 		NPCAction.register(5523, 2, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.openDonatorTab(player));
-		NPCAction.register(2989, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openZelusPointsShop(player));
-		NPCAction.register(4058, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openVoteStoreShop(player));
+		// Zelus Point Store (5214, renamed in the cache: Trade only) and Vote Point Store (1188: Trade, Vote)
+		NPCAction.register(5214, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openZelusPointsShop(player));
+		NPCAction.register(1188, 1, (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openVoteStoreShop(player));
 		NPCAction.register(5527, "trade", (player, npc) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openAchievementPointsShop(player));
 		NPCAction.register(7456, 1, (player, npc) -> {
 			player.dialogue(new NPCDialogue(7456, "Use your broken items on me to get them repaired."));

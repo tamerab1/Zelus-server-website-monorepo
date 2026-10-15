@@ -68,7 +68,7 @@ public class HweenEvent extends TemporaryEvent {
 				}
 				index++;
 			}
-			Broadcast.WORLD.sendNews(Icon.GRAVE, "</col>[<shad=8A0011>Halloween Event</shad>] <shad=9B9B9B> The following bosses have been selected for the H'ween event:<br> <shad=8A0011>" + sb.toString());
+			Broadcast.WORLD.sendNews(Icon.SERVER_EVENT, "</col>[<shad=8A0011>Halloween Event</shad>] <shad=9B9B9B> The following bosses have been selected for the H'ween event:<br> <shad=8A0011>" + sb.toString());
 
 			e.delay(15);
 			newEventStart();
@@ -103,7 +103,7 @@ public class HweenEvent extends TemporaryEvent {
 				loot.owner(player);
 				loot.spawn();
 				player.sendMessage("<shad=000000><col=ff0000>A pumpkin has been dropped at your feet!");
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.ADMINISTRATOR, "<col=000000>" + player.getName(), " received <shad=D80808>1x " + new Item(1959).getDef().name.toLowerCase() + "</shad> from a " + name + "!");
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.SERVER_EVENT, "<col=000000>" + player.getName(), " received <shad=D80808>1x " + new Item(1959).getDef().name.toLowerCase() + "</shad> from a " + name + "!");
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class HweenEvent extends TemporaryEvent {
 			}
 			index++;
 		}
-		Broadcast.WORLD.sendNews(Icon.GRAVE, "</col>[<shad=8A0011>Halloween Event</shad>] <shad=9B9B9B> The following bosses have been selected for the H'ween event:<br> <shad=8A0011>" + sb.toString());
+		Broadcast.WORLD.sendNews(Icon.SERVER_EVENT, "</col>[<shad=8A0011>Halloween Event</shad>] <shad=9B9B9B> The following bosses have been selected for the H'ween event:<br> <shad=8A0011>" + sb.toString());
 
 		World.hweenEvent = this;
 	}

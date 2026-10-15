@@ -1,5 +1,7 @@
 package io.ruin.model.item.actions.impl;
 
+import io.ruin.cache.Icon;
+
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.inter.dialogue.NPCDialogue;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
@@ -430,7 +432,7 @@ public class GetPissed {
 				player.getInventory().addOrDrop(2034, 1);
 				player.getInventory().addOrDrop(2048, 1);
 				player.getInventory().addOrDrop(1907, 1);
-				Broadcast.WORLD.sendNews(player.getName() + " Has just completed the bar crawl event!!");
+				Broadcast.WORLD.sendNews(Icon.SERVER_EVENT,player.getName() + " Has just completed the bar crawl event!!");
 
 			}
 

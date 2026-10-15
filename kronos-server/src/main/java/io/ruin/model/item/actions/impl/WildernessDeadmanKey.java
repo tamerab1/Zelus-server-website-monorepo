@@ -84,7 +84,7 @@ public class WildernessDeadmanKey {
 	public static void rollForDeadmanKey(Player killer, Player victim) {
 		if (Random.rollDie(20, 1)) {
 			killer.getInventory().addOrDrop(DMM_KEY_ID, 1);
-			Broadcast.WORLD.sendNews(Icon.WILDERNESS, killer.getName() + " has just received a PK Key by killing " + victim.getName() + "!");
+			Broadcast.WORLD.sendNews(Icon.WILDY_KEY, killer.getName() + " has just received a PK Key by killing " + victim.getName() + "!");
 
 		}
 	}
