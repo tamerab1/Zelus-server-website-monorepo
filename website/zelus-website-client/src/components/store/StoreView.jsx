@@ -25,6 +25,7 @@ import storeItems, { CATEGORIES } from '../../data/storeItems.js';
 import CategoryNav from './CategoryNav.jsx';
 import ProductCard from './ProductCard.jsx';
 import CartDrawer  from './CartDrawer.jsx';
+import { DonatorBenefits, DonatorBenefitsModal } from './DonatorBenefits.jsx';
 
 // ── Floating cart button ──────────────────────────────────────────────────────
 function CartFAB({ count, onClick }) {
@@ -104,6 +105,10 @@ export default function StoreView() {
 
   // ─── Category state ───
   const [activeCategory, setActiveCategory] = useState('dp');
+
+  // ─── Donator benefits viewer (modal from any category; inline under Ranks) ───
+  const [benefitsOpen, setBenefitsOpen] = useState(false);
+  const goToPoints = () => { setActiveCategory('dp'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   // ─── Cart state ───
   const [cartItems, setCartItems] = useState([]);   // [{ item, qty }]
@@ -215,6 +220,20 @@ export default function StoreView() {
           >
             Unlock exclusive ranks, zones, items, and perks. All purchases are permanent.
           </p>
+          <button
+            type="button"
+            onClick={() => setBenefitsOpen(true)}
+            className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.18em] uppercase rounded-lg transition-all duration-200 hover:-translate-y-0.5"
+            style={{
+              color: '#f3d36b',
+              background: 'rgba(21,24,33,0.7)',
+              border: '1px solid rgba(212,175,55,0.45)',
+              boxShadow: '0 0 18px rgba(212,175,55,0.12)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            ✦ Compare Rank Benefits
+          </button>
         </div>
       </div>
 
@@ -276,8 +295,11 @@ export default function StoreView() {
             </div>
           )}
 
+          {/* Ranks: the verified benefits matrix replaces the old info-only rank cards */}
+          {activeCategory === 'ranks' && <DonatorBenefits onGetPoints={goToPoints} />}
+
           {/* Product grid */}
-          <div className={`grid ${gridCols} gap-5`}>
+          {activeCategory !== 'ranks' && <div className={`grid ${gridCols} gap-5`}>
             {filteredItems.length === 0 ? (
               <EmptyCategory category={activeCategoryMeta} />
             ) : (
@@ -290,7 +312,7 @@ export default function StoreView() {
                 />
               ))
             )}
-          </div>
+          </div>}
 
           {/* ── How it works panel ─────────────────────────────────── */}
           <div className="mt-14 stone-panel" style={{ borderRadius: 3 }}>
@@ -350,6 +372,7 @@ export default function StoreView() {
         onCheckout={handleCartCheckout}
       />
 
+      <DonatorBenefitsModal open={benefitsOpen} onClose={() => setBenefitsOpen(false)} onGetPoints={goToPoints} />
     </main>
   );
 }

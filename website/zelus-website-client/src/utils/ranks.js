@@ -74,7 +74,9 @@ export const getPrivilegeLabel = (privilege) => {
 // getDonorRank() is called with the user's `total_spent` (USD float) and
 // returns the display name + Tailwind colour for their current tier.
 //
-// SecondaryGroup  | Price threshold | Drop boost
+// NOTE (2026-10-15): the "Drop boost" column is SecondaryGroup.doubleDropChance, which is NOT applied in-game
+// (every use in DoubleDrops.java is commented out). Real, verified perks: src/data/donatorBenefits.js.
+// SecondaryGroup  | Price threshold | Drop boost (inactive)
 // ─────────────── | ─────────────── | ──────────
 // DONATOR         | $10             | +2.50 %
 // SUPER_DONATOR   | $50             | +2.75 %
