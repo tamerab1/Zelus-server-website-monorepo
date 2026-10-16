@@ -25,7 +25,7 @@ public class BuildMarketInterface {
     static final int HEADING_FONT = 496, BIG_FONT = 495, TEXT_FONT = 494, TITLE_Y = 14;
     static final int PANEL_FILL = 0x36302a, BOX = 0x433b31, BOX_HOVER = 0x524737, BORDER = 0x5a4d3a;
     static final int ROW = 0x2e2924, ROW_HOVER = 0x3a332b, SEARCH_FILL = 0x25201b, SEARCH_HOVER = 0x2f2924;
-    static final int BAR_TRACK = 0x181512, BAR_FILL = 0x2fa83a, BAR_SHINE = 0x5ccf5c, BAR_DEPTH = 0x1f7a2a, BAR_EDGE = 0x0e0c0a;
+    static final int BAR_TRACK = 0x181512, BAR_FILL = 0x2e7d32, BAR_SHINE = 0x5ccf5c, BAR_DEPTH = 0x1f7a2a, BAR_EDGE = 0x0e0c0a;
     static final int TABS = 5, ROWS = 40, ROW_H = 46, ROW_PITCH = 48, ROW_W = 418, LIST_H = 176;
     /** OSRS tab stone: raised (hover lighter); active = recessed dark well, inner shadow and a bronze trim. */
     static final int TAB_FILL = 0x38322a, TAB_HOVER = 0x453d33, TAB_ACTIVE = 0x241f1a, SHADOW = 0x15120f, TRIM = 0x8a6a3a;
@@ -174,20 +174,25 @@ public class BuildMarketInterface {
                 add(comps, want, itemSlot(buttonT, row, 6, 7, 36, 32, "Examine"));            // +7
                 add(comps, want, text(textT, row, 48, 6, 158, 15, TEXT_FONT, 0xff981f, ""));   // +8 name
                 add(comps, want, text(textT, row, 48, 24, 158, 15, TEXT_FONT, 0x8f8f8f, ""));  // +9 seller line
-                // stock bar: recessed track, fill + lighter top band (a two-tone gradient), border, text over it
-                // a slim OSRS meter (12px): sunken track, flat fill with a 1px highlight and a 1px shade line
-                add(comps, want, solid(rect, row, 210, 17, 80, 12, BAR_TRACK));               // +10 track
-                add(comps, want, solid(rect, row, 211, 18, 78, 10, BAR_FILL));                // +11 fill
-                add(comps, want, solid(rect, row, 211, 18, 78, 1, BAR_SHINE));               // +12 highlight line
-                add(comps, want, solid(rect, row, 211, 27, 78, 1, BAR_DEPTH));               // +13 shade line
-                add(comps, want, outline(rect, row, 210, 17, 80, 12, BAR_EDGE, false));       // +14 border
-                InterfaceDefinition barText = text(textT, row, 210, 16, 80, 14, TEXT_FONT, 0xffffff, "");
+                // stock: "x / y left" above a slim 8px meter (2026-10-16 r2: the old 12px bar was stretched to 18px by
+                // clientscript 10606 and covered the "(total)" line). Only the fill is resized, by 10754 = 10606
+                // with height 6. The highlight / shade lines are kept (hidden, 0 size) so the row offsets don't move.
+                add(comps, want, solid(rect, row, 210, 21, 68, 8, BAR_TRACK));               // +10 track
+                add(comps, want, solid(rect, row, 211, 22, 66, 6, BAR_FILL));                 // +11 fill
+                InterfaceDefinition shine = solid(rect, row, 211, 22, 0, 0, BAR_SHINE);
+                shine.isHidden = true;
+                add(comps, want, shine);                                                      // +12 (unused)
+                InterfaceDefinition depth = solid(rect, row, 211, 27, 0, 0, BAR_DEPTH);
+                depth.isHidden = true;
+                add(comps, want, depth);                                                      // +13 (unused)
+                add(comps, want, outline(rect, row, 210, 21, 68, 8, BAR_EDGE, false));        // +14 border
+                InterfaceDefinition barText = text(textT, row, 206, 5, 76, 14, TEXT_FONT, 0xffffff, "");
                 barText.xTextAlignment = 1;
-                add(comps, want, barText);                                                    // +15 text over the bar
+                add(comps, want, barText);                                                    // +15 "x / y left" above the bar
                 InterfaceDefinition price = text(textT, row, 280, 6, 60, 15, TEXT_FONT, 0x00ff00, "");
                 price.xTextAlignment = 2;
                 add(comps, want, price);                                                      // +16
-                InterfaceDefinition total = text(textT, row, 264, 24, 76, 15, TEXT_FONT, 0xa0a0a0, "");
+                InterfaceDefinition total = text(textT, row, 264, 30, 76, 15, TEXT_FONT, 0xa0a0a0, "");
                 total.xTextAlignment = 2;
                 add(comps, want, total);                                                      // +17
                 bezel(comps, want, buttonT, labelT, row, 346, 11, 52, 24, "Select");          // +18, +19 (16px clear of the scrollbar)

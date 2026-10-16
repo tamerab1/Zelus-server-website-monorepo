@@ -78,15 +78,18 @@ public final class ZelusMarket {
 	private static final int FIRST_ROW = 70, ROW_STRIDE = 20, ROWS = 40, ROW_PITCH = 48;
 	/** +5/+6: the sunken item slot (well + rim, 2026-10-15) sits under the item. */
 	private static final int R_BOX = 1, R_GOLD = 3, R_ITEM = 7, R_NAME = 8, R_INFO = 9, R_TRACK = 10, R_FILL = 11,
-		R_SHINE = 12, R_DEPTH = 13, R_EDGE = 14, R_BAR_TEXT = 15, R_PRICE = 16, R_TOTAL = 17, R_BUTTON = 18, BAR_WIDTH = 78;
+		R_SHINE = 12, R_DEPTH = 13, R_EDGE = 14, R_BAR_TEXT = 15, R_PRICE = 16, R_TOTAL = 17, R_BUTTON = 18, BAR_WIDTH = 66;
 	private static final int EMPTY = 870;
 	private static final int MODAL = 882, MODAL_ITEM = 888, MODAL_TITLE = 889, MODAL_INFO = 890, MODAL_BUY_1 = 891,
 		MODAL_BUY_5 = 893, MODAL_BUY_X = 895, MODAL_BUY_ALL = 897, MODAL_CANCEL = 899;
 
-	/** Clientscript 10606 (the old 1131 bar): set a component's width. Clientscript 45: set a component's colour. */
-	private static final int SET_WIDTH = 10606, SET_COLOUR = 45;
-	private static final int BAR_GREEN = 0x2fa83a, BAR_GREEN_SHINE = 0x5ccf5c, BAR_GREEN_DEPTH = 0x1f7a2a,
-		BAR_ORANGE = 0xd8761a, BAR_ORANGE_SHINE = 0xffa64d, BAR_ORANGE_DEPTH = 0x9a5210;
+	/**
+	 * Clientscript 10754: set the stock bar fill's width at the slim bar's 6px height (a copy of 10606, which forces an
+	 * 18px height and stretched the old bar over the "(total)" line). Clientscript 45: set a component's colour.
+	 */
+	private static final int SET_FILL_WIDTH = 10754, SET_COLOUR = 45;
+	/** Muted green while healthy, dark gold when half or less is left (was neon green / orange). */
+	private static final int BAR_GREEN = 0x2e7d32, BAR_LOW = 0xc69e38;
 
 	private static final int BROWSE = 0, FEATURED = 1, MY_SHOP = 2, HISTORY = 3, LOOKUP = 4;
 	private static final String[] TABS = {"Browse", "Featured", "My Shop", "History", "Lookup"};
@@ -385,7 +388,7 @@ public final class ZelusMarket {
 			name = ORANGE + itemName(itemId) + END + (o.isSell() ? GREEN + " (Selling)" + END : YELLOW + " (Buying)" + END)
 					+ (featured ? FEATURED_COL + "  Featured " + hours(TradePostFeatured.secondsLeft(o)) + END : "");
 			var done = o.getStartAmount() - o.getAmount();
-			info = (o.isSell() ? done + " sold" : done + " bought") + " · Placed " + ago(o.getTimeStamp());
+			info = (o.isSell() ? done + " sold" : done + " bought") + " · " + ago(o.getTimeStamp());
 			price = colouredCoins(o.priceEach());
 			total = DIM + "(" + coins(o.priceEach().multiply(o.amount)) + " left)" + END;
 			bar = true;
@@ -397,7 +400,8 @@ public final class ZelusMarket {
 			featured = TradePostFeatured.isFeatured(o);
 			itemAmount = o.getAmount();
 			name = ORANGE + itemName(itemId) + END + (featured ? FEATURED_COL + "  Featured" + END : "");
-			info = o.getAmount() + " from " + PLAYER + display(o.owner) + END + " · Placed " + ago(o.getTimeStamp());
+			// short enough for the column: the amount is already on the item icon and in the Stock column
+			info = "from " + PLAYER + display(o.owner) + END + " · " + ago(o.getTimeStamp());
 			price = colouredCoins(o.priceEach());
 			total = DIM + "(" + coins(o.priceEach().multiply(o.amount)) + " total)" + END;
 			bar = true;
@@ -432,7 +436,8 @@ public final class ZelusMarket {
 		ps.sendString(INTERFACE, row + R_NAME, name);
 		ps.sendString(INTERFACE, row + R_INFO, info);
 		for (int part = R_TRACK; part <= R_BAR_TEXT; part++) {
-			ps.setHidden(INTERFACE, row + part, !bar);
+			// the old highlight / shade lines stay hidden: the slim bar is a flat fill
+			ps.setHidden(INTERFACE, row + part, !bar || part == R_SHINE || part == R_DEPTH);
 		}
 		if (bar) {
 			var o = data.offer();
@@ -441,12 +446,8 @@ public final class ZelusMarket {
 			int filled = progress ? traded : o.getAmount();
 			int width = filled <= 0 ? 0 : Math.max(2, (int) Math.round(BAR_WIDTH * ratio));
 			boolean healthy = progress || ratio > 0.5;
-			for (int part : new int[]{R_FILL, R_SHINE, R_DEPTH}) {
-				ps.sendClientScript(SET_WIDTH, "Ii", INTERFACE << 16 | (row + part), width);
-			}
-			ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (row + R_FILL), healthy ? BAR_GREEN : BAR_ORANGE);
-			ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (row + R_SHINE), healthy ? BAR_GREEN_SHINE : BAR_ORANGE_SHINE);
-			ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (row + R_DEPTH), healthy ? BAR_GREEN_DEPTH : BAR_ORANGE_DEPTH);
+			ps.sendClientScript(SET_FILL_WIDTH, "Ii", INTERFACE << 16 | (row + R_FILL), width);
+			ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (row + R_FILL), healthy ? BAR_GREEN : BAR_LOW);
 			String what = progress ? traded + " / " + start + (o.isSell() ? " sold" : " bought") : o.getAmount() + " / " + start + " left";
 			ps.sendString(INTERFACE, row + R_BAR_TEXT, WHITE + "<shad=000000>" + what + "</shad>" + END);
 		}
