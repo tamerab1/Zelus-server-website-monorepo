@@ -47,7 +47,7 @@ public class RimeweaverHexer extends BossVariant {
 		if (!target.hasFreezeImmunity()) {
 			target.freeze(FREEZE_SECONDS, npc);
 			if (target.player != null)
-				target.player.sendMessage("<col=4fa8ff>Permafrost locks you in place!</col>");
+				target.player.sendMessage("<col=0055ff>Permafrost locks you in place!</col>");
 		}
 		target.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(18, 32).delay(2));
 		return true;

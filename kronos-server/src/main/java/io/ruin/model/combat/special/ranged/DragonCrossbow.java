@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.ranged;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -29,12 +30,12 @@ public class DragonCrossbow implements Special {
 
 	@Override
 	public boolean handle(Player player, Entity victim, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
-		int delay = PROJECTILE.send(player, victim);
+		int delay = ForgeSpecGfx.of(player, PROJECTILE).send(player, victim);
 		final int distance = getChebyshevDistance(player, victim);
 		final int delayTicks = getBowHitDelay(distance);
 		victim.hit(new Hit(player, attackStyle, attackType).randDamage((int) (maxDamage * 1.2)).delay(delayTicks));
 		player.animate(4230);
-		victim.graphics(1466, 80, delay);
+		victim.graphics(ForgeSpecGfx.of(player, 1466), 80, delay);
 		List<Entity> targets = new LinkedList<>();
 		double boostAttack = 0;
 		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ACCURATE_BLOWS)) {

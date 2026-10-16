@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -24,7 +25,7 @@ public class DragonWarhammer implements Special {
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(1378);
-		player.graphics(1292);
+		player.graphics(ForgeSpecGfx.of(player, 1292));
 		player.publicSound(2541);
 		if (target.player != null)
 			target.player.getStats().get(StatType.Defence).drain(0.30);

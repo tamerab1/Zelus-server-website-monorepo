@@ -10,6 +10,19 @@ import io.ruin.model.entity.player.Player;
  */
 public class SanguineHarrowlord extends BossVariant {
 
+	/** Sanctum main boss: calls one of its wing's guardians below half health. */
+	@Override
+	protected int reinforcementId() {
+		return 30599;
+	}
+
+	/** Sanctum main boss: protection prayer always up. */
+	@Override
+	protected io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex protectionPrayer() {
+		return io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex.ProtectFromMelee;
+	}
+
+
 	private static final int GFX_BOLT = 4275, GFX_BOLT_HIT = 4276, GFX_TITHE = 4277;
 	private static final int ANIM_CAST = 9194;
 

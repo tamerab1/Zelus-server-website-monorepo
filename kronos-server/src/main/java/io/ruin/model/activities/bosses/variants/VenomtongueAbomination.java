@@ -10,6 +10,19 @@ import io.ruin.model.stat.StatType;
  */
 public class VenomtongueAbomination extends BossVariant {
 
+	/** Sanctum main boss: calls one of its wing's guardians below half health. */
+	@Override
+	protected int reinforcementId() {
+		return 30600;
+	}
+
+	/** Sanctum main boss: protection prayer always up. */
+	@Override
+	protected io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex protectionPrayer() {
+		return io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex.ProtectFromRanged;
+	}
+
+
 	private static final int GFX_LASH = 4283;
 	private static final int ANIM_ATTACK = 1552;
 	private static final int REACH = 2;
@@ -43,7 +56,7 @@ public class VenomtongueAbomination extends BossVariant {
 		target.envenom(6);
 		if (target.player != null) {
 			target.player.getStats().get(StatType.Defence).drain(0.2);
-			target.player.sendMessage("<col=4f9a00>The Corrosive Lash eats through your defences!</col>");
+			target.player.sendMessage("<col=1e7b00>The Corrosive Lash eats through your defences!</col>");
 		}
 		return true;
 	}

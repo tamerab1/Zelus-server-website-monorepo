@@ -2332,6 +2332,9 @@ public class PlayerCombat extends Combat {
 		return randomDamage;
 	}
 
+	/** Nightfall bow (celestial): a gold starlit arrow instead of the ammo's own projectile. */
+	private static final io.ruin.model.map.Projectile CELESTIAL_ARROW = io.ruin.model.map.Projectile.arrow(4417)[0];
+
 	private void attackAnim() {
 		if (attackSet.attackAnimation != null)
 			player.animate(attackSet.attackAnimation);
@@ -3474,12 +3477,17 @@ public class PlayerCombat extends Combat {
 		attackAnim();
 		if (!fireDouble) {
 			boolean chins = wep.getId() == 10033 || wep.getId() == 10034 || wep.getId() == 11959 || wep.getId() == 30476;
-			if (rangedData.drawbackId != -1)
+			boolean celestialNightfall = wep.getId() == io.ruin.model.combat.special.ranged.StarfallVolley.CELESTIAL_NIGHTFALL_BOW;
+			if (celestialNightfall)
+				player.graphics(4416, 96, 0); // starlit drawback (celestial_nightfall_gfx.txt)
+			else if (rangedData.drawbackId != -1)
 				player.graphics(rangedData.drawbackId, 96, 0);
 
 			final int distance = getChebyshevDistance(player, target);
 			final int delayTicks = chins ? getThrownHitDelay(distance) : getBowHitDelay(distance);
-			int delay = rangedData.projectiles[0].send(player, target);
+			int delay = (celestialNightfall ? CELESTIAL_ARROW : rangedData.projectiles[0]).send(player, target);
+			if (celestialNightfall)
+				target.graphics(4293, 70, delay); // gold stardust on impact
 			Hit hit;
 
 			if (player.getEquipment().get(Equipment.SLOT_WEAPON) != null && AttributeExtensions.hasAttribute(
@@ -5274,7 +5282,7 @@ public class PlayerCombat extends Combat {
 		}
 
 		/* twisted bow */
-		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626)
+		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626) || player.getEquipment().hasId(31818)
 				|| player.getEquipment().hasId(io.ruin.model.content.cosmetic.Stardust.CELESTIAL_TWISTED_BOW);
 		if (hit.attackStyle != null && hit.attackStyle.isRanged() && hasTwistedBow) {
 			double magicLevel = target.getCombat().getLevel(StatType.Magic);

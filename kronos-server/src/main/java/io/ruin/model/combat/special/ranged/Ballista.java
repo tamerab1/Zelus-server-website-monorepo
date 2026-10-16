@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.ranged;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ItemID;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
@@ -47,7 +48,7 @@ public class Ballista implements Special {
 			.boostAttack(boostAttack)
 			.delay(delayTicks)
 			.capDamagePvP(weaponId == ItemID.HEAVY_BALLISTA || weaponId == ItemID.HEAVY_BALLISTA_23630 ? 76 : 57, victim)
-			.postDamage(t -> t.graphics(344, 120, 0))
+			.postDamage(t -> t.graphics(ForgeSpecGfx.of(player, 344), 120, 0))
 		);
 		return true;
 	}

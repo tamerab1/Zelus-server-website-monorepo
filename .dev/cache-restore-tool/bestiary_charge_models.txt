@@ -1,0 +1,2 @@
+# Combat Pet Shard (2026-10-16): crystal shard model 37961, every face cosmic texture 186 (matches the Astral Spore)
+model 37961 60175 186 all

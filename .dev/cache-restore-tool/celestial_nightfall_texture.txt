@@ -1,0 +1,2 @@
+# Nightfall bow (celestial) (2026-10-16): lava swirl 59 remapped to a deep navy flow with gold star tips.
+texture 59 235 24557 - - 0:01030c,0.35:06103a,0.6:10257a,0.78:2a4cc0,0.9:6a8cf0,0.96:e6c05a,1:fff4c0

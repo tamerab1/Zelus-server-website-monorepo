@@ -6,7 +6,7 @@ import io.ruin.model.entity.player.Player;
 
 /**
  * Thunderborn Warlord (Chaotic death spawn (melee) clone, storm gold). Slash melee that strikes twice per attack.
- * Special "Stormcleave": lightning strikes everyone within two tiles of it and stuns them.
+ * Special "Stormcleave": lightning strikes everyone within two tiles of it, stuns them and turns off their prayers.
  */
 public class ThunderbornWarlord extends BossVariant {
 
@@ -45,6 +45,8 @@ public class ThunderbornWarlord extends BossVariant {
 			p.graphics(GFX_LIGHTNING, 0, 0);
 			p.hit(new Hit(npc).randDamage(15, 30).delay(1));
 			p.stun(2, true);
+			p.getPrayer().deactivateAll();
+			p.sendMessage("<col=8A0707>The storm shatters your prayers!</col>");
 		}
 		return true;
 	}

@@ -193,6 +193,13 @@ public enum ServerTeleports {
 		// Cindermaw above.
 		"Hard", "No requirements.", 60345, 12502
 	),
+	// the Sanctum hub (io.ruin.model.activities.bosses.sanctum.Sanctum.HUB): guardians + Harrowlord / Gloomfang / Venomtongue.
+	// Preview: Sanguine Harrowlord (model 60037, stand 9195) -- teleport_previews.txt.
+	RELIQUARY("Obsidian Reliquary", new Position(1945, 11040, 0),
+		new Item[]{new Item(31722), new Item(31710), new Item(31728), new Item(31748), new Item(31816)},
+		"A shattered god-fortress of obsidian and blood. <br>Slay its guardians to face the Sanguine Harrowlord, <br>the Gloomfang Devourer and the Venomtongue Abomination.",
+		"Elite", "No requirements.", 60037, 9195
+	),
 	TORMENTED_DEMON("Tormented Demon", new Position(4137, 4364, 0),
 		new Item[]{new Item(29580), new Item(29574), new Item(25778)},
 		"A demon wreathed in flame that hardens its shield <br>against your weapon's attack speed. Bring a demonbane <br>or abyssal weapon once its shield is up.",

@@ -1477,6 +1477,10 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter cindermawKills = new KillCounter();
 	public KillCounter madAngelKills = new KillCounter();
 	public KillCounter sylvarothKills = new KillCounter();
+	/* the Sanctum's main bosses (io.ruin.model.activities.bosses.sanctum) */
+	public KillCounter harrowlordKills = new KillCounter();
+	public KillCounter gloomfangKills = new KillCounter();
+	public KillCounter venomtongueKills = new KillCounter();
 	public KillCounter dracoKills = new KillCounter();
 	public KillCounter perkersKills = new KillCounter();
 	/** Bond of the Sovereign Monarch T5: auto-loot that doesn't fit the inventory goes to the bank (::vaultloot). */

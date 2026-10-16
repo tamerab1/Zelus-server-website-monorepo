@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -37,7 +38,7 @@ public class BandosGodsword implements Special {
 		if (player.goldenBandosGodsword == true) {
 			player.graphics(1748);
 		} else {
-			player.graphics(1212);
+			player.graphics(ForgeSpecGfx.of(player, 1212));
 		}
 		player.publicSound(3869);
 		double boostAttack = 0.5;

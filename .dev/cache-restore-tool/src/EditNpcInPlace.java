@@ -20,7 +20,7 @@ import java.util.List;
 // generic pet-follow facing logic, making the pet always render facing one fixed direction
 // while idle regardless of the player's position).
 //
-// Usage: <cachePath> <npcId> <widthScale> <heightScale> [stripOpcode|-]
+// Usage: <cachePath> <npcId> <widthScale> <heightScale> [stripOpcode|-] [combatLevel|-] [size|-]   (size = opcode 12, tile footprint)
 public class EditNpcInPlace {
     public static void main(String[] args) throws Exception {
         String cachePath = args[0];
@@ -31,6 +31,7 @@ public class EditNpcInPlace {
                 ? java.util.Arrays.stream(args[4].split(",")).mapToInt(Integer::parseInt).toArray()
                 : new int[0];
         int combatLevel = args.length > 5 && !args[5].equals("-") ? Integer.parseInt(args[5]) : -1;
+        int size = args.length > 6 && !args[6].equals("-") ? Integer.parseInt(args[6]) : -1;
 
         try (Store store = new Store(new File(cachePath))) {
             store.load();
@@ -61,6 +62,9 @@ public class EditNpcInPlace {
                 if (combatLevel >= 0) {
                     work = SplicePetify.replaceOrInsert(work, 95, SplicePetify.twoBytes(combatLevel));
                 }
+                if (size > 0) {
+                    work = SplicePetify.replaceOrInsert(work, 12, new byte[]{(byte) size});
+                }
 
                 NpcDefinition after = loader.load(targetId, work);
                 System.out.println("slot " + i + " BEFORE: name=\"" + before.name + "\" widthScale=" + before.widthScale
@@ -70,6 +74,9 @@ public class EditNpcInPlace {
 
                 if (after.widthScale != widthScale || after.heightScale != heightScale) {
                     throw new IllegalStateException("scale not applied correctly -- ABORTING, nothing written");
+                }
+                if (size > 0 && after.size != size) {
+                    throw new IllegalStateException("size not applied correctly -- ABORTING, nothing written");
                 }
                 if (combatLevel >= 0 && after.combatLevel != combatLevel) {
                     throw new IllegalStateException("combatLevel not applied correctly -- ABORTING, nothing written");

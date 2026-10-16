@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -32,7 +33,7 @@ public class ArmadylGodsword implements Special {
 		if (player.goldenArmadylGodsword) {
 			player.graphics(1747);
 		} else {
-			player.graphics(1211);
+			player.graphics(ForgeSpecGfx.of(player, 1211));
 		}
 		player.publicSound(3869);
 		double boostAttack = 1.25;

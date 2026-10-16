@@ -3,6 +3,7 @@ package io.ruin.model.entity.npc.combatpet;
 import io.ruin.cache.NPCType;
 import io.ruin.model.ScrollbarClientScript;
 import io.ruin.cache.ObjType;
+import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.npc.PetNPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.InterfaceHandler;
@@ -18,9 +19,10 @@ import java.util.List;
  * The Ascended Bestiary (item 31746, cosmic-textured Arena book -- .dev/cache-restore-tool/bestiary_item.txt):
  * the core item of the combat pet system.
  * <ul>
- * <li>Tiered combat pets can only be summoned while the book is in the inventory, and are sent back
- * (inventory, else bank) as soon as it leaves the inventory (dropped, banked, traded...).</li>
- * <li>The older assist pets (Graardor Jr. etc.) still follow without it, but only fight while it is carried.</li>
+ * <li>Combat pets only fight as timed bursts summoned with the book's "Spawn" option ({@link BestiaryBurst}),
+ * paid for with charges ({@link BestiaryCharges}); the empty book is 31814.</li>
+ * <li>A bursting pet is sent back (inventory, else bank) as soon as the book leaves the inventory.</li>
+ * <li>The older assist pets (Graardor Jr. etc.) can still be dropped as plain followers, but don't fight.</li>
  * <li>"Read" / "Inspect" open interface 1139 (BuildBestiaryInterface) on the guide / active-pet tab, and
  * examining any combat pet (item or follower) opens its own pet page there, model included.</li>
  * </ul>
@@ -29,7 +31,7 @@ public final class AscendedBestiary {
 
 	public static final int ID = 31746;
 
-	public static final String MISSING_MESSAGE = "You must possess the Ascended Bestiary in your inventory to awaken this companion.";
+	public static final String SUMMON_HINT = "Combat pets are summoned with the Spawn option of a charged Ascended Bestiary.";
 
 	/* interface 1139 components (see BuildBestiaryInterface) */
 	private static final int INTERFACE = 1139;
@@ -53,12 +55,24 @@ public final class AscendedBestiary {
 	private static final String[] TIER_THEMES = {"Bronze", "Electric", "Cosmic"};
 	private static final String BULLET = GOLD + "»" + END + " ";
 
+	/** The Sanctum hub's T3 pet showcase (npcs 30601-30606: copies of the T3 pets with an "Inspect" option). */
+	private static final int[] SHOWCASE_NPCS = {30601, 30602, 30603, 30604, 30605, 30606};
+	private static final Pet[] SHOWCASE_PETS = {Pet.DOUBT_T3, Pet.LUKE_T3, Pet.MALEDICTUS_T3, Pet.REANIMATED_TZHAAR_T3,
+			Pet.JAL_XIL_T3, Pet.XAMPHUR_T3};
+
 	private AscendedBestiary() {
 	}
 
 	public static void register() {
 		ItemAction.registerInventory(ID, "read", (player, item) -> open(player, TAB_GUIDE));
 		ItemAction.registerInventory(ID, "inspect", (player, item) -> open(player, TAB_ACTIVE));
+		ItemAction.registerInventory(BestiaryCharges.EMPTY_ID, "read", (player, item) -> open(player, TAB_GUIDE));
+		BestiaryCharges.register();
+		BestiaryBurst.register();
+		for (int i = 0; i < SHOWCASE_NPCS.length; i++) {
+			Pet pet = SHOWCASE_PETS[i];
+			NPCAction.register(SHOWCASE_NPCS[i], "inspect", (player, npc) -> showcase(player, pet));
+		}
 		InterfaceHandler.register(INTERFACE, h -> {
 			h.actions[CLOSE] = (SimpleAction) player -> player.closeInterface(ToplevelComponent.MAINMODAL);
 			for (int t = 0; t < TAB_BUTTONS.length; t++) {
@@ -68,8 +82,13 @@ public final class AscendedBestiary {
 		});
 	}
 
+	/**
+	 * Either form of the book (a burst that just used the last charges keeps going with an empty book).
+	 * findItemExact, not hasId: hasId only matches items WITHOUT attributes, and a charged book carries "bestiary_charges".
+	 */
 	public static boolean carries(Player player) {
-		return player.getInventory().hasId(ID);
+		return player.getInventory().findItemExact(ID) != null
+				|| player.getInventory().findItemExact(BestiaryCharges.EMPTY_ID) != null;
 	}
 
 	/** Pets that cannot be summoned / kept out without the book. */
@@ -104,6 +123,12 @@ public final class AscendedBestiary {
 	 * Examine on a combat pet item: opens its pet page. Returns false for anything that isn't a combat pet.
 	 */
 	public static boolean examineItem(Player player, int itemId) {
+		if (BestiaryCharges.isBook(itemId)) {
+			String charges = BestiaryCharges.describeCarried(player, itemId);
+			if (charges != null)
+				player.sendMessage(BestiaryCharges.TAG + charges + ".");
+			return false; // the normal examine still runs
+		}
 		Pet pet = Pet.getByItemId(itemId);
 		if (!CombatPets.isCombatPet(pet))
 			return false;
@@ -129,6 +154,25 @@ public final class AscendedBestiary {
 		show(player, TAB_ROSTER, pet, active != null && active.pet.petType == pet ? active : null);
 	}
 
+	/** Showcase "Inspect": the pet's page plus how it is summoned and obtained. */
+	private static void showcase(Player player, Pet pet) {
+		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
+		player.getPacketSender().sendString(INTERFACE, TITLE, "Ascended Bestiary");
+		List<String> extra = new ArrayList<>();
+		extra.add("");
+		extra.add(GOLD + "Summoning" + END);
+		extra.add(BULLET + "Spawn it from a charged Ascended Bestiary:");
+		extra.add("   " + BestiaryBurst.seconds(BestiaryBurst.DURATION_TICKS) + " seconds for " + BestiaryBurst.COST + " charges.");
+		extra.add(BULLET + "Charge the book with Combat Pet Shards.");
+		extra.add("");
+		extra.add(GOLD + "How to get it" + END);
+		extra.add(BULLET + "Tier 1 pets drop from the Obsidian Reliquary's");
+		extra.add("   bosses (Harrowlord, Gloomfang, Venomtongue).");
+		extra.add(BULLET + "Ascend T1 -> T2 with " + spores(CombatPetUpgrades.SPORES[0]) + ", T2 -> T3");
+		extra.add("   with " + spores(CombatPetUpgrades.SPORES[1]) + " (use them on the pet item).");
+		show(player, TAB_ROSTER, pet, null, extra);
+	}
+
 	private static void show(Player player, int tab) {
 		CombatPet active = tab == TAB_ACTIVE ? activePet(player) : null;
 		show(player, tab, active == null ? null : active.pet.petType, active);
@@ -136,6 +180,10 @@ public final class AscendedBestiary {
 
 	/** @param pet when set, the panel shows that pet's page (with its model) instead of the tab's text. */
 	private static void show(Player player, int tab, Pet pet, CombatPet live) {
+		show(player, tab, pet, live, List.of());
+	}
+
+	private static void show(Player player, int tab, Pet pet, CombatPet live, List<String> extraRows) {
 		var ps = player.getPacketSender();
 		for (int t = 0; t < TAB_LABELS.length; t++)
 			ps.sendString(INTERFACE, TAB_LABELS[t], t == tab ? WHITE + TAB_NAMES[t] + END : TAB_NAMES[t]);
@@ -145,6 +193,10 @@ public final class AscendedBestiary {
 			case TAB_ACTIVE -> noActivePet();
 			default -> guide();
 		};
+		if (!extraRows.isEmpty()) {
+			rows = new ArrayList<>(rows);
+			rows.addAll(extraRows);
+		}
 		showModel(player, pet);
 		ps.sendString(INTERFACE, SECTION, pet != null ? familyName(pet) : TAB_NAMES[tab]);
 		for (int r = 0; r < ROWS; r++)
@@ -159,10 +211,19 @@ public final class AscendedBestiary {
 
 	private static List<String> guide() {
 		List<String> r = new ArrayList<>();
-		r.add(GOLD + "The book" + END);
-		r.add(BULLET + "Keep this book in your inventory to summon");
-		r.add("   and keep a combat pet.");
-		r.add(BULLET + "Bank or drop it and your pet returns to you.");
+		r.add(GOLD + "Charges" + END);
+		r.add(BULLET + "Use Combat Pet Shards on the book: 1 shard is");
+		r.add("   1 charge, up to " + BestiaryCharges.MAX_CHARGES + ".");
+		r.add(BULLET + "An empty book awakens at " + BestiaryCharges.ACTIVATE_AT + " charges, and");
+		r.add("   becomes empty again when it runs out.");
+		r.add(BULLET + "Use a duplicate pet on the book to dismantle");
+		r.add("   it into " + BestiaryCharges.DISMANTLE_SHARDS + " shards.");
+		r.add("");
+		r.add(GOLD + "Spawning" + END);
+		r.add(BULLET + "Spawn: a pet from your inventory fights for");
+		r.add("   " + BestiaryBurst.seconds(BestiaryBurst.DURATION_TICKS) + " seconds, for " + BestiaryBurst.COST + " charges.");
+		r.add(BULLET + "It returns early only if you die or enter");
+		r.add("   the Wilderness. Only one pet at a time.");
 		r.add("");
 		r.add(GOLD + "In combat" + END);
 		r.add(BULLET + "Your pet attacks whatever monster you attack.");
@@ -172,8 +233,8 @@ public final class AscendedBestiary {
 		r.add(BULLET + "Its damage counts as yours for loot.");
 		r.add("");
 		r.add(GOLD + "Specials" + END);
-		r.add(BULLET + "A guaranteed special attack every 8 / 7 / 6");
-		r.add("   combat ticks at Tier 1 / 2 / 3.");
+		r.add(BULLET + "A guaranteed special every 8 / 7 / 6 ticks of");
+		r.add("   the pet's own attacks at Tier 1 / 2 / 3.");
 		r.add("");
 		r.add(GOLD + "Ascending" + END);
 		r.add(BULLET + "Use Astral Spores on a pet item to raise its tier.");
@@ -221,8 +282,8 @@ public final class AscendedBestiary {
 		List<String> r = new ArrayList<>();
 		r.add("No combat pet is following you.");
 		r.add("");
-		r.add(BULLET + "Drop a combat pet item while carrying");
-		r.add("   this book to awaken it.");
+		r.add(BULLET + "Use the book's Spawn option with a combat");
+		r.add("   pet item in your inventory.");
 		r.add(BULLET + "Examine any combat pet to see its page.");
 		return r;
 	}
@@ -243,7 +304,7 @@ public final class AscendedBestiary {
 		r.add("");
 		r.add(GOLD + "Special" + END);
 		r.add(WHITE + profile.specialName() + END);
-		r.add(profile.specialIntervalTicks > 0 ? "Every " + profile.specialIntervalTicks + " combat ticks" : "Random chance");
+		r.add(profile.specialIntervalTicks > 0 ? "Every " + profile.specialIntervalTicks + " ticks of its attacks" : "Random chance");
 		r.add(live != null && profile.specialIntervalTicks > 0 ? "Next: " + WHITE + specialReadyIn(live) + END : "");
 		r.add("");
 		r.add(GREY + profile.specialEffect() + END);
@@ -319,14 +380,24 @@ public final class AscendedBestiary {
 		CombatPet active = activePet(player);
 		if (active == null) {
 			r.add(GREY + "None" + END);
-			r.add(carries(player) ? "" : "<col=ff5050>Book not in inventory" + END);
+			r.add(carries(player) ? "Charges: " + WHITE + carriedCharges(player) + "/" + BestiaryCharges.MAX_CHARGES + END
+					: "<col=ff5050>Book not in inventory" + END);
 			return r;
 		}
 		PetTier tier = CombatPets.tierOf(active.pet.petType);
 		r.add(WHITE + name(active.pet.petType) + END);
 		r.add((tier == null ? "" : TIER_COLOURS[tier.ordinal()] + "Tier " + tier.number() + END + " - ") + styleName(active.profile));
-		r.add(active.isEngaged() ? "Fighting" : "Idle");
+		r.add((active.isEngaged() ? "Fighting" : "Idle")
+				+ (active.isBursting() ? " - " + WHITE + BestiaryBurst.seconds(active.getTicksRemaining()) + "s left" + END : ""));
 		return r;
+	}
+
+	/** Charges of the first book in the inventory (active form first). */
+	private static int carriedCharges(Player player) {
+		var book = player.getInventory().findItemExact(ID);
+		if (book == null)
+			book = player.getInventory().findItemExact(BestiaryCharges.EMPTY_ID);
+		return book == null ? 0 : BestiaryCharges.charges(book);
 	}
 
 	private static CombatPet activePet(Player player) {
@@ -335,7 +406,7 @@ public final class AscendedBestiary {
 
 	private static String specialReadyIn(CombatPet active) {
 		int left = Math.max(0, active.profile.specialIntervalTicks - active.ticksSinceLastSpecial);
-		return left == 0 ? "ready" : "in " + left + " combat ticks";
+		return left == 0 ? "next attack" : "in " + left + " attack ticks";
 	}
 
 	private static int[] maxHitRange(PetTier tier) {

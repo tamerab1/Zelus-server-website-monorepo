@@ -577,6 +577,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.pet.perk.PetPerksInterface.register();
 		io.ruin.model.entity.npc.combatpet.CombatPetUpgrades.register();
 		io.ruin.model.entity.npc.combatpet.AscendedBestiary.register();
+		io.ruin.model.activities.bosses.sanctum.Sanctum.register();
 		io.ruin.model.content.petexchange.PetRecolorExchange.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCard.register();
 		io.ruin.model.item.actions.impl.scratchcard.ScratchCardManager.register();

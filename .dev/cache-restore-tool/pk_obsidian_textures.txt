@@ -1,0 +1,14 @@
+# Wilderness Forge "Matte Obsidian & Blood Crimson" (2026-10-16): animated lava swirl 59 remapped to near-black
+# obsidian -> blood crimson, each with its own hot tips so the forge families keep a distinct accent.
+# 229 blood crimson (ember tips)
+texture 59 229 24551 - - 0:030000,0.35:140204,0.58:4a0508,0.74:8a0a10,0.86:c8141a,0.95:f0402a,1:ff8a4a
+# 230 frost-crimson (icy tips)
+texture 59 230 24552 - - 0:030003,0.35:120208,0.58:440612,0.74:8a0c1c,0.86:c82a3a,0.95:a8e0ff,1:e8fbff
+# 231 venom-crimson (toxic green tips)
+texture 59 231 24553 - - 0:030200,0.35:120404,0.58:44060a,0.74:880c12,0.86:b02414,0.95:6ee03a,1:c4ff6a
+# 232 arcane-crimson (violet tips)
+texture 59 232 24554 - - 0:030006,0.35:140210,0.58:480722,0.74:880c34,0.86:b8205a,0.95:b860ff,1:e6c8ff
+# 233 storm-crimson (white-blue lightning tips)
+texture 59 233 24555 - - 0:020204,0.35:10040a,0.58:420614,0.74:880c1c,0.86:c41c28,0.95:9ac4ff,1:f4f8ff
+# 234 gilded-crimson (gold tips)
+texture 59 234 24556 - - 0:030100,0.35:140402,0.58:4a0806,0.74:8a100c,0.86:c8301a,0.95:f0b040,1:fff0b0

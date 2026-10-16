@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.AttackType;
@@ -20,7 +21,7 @@ public class Voidwaker implements Special {
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(1378, 0);
-		target.graphics(2363, 0, 0);
+		target.graphics(ForgeSpecGfx.of(player, 2363), 0, 0);
 		var min = maxDamage / 2;
 		var max = (int) (maxDamage * 1.5);
 		var hit = new Hit(player, AttackStyle.MAGIC, attackType);

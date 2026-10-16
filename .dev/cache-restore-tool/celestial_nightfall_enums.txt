@@ -1,0 +1,3 @@
+# Nightfall bow (celestial) 31818: spec bar (906, cost x10) + description (1739)
+int 906 31818 550
+str 1739 31818 Starfall Volley: Loose two starlit arrows that deal up to 35% more damage each, never less than 8, and heal you for a fifth of the damage they deal.

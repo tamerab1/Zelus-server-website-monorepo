@@ -1,0 +1,8 @@
+# Nightfall bow (celestial) effects (2026-10-16): navy + gold copies. Build: BuildBossVariants gfx apply <cache> <this>
+#     name      pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme celestial 43   6    0.65 8    8    6    1.05 12   4         80
+#   src  new  theme     texture model
+gfx 1116 4416 celestial -       -
+gfx 1120 4417 celestial -       -
+gfx 1099 4418 celestial -       -
+gfx 1100 4419 celestial -       -

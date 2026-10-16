@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -22,7 +23,7 @@ public class DragonScimitar implements Special {
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(1872);
-		player.graphics(347, 96, 0);
+		player.graphics(ForgeSpecGfx.of(player, 347), 96, 0);
 		player.publicSound(2529);
 		double boostAttack = 0.25;
 		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ACCURATE_BLOWS)) {

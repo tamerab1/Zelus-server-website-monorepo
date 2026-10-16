@@ -57,6 +57,10 @@ public class KillCounter {
 		set(p -> p.dracoKills, 30560, 30561, 30562, 30563, 30564, 30565);
 		// Chamber of Ascension (Perkers room): Azurion, Verdanox, Crimsar and Aurelius share one counter.
 		set(p -> p.perkersKills, 30568, 30569, 30570, 30571);
+		// the Sanctum's main bosses, by id (the boss variant names are unique, but ids are exact)
+		set(p -> p.harrowlordKills, 30594);
+		set(p -> p.gloomfangKills, 30596);
+		set(p -> p.venomtongueKills, 30597);
 		set(p -> p.kingBlackDragonKills, "king black Dragon");
 		set(p -> p.callistoKills, "callisto");
 		set(p -> p.venenatisKills, "venenatis");
@@ -199,6 +203,9 @@ public class KillCounter {
 			p.cindermawKills.setName("Cindermaw").messageOnKill();
 			p.madAngelKills.setName("Mad Angel").messageOnKill();
 			p.sylvarothKills.setName("Sylvaroth").messageOnKill();
+			p.harrowlordKills.setName("Sanguine Harrowlord").messageOnKill();
+			p.gloomfangKills.setName("Gloomfang Devourer").messageOnKill();
+			p.venomtongueKills.setName("Venomtongue Abomination").messageOnKill();
 			p.dracoKills.setName("Draco").messageOnKill();
 			p.perkersKills.setName("Chamber of Ascension").messageOnKill();
 			p.alchemicalHydraKills.setName("Alchemical Hydra").messageOnKill();
@@ -325,6 +332,9 @@ public class KillCounter {
 			p -> p.tormentedDemonKills,
 			p -> p.madAngelKills,
 			p -> p.sylvarothKills,
+			p -> p.harrowlordKills,
+			p -> p.gloomfangKills,
+			p -> p.venomtongueKills,
 			p -> p.dracoKills,
 			p -> p.perkersKills
 		);

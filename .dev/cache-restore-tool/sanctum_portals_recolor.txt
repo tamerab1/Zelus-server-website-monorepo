@@ -1,0 +1,5 @@
+# Sanctum hub portals (2026-10-16): clones of portal 4150 (model 2318, one colour 11218 = h10 s7 l82), one per boss.
+object 60020 11218:946
+object 60021 11218:52013
+object 60022 11218:23479
+object 60023 11218:37820

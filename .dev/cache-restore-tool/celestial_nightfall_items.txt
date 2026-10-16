@@ -1,0 +1,6 @@
+# Nightfall bow (celestial) 31818 (2026-10-16): made with the Celestial ornament kit (RivalsItems). Textured body (model
+# 61135, texture 235), crimson -> gold, teal -> pale gold. Server: combat/special/ranged/StarfallVolley, PlayerCombat visuals.
+variant 59626 31818 31819 1 -|Wield|-|-|Drop Nightfall bow (celestial)
+placeholderfrom 31818 14387
+models 31818 59815:61135
+recolor 31818 934:8998,956:9020,36508:9650,36525:9670,37524:8867

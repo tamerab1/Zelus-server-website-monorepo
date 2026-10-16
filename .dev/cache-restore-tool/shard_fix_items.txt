@@ -1,0 +1,6 @@
+# Combat Pet Shard 31816 (2026-10-16): rebuilt WITHOUT the Crystal shard's stack-size models (op100-109 -> 23966-23970), which
+# made stacks (drop table, collection log, piles) show the plain crystal shard instead of the cosmic model 60175.
+variant 23962 31816 31817 1 -|-|-|-|Drop Combat Pet Shard
+placeholderfrom 31816 14387
+models 31816 37961:60175
+strip 31816 100,101,102,103,104,105,106,107,108,109

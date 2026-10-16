@@ -738,7 +738,8 @@ public enum Pet {
 				}
 			});
 		}
-		if (player.pet == null) {
+		// tiered combat pets never come out on their own: they only fight as Bestiary bursts
+		if (player.pet == null && !AscendedBestiary.required(this)) {
 			spawn(player);
 			unlockBroadcast(player, npcId);
 			player.sendMessage("<col=FF0000>You have a funny feeling like you're being followed.");
@@ -831,25 +832,14 @@ public enum Pet {
 			 */
 
 			ItemAction.registerInventory(pet.itemId, "drop", (player, item) -> {
-				if (AscendedBestiary.required(pet) && !AscendedBestiary.carries(player)) {
-					player.sendMessage(AscendedBestiary.MISSING_MESSAGE);
+				if (AscendedBestiary.required(pet)) {
+					// tiered combat pets only come out as timed bursts from a charged Ascended Bestiary
+					player.sendMessage(AscendedBestiary.SUMMON_HINT);
 					return;
 				}
-				if (player.wildernessLevel > 0) {
-					player.sendMessage(Color.RED.wrap("You cannot bring battle pets to the wilderness!"));
-					return;
-				}
-				if (DonationBossHandler.map != null
-						&& DonationBossHandler.map.swRegion.id == player.getPosition().getRegionId()) {
-					player.sendMessage("You cannot drop pets here.");
-					return;
-				}
-				if (VoteBossHandler.map != null && VoteBossHandler.map.swRegion.id == player.getPosition().getRegionId()) {
-					player.sendMessage("You cannot drop pets here.");
-					return;
-				}
-				if(SummerEvent.map != null && SummerEvent.map.isIn(player)) {
-					player.sendMessage("You can't place a pet here.");
+				String blocked = summonBlockReason(player);
+				if (blocked != null) {
+					player.sendMessage(blocked);
 					return;
 				}
 				Pet petNPC = Pet.getByItemId(item.getId());
@@ -976,6 +966,20 @@ public enum Pet {
 		});
 	}
 
+	/** Why a pet can't be put down here (wilderness, boss instances, events), or null when it can. */
+	public static String summonBlockReason(Player player) {
+		if (player.wildernessLevel > 0)
+			return Color.RED.wrap("You cannot bring battle pets to the wilderness!");
+		int region = player.getPosition().getRegionId();
+		if (DonationBossHandler.map != null && DonationBossHandler.map.swRegion.id == region)
+			return "You cannot drop pets here.";
+		if (VoteBossHandler.map != null && VoteBossHandler.map.swRegion.id == region)
+			return "You cannot drop pets here.";
+		if (SummerEvent.map != null && SummerEvent.map.isIn(player))
+			return "You can't place a pet here.";
+		return null;
+	}
+
 	public static boolean pickup(Player player, NPC npc, Pet pet, boolean force) {
 		if (npc.ownerId != player.getUserId()) {
 			player.sendMessage("That's not your pet.");
@@ -994,6 +998,8 @@ public enum Pet {
 		player.faceTemp(npc);
 		player.animate(827); // this is custom
 		// e.delay(1); // Fuck your player event just for a 1 second delay.
+		if (npc instanceof PetNPC p && p.combatPet != null && p.combatPet.isBursting()) // ends the client's pet timer
+			player.sendMessage(io.ruin.model.entity.npc.combatpet.BestiaryCharges.TAG + "Your combat pet returns to the Bestiary.");
 		npc.remove();
 		player.pet = null;
 		VarPlayerRepository.PET_NPC_INDEX.set(player, -1);

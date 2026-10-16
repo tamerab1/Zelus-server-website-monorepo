@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
@@ -31,7 +32,7 @@ public class DragonClaws implements Special {
 	@Override
 	public boolean handle(Player player, Entity victim, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(7514, 10);
-		player.graphics(1171, 0, 10);
+		player.graphics(ForgeSpecGfx.of(player, 1171), 0, 10);
 		player.publicSound(2537);
 		double boostAttack = 0;
 		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ACCURATE_BLOWS)) {

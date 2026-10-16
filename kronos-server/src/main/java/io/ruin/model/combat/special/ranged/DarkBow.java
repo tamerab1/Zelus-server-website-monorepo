@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.ranged;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -35,6 +36,8 @@ public class DarkBow implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
+		if (def.id == StarfallVolley.CELESTIAL_NIGHTFALL_BOW) // has its own special
+			return false;
 		return name.contains("dark bow") || name.contains("nightfall bow") || def.id == 31534; // Eclipse bow (Wilderness Forge)
 	}
 
@@ -63,12 +66,13 @@ public class DarkBow implements Special {
 			gfxId = 1100;
 		}
 
+		final int impactGfx = ForgeSpecGfx.of(player, gfxId);
 		player.animate(426);
 		player.graphics(data.doubleDrawbackId, 96, 0);
 
 		Hit[] hits = new Hit[projectiles.length];
 		for (int i = 0; i < projectiles.length; i++) {
-			int delay = projectiles[i].send(player, target);
+			int delay = ForgeSpecGfx.of(player, projectiles[i]).send(player, target);
 			final int distance = getChebyshevDistance(player, target);
 			final int delayTicks = getBowHitDelay(distance);
 			double boostAttack = 0.45;
@@ -89,7 +93,7 @@ public class DarkBow implements Special {
 			hit.postDefend(t -> {
 				hit.type = HitType.DAMAGE;
 				hit.damage = Math.max(minDamage, hit.damage);
-			}).postDamage(t -> t.graphics(gfxId, 96, 0));
+			}).postDamage(t -> t.graphics(impactGfx, 96, 0));
 			hits[i] = hit;
 		}
 		player.getCombat().removeAmmo(ammo, hits);

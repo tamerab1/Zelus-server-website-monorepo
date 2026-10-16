@@ -1,0 +1,22 @@
+# Wilderness Forge obsidian/crimson special-attack effects (2026-10-16): themed copies of the source weapons'
+# spec spotanims. Dark parts -> smoky obsidian, bright/saturated parts -> blood crimson.
+# Build: BuildBossVariants gfx apply <cache> pk_obsidian_gfx.txt   (server: combat/special/ForgeSpecGfx)
+#     name       pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme bloodforge 0    2    0.35 3    0    7    0.95 16   5         60
+#   src  new  theme      texture model
+gfx 1211 4400 bloodforge -       -
+gfx 1212 4401 bloodforge -       -
+gfx 1171 4402 bloodforge -       -
+gfx 252  4403 bloodforge -       -
+gfx 347  4404 bloodforge -       -
+gfx 1292 4405 bloodforge -       -
+gfx 340  4406 bloodforge -       -
+gfx 2363 4407 bloodforge -       -
+gfx 301  4408 bloodforge -       -
+gfx 344  4409 bloodforge -       -
+gfx 1099 4410 bloodforge -       -
+gfx 1101 4411 bloodforge -       -
+gfx 1100 4412 bloodforge -       -
+gfx 1103 4413 bloodforge -       -
+gfx 698  4414 bloodforge -       -
+gfx 1466 4415 bloodforge -       -

@@ -10,6 +10,8 @@ import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.PetNPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.map.route.routes.DumbRoute;
+import io.ruin.model.map.Tile;
+import io.ruin.model.map.Position;
 import io.ruin.model.map.route.routes.ProjectileRoute;
 
 /**
@@ -32,28 +34,87 @@ public final class CombatPetCombat {
 		NPC target = ctx.target;
 		CombatPetProfile profile = ctx.profile;
 
-		if (!inRange(pet, target, profile.attackRange)) {
-			DumbRoute.step(pet, target, profile.attackRange);
+		// stand within OWNER_REACH tiles of the owner, never on the owner's or the target's tiles
+		if (!goodSpot(pet.getAbsX(), pet.getAbsY(), pet, ctx.owner, target, profile.attackRange)) {
+			Position spot = fightingSpot(pet, ctx.owner, target, profile.attackRange);
+			if (spot != null) {
+				pet.getRouteFinder().routeAbsolute(spot.getX(), spot.getY());
+				return;
+			}
+			// nowhere near the owner to hit from: stay beside the owner instead of walking onto anything
+			if (gap(pet, ctx.owner) == 0 || gap(pet, ctx.owner) > OWNER_REACH)
+				DumbRoute.step(pet, ctx.owner, 1);
 			return;
 		}
 		pet.getMovement().reset();
 		pet.face(target);
 
+		// everything runs on the PET's own attack clock (its attack speed), never the owner's
 		long now = Server.currentTick();
-		if (profile.specialIntervalTicks > 0 && ctx.ticksSinceLastSpecial >= profile.specialIntervalTicks) {
-			ctx.ticksSinceLastSpecial = 0;
-			ctx.nextAttackTick = now + profile.attackTicks;
-			profile.specialAttack(pet, ctx.owner, target);
-			return;
-		}
 		if (now < ctx.nextAttackTick)
 			return;
 		ctx.nextAttackTick = now + profile.attackTicks;
 
+		if (profile.specialIntervalTicks > 0 && ctx.ticksSinceLastSpecial >= profile.specialIntervalTicks) {
+			ctx.ticksSinceLastSpecial = 0;
+			profile.specialAttack(pet, ctx.owner, target);
+			return;
+		}
+		ctx.ticksSinceLastSpecial += profile.attackTicks; // pet attack time since the last special
 		if (profile.specialChance > 0 && Random.get() < profile.specialChance)
 			profile.specialAttack(pet, ctx.owner, target);
 		else
 			profile.basicAttack(pet, ctx.owner, target);
+	}
+
+	/** How far from its owner a fighting pet may stand. */
+	private static final int OWNER_REACH = 2;
+
+	/** True when standing at (x, y) the pet is near its owner, overlaps nobody and can hit the target. */
+	private static boolean goodSpot(int x, int y, PetNPC pet, Entity owner, NPC target, int range) {
+		int size = pet.getSize(), z = pet.getHeight();
+		int toOwner = gap(x, y, size, owner), toTarget = gap(x, y, size, target);
+		if (toOwner == 0 || toOwner > OWNER_REACH || toTarget == 0)
+			return false;
+		if (range == 1)
+			return toTarget == 1;
+		return toTarget <= range && ProjectileRoute.allow(new Position(x, y, z), size, target);
+	}
+
+	/** The free tile near the owner the pet can fight from, closest to where the pet already is. */
+	private static Position fightingSpot(PetNPC pet, Entity owner, NPC target, int range) {
+		Position best = null;
+		int bestCost = Integer.MAX_VALUE, z = pet.getHeight(), size = pet.getSize();
+		for (int dx = -OWNER_REACH - size + 1; dx <= OWNER_REACH + owner.getSize() - 1; dx++) {
+			for (int dy = -OWNER_REACH - size + 1; dy <= OWNER_REACH + owner.getSize() - 1; dy++) {
+				int x = owner.getAbsX() + dx, y = owner.getAbsY() + dy;
+				if (!goodSpot(x, y, pet, owner, target, range) || !free(x, y, z, size))
+					continue;
+				int cost = Math.max(Math.abs(x - pet.getAbsX()), Math.abs(y - pet.getAbsY())) * 4 + gap(x, y, size, owner);
+				if (cost < bestCost) {
+					bestCost = cost;
+					best = new Position(x, y, z);
+				}
+			}
+		}
+		return best;
+	}
+
+	private static boolean free(int x, int y, int z, int size) {
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++) {
+				Tile tile = Tile.get(x + i, y + j, z);
+				if (tile != null && !tile.isFloorFree())
+					return false;
+			}
+		return true;
+	}
+
+	/** gap() for a footprint at (x, y). */
+	private static int gap(int x, int y, int size, Entity b) {
+		int dx = Math.max(0, Math.max(x - (b.getAbsX() + b.getSize() - 1), b.getAbsX() - (x + size - 1)));
+		int dy = Math.max(0, Math.max(y - (b.getAbsY() + b.getSize() - 1), b.getAbsY() - (y + size - 1)));
+		return Math.max(dx, dy);
 	}
 
 	private static boolean inRange(PetNPC pet, NPC target, int range) {

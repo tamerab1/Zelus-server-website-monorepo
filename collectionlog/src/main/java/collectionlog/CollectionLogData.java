@@ -1186,6 +1186,42 @@ public enum CollectionLogData {
 				new Item(30461, 1),
 			}),
 
+	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30594.json).
+	SANGUINE_HARROWLORD(CollectionLogUpdated.Categories.BOSSES, "Sanguine Harrowlord", new Item[] {
+			new Item(31722) /* Spectral Soulbinder (T1) */,
+			new Item(31740) /* Starbound Invoker (T1) */,
+			new Item(31748) /* Astral Spore */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			}),
+
+	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30596.json).
+	GLOOMFANG_DEVOURER(CollectionLogUpdated.Categories.BOSSES, "Gloomfang Devourer", new Item[] {
+			new Item(31710) /* Voidmind Hexer (T1) */,
+			new Item(31716) /* Ironknuckle Brawler (T1) */,
+			new Item(31748) /* Astral Spore */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			}),
+
+	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30597.json).
+	VENOMTONGUE_ABOMINATION(CollectionLogUpdated.Categories.BOSSES, "Venomtongue Abomination", new Item[] {
+			new Item(31728) /* Magmafist Smasher (T1) */,
+			new Item(31734) /* Magma Skirmisher (T1) */,
+			new Item(31748) /* Astral Spore */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			}),
+
 	// Chamber of Ascension: the Perkers room (Azurion / Verdanox / Crimsar / Aurelius), its three armour sets and the six bonds.
 	CHAMBER_OF_ASCENSION(CollectionLogUpdated.Categories.MINIGAMES, "Chamber of Ascension", new Item[] {
 			new Item(31300) /* Azurion's helm */,

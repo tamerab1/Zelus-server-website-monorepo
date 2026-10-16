@@ -1,0 +1,2 @@
+# Nightfall bow (celestial): the bow's dark navy body faces (model 59815) -> celestial texture 235
+model 59815 61135 235 41095,39057,48652,48672

@@ -12,7 +12,7 @@ import io.ruin.utility.Broadcast;
 /**
  * Division Rivals shop items (2026-10-15; cache: .dev/cache-restore-tool rivals_items.txt).
  * <ul>
- * <li>Celestial ornament kit 31790: used on a Twisted bow, Armadyl godsword, Voidwaker or Harmonised nightmare staff it
+ * <li>Celestial ornament kit 31790: used on a Twisted bow, Armadyl godsword, Voidwaker, Harmonised nightmare staff or Nightfall bow it
  * turns it into the celestial version (navy and gold, the client's stardust sparkles) after a confirmation. The binding
  * is PERMANENT (no Dismantle: the celestial items have no such option), so kits can't be recycled. The weapon keeps
  * its attributes (charges, upgrades, perks): the item changes id in place.</li>
@@ -29,6 +29,7 @@ public final class RivalsItems {
 		{11802, 31784},   // Armadyl godsword
 		{27690, 31786},   // Voidwaker
 		{24423, 31788},   // Harmonised nightmare staff
+		{59626, 31818},   // Nightfall bow -> Nightfall bow (celestial): own look, attack animation, arrows and special
 	};
 
 	public static final LootTable BOX = new LootTable()

@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.ranged;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -27,7 +28,7 @@ public class ArmadylCrossbow implements Special {
 	@Override
 	public boolean handle(Player player, Entity victim, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(4230);
-		PROJECTILE.send(player, victim);
+		ForgeSpecGfx.of(player, PROJECTILE).send(player, victim);
 		final int distance = getChebyshevDistance(player, victim);
 		final int delayTicks = getBowHitDelay(distance);
 		double boostAttack = 1;

@@ -62,14 +62,16 @@ public class Sylvaroth extends NPCCombat {
 	// Splinter Wave -- a line of moving hazards sweeps across the arena floor and players must
 	// step out of its path or take heavy damage. Same spawn-a-line-of-NPCs-and-step-them-forward
 	// technique Galvek's tsunami special uses (see Galvek.java#waveAttack), reused rather than
-	// reinvented -- WAVE_NPC_ID 8099 is the same stock "Tsunami" NPC that attack already relies
-	// on. Everything below is computed relative to Sylvaroth's own live position rather than
+	// reinvented. WAVE_NPC_ID 30607 "Splinter wave" is a copy of Galvek's stock "Tsunami" (8099) recoloured
+	// emerald with golden sap foam (.dev/cache-restore-tool/sylvaroth_wave.sh), so the two specials no longer look
+	// alike. Every sweep leaves ONE random row open (no wave on it): standing there is the way to dodge. Everything below is computed relative to Sylvaroth's own live position rather than
 	// hardcoded region coordinates (unlike Galvek's arena-specific version), since the safe/clear
 	// radius around her spawn is only confirmed out to ARENA_OBJECT_SCAN_RADIUS (15 tiles, see
 	// clearArenaClutter()) -- both the sweep width and travel distance below stay comfortably
 	// inside that.
-	private static final int WAVE_NPC_ID = 8099;
-	private static final int WAVE_HALF_WIDTH = 6;
+	private static final int WAVE_NPC_ID = 30607;
+	/** The wave line always starts at x 2595, y 4769-4781 (user-placed), then sweeps east WAVE_SWEEP_RANGE * 2 tiles. */
+	private static final int WAVE_START_X = 2595, WAVE_START_Y = 4769, WAVE_END_Y = 4781;
 	private static final int WAVE_SWEEP_RANGE = 10;
 	private static final int WAVE_ATTACK_INTERVAL = 6;
 	private final List<NPC> waves = new ArrayList<>();
@@ -194,8 +196,6 @@ public class Sylvaroth extends NPCCombat {
 
 	private void splinterWaveAttack() {
 		npc.animate(info.attack_animation);
-		int centerX = npc.getPosition().getX();
-		int centerY = npc.getPosition().getY();
 		int z = npc.getPosition().getZ();
 
 		for (Player p : npc.localPlayers()) {
@@ -204,10 +204,13 @@ public class Sylvaroth extends NPCCombat {
 			}
 		}
 
-		int startX = centerX - WAVE_SWEEP_RANGE;
-		int endX = centerX + WAVE_SWEEP_RANGE;
-		for (int dy = -WAVE_HALF_WIDTH; dy <= WAVE_HALF_WIDTH; dy++) {
-			NPC wave = new NPC(WAVE_NPC_ID).spawn(new Position(startX, centerY + dy, z));
+		int startX = WAVE_START_X;
+		int endX = WAVE_START_X + WAVE_SWEEP_RANGE * 2;
+		int safeRow = Random.get(WAVE_START_Y, WAVE_END_Y); // the one open tile-row in this sweep
+		for (int y = WAVE_START_Y; y <= WAVE_END_Y; y++) {
+			if (y == safeRow)
+				continue;
+			NPC wave = new NPC(WAVE_NPC_ID).spawn(new Position(startX, y, z));
 			waves.add(wave);
 			wave.startEvent(event -> {
 				int ticks = 0;

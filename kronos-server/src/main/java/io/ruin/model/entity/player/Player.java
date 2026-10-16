@@ -2186,8 +2186,15 @@ public class Player extends PlayerAttributes {
 
 		LoginListener.executeAll(this);
 
-		if (pet != null)
-			pet.spawn(this);
+		if (pet != null) {
+			if (io.ruin.model.entity.npc.combatpet.AscendedBestiary.required(pet)) {
+				// logged out mid Bestiary burst: tiered pets never stay out, so hand the item back
+				getInventory().addOrSendToBank(pet.itemId, 1);
+				pet = null;
+			} else {
+				pet.spawn(this);
+			}
+		}
 
 		Title.load(this);
 

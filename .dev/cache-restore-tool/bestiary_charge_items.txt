@@ -1,0 +1,14 @@
+# Ascended Bestiary charges (2026-10-16). Built with CreateItemVariants apply-replace.
+# Active book 31746 rebuilt in place with the new ops (Spawn / Read / Inspect / Check).
+variant 6891 31746 31747 0 Spawn|Read|Inspect|Check|Drop Ascended Bestiary
+placeholderfrom 31746 14387
+models 31746 10575:60002
+recolor 31746 32809:8877,32813:8882,32817:8887
+# Ascended Bestiary (empty): the plain Arena book model with a dull charcoal cover (no cosmic glow) + gold pages.
+variant 6891 31814 31815 0 Check|Read|-|-|Drop Ascended Bestiary (empty)
+placeholderfrom 31814 14387
+recolor 31814 7857:20,3862:26,5018:32,32809:8877,32813:8882,32817:8887
+# Combat Pet Shard: stackable charge material for the book. Clone of Crystal shard 23962, cosmic model 60175.
+variant 23962 31816 31817 1 -|-|-|-|Drop Combat Pet Shard
+placeholderfrom 31816 14387
+models 31816 37961:60175

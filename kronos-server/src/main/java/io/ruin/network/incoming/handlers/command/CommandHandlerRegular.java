@@ -1253,6 +1253,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "sanctum": {
+				// the Sanctum hub (ToB Bloat room, 2026-10-16) -- see io.ruin.model.activities.bosses.sanctum.Sanctum
+				io.ruin.model.activities.bosses.sanctum.Sanctum.teleportToHub(player);
+				return true;
+			}
+
 			case "train":
 			case "sandcrabs": {
 				player.clanChatSpeeches++;

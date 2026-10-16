@@ -82,6 +82,11 @@ public final class CombatPets {
 		return TIERS.keySet();
 	}
 
+	/** Every pet that fights (tiered pets and the older assist pets with their recolours). */
+	public static Iterable<Pet> allPets() {
+		return PROFILES.keySet();
+	}
+
 	public static CombatPetProfile profileOf(Pet pet) {
 		return pet == null ? null : PROFILES.get(pet);
 	}

@@ -35,8 +35,13 @@ public class CombatPet {
 	State state = State.IDLE;
 	NPC target;
 	long nextAttackTick;
-	/** Engaged ticks since the last special (tiered pets fire a special every N of these). */
+	/** The pet's own attack time (sum of its attack speeds) since its last special; specials fire on an attack turn. */
 	int ticksSinceLastSpecial;
+
+	/** Ticks left on the Ascended Bestiary burst that summoned this pet; 0 = not summoned (never fights). */
+	int burstTicksLeft;
+	/** Ticks since the burst started (the out-of-combat check waits for a short grace period). */
+	int burstTicksElapsed;
 
 	CombatPet(PetNPC pet, CombatPetProfile profile) {
 		this.pet = pet;
@@ -52,7 +57,21 @@ public class CombatPet {
 		return target;
 	}
 
+	public boolean isBursting() {
+		return burstTicksLeft > 0;
+	}
+
+	public int getTicksRemaining() {
+		return burstTicksLeft;
+	}
+
 	public void process() {
+		if (!isBursting()) { // a plain follower (dropped boss pet): combat pets only fight during a burst
+			disengage();
+			return;
+		}
+		if (BestiaryBurst.tick(this))
+			return; // the burst ended and the pet went back
 		if (!AscendedBestiary.check(pet)) {
 			disengage();
 			return;
@@ -68,7 +87,6 @@ public class CombatPet {
 			nextAttackTick = Math.max(nextAttackTick, Server.currentTick() + 1);
 		}
 		state = State.ENGAGED;
-		ticksSinceLastSpecial++;
 		CombatPetCombat.tick(this);
 	}
 

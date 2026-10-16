@@ -1,0 +1,4 @@
+# Obsidian Reliquary teleport preview (2026-10-16): Sanguine Harrowlord merged with its npc recolours baked in.
+# Built separately from teleport_previews.txt (whose merged ids are all taken); its bounds are merged into teleport_previews.json.
+ids 61134-61134
+RELIQUARY npc 30594

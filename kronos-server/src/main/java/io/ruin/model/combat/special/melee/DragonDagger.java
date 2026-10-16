@@ -1,5 +1,6 @@
 package io.ruin.model.combat.special.melee;
 
+import io.ruin.model.combat.special.ForgeSpecGfx;
 import io.ruin.cache.ObjType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.AccurateBlows;
@@ -22,7 +23,7 @@ public class DragonDagger implements Special {
 	@Override
 	public boolean handle(Player player, Entity target, AttackStyle attackStyle, AttackType attackType, int maxDamage) {
 		player.animate(1062);
-		player.graphics(252, 96, 0);
+		player.graphics(ForgeSpecGfx.of(player, 252), 96, 0);
 		player.publicSound(2537);
 		double boostAttack = 0.15;
 		if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.ACCURATE_BLOWS)) {

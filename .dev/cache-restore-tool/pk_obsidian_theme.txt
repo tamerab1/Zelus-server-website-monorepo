@@ -1,0 +1,88 @@
+# Wilderness Forge Matte Obsidian & Blood Crimson re-skin (2026-10-16). See GenForgeObsidian.
+# theme <name> <texId> auto <fraction> [pMul pAdd]   (229 crimson, 230 frost, 231 venom, 232 arcane, 233 storm, 234 gilded)
+theme bloodrage     229 auto 0.30
+theme venomshot     231 auto 0.22
+theme arcanist      232 auto 0.22
+theme tempest       233 auto 0.40
+theme frostfang     230 auto 0.40
+theme venomfang     231 auto 0.40
+theme nightshade    231 auto 0.35
+theme obsidian      229 auto 0.35
+theme eclipse       232 auto 0.40
+theme thunderstrike 233 auto 0.35
+theme sunforged     234 auto 0.40
+theme bloodletter   229 auto 0.40
+theme havoc         229 auto 0.55
+theme eldritch      232 auto 0.55
+theme warlord       229 auto 0.55
+theme deadeye       234 auto 0.55
+theme mysticeye     232 auto 0.55
+theme bulwark       229 auto 0.30
+theme reaper        229 auto 0.25
+theme hellstride    229 auto 0.25
+theme chaos         229 auto 0.30
+theme gladiator     234 auto 0.25
+theme celestial     233 auto 0.22
+theme warbringer    229 auto 0.25
+theme skyfall       233 auto 0.40
+theme hellfire      229 auto 0.40
+theme riftbreaker   232 auto 0.40
+theme carnage       229 auto 0.55
+theme agony         229 auto 0.55
+theme retribution   232 auto 0.55
+theme sunbearer     234 auto 0.55
+theme wraithbound   232 auto 0.45
+theme ragefire      229 auto 0.25
+theme windstrider   233 auto 0.25
+theme starweave     232 auto 0.25
+# item <srcId> <newId> <placeholderId> <tradeable> <ops> <theme> <name...>  (the Divine wrath potions are not gear: left as they are)
+item 4716 31500 31501 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's helm
+item 4718 31502 31503 1 -|Wield|-|-|Drop bloodrage Bloodrage Dharok's greataxe
+item 4720 31504 31505 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platebody
+item 4722 31506 31507 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platelegs
+item 4732 31508 31509 1 -|Wear|-|-|Drop venomshot Venomshot Karil's coif
+item 4734 31510 31511 1 -|Wield|-|-|Drop venomshot Venomshot Karil's crossbow
+item 4736 31512 31513 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leathertop
+item 4738 31514 31515 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leatherskirt
+item 4708 31516 31517 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's hood
+item 4710 31518 31519 1 -|Wield|-|-|Drop arcanist Arcanist Ahrim's staff
+item 4712 31520 31521 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robetop
+item 4714 31522 31523 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robeskirt
+item 11802 31524 31525 1 -|Wield|-|-|Drop tempest Tempest godsword
+item 13652 31526 31527 1 -|Wield|-|-|Drop frostfang Frostfang claws
+item 4587 31528 31529 1 -|Wield|-|-|Drop venomfang Venomfang scimitar
+item 5698 31530 31531 1 -|Wield|-|-|Drop nightshade Nightshade dagger(p++)
+keep 31530 22459,6036
+item 4153 31532 31533 1 -|Wield|-|-|Drop obsidian Obsidian maul
+item 11235 31534 31535 1 -|Wield|-|-|Drop eclipse Eclipse bow
+item 19481 31536 31537 1 -|Wield|-|-|Drop thunderstrike Thunderstrike ballista
+item 13576 31538 31539 1 -|Wield|-|-|Drop sunforged Sunforged warhammer
+item 22613 31540 31541 1 -|Wield|-|-|Drop bloodletter Bloodletter longsword
+item 6585 31542 31543 1 -|Wear|-|-|Drop havoc Amulet of havoc
+item 12002 31544 31545 1 -|Wear|-|-|Drop eldritch Eldritch necklace
+item 11773 31546 31547 1 -|Wear|-|-|Drop warlord Warlord ring
+item 11771 31548 31549 1 -|Wear|-|-|Drop deadeye Deadeye ring
+item 11770 31550 31551 1 -|Wear|-|-|Drop mysticeye Mystic eye ring
+item 12954 31552 31553 1 -|Wield|-|-|Drop bulwark Bulwark defender
+item 7462 31554 31555 1 -|Wear|-|-|Drop reaper Reaper gloves
+item 11840 31556 31557 1 -|Wear|-|-|Drop hellstride Hellstride boots
+item 21795 31558 31559 1 -|Wear|-|-|Drop chaos Cape of chaos
+item 10551 31560 31561 1 -|Wear|-|-|Drop gladiator Gladiator's torso
+item 11826 31562 31563 1 -|Wear|-|-|Drop celestial Celestial Armadyl helmet
+item 11828 31564 31565 1 -|Wear|-|-|Drop celestial Celestial Armadyl chestplate
+item 11830 31566 31567 1 -|Wear|-|-|Drop celestial Celestial Armadyl chainskirt
+item 11832 31568 31569 1 -|Wear|-|-|Drop warbringer Warbringer Bandos chestplate
+item 11834 31570 31571 1 -|Wear|-|-|Drop warbringer Warbringer Bandos tassets
+item 11836 31572 31573 1 -|Wear|-|-|Drop warbringer Warbringer Bandos boots
+item 11785 31574 31575 1 -|Wield|-|-|Drop skyfall Skyfall crossbow
+item 11804 31576 31577 1 -|Wield|-|-|Drop warbringer Warbringer godsword
+item 21902 31578 31579 1 -|Wield|-|-|Drop hellfire Hellfire crossbow
+item 27690 31580 31581 1 -|Wield|-|-|Drop riftbreaker Riftbreaker
+item 19553 31582 31583 1 -|Wear|-|-|Drop carnage Amulet of carnage
+item 19547 31584 31585 1 -|Wear|-|-|Drop agony Necklace of agony
+item 19710 31586 31587 1 -|Wear|-|-|Drop retribution Ring of retribution
+item 25975 31588 31589 1 -|Wear|-|-|Drop sunbearer Sunbearer
+item 19544 31590 31591 1 -|Wear|-|-|Drop wraithbound Wraithbound bracelet
+item 13239 31592 31593 1 -|Wear|-|-|Drop ragefire Ragefire boots
+item 13237 31594 31595 1 -|Wear|-|-|Drop windstrider Windstrider boots
+item 13235 31596 31597 1 -|Wear|-|-|Drop starweave Starweave boots

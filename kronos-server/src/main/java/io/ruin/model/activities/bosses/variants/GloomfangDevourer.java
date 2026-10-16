@@ -11,6 +11,19 @@ import io.ruin.model.stat.StatType;
  */
 public class GloomfangDevourer extends BossVariant {
 
+	/** Sanctum main boss: calls one of its wing's guardians below half health. */
+	@Override
+	protected int reinforcementId() {
+		return 30598;
+	}
+
+	/** Sanctum main boss: protection prayer always up. */
+	@Override
+	protected io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex protectionPrayer() {
+		return io.ruin.model.entity.npc.NPC.DefaultHeadIconIndex.ProtectFromMagic;
+	}
+
+
 	private static final int GFX_ORB = 4280, GFX_ORB_HIT = 4281, GFX_ECLIPSE = 4282;
 	private static final int ANIM_ATTACK = 2731;
 
