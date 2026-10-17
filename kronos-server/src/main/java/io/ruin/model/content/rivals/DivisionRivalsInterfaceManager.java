@@ -88,6 +88,7 @@ public final class DivisionRivalsInterfaceManager {
 		io.ruin.model.map.object.actions.ObjectAction.register(RivalsLeaderboard.BOARD_OBJECT, "View", (player, obj) -> RivalsLeaderboard.open(player));
 		RivalsCape.register();
 		ChallengeBell.register();
+		RivalsHerald.register();
 	}
 
 	/** The Rivals lobby (::rivals) and the Rivals Overseer NPC (3351, spawned at 3360,3226 in duel_arena.json). */

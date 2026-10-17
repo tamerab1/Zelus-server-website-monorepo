@@ -1,0 +1,2 @@
+# Division Rivals Herald chathead (2026-10-17): the Zelus Partyhat's head model 29 with the worn model's texture 226 on colour 926 (zelus_donator_models.txt)
+model 29 61190 226 926

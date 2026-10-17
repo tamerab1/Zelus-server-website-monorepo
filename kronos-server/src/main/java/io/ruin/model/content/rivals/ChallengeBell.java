@@ -16,7 +16,7 @@ import java.util.Map;
  * <p>
  * The object is The Challenge Bell (62396, .dev/cache-restore-tool build_challenge_bell.sh): The Cloister Bell's framed
  * bell scaled to 42/128 (its mesh is 545 tall / 507 wide on a 1x1 object) and recoloured dark bronze and weathered
- * wood. Spawned in custom_objects.json at 3356,3231 (user's spot); only that spawn is hooked.
+ * wood. Spawned in custom_objects.json at 3355,3231 (user's spot, beside the bank chest at 3355,3233); only that spawn is hooked.
  * <p>
  * Cooldowns live in server memory by user id, so relogging doesn't reset them: 15 minutes per player, plus a short
  * world-wide gap so several players can't stack broadcasts back to back.
@@ -24,7 +24,7 @@ import java.util.Map;
 public final class ChallengeBell {
 
 	public static final int BELL = 62396;
-	public static final Position SPOT = new Position(3356, 3231, 0);
+	public static final Position SPOT = new Position(3355, 3231, 0);
 
 	private static final long PLAYER_COOLDOWN_MS = 15 * 60_000L, GLOBAL_COOLDOWN_MS = 2 * 60_000L;
 	private static final int TOLL_RANGE = 15;
