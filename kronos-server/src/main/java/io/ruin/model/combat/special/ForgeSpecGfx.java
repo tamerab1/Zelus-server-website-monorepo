@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public final class ForgeSpecGfx {
 
-	/** Tempest godsword .. Riftbreaker: every forge weapon with a special attack. */
+	/** Bloodforged godsword .. Riftbreaker: every forge weapon with a special attack. */
 	private static final Set<Integer> FORGE_WEAPONS = Set.of(31524, 31526, 31528, 31530, 31532, 31534, 31536, 31538,
 			31574, 31576, 31578, 31580);
 

@@ -1,0 +1,18 @@
+# Wilderness Forge names matched to the 2026-10-16 obsidian/blood-crimson re-skin (2026-10-17). <id>|<new name>
+# Kept (their look still fits): Nightshade dagger(p++) (green venom blade), Eclipse bow, Starweave boots, Arcanist Ahrim's,
+# Eldritch / Mystic eye (purple tips), Sunbearer (lightbearer pun), and the textured round-4 sets 31626-31686.
+31508|Sanguine Karil's coif
+31510|Sanguine Karil's crossbow
+31512|Sanguine Karil's leathertop
+31514|Sanguine Karil's leatherskirt
+31524|Bloodforged godsword
+31526|Bloodfang claws
+31528|Vampiric scimitar
+31536|Dreadblood ballista
+31538|Ravager warhammer
+31562|Gorewing Armadyl helmet
+31564|Gorewing Armadyl chestplate
+31566|Gorewing Armadyl chainskirt
+31574|Gorewing crossbow
+31594|Bloodstrider boots
+31432|Tidal whip

@@ -19,7 +19,7 @@ public class AbyssalWhip implements Special {
 	// Custom whip progression line (recoloured Abyssal whips, items 31418-31432).
 	private static final Set<String> CUSTOM_WHIPS = Set.of(
 		"iron whip", "steel whip", "mithril whip", "adamant whip", "rune whip",
-		"volcanic whip", "cosmic whip", "void whip");
+		"volcanic whip", "cosmic whip", "tidal whip");
 
 	@Override
 	public boolean accept(ObjType def, String name) {

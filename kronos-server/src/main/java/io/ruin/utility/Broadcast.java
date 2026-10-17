@@ -95,7 +95,7 @@ public enum Broadcast {
 			{Icon.DONATOR_ICON, "Donation", player.getName() + " has claimed a donation! Thank you for the support!"},
 			{Icon.BOND, "Bonds", player.getName() + " has redeemed a $25 bond!"},
 			{Icon.VOTE_STAR, "Vote", "10 more votes until the Vote Boss spawns!"},
-			{Icon.UPGRADE_GEM, "Upgrade", player.getName() + " has successfully forged a Tempest godsword!"},
+			{Icon.UPGRADE_GEM, "Upgrade", player.getName() + " has successfully forged a Bloodforged godsword!"},
 			{Icon.SKILL_STAR, "Skills", player.getName() + " has just achieved level 99 Slayer!"},
 			{Icon.NEWCOMER_SMILE, "Welcome", "Welcome " + player.getName() + " to Zelus!"},
 			{Icon.ACHIEVEMENT_TROPHY, "Inferno", player.getName() + " has completed the Inferno!"},

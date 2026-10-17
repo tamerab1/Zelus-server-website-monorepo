@@ -45,24 +45,24 @@ item 4716 31500 31501 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's helm
 item 4718 31502 31503 1 -|Wield|-|-|Drop bloodrage Bloodrage Dharok's greataxe
 item 4720 31504 31505 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platebody
 item 4722 31506 31507 1 -|Wear|-|-|Drop bloodrage Bloodrage Dharok's platelegs
-item 4732 31508 31509 1 -|Wear|-|-|Drop venomshot Venomshot Karil's coif
-item 4734 31510 31511 1 -|Wield|-|-|Drop venomshot Venomshot Karil's crossbow
-item 4736 31512 31513 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leathertop
-item 4738 31514 31515 1 -|Wear|-|-|Drop venomshot Venomshot Karil's leatherskirt
+item 4732 31508 31509 1 -|Wear|-|-|Drop venomshot Sanguine Karil's coif
+item 4734 31510 31511 1 -|Wield|-|-|Drop venomshot Sanguine Karil's crossbow
+item 4736 31512 31513 1 -|Wear|-|-|Drop venomshot Sanguine Karil's leathertop
+item 4738 31514 31515 1 -|Wear|-|-|Drop venomshot Sanguine Karil's leatherskirt
 item 4708 31516 31517 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's hood
 item 4710 31518 31519 1 -|Wield|-|-|Drop arcanist Arcanist Ahrim's staff
 item 4712 31520 31521 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robetop
 item 4714 31522 31523 1 -|Wear|-|-|Drop arcanist Arcanist Ahrim's robeskirt
-item 11802 31524 31525 1 -|Wield|-|-|Drop tempest Tempest godsword
-item 13652 31526 31527 1 -|Wield|-|-|Drop frostfang Frostfang claws
-item 4587 31528 31529 1 -|Wield|-|-|Drop venomfang Venomfang scimitar
+item 11802 31524 31525 1 -|Wield|-|-|Drop tempest Bloodforged godsword
+item 13652 31526 31527 1 -|Wield|-|-|Drop frostfang Bloodfang claws
+item 4587 31528 31529 1 -|Wield|-|-|Drop venomfang Vampiric scimitar
 item 5698 31530 31531 1 -|Wield|-|-|Drop nightshade Nightshade dagger(p++)
 # keep the dagger's green poison tip and gold hilt
 keep 31530 22459,6036
 item 4153 31532 31533 1 -|Wield|-|-|Drop obsidian Obsidian maul
 item 11235 31534 31535 1 -|Wield|-|-|Drop eclipse Eclipse bow
-item 19481 31536 31537 1 -|Wield|-|-|Drop thunderstrike Thunderstrike ballista
-item 13576 31538 31539 1 -|Wield|-|-|Drop sunforged Sunforged warhammer
+item 19481 31536 31537 1 -|Wield|-|-|Drop thunderstrike Dreadblood ballista
+item 13576 31538 31539 1 -|Wield|-|-|Drop sunforged Ravager warhammer
 item 22613 31540 31541 1 -|Wield|-|-|Drop bloodletter Bloodletter longsword
 item 6585 31542 31543 1 -|Wear|-|-|Drop havoc Amulet of havoc
 item 12002 31544 31545 1 -|Wear|-|-|Drop eldritch Eldritch necklace
@@ -74,13 +74,13 @@ item 7462 31554 31555 1 -|Wear|-|-|Drop reaper Reaper gloves
 item 11840 31556 31557 1 -|Wear|-|-|Drop hellstride Hellstride boots
 item 21795 31558 31559 1 -|Wear|-|-|Drop chaos Cape of chaos
 item 10551 31560 31561 1 -|Wear|-|-|Drop gladiator Gladiator's torso
-item 11826 31562 31563 1 -|Wear|-|-|Drop celestial Celestial Armadyl helmet
-item 11828 31564 31565 1 -|Wear|-|-|Drop celestial Celestial Armadyl chestplate
-item 11830 31566 31567 1 -|Wear|-|-|Drop celestial Celestial Armadyl chainskirt
+item 11826 31562 31563 1 -|Wear|-|-|Drop celestial Gorewing Armadyl helmet
+item 11828 31564 31565 1 -|Wear|-|-|Drop celestial Gorewing Armadyl chestplate
+item 11830 31566 31567 1 -|Wear|-|-|Drop celestial Gorewing Armadyl chainskirt
 item 11832 31568 31569 1 -|Wear|-|-|Drop warbringer Warbringer Bandos chestplate
 item 11834 31570 31571 1 -|Wear|-|-|Drop warbringer Warbringer Bandos tassets
 item 11836 31572 31573 1 -|Wear|-|-|Drop warbringer Warbringer Bandos boots
-item 11785 31574 31575 1 -|Wield|-|-|Drop skyfall Skyfall crossbow
+item 11785 31574 31575 1 -|Wield|-|-|Drop skyfall Gorewing crossbow
 item 11804 31576 31577 1 -|Wield|-|-|Drop warbringer Warbringer godsword
 item 21902 31578 31579 1 -|Wield|-|-|Drop hellfire Hellfire crossbow
 item 27690 31580 31581 1 -|Wield|-|-|Drop riftbreaker Riftbreaker
@@ -90,7 +90,7 @@ item 19710 31586 31587 1 -|Wear|-|-|Drop retribution Ring of retribution
 item 25975 31588 31589 1 -|Wear|-|-|Drop sunbearer Sunbearer
 item 19544 31590 31591 1 -|Wear|-|-|Drop wraithbound Wraithbound bracelet
 item 13239 31592 31593 1 -|Wear|-|-|Drop ragefire Ragefire boots
-item 13237 31594 31595 1 -|Wear|-|-|Drop windstrider Windstrider boots
+item 13237 31594 31595 1 -|Wear|-|-|Drop windstrider Bloodstrider boots
 item 13235 31596 31597 1 -|Wear|-|-|Drop starweave Starweave boots
 item 23685 31598 31599 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(4)
 item 23688 31600 31601 1 Drink|-|-|Empty|Drop wrath Divine wrath potion(3)

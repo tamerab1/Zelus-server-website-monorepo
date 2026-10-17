@@ -17,7 +17,7 @@ public class DragonScimitar implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dragon scimitar") || def.id == 31528; // Venomfang scimitar (Wilderness Forge)
+		return name.contains("dragon scimitar") || def.id == 31528; // Vampiric scimitar (Wilderness Forge)
 	}
 
 	@Override

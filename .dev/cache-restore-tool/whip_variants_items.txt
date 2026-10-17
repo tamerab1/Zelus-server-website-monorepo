@@ -15,5 +15,5 @@ variant 4151 31428 31429 0 -|Wield|-|-|Drop Volcanic whip
 recolor 31428 0:1958,16:1958,528:7095
 variant 4151 31430 31431 0 -|Wield|-|-|Drop Cosmic whip
 recolor 31430 0:52003,16:52003,528:56247
-variant 4151 31432 31433 0 -|Wield|-|-|Drop Void whip
+variant 4151 31432 31433 0 -|Wield|-|-|Drop Tidal whip
 recolor 31432 0:8,16:8,528:31410
