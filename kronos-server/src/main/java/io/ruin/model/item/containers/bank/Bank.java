@@ -231,6 +231,64 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	/**
+	 * Deposits a whole set of items at once, all-or-nothing (2026-10-17, ::youtubepack). Items the bank already holds
+	 * stack onto that entry, and a placeholder of the item is filled in place, exactly like {@link #add}; everything
+	 * else goes into ONE new tab (the next free tab number, or the main tab when all 9 are used) so the set stays
+	 * grouped. Nothing is added unless every new entry fits.
+	 *
+	 * @return 0 when deposited, the number of free slots still missing when the bank is too full, or -1 when this
+	 * player can't use a bank (ultimate ironman)
+	 */
+	public int addToNewTab(List<Item> set) {
+		if (player.getGameMode().isUltimateIronman())
+			return -1;
+		removeBlankItems();
+		int usedTabs = 0, free = 0;
+		for (BankItem item : items) {
+			if (item == null)
+				free++;
+			else
+				usedTabs = Math.max(usedTabs, item.tab);
+		}
+		int newTab = usedTabs < 9 ? usedTabs + 1 : 0;
+		Set<Integer> newEntries = new HashSet<>();
+		for (Item item : set)
+			if (findStackOrPlaceholder(item.getId()) == null)
+				newEntries.add(item.getId());
+		if (newEntries.size() > free)
+			return newEntries.size() - free;
+		for (Item item : set) {
+			BankItem existing = findStackOrPlaceholder(item.getId());
+			if (existing == null) {
+				for (int slot = 0; slot < items.length; slot++)
+					if (items[slot] == null) {
+						set(slot, new BankItem(item.getId(), item.getAmount(), newTab, null));
+						break;
+					}
+			} else if (existing.getId() == item.getId()) {
+				existing.setAmount((int) Math.min(Integer.MAX_VALUE, (long) existing.getAmount() + item.getAmount()));
+			} else { // its placeholder
+				existing.setId(item.getId());
+				existing.setAmount(item.getAmount());
+			}
+		}
+		sort();
+		return 0;
+	}
+
+	/** The unattributed stack of this item, or its placeholder, that {@link #add} would deposit onto (null = none). */
+	private BankItem findStackOrPlaceholder(int id) {
+		ObjType def = ObjType.get(id);
+		for (BankItem item : items) {
+			if (item == null || item.getId() == BLANK_ID)
+				continue;
+			if ((item.getId() == id && !item.hasAttributes()) || (def != null && item.getId() == def.placeholderMainId))
+				return item;
+		}
+		return null;
+	}
+
+	/**
 	 * Depositing
 	 */
 

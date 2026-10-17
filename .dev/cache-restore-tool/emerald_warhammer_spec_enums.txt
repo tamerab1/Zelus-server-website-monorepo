@@ -1,0 +1,3 @@
+# Emerald Draconies Warhammer 31774 (2026-10-17): spec bar (906, 500 = 50%) + description (1739). Server: EmeraldDraconiesWarhammer.
+int 906 31774 500
+str 1739 31774 Emerald Smash: Deal an attack with 25% more damage and 30% more accuracy. On a hit, lowers your target's Defence by 30% and envenoms them.

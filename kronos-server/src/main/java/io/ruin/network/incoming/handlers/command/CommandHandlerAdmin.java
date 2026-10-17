@@ -118,6 +118,12 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			// ::youtubepack <player name> -- YouTuber Creator Pack into the player's bank as a new tab (owner / developer only)
+			case "youtubepack": {
+				YoutubePackCommand.run(player, args);
+				return true;
+			}
+
 			// ::givetp <amount> [player name] -- Pit Championship tournament points (negative removes); no name = yourself
 			case "givetp": {
 				int amount;
