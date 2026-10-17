@@ -16,8 +16,6 @@ import io.ruin.model.activities.raids.xeric.chamber.impl.CheckpointChamber;
 import io.ruin.model.activities.raids.xeric.chamber.impl.OlmChamber;
 import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.raids.xeric.party.RecruitingBoard;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerDisplayMode;
@@ -892,9 +890,7 @@ public class ChambersOfXeric {
 		if (!isRaiding(player))
 			return;
 		points /= 2.5;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_RAID_POINTS)) {
-			points *= 2;
-		}
+		points *= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.RAID_POINTS);
 
 		points /= 10;
 		int personalPoints = VarPlayerRepository.RAIDS_PERSONAL_POINTS.get(player);

@@ -10,8 +10,6 @@ import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.impl.pet.Pet;
@@ -181,8 +179,7 @@ public class GauntletRewards {
 			}
 			if (player.petDropBonus.isDelayed())
 				basePetChance *= 0.8f;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				basePetChance *= 0.85F;
+			basePetChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			basePetChance *= (float) HomeHandler.getPetDonatorBoost(player);
 			if (Random.get((int) basePetChance) == 0) {

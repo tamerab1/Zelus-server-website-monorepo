@@ -11,8 +11,6 @@ import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.combat.AttackStyle;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.npc.NPCCombat;
@@ -556,8 +554,7 @@ public class Araxxor extends NPCCombat {
 				rolls *= 2;
 			if (NPCCombat.rollExtraDonatorDrop(player))
 				rolls++;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.ADDITIONAL_ROLL_CHANCE)
-					&& Random.get(2) == 0)
+			if (io.ruin.model.content.fortune.StatueOfFortune.rollExtraDrop())
 				rolls++;
 			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.SECURING_THE_BAG)) {
 				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.SECURING_THE_BAG);
@@ -614,9 +611,7 @@ public class Araxxor extends NPCCombat {
 			petDropAverage *= 0.8f;
 		}
 
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES)) {
-			petDropAverage *= 0.85F;
-		}
+		petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 		if (Random.get(0, (int) petDropAverage) == 0) {
 			Pet.NID.unlock(player, 13668);

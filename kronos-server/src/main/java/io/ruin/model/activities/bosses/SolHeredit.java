@@ -12,8 +12,6 @@ import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.combat.Hit;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCCombat;
@@ -845,8 +843,7 @@ public class SolHeredit extends NPCCombat {
 		}
 		if (player.petDropBonus.isDelayed())
 			petDropAverage *= 0.8f;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-			petDropAverage *= 0.85F;
+		petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 		petDropAverage *= getPetDonatorBoost(player);
 		if (Random.get(0, (int) petDropAverage) == 0) {
@@ -870,7 +867,7 @@ public class SolHeredit extends NPCCombat {
 			rolls++;
 		if (player.doubleDropBonus.remaining() > 0)
 			rolls *= 2;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.ADDITIONAL_ROLL_CHANCE) && Random.get(2) == 0)
+		if (io.ruin.model.content.fortune.StatueOfFortune.rollExtraDrop())
 			rolls++;
 
 		for (int i = 0; i < rolls; i++) {

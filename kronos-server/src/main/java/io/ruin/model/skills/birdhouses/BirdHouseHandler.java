@@ -7,8 +7,6 @@ import io.ruin.model.activities.dailytasks.DailyTasks;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
 import io.ruin.model.inter.utils.Option;
@@ -245,8 +243,7 @@ public class BirdHouseHandler {
 			}
 			if (player.petDropBonus.isDelayed())
 				petDropAverage *= 0.8f;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petDropAverage *= 0.85F;
+			petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			petDropAverage *= HomeHandler.getPetDonatorBoost(player);
 			if(io.ruin.utility.Random.get((int) petDropAverage) == 0) {

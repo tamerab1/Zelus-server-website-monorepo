@@ -16,8 +16,6 @@ import io.ruin.model.activities.perktree.PerkSets;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.perktree.perksets.GoldDigger;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Difficulty;
 import io.ruin.model.entity.player.Player;
@@ -453,8 +451,7 @@ public class LootTable {
 						assert c != null;
 						petDropRate *= (float) c.getPetChanceBoost();
 					}
-					if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-						petDropRate *= 0.85F;
+					petDropRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 					if (player.petDropBonus.isDelayed())
 						petDropRate *= 0.75f;
 					petDropRate *= getPetDonatorBoost(player);

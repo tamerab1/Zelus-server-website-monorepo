@@ -12,8 +12,6 @@ import io.ruin.model.activities.perktree.perks.TheArtOfMining;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.combat.Hit;
 
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
@@ -975,8 +973,7 @@ public enum PickPocket {
 				petChance *= 0.8F;
 
 			petChance *= getPetDonatorBoost(player);
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petChance *= 0.85F;
+			petChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 			if (Random.get((int) petChance) == 0)
 				Pet.ROCKY.unlock(player, 0);
 		} else if (successful(player, pickpocket)) {
@@ -1034,8 +1031,7 @@ public enum PickPocket {
 			if (player.petDropBonus.isDelayed())
 				petChance *= 0.8F;
 			petChance *= getPetDonatorBoost(player);
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petChance *= 0.85F;
+			petChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 			if (Random.get((int) petChance) == 0)
 				Pet.ROCKY.unlock(player, 0);
 		} else {

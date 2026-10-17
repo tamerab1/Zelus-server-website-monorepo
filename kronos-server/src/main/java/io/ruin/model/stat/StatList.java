@@ -10,8 +10,6 @@ import io.ruin.model.activities.perktree.PerkSets;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ExperienceEnhancer;
 import io.ruin.model.activities.perktree.perksets.SkilledMind;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.itembreaking.ItemBreakPerkHandler;
 import io.ruin.model.content.upgrade.ItemEffect;
 import io.ruin.model.entity.player.BeginnerUpgradesHandler;
@@ -269,8 +267,8 @@ public class StatList {
 
 		if (World.doubleExpActive && useMultiplier)
 			amount *= 2;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_EXPERIENCE) && useMultiplier)
-			amount *= 2;
+		if (useMultiplier)
+			amount *= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.EXPERIENCE);
 		double newXp = stat.experience + amount;
 		if (newXp > Stat.MAX_XP)
 			newXp = Stat.MAX_XP;

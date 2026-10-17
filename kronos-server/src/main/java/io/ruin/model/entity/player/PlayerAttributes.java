@@ -1275,6 +1275,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public boolean broadcastActiveVolcano = true;
 	public boolean broadcastHotspot = true;
 	public boolean broadcastSupplyChest = true;
+	public boolean fortuneBroadcast = true;
 	public boolean broadcastBloodyMechant = true;
 	public boolean broadcastAnnouncements = true;
 	public boolean broadcastTournaments = true;

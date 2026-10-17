@@ -4,8 +4,6 @@ import io.ruin.api.utils.Random;
 import io.ruin.model.activities.dailytasks.DailyTasks;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.questtab.main.Achievements;
 import io.ruin.model.item.actions.impl.pet.Pet;
@@ -143,8 +141,7 @@ public class WoodTreePatch extends Patch {
 		player.treesGrown++;
 		int petChance = Random.get(getPlantedCrop().getPetOdds());
 		petChance /= 2;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-			petChance *= 0.85F;
+		petChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 		if (player.petDropBonus.isDelayed())
 			petChance *= 0.8F;
 		petChance *= getPetDonatorBoost(player);

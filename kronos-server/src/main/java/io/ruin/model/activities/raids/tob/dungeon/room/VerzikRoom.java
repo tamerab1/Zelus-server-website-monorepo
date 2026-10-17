@@ -17,8 +17,6 @@ import io.ruin.model.activities.raids.tob.dungeon.boss.verzik.VerzikPillar;
 import io.ruin.model.activities.raids.tob.party.TheatreParty;
 import io.ruin.model.activities.raids.tob.party.TheatrePartyManager;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
@@ -344,9 +342,7 @@ public class VerzikRoom extends TheatreRoom {
 		} else {
 			purpleProbability.updateAndGet(v -> (int) (v * p.getDifficulty().GetDropRate()));
 			int chance = Random.get(purpleProbability.get());
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_RAID_POINTS)) {
-				chance /= 2;
-			}
+			chance /= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.RAID_POINTS);
 			if (p.getEquipment().get(Equipment.SLOT_RING) != null && AttributeExtensions
 					.hasAttribute(p.getEquipment().get(Equipment.SLOT_RING), AttributeTypes.RAID_UNIQUE_CHARM)) {
 				int level = AttributeExtensions.getCharges(AttributeTypes.RAID_UNIQUE_CHARM,
@@ -381,8 +377,7 @@ public class VerzikRoom extends TheatreRoom {
 		}
 		if (p.petDropBonus.isDelayed())
 			basePetChance *= 0.8F;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-			basePetChance *= 0.85F;
+		basePetChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 		basePetChance *= getPetDonatorBoost(p);
 

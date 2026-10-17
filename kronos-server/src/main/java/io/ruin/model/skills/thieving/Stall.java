@@ -5,8 +5,6 @@ import io.ruin.model.World;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 import io.ruin.model.inter.dialogue.MessageDialogue;
@@ -342,8 +340,7 @@ public enum Stall {
 					getActivePerks(player).get(perkIndex).getPerk(player);
 				petOdds *= c.getPetChanceBoost();
 			}
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petOdds *= 0.85F;
+			petOdds *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 			if (player.petDropBonus.isDelayed())
 				petOdds *= 0.8;
 			petOdds *= getPetDonatorBoost(player);

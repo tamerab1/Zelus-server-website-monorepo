@@ -11,8 +11,6 @@ import io.ruin.model.activities.newshop.NewShopHandler;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.itembreaking.ItemBreakingHandler;
 import io.ruin.model.content.pvppreset.PvpPresetInterface;
 import io.ruin.model.entity.npc.NPC;
@@ -116,17 +114,8 @@ public class HomeHandler {
 			}
 		});
 		var gauntletBankChest = GameObject.spawn(4483, 3037, 6129, 1, 10, 2);
-		// Fountain (879) baked into the RSPSi home map export, unwanted --
-		// spawning id -1 at the same tile/type/rotation overrides and
-		// removes a cache-placed object (same convention as
-		// EchoTreasureRoom.java). Covering both candidate tiles since the
-		// exact one wasn't certain, then replacing it with the Camel
-		// Statue. Rotation 3 is a guess at "east" (no prior spawn of this
-		// object elsewhere in the codebase to confirm against) -- check
-		// in-game and give the correct rotation number if it's off.
-		GameObject.spawn(-1, 3094, 3464, 0, 10, 0);
-		GameObject.spawn(-1, 3095, 3464, 0, 10, 0);
-		GameObject.spawn(ObjectID.CAMELS_STATUE, 3094, 3464, 0, 10, 3);
+		// The old fountain (879), its fence ring and the knight statue (38443) are removed by StatueOfFortune.placeStatue(),
+		// which spawns the 3x3 Statue of Fortune on the knight statue's spot (south-west tile 3104,3506).
 		if(!SummerEvent.disabled) {
 			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
 			SummerEvent.newEventStart();
@@ -289,8 +278,7 @@ public class HomeHandler {
 			}
 			if (player.petDropBonus.isDelayed())
 				petChance *= 0.8F;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petChance *= 0.85F;
+			petChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			petChance *= getPetDonatorBoost(player);
 			if (Random.get((int) petChance) == 0)

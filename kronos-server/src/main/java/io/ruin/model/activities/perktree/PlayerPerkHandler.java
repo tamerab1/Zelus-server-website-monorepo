@@ -4,8 +4,6 @@ import io.ruin.api.utils.NumberUtils;
 import io.ruin.api.utils.Random;
 import io.ruin.model.activities.dailytasks.DailyTasks;
 import io.ruin.model.activities.newcomertasks.NewcomerTasks;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievementSystem;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.listeners.LoginListener;
@@ -472,8 +470,7 @@ public class PlayerPerkHandler {
 		PerkTasks.TaskTiers tier = player.currentPerkTask.tier;
 		PerkTasks.TaskType type = player.currentPerkTask.type;
 		int expReward = calculateExperienceRewardFromTier(player, tier, type);
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_PERK_EXPERIENCE))
-			expReward *= 2;
+		expReward *= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.PERK_EXPERIENCE);
 		if (player.doubleExpTimer.isDelayed())
 			expReward *= 2;
 		addPerkExperience(player, expReward);

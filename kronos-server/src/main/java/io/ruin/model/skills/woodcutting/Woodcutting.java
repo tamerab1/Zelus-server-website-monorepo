@@ -9,8 +9,6 @@ import io.ruin.model.activities.perktree.PerkTaskHandler;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.TheEfficientChop;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 import io.ruin.model.entity.player.SecondaryGroup;
@@ -182,8 +180,7 @@ public class Woodcutting {
 									getActivePerks(player).get(perkIndex).getPerk(player);
 								petOdds *= c.getPetChanceBoost();
 							}
-							if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-								petOdds *= 0.85F;
+							petOdds *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 							if (player.petDropBonus.isDelayed())
 								petOdds *= 0.8;
 
@@ -246,8 +243,7 @@ public class Woodcutting {
 								getActivePerks(player).get(perkIndex).getPerk(player);
 							petOdds *= c.getPetChanceBoost();
 						}
-						if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-							petOdds *= 0.85F;
+						petOdds *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 						if (player.petDropBonus.isDelayed())
 							petOdds *= 0.8;
 

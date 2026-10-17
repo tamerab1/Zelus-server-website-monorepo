@@ -10,8 +10,6 @@ import io.ruin.model.activities.DonationBossHandler;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.combat.Hit;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.dialogue.ItemDialogue;
@@ -1159,8 +1157,7 @@ public enum ClueType {
 			}
 			if (player.petDropBonus.isDelayed())
 				basePetChance *= 0.8F;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				basePetChance *= 0.85F;
+			basePetChance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 			basePetChance *= getPetDonatorBoost(player);
 			if (Random.get(basePetChance) == 0)
 				Pet.BLOODHOUND.unlock(player, 0);

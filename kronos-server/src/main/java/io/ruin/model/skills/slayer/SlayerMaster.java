@@ -310,7 +310,7 @@ public class SlayerMaster {
 
 			if (am == 0) {
 				final int spree = ++player.slayerSpree;
-				int basePoints = basePoints(master) * (World.doubleSlayer ? 2 : 1)
+				int basePoints = (int) Math.round(basePoints(master) * (World.doubleSlayer ? 2 : 1) * io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.SLAYER_POINTS))
 						+ DonatorBonus.BONUS_SLAYER_POINTS.handleBonus(player);
 				final int total = points(master, spree) + basePoints;
 				final int current = VarPlayerRepository.SLAYER_POINTS.get(player);

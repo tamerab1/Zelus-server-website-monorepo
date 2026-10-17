@@ -6,8 +6,6 @@ import io.ruin.cache.NPCType;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.*;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
@@ -127,8 +125,7 @@ public abstract class Creature {
 								if (player.petDropBonus.isDelayed())
 									baseRate *= 0.8F;
 								baseRate *= getPetDonatorBoost(player);
-								if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-									baseRate *= 0.85F;
+								baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 								if (Random.get(baseRate) == 0) {
 									Pet.BABY_CHINCHOMPA_RED.unlock(player, 0);
@@ -144,8 +141,7 @@ public abstract class Creature {
 								if (player.petDropBonus.isDelayed())
 									baseRate *= 0.8F;
 								baseRate *= getPetDonatorBoost(player);
-								if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-									baseRate *= 0.85F;
+								baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 								if (Random.get(baseRate) == 0) {
 									Pet.BABY_CHINCHOMPA_BLACK.unlock(player, 0);
 								}
@@ -160,8 +156,7 @@ public abstract class Creature {
 								if (player.petDropBonus.isDelayed())
 									baseRate *= 0.8F;
 								baseRate *= getPetDonatorBoost(player);
-								if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-									baseRate *= 0.85F;
+								baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 								if (Random.get(baseRate) == 0) {
 									Pet.BABY_CHINCHOMPA_GREY.unlock(player, 0);
 								}
@@ -176,8 +171,7 @@ public abstract class Creature {
 								if (player.petDropBonus.isDelayed())
 									baseRate *= 0.8F;
 								baseRate *= getPetDonatorBoost(player);
-								if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-									baseRate *= 0.85F;
+								baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 								if (Random.get(baseRate) == 0) {
 									Pet.BABY_CHINCHOMPA_GREY.unlock(player, 0);
 								}
@@ -346,8 +340,7 @@ public abstract class Creature {
 					if (player.petDropBonus.isDelayed())
 						baseRate *= 0.8F;
 					baseRate *= getPetDonatorBoost(player);
-					if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-						baseRate *= 0.85F;
+					baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 					if (Random.get(baseRate) == 0) {
 						Pet.BABY_CHINCHOMPA_RED.unlock(player, 0);
@@ -363,8 +356,7 @@ public abstract class Creature {
 					if (player.petDropBonus.isDelayed())
 						baseRate *= 0.8F;
 					baseRate *= getPetDonatorBoost(player);
-					if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-						baseRate *= 0.85F;
+					baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 					if (Random.get(baseRate) == 0) {
 						Pet.BABY_CHINCHOMPA_BLACK.unlock(player, 0);
 					}
@@ -379,8 +371,7 @@ public abstract class Creature {
 					if (player.petDropBonus.isDelayed())
 						baseRate *= 0.8F;
 					baseRate *= getPetDonatorBoost(player);
-					if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-						baseRate *= 0.85F;
+					baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 					if (Random.get(baseRate) == 0) {
 						Pet.BABY_CHINCHOMPA_GREY.unlock(player, 0);
 					}
@@ -395,8 +386,7 @@ public abstract class Creature {
 					if (player.petDropBonus.isDelayed())
 						baseRate *= 0.8F;
 					baseRate *= getPetDonatorBoost(player);
-					if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-						baseRate *= 0.85F;
+					baseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 					if (Random.get(baseRate) == 0) {
 						Pet.BABY_CHINCHOMPA_GREY.unlock(player, 0);
 					}

@@ -35,7 +35,6 @@ import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.tempoross.Tempoross;
 import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
-import io.ruin.model.content.camelstatue.CamelStatueInterface;
 import io.ruin.model.content.combatachievements.CombatAchievementInterface;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.content.equipmentpresets.GearPresetInterface;
@@ -548,7 +547,6 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient ItemUpgradeInterface itemUpgradeInterface;
 	public transient GearPresetInterface gearPresetInterface;
 	public transient io.ruin.model.entity.player.presets.PresetManager presetManager;
-	public transient CamelStatueInterface camelStatueInterface;
 
 	protected Runnable onDialogueContinued;
 

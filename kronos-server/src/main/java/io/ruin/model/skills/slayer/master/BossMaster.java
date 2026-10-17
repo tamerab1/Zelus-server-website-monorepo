@@ -117,7 +117,7 @@ public class BossMaster {
 				player.bossSlayerStartAmount = 0;
 				player.bossSlayerStreak++;
 				final int spree = player.bossSlayerStreak;
-				int basePoints = 35 * (World.doubleSlayer ? 2 : 1)
+				int basePoints = (int) Math.round(35 * (World.doubleSlayer ? 2 : 1) * io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.SLAYER_POINTS))
 					+ DonatorBonus.BONUS_SLAYER_POINTS.handleBonus(player);
 				final int total = SlayerMaster.points(8, spree) + basePoints;
 				final int current = VarPlayerRepository.SLAYER_POINTS.get(player);

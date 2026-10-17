@@ -24,7 +24,6 @@ import io.ruin.model.activities.tempevents.TemporaryEvent;
 import io.ruin.model.combat.Killer;
 import io.ruin.model.content.PestControl;
 import io.ruin.model.content.XPWeekend;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerLoginWorker;

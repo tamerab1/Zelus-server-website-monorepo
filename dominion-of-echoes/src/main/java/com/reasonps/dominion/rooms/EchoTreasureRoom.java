@@ -8,8 +8,6 @@ import io.ruin.model.activities.bosses.instancetoken.MapHandler;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.content.HomeHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.Toxins;
@@ -118,8 +116,7 @@ public class EchoTreasureRoom extends Dominion {
 			if (player.petDropBonus.isDelayed())
 				petBaseRate *= 0.8F;
 			petBaseRate *= getPetDonatorBoost(player);
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petBaseRate *= 0.85F;
+			petBaseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 			player.doePetRate = petBaseRate;
 			if (Random.get(player.doePetRate) == 1)
 				Pet.KEEP_OF_ECHOES.unlock(player, 17012);

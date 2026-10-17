@@ -8,7 +8,6 @@ import io.ruin.model.VoteHandler;
 import io.ruin.model.World;
 import io.ruin.model.activities.DonationBossHandler;
 import io.ruin.model.activities.bosses.globalboss.GlobalBossHandler;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.entity.player.*;
 import io.ruin.model.inter.handlers.TeleInterface;
 import io.ruin.model.map.Locations;
@@ -83,7 +82,9 @@ public class CommandHandlerManager {
 
 			case "fillwell": {
 				int amount = Integer.parseInt(args[0]);
-				CamelStatueHandler.adminDonateToWell(player, amount);
+				// ::fillwell <amount> [blessing] -- pool-only fill (no leaderboard / surge), default Zelus Points
+				var blessing = args.length > 1 ? io.ruin.model.content.fortune.Blessing.valueOf(args[1].toUpperCase()) : io.ruin.model.content.fortune.Blessing.ZELUS_POINTS;
+				io.ruin.model.content.fortune.StatueOfFortune.adminFill(player, blessing, Long.parseLong(args[0]));
 				return true;
 			}
 

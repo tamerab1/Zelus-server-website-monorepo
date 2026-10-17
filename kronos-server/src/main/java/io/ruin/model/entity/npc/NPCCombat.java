@@ -67,8 +67,6 @@ import io.ruin.model.combat.Combat;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
 import io.ruin.model.combat.Killer;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievement;
 import io.ruin.model.content.combatachievements.CombatAchievementSystem;
 import io.ruin.model.content.combatachievements.CombatAchievements;
@@ -2793,8 +2791,7 @@ public abstract class NPCCombat extends Combat {
 							assert c != null;
 							petDropAverage *= (float) c.getPetChanceBoost();
 						}
-						if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-							petDropAverage *= 0.85F;
+						petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 						if (killer.player.petDropBonus.isDelayed())
 							petDropAverage *= 0.8f;
 
@@ -3638,7 +3635,7 @@ public abstract class NPCCombat extends Combat {
 			rolls++;
 		}
 
-		if (CamelStatueHandler.isRewardActive(CamelStatueRewards.ADDITIONAL_ROLL_CHANCE) && Random.get(2) == 0) {
+		if (io.ruin.model.content.fortune.StatueOfFortune.rollExtraDrop()) {
 			rolls++;
 		}
 

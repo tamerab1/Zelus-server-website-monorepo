@@ -3,8 +3,6 @@ package io.ruin.model.inter.handlers;
 import io.ruin.cache.Color;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.AccessMasks;
 import io.ruin.model.inter.ToplevelComponent;
@@ -137,8 +135,7 @@ public class LootsViewer {
 			}
 			if (player.petDropBonus.isDelayed())
 				base *= 0.8F;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				base *= 0.85F;
+			base *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			base *= getPetDonatorBoost(player);
 			LootTable.DropItem dropItem = new LootTable.DropItem(Pet.NID.itemId, base, 1, 1);
@@ -154,8 +151,7 @@ public class LootsViewer {
 			}
 			if (player.petDropBonus.isDelayed())
 				base *= 0.8F;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				base *= 0.85F;
+			base *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			base *= getPetDonatorBoost(player);
 			LootTable.DropItem dropItem = new LootTable.DropItem(28960, base, 1, 1);

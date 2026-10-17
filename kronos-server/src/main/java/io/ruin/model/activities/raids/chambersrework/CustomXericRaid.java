@@ -17,8 +17,6 @@ import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
@@ -204,9 +202,7 @@ public class CustomXericRaid {
 		if (!isRaiding(player))
 			return;
 		points /= 2.5;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_RAID_POINTS)) {
-			points *= 2;
-		}
+		points *= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.RAID_POINTS);
 		if (!player.getCustomXericRaid().olmRaid)
 			points /= 8;
 		int personalPoints = VarPlayerRepository.RAIDS_PERSONAL_POINTS.get(player);

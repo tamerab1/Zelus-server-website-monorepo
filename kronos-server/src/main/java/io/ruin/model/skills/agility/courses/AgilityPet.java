@@ -6,8 +6,6 @@ import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.DancingInTheYields;
 import io.ruin.model.activities.perktree.perks.RunningPays;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.questtab.main.Achievements;
 import io.ruin.model.item.actions.impl.pet.Pet;
@@ -38,8 +36,7 @@ public class AgilityPet {
 		}
 		if (player.petDropBonus.isDelayed())
 			chance *= 0.8;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-			chance *= 0.85F;
+		chance *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 		chance *= getPetDonatorBoost(player);
 		if (Random.get(chance) == 0)

@@ -11,8 +11,6 @@ import io.ruin.model.activities.perktree.perks.RaidingRestorations;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.raids.toa.rooms.*;
 import io.ruin.model.activities.tempevents.summerevent.SummerEvent;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
@@ -771,9 +769,7 @@ public class ToAObjects {
 		}
 		if (player.petDropBonus.isDelayed())
 			petBaseRate *= 0.8F;
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_RAID_POINTS)) {
-			baseRate /= 2;
-		}
+		baseRate /= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.RAID_POINTS);
 		petBaseRate *= getPetDonatorBoost(player);
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null && AttributeExtensions
 				.hasAttribute(player.getEquipment().get(Equipment.SLOT_RING), AttributeTypes.RAID_UNIQUE_CHARM)) {
@@ -789,8 +785,7 @@ public class ToAObjects {
 			double multiplier = 1.0 + c.getLootChance();
 			baseRate *= multiplier;
 		}
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-			petBaseRate *= 0.85F;
+		petBaseRate *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 		player.toaPetRate = petBaseRate;
 		if(Random.get(player.toaPetRate) == 0) {
 			Item pet = new Item(Pet.TUMEKENS_GUARDIAN.itemId);

@@ -51,9 +51,6 @@ import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
 import io.ruin.model.content.DailyLoginInterface;
 import io.ruin.model.content.DailyVoteInterface;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueInterface;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievement;
 import io.ruin.model.content.combatachievements.CombatAchievementInterface;
 import io.ruin.model.content.combatachievements.CombatAchievementSystem;
@@ -295,12 +292,6 @@ public class Player extends PlayerAttributes {
 		return securityGuard;
 	}
 
-	public CamelStatueInterface getCamelStatueInterface() {
-		if (camelStatueInterface == null)
-			camelStatueInterface = new CamelStatueInterface();
-		return camelStatueInterface;
-	}
-
 	public void addToCollectionLog(Item... items) {
 		if (hooks.handle(new Hook.OnAddCollectionLog(this, items))) {
 			return;
@@ -441,8 +432,7 @@ public class Player extends PlayerAttributes {
 					getEquipment().get(Equipment.SLOT_RING));
 			dropAddition += level;
 		}
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DROP_RATE_BOOST))
-			dropAddition += 5;
+		dropAddition += io.ruin.model.content.fortune.StatueOfFortune.dropRateBonus();
 		dropAddition += io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler.getDropRateAddition(this);
 		switch (player.getSecondaryGroup()) {
 			case SUPER_DONATOR -> dropAddition += 2;
@@ -614,8 +604,8 @@ public class Player extends PlayerAttributes {
 	}
 
 	public void updateReasonPoints(int amount) {
-		if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.DOUBLE_REASON_POINTS) && amount > 0)
-			amount *= 2;
+		if (amount > 0)
+			amount *= io.ruin.model.content.fortune.StatueOfFortune.multiplier(io.ruin.model.content.fortune.Blessing.ZELUS_POINTS);
 		reasonPoints += amount;
 		if (amount > 0)
 			DailyTasks.handleTaskDecrement(player, "reasonPoints", amount);

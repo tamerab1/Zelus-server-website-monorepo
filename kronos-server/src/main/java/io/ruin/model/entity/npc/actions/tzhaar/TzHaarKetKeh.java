@@ -3,8 +3,6 @@ package io.ruin.model.entity.npc.actions.tzhaar;
 import io.ruin.api.utils.Random;
 import io.ruin.model.activities.perktree.Perks;
 import io.ruin.model.activities.perktree.perks.ThePetHunter;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
@@ -141,8 +139,7 @@ public class TzHaarKetKeh {
 			}
 			if (player.petDropBonus.isDelayed())
 				petDropAverage *= 0.8f;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petDropAverage *= 0.85F;
+			petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			petDropAverage *= getPetDonatorBoost(player);
 			if (Random.get((int) petDropAverage) == 1) {

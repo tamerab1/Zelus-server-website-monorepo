@@ -9,8 +9,6 @@ import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.tempevents.hweenevent.HweenEvent;
 import io.ruin.model.combat.Hit;
 import io.ruin.model.combat.HitType;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.content.combatachievements.CombatAchievements;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.npc.NPCCombat;
@@ -92,8 +90,7 @@ public class DukeSucellus extends NPCCombat {
 			}
 			if (player.petDropBonus.isDelayed())
 				petDropAverage *= 0.8f;
-			if (CamelStatueHandler.getActiveRewards().contains(CamelStatueRewards.BOOSTED_PET_RATES))
-				petDropAverage *= 0.85F;
+			petDropAverage *= io.ruin.model.content.fortune.StatueOfFortune.petChanceMultiplier();
 
 			petDropAverage *= getPetDonatorBoost(player);
 

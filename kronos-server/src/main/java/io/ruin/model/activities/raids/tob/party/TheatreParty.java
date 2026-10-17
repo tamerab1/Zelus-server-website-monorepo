@@ -13,8 +13,6 @@ import io.ruin.model.activities.perktree.perks.ThePetHunter;
 import io.ruin.model.activities.raids.tob.dungeon.TheatreDungeon;
 import io.ruin.model.activities.raids.tob.dungeon.room.TheatreRoom;
 import io.ruin.model.activities.raids.tob.dungeon.room.VerzikRoom;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
-import io.ruin.model.content.camelstatue.CamelStatueRewards;
 import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.listeners.LogoutListener;

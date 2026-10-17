@@ -32,7 +32,6 @@ import io.ruin.model.World;
 import io.ruin.model.activities.pkbots.ZelusBotPlayer;
 import io.ruin.model.combat.special.Special;
 import io.ruin.model.content.XPWeekend;
-import io.ruin.model.content.camelstatue.CamelStatueHandler;
 import io.ruin.model.entity.npc.actions.edgeville.StarterGuide;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerLoginWorker;
@@ -252,7 +251,6 @@ public final class Server extends ServerWrapper {
 		loadData();
 		Slayer.loadTasks();
 		xpweekend.start();
-		CamelStatueHandler.scheduleWellClearing();
 		StarterGuide.loadIps();
 		referralSystem.loadIps();
 
@@ -438,7 +436,6 @@ public final class Server extends ServerWrapper {
 		CharacterBackups.shutdown();
 		ExecutorUtils.shutdown(asyncWorker);
 		HWIDManager.shutdown();
-		CamelStatueHandler.shutdown();
 		PlayerLoginWorker.shutdown();
 		RSProtService.shutdown();
 		WorldList.shutdown();
