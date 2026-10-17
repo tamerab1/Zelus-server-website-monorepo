@@ -1,0 +1,5 @@
+# Morveth (or) 2026-10-17: the inner energy faces flow like the base set's (texture 56, dir 1 speed 2).
+# 236 = exact copy of the static texture 60 (same sprite and colours) animated at dir 1 speed 2 (CloneTextureAnimated).
+item 59591 retexture 60:236
+item 59592 retexture 60:236
+item 59593 retexture 60:236
