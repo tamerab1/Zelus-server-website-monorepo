@@ -126,8 +126,8 @@ export function DonatorBenefits({ onGetPoints, compact = false }) {
               <tr key={`${g.id}-h`} className="zb-group" style={{ '--a': g.accent }}>
                 <td colSpan={DONATOR_RANKS.length + 2}>{g.label}</td>
               </tr>,
-              ...g.perks.map((p) => (
-                <tr key={`${g.id}-${p.label}`}>
+              ...g.perks.map((p, pi) => (
+                <tr key={`${g.id}-${p.label}`} className={pi % 2 === 0 ? 'zb-row-a' : 'zb-row-b'}>
                   <td>
                     <span className="zb-perk-label">{p.label}</span>
                     {p.unit && <span className="zb-perk-src">{p.unit}</span>}

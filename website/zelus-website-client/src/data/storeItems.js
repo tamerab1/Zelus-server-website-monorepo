@@ -91,7 +91,7 @@ const storeItems = [
     description:  'The most popular top-up — enough for gear, scrolls and a few mystery boxes.',
     quantity:     2180,
     bonus:        '+25% bonus',
-    badge_label:  'POPULAR',
+    badge_label:  'MOST POPULAR',
   },
   {
     id:           'dp_4350',

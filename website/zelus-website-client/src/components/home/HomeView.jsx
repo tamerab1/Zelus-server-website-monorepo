@@ -5,6 +5,7 @@ import HiscoresWidget from './HiscoresWidget.jsx';
 import FeaturedStoreWidget from './FeaturedStoreWidget.jsx';
 import ServerStatusWidget from './ServerStatusWidget.jsx';
 import LiveFeed from './LiveFeed.jsx';
+import NewsSpotlight from './NewsSpotlight.jsx';
 
 export default function HomeView() {
   const [hiscores, setHiscores] = useState([]);
@@ -20,6 +21,9 @@ export default function HomeView() {
   return (
     <>
       <Hero />
+
+      {/* Latest updates (65%) + media & community (35%) */}
+      <NewsSpotlight />
 
       {/* Live feed — full width strip below hero */}
       <section className="max-w-7xl mx-auto pt-10 px-4 sm:px-6">

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
 import logo from '../../assets/logo.png';
-
-const API = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+import useDiscordInvite from '../../hooks/useDiscordInvite.js';
+import { DISCORD_URL, LAUNCHER_URL, JAR_URL } from '../../data/links.js';
+import DiscordIcon from '../ui/DiscordIcon.jsx';
+import './HomeSections.css';
 
 /* ── Diamond gem ornament — pure inline SVG, no shared gradient IDs ── */
 let _gemId = 0;
@@ -59,50 +61,59 @@ function KeyIcon() {
   );
 }
 
-/* ── MMO-style button ──────────────────────────────────── */
-function MMOButton({ children, onClick, wide = false, ghost = false, className = '' }) {
+/* ── MMO-style button (a link when href is given) ──────── */
+function MMOButton({ children, onClick, href, external = false, wide = false, accent = 'gold', className = '' }) {
   const [hovered, setHovered] = useState(false);
-
-  if (ghost) {
-    return (
-      <button
-        onClick={onClick}
-        className={`btn-mmo-ghost font-fantasy ${className}`}
-        style={{ width: wide ? 'min(320px, 100%)' : 'min(220px, 100%)' }}
-      >
-        {children}
-      </button>
-    );
-  }
-
+  const discord = accent === 'discord';
+  const Tag = href ? 'a' : 'button';
   return (
-    <button
+    <Tag
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`btn-mmo font-fantasy ${className}`}
+      className={`btn-mmo font-fantasy ${discord ? 'btn-mmo--discord' : ''} ${className}`}
       style={{
         width: wide ? 'min(340px, 100%)' : 'min(240px, 100%)',
+        textDecoration: 'none',
         boxShadow: hovered
-          ? '0 0 40px rgba(0,180,220,0.25), 0 0 60px rgba(212,175,55,0.12), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(100,210,240,0.12)'
-          : '0 0 20px rgba(0,130,180,0.12), 0 4px 18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(100,210,240,0.07)',
-        borderColor: hovered ? '#d4af37' : '#a87c18',
+          ? (discord
+            ? '0 0 40px rgba(88,101,242,0.45), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(160,170,255,0.18)'
+            : '0 0 40px rgba(0,180,220,0.25), 0 0 60px rgba(212,175,55,0.18), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(100,210,240,0.12)')
+          : (discord
+            ? '0 0 22px rgba(88,101,242,0.25), 0 4px 18px rgba(0,0,0,0.85)'
+            : '0 0 22px rgba(212,175,55,0.18), 0 4px 18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(100,210,240,0.07)'),
+        borderColor: discord ? (hovered ? '#8b95ff' : '#5865f2') : (hovered ? '#d4af37' : '#a87c18'),
       }}
     >
-      {/* left gem */}
       <DiamondGem side="left" />
-
-      {/* top inner bevel */}
       <div className="btn-mmo-bevel-top" />
-
-      {/* content */}
-      <div className="btn-mmo-content">
-        {children}
-      </div>
-
-      {/* right gem */}
+      <div className="btn-mmo-content">{children}</div>
       <DiamondGem side="right" />
-    </button>
+    </Tag>
+  );
+}
+
+/* ── Client preview card (glass) ── */
+function ClientCard({ title, sub, lines, cta, onClick, soon = false }) {
+  return (
+    <div className={`zh-glass zh-client ${soon ? 'zh-client--soon' : ''}`}>
+      <div className="zh-client-top">
+        <span className="zh-client-title font-fantasy">{title}</span>
+        <span className={`zh-pill ${soon ? 'zh-pill--muted' : 'zh-pill--live'}`}>{soon ? 'Coming soon' : 'Available'}</span>
+      </div>
+      <p className="zh-client-sub">{sub}</p>
+      <ul className="zh-client-lines">
+        {lines.map((l) => <li key={l}>{l}</li>)}
+      </ul>
+      {cta && (
+        <button type="button" className="zh-client-cta" onClick={onClick}>
+          {cta}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -110,28 +121,10 @@ function MMOButton({ children, onClick, wide = false, ghost = false, className =
 
 export default function Hero() {
   const { setCurrentView } = useApp();
-  const [onlineCount, setOnlineCount] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    const fetchCount = async () => {
-      try {
-        const res = await fetch(`${API}/players/online`);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!cancelled) setOnlineCount(data.online ?? 0);
-      } catch { /* ignore */ }
-    };
-    fetchCount();
-    const id = setInterval(fetchCount, 30_000);
-    return () => { cancelled = true; clearInterval(id); };
-  }, []);
+  const discord = useDiscordInvite();
 
   return (
-    <section
-      className="relative flex items-center justify-center"
-      style={{ minHeight: '85vh', overflow: 'visible' }}
-    >
+    <section className="relative flex items-center justify-center" style={{ minHeight: '85vh', overflow: 'visible' }}>
       {/* Lightning flash effect */}
       <div className="absolute inset-0 pointer-events-none lightning-overlay" />
 
@@ -155,74 +148,68 @@ export default function Hero() {
 
       {/* Content */}
       <div
-        className="relative z-10 text-center px-4 pb-24 w-full max-w-4xl mx-auto flex flex-col items-center"
+        className="relative z-10 text-center px-4 pb-16 w-full max-w-5xl mx-auto flex flex-col items-center"
         style={{ paddingTop: 'clamp(9rem, 21vw, 17rem)' }}
       >
-        <p
-          className="font-fantasy text-sm tracking-[0.45em] mb-4 uppercase"
-          style={{ color: '#d4af37', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}
-        >
+        <p className="font-fantasy text-sm tracking-[0.45em] mb-3 uppercase" style={{ color: '#d4af37', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}>
           OLD SCHOOL FANTASY RSPS
         </p>
-
-        <p
-          className="text-gray-300 text-base max-w-xl mx-auto mb-10 leading-relaxed font-serif tracking-wide"
-          style={{ textShadow: '0 2px 6px rgba(0,0,0,0.9)' }}
-        >
+        <h1 className="zh-headline font-fantasy">PREPARE FOR THE ADVENTURE</h1>
+        <p className="text-gray-200 text-base max-w-xl mx-auto mb-9 leading-relaxed font-serif tracking-wide" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.95)' }}>
           Experience the pinnacle of custom RSPS. Fight legendary bosses,
           compete in high-stakes PvP, and build your legacy.
         </p>
 
-        {/* ── Stacked CTA buttons ── */}
-        <div className="flex flex-col items-center gap-4 w-full">
-
-          {/* DOWNLOAD CLIENT */}
-          <MMOButton wide={true} onClick={() => setCurrentView('download')}>
+        {/* ── Primary CTAs ── */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full">
+          <MMOButton wide href={LAUNCHER_URL}>
             <div className="flex flex-col items-center gap-0.5">
               <div className="flex items-center gap-3">
-                <span
-                  className="text-sm tracking-[0.2em] font-bold"
-                  style={{ color: '#f0e060', textShadow: '0 0 14px rgba(212,175,55,0.7), 0 1px 3px rgba(0,0,0,0.9)' }}
-                >
+                <span className="text-sm tracking-[0.2em] font-bold" style={{ color: '#f0e060', textShadow: '0 0 14px rgba(212,175,55,0.7), 0 1px 3px rgba(0,0,0,0.9)' }}>
                   DOWNLOAD CLIENT
                 </span>
                 <KeyIcon />
               </div>
-              <span
-                className="text-xs tracking-[0.25em]"
-                style={{ color: '#7ab8cc', fontSize: '9px', letterSpacing: '0.2em' }}
-              >
-                — FREE TO PLAY, WINDOWS —
-              </span>
+              <span style={{ color: '#9fd3e3', fontSize: '10px', letterSpacing: '0.2em' }}>— WINDOWS LAUNCHER —</span>
             </div>
           </MMOButton>
 
-        </div>
-
-        {/* Stats */}
-        <div className="flex flex-wrap justify-center gap-6 mt-12">
-          {[
-            { label: 'Players Online', value: onlineCount === null ? '…' : onlineCount },
-            { label: 'Custom Items',   value: '500+'    },
-          ].map(({ label, value }) => (
-            <div
-              key={label}
-              className="stat-box-fantasy text-center flex flex-col items-center justify-center"
-            >
-              <div
-                className="font-fantasy text-3xl font-bold mb-1"
-                style={{ color: '#ffd700', textShadow: '0 2px 12px rgba(212,175,55,0.6)' }}
-              >
-                {value}
+          <MMOButton wide external accent="discord" href={DISCORD_URL}>
+            <div className="flex flex-col items-center gap-0.5">
+              <div className="flex items-center gap-3">
+                <span className="text-sm tracking-[0.2em] font-bold" style={{ color: '#e6e8ff', textShadow: '0 0 14px rgba(88,101,242,0.8), 0 1px 3px rgba(0,0,0,0.9)' }}>
+                  JOIN OUR DISCORD
+                </span>
+                <DiscordIcon color="#c7cbff" />
               </div>
-              <div
-                className="text-xs tracking-widest mt-2 font-fantasy uppercase"
-                style={{ color: '#888' }}
-              >
-                {label}
-              </div>
+              <span style={{ color: '#c7cbff', fontSize: '10px', letterSpacing: '0.2em' }} className="flex items-center gap-1.5">
+                {discord?.online != null
+                  ? <><span className="zh-dot" />{discord.online.toLocaleString()} ONLINE NOW</>
+                  : '— COMMUNITY & SUPPORT —'}
+              </span>
             </div>
-          ))}
+          </MMOButton>
+        </div>
+        <p className="mt-4 text-xs" style={{ color: '#c8d3df', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
+          Prefer the jar? <a href={JAR_URL} className="zh-link">Download client.jar</a> (Java 21) ·{' '}
+          <button type="button" className="zh-link" onClick={() => setCurrentView('download')}>All download options</button>
+        </p>
+
+        {/* ── Client preview cards ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-3xl mt-12 text-left">
+          <ClientCard
+            title="DESKTOP CLIENT"
+            sub="Windows 10 / 11"
+            lines={['Auto-updating launcher', 'GPU & HD rendering', 'Zelus plugins built in']}
+            cta="Download options"
+            onClick={() => setCurrentView('download')}
+          />
+          <ClientCard
+            title="WEB / MOBILE"
+            sub="Play from the browser or your phone"
+            lines={['No install needed', 'Same world, same account', 'In development']}
+            soon
+          />
         </div>
       </div>
     </section>

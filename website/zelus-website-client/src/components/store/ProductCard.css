@@ -1,0 +1,101 @@
+/* ProductCard — obsidian card with a gold gradient border. Scoped with the zs- prefix. */
+
+.zs-card {
+  --acc: #d4af37;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(18, 22, 31, 0.92), rgba(18, 22, 31, 0.92)) padding-box,
+    linear-gradient(160deg, rgba(212, 175, 55, 0.55), #2b3240 38%, #2b3240 62%, rgba(212, 175, 55, 0.3)) border-box;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.zs-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65), 0 0 26px color-mix(in srgb, var(--acc) 22%, transparent);
+}
+.zs-card--featured {
+  background:
+    linear-gradient(rgba(20, 24, 33, 0.95), rgba(20, 24, 33, 0.95)) padding-box,
+    linear-gradient(160deg, #f3d36b, #a87c18 45%, #f3d36b) border-box;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 175, 55, 0.22);
+}
+
+.zs-ribbon {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+  color: #120d02;
+  background: linear-gradient(180deg, #f8de7e, #d4a933);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+}
+.zs-ribbon--value { color: #04150b; background: linear-gradient(180deg, #6ff0a5, #2ecc71); box-shadow: 0 4px 16px rgba(46, 204, 113, 0.4); }
+
+.zs-head { padding: 24px 18px 12px; text-align: center; border-bottom: 1px solid #2b3240; }
+.zs-name { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 0.16em; color: #f0f6fc; }
+.zs-price { margin-top: 8px; font-size: 34px; font-weight: 800; line-height: 1; color: #f1c40f; text-shadow: 0 0 18px rgba(241, 196, 15, 0.25); }
+.zs-price small { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #c3cbd6; margin-left: 4px; }
+
+.zs-body { flex: 1; padding: 16px 18px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.zs-points { font-size: 26px; font-weight: 800; color: #f0f6fc; letter-spacing: 0.02em; }
+.zs-points-label { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; color: #c3cbd6; }
+.zs-bonus {
+  margin-top: 2px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.45);
+}
+.zs-desc { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+
+.zs-actions { padding: 14px 16px 18px; display: grid; gap: 8px; }
+.zs-btn {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.zs-btn:active { transform: translateY(1px); }
+.zs-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.zs-btn--buy {
+  color: #120d02;
+  border: 1px solid #f3d36b;
+  background: linear-gradient(180deg, #f6d873, #cf9f2f);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 3px 0 #8a6516;
+}
+.zs-btn--buy:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 3px 0 #8a6516, 0 8px 24px rgba(212, 175, 55, 0.35); }
+.zs-btn--cart {
+  color: #f0f6fc;
+  border: 1px solid #3a4354;
+  background: #1a202c;
+}
+.zs-btn--cart:hover { border-color: #d4af37; background: #202736; }
+.zs-btn--added { color: #2ecc71; border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-card, .zs-btn { transition: none !important; }
+}

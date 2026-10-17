@@ -1,23 +1,24 @@
 import { useApp } from '../../context/AppContext.jsx';
 import AlertBox from '../ui/AlertBox.jsx';
 import storeItems from '../../data/storeItems.js';
+import './HomeSections.css';
 
 /**
  * Featured Store Widget — Homepage sidebar panel.
  *
- * Displays two hand-picked Donator Points items — the only category that's
- * directly purchasable (ranks unlock automatically via Total Donated and
- * have no buy button, so they're never featured here):
- *   • dp_2180  — most popular top-up ($25, POPULAR)
- *   • dp_4350  — high-tier top-up    ($50)
- *
- * Both items have their slug in store_catalog.py so checkout works out-of-the-box.
- * To change the featured items, edit FEATURED_SLUGS below — keep them 'dp' items.
+ * Two hand-picked Donator Points bonds (the only directly purchasable category; ranks unlock from Total Donated):
+ *   • dp_2180 — $25, MOST POPULAR
+ *   • dp_9450 — $100, BEST VALUE
+ * Labels come from storeItems.js so the widget and the main store always agree. Keep FEATURED_SLUGS 'dp' items.
+ * Layout (2026-10-17): the badge has its own row above the title, so it can never sit on the price.
  */
-const FEATURED_SLUGS = ['dp_2180', 'dp_4350'];
+const FEATURED_SLUGS = ['dp_2180', 'dp_9450'];
 const featured = FEATURED_SLUGS
   .map(slug => storeItems.find(i => i.slug === slug))
   .filter(Boolean);
+
+/** "+25% bonus" -> "+25% Bonus" */
+const bonusText = (bonus) => bonus.replace(/\s*bonus\s*$/i, '').trim() + ' Bonus';
 
 export default function FeaturedStoreWidget() {
   const { setCurrentView, handleCheckout, storeMessage } = useApp();
@@ -28,13 +29,7 @@ export default function FeaturedStoreWidget() {
         <span className="font-fantasy text-xs tracking-widest" style={{ color: '#d4af37' }}>
           💎&nbsp; FEATURED STORE
         </span>
-        <button
-          onClick={() => setCurrentView('store')}
-          className="font-fantasy text-xs tracking-widest transition-colors"
-          style={{ color: '#444' }}
-          onMouseOver={e => (e.currentTarget.style.color = '#d4af37')}
-          onMouseOut={e  => (e.currentTarget.style.color = '#444')}
-        >
+        <button type="button" onClick={() => setCurrentView('store')} className="zf-all font-fantasy">
           SHOP ALL →
         </button>
       </div>
@@ -43,69 +38,28 @@ export default function FeaturedStoreWidget() {
         <AlertBox status={storeMessage} />
 
         {featured.map(item => (
-          <div
-            key={item.slug}
-            className="p-4 relative overflow-hidden"
-            style={{
-              background: 'rgba(0,0,0,0.4)',
-              border: `1px solid ${item.badge}22`,
-              borderTop: `2px solid ${item.badge}88`,
-              borderRadius: 2,
-            }}
-          >
-            {/* Badge label (BEST VALUE / RARE / etc.) */}
+          <div key={item.slug} className="zf-card" style={{ '--acc': item.badge }}>
             {item.badge_label && (
-              <span
-                className="absolute top-2 right-2 font-fantasy text-xs tracking-widest px-2 py-0.5 rounded-full"
-                style={{ background: item.badge, color: '#0a0a14', fontSize: '9px', fontWeight: 700 }}
-              >
+              <span className={`zf-badge ${item.badge_label === 'BEST VALUE' ? 'zf-badge--value' : ''}`}>
                 {item.badge_label}
               </span>
             )}
 
-            {/* Name + Price row */}
-            <div className="flex justify-between items-start mb-1 pr-16">
-              <div className="flex items-center gap-2">
-                <span className="text-xl leading-none">{item.iconFallback}</span>
-                <span className="font-fantasy text-sm text-white">{item.name}</span>
+            <div className="zf-top">
+              <img src={item.icon_path} alt="" className="zf-icon" loading="lazy" />
+              <div className="zf-titles">
+                <span className="zf-name font-fantasy">{item.name}</span>
+                <span className="zf-points">
+                  {item.quantity?.toLocaleString()} Donator Points
+                  {item.bonus && <span className="zf-bonus"> ({bonusText(item.bonus)})</span>}
+                </span>
               </div>
-              <span
-                className="font-fantasy font-bold text-base shrink-0"
-                style={{ color: item.badge, textShadow: `0 0 8px ${item.badge}55` }}
-              >
-                ${item.price}
-              </span>
             </div>
 
-            {/* Description */}
-            <p
-              className="text-xs leading-relaxed mb-3 font-sans mt-2"
-              style={{ color: '#6a6058' }}
-            >
-              {item.description}
-            </p>
-
-            {/* CTA */}
-            <div className="flex justify-end">
-              <button
-                onClick={() => handleCheckout(item)}
-                className="font-fantasy text-xs tracking-widest px-4 py-1.5 transition-all duration-200"
-                style={{
-                  background: `${item.badge}22`,
-                  border: `1px solid ${item.badge}66`,
-                  color: item.badge,
-                  borderRadius: 2,
-                }}
-                onMouseOver={e => {
-                  e.currentTarget.style.background = item.badge;
-                  e.currentTarget.style.color = '#0a0a14';
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.background = `${item.badge}22`;
-                  e.currentTarget.style.color = item.badge;
-                }}
-              >
-                PURCHASE
+            <div className="zf-bottom">
+              <span className="zf-price">${item.price}<small>USD</small></span>
+              <button type="button" className="zf-buy" onClick={() => handleCheckout(item)}>
+                Buy Now
               </button>
             </div>
           </div>

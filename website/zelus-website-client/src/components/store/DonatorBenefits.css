@@ -4,8 +4,13 @@
   --zb-bg: #0d0e12;
   --zb-panel: #151821;
   --zb-line: rgba(255, 255, 255, 0.07);
-  --zb-text: #e9e6ef;
-  --zb-dim: #8d8a99;
+  --zb-text: #f0f6fc;
+  --zb-dim: #c3cbd6;
+  --zb-value: #f1c40f;
+  --zb-tick: #2ecc71;
+  --zb-border: #2b3240;
+  --zb-row-a: #161b24;
+  --zb-row-b: #1a202c;
   --zb-gold: #d4af37;
   --zb-crimson: #e2384d;
   --zb-purple: #a855f7;
@@ -14,7 +19,15 @@
   color: var(--zb-text);
   font-feature-settings: "tnum";
   isolation: isolate;
+  /* solid backplate: the lightning background must never show through the text (2026-10-17) */
+  padding: clamp(14px, 2.4vw, 24px);
+  background: rgba(13, 17, 23, 0.96);
+  border: 1px solid var(--zb-border);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
 }
+/* inside the modal the modal itself is the backplate */
+.zb-modal .zb { padding: 0; background: none; border: 0; box-shadow: none; }
 
 /* glowing mesh behind the panel */
 .zb::before {
@@ -22,19 +35,13 @@
   position: absolute;
   inset: -40px -20px;
   z-index: -1;
-  background:
-    radial-gradient(40% 50% at 12% 10%, rgba(226, 56, 77, 0.16), transparent 70%),
-    radial-gradient(35% 45% at 88% 18%, rgba(168, 85, 247, 0.14), transparent 70%),
-    radial-gradient(45% 50% at 50% 100%, rgba(212, 175, 55, 0.10), transparent 70%);
-  filter: blur(8px);
+  background: none;
   pointer-events: none;
 }
 
 .zb-glass {
-  background: linear-gradient(180deg, rgba(21, 24, 33, 0.78), rgba(13, 14, 18, 0.86));
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  border: 1px solid var(--zb-line);
+  background: #11161e;
+  border: 1px solid var(--zb-border);
   border-radius: 14px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -116,8 +123,8 @@
   border-radius: 12px;
   cursor: pointer;
   color: var(--zb-text);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--zb-line);
+  background: var(--zb-row-a);
+  border: 1px solid var(--zb-border);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background 0.2s ease;
 }
 .zb-rank:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--c) 55%, transparent); }
@@ -172,8 +179,8 @@
   letter-spacing: 0.05em;
   cursor: pointer;
   color: var(--zb-dim);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--zb-line);
+  background: var(--zb-row-a);
+  border: 1px solid var(--zb-border);
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .zb-cat:hover { color: var(--zb-text); }
@@ -184,18 +191,19 @@
 }
 
 /* ---- matrix (desktop) ---- */
-.zb-matrix { overflow-x: auto; padding: 4px 0 2px; }
-.zb-table { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
-.zb-table th, .zb-table td { padding: 9px 10px; text-align: center; border-bottom: 1px solid var(--zb-line); white-space: nowrap; }
+.zb-matrix { overflow-x: auto; padding: 0; background: #0d1117; }
+.zb-table { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.zb-table th, .zb-table td { padding: 10px 10px; text-align: center; border-bottom: 1px solid #222936; white-space: nowrap; }
 .zb-table thead th {
   position: sticky;
   top: 0;
   z-index: 2;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
   letter-spacing: 0.06em;
   color: var(--c, var(--zb-dim));
-  background: rgba(13, 14, 18, 0.96);
+  background: #0d1117;
+  border-bottom: 1px solid var(--zb-border);
 }
 .zb-table th:first-child, .zb-table td:first-child {
   position: sticky;
@@ -203,33 +211,42 @@
   z-index: 1;
   text-align: left;
   min-width: 220px;
-  background: #11131a;
 }
-.zb-table thead th:first-child { z-index: 3; }
+.zb-table thead th:first-child { z-index: 3; color: var(--zb-text); }
+/* zebra rows: every cell is opaque (the sticky first column needs it too) */
+.zb-table tbody tr.zb-row-a td { background: var(--zb-row-a); }
+.zb-table tbody tr.zb-row-b td { background: var(--zb-row-b); }
+.zb-table tbody tr.zb-row-a:hover td, .zb-table tbody tr.zb-row-b:hover td { background: #212837; }
 .zb-group td {
   padding-top: 16px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--a);
-  background: transparent !important;
-  border-bottom-color: color-mix(in srgb, var(--a) 40%, transparent);
+  text-align: left;
+  color: color-mix(in srgb, var(--a) 45%, #ffffff);
+  background: #0d1117 !important;
+  border-bottom: 2px solid color-mix(in srgb, var(--a) 60%, transparent);
 }
 .zb-perk-label { color: var(--zb-text); }
-.zb-perk-src { display: block; font-size: 10px; color: #5f5c6b; margin-top: 2px; }
-.zb-base { color: var(--zb-dim); }
-.zb-none { color: #3c3a46; }
-.zb-check { color: #4ade80; font-weight: 700; }
-.zb-table tbody tr { transition: background 0.15s ease; }
-.zb-table tbody tr:hover td { background: rgba(255, 255, 255, 0.025); }
-.zb-table tbody tr:hover td:first-child { background: #161925; }
-.zb-col-on {
-  background: color-mix(in srgb, var(--zb-rank) 9%, transparent) !important;
-  color: #fff;
-  font-weight: 700;
+.zb-perk-src { display: block; font-size: 11px; color: #a8b3c2; margin-top: 2px; }
+.zb-table td { color: var(--zb-value); font-weight: 600; }
+.zb-table td:first-child { font-weight: 500; }
+.zb-base { color: var(--zb-dim) !important; font-weight: 500 !important; }
+.zb-none { color: #a3adbb; font-weight: 400; }
+.zb-check { color: var(--zb-tick); font-weight: 800; font-size: 15px; }
+/* the selected rank: tinted, outlined column with a glowing header */
+.zb-table td.zb-col-on {
+  background-image: linear-gradient(color-mix(in srgb, var(--zb-rank) 12%, transparent), color-mix(in srgb, var(--zb-rank) 12%, transparent)) !important;
+  box-shadow: inset 1px 0 0 var(--zb-rank), inset -1px 0 0 var(--zb-rank);
+  font-weight: 800;
 }
-.zb-table thead th.zb-col-on { box-shadow: inset 0 -2px 0 var(--zb-rank); }
+.zb-table thead th.zb-col-on {
+  background: color-mix(in srgb, var(--zb-rank) 16%, #0d1117);
+  box-shadow: inset 1px 0 0 var(--zb-rank), inset -1px 0 0 var(--zb-rank), inset 0 3px 0 var(--zb-rank), 0 0 18px color-mix(in srgb, var(--zb-rank) 45%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--zb-rank) 60%, transparent);
+}
+.zb-table tbody tr:last-child td.zb-col-on { box-shadow: inset 1px 0 0 var(--zb-rank), inset -1px 0 0 var(--zb-rank), inset 0 -1px 0 var(--zb-rank); }
 
 /* ---- mobile: collapsible category cards for the selected rank ---- */
 .zb-cards { display: none; gap: 10px; }
@@ -256,10 +273,12 @@
   gap: 12px;
   padding: 9px 0;
   font-size: 13px;
-  border-top: 1px solid var(--zb-line);
+  border-top: 1px solid #222936;
 }
-.zb-card li span:last-child { font-weight: 700; color: #fff; text-align: right; }
-.zb-card li .zb-none { font-weight: 400; color: #4a4856; }
+.zb-card li span:last-child { font-weight: 700; color: var(--zb-value); text-align: right; }
+.zb-card li .zb-none { font-weight: 400; color: #a3adbb; }
+.zb-card li:nth-child(even) { background: var(--zb-row-b); }
+.zb-card li { padding-left: 8px !important; padding-right: 8px !important; border-radius: 6px; }
 
 .zb-foot {
   display: flex;
@@ -282,12 +301,12 @@
   justify-content: center;
   padding: 4vh 16px;
   overflow-y: auto;
-  background: rgba(5, 6, 9, 0.72);
+  background: rgba(5, 6, 9, 0.85);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   animation: zb-fade 0.18s ease;
 }
-.zb-modal { width: min(1180px, 100%); padding: 22px; position: relative; }
+.zb-modal { width: min(1180px, 100%); padding: 22px; position: relative; background: rgba(13, 17, 23, 0.98); }
 .zb-close {
   position: absolute;
   top: 14px;
