@@ -947,7 +947,8 @@ public class PlayerCombat extends Combat {
 	public boolean useSpecialEnergy(int amount) {
 
 		int energy = VarPlayerRepository.SPECIAL_ENERGY.get(player);
-		if (player.wildernessLevel < 1) {
+		// Rivals instances are wilderness level 0: without the RivalsFairPlay check these discounts applied in duels
+		if (player.wildernessLevel < 1 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player)) {
 			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_SPECIAL_ATTACK)) {
 				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_SPECIAL_ATTACK);
 				TheSpecialAttacker c = (TheSpecialAttacker) player.getPlayerPerkHandler().getActivePerks(player).get(perkIndex)
@@ -972,14 +973,14 @@ public class PlayerCombat extends Combat {
 				&& player.getCurrentToARaid().getInvocations().contains(Invocations.OVERLY_DRAINING)) {
 			amount = 100;
 		}
-		if (player.liquidAdrenalineDelay.remaining() > 0)
+		if (player.liquidAdrenalineDelay.remaining() > 0 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player))
 			amount /= 2;
 		if (amount > energy / 10) {
 			player.sendMessage("You need at least " + amount + "% special attack energy to use this.");
 			return false;
 		}
 
-		if (io.ruin.model.content.bonds.BondPerks.saveSpecialEnergy(player, target))
+		if (!io.ruin.model.content.rivals.RivalsFairPlay.active(player) && io.ruin.model.content.bonds.BondPerks.saveSpecialEnergy(player, target))
 			return true;
 		VarPlayerRepository.SPECIAL_ENERGY.set(player, energy - (amount * 10));
 		return true;
@@ -5662,7 +5663,8 @@ public class PlayerCombat extends Combat {
 			return false;
 		int amount = special.getDrainAmount();
 		int energy = VarPlayerRepository.SPECIAL_ENERGY.get(player);
-		if (player.wildernessLevel < 1) {
+		// Rivals instances are wilderness level 0: without the RivalsFairPlay check these discounts applied in duels
+		if (player.wildernessLevel < 1 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player)) {
 			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_SPECIAL_ATTACK)) {
 				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_SPECIAL_ATTACK);
 				TheSpecialAttacker c = (TheSpecialAttacker) player.getPlayerPerkHandler().getActivePerks(player).get(perkIndex)
@@ -5687,7 +5689,7 @@ public class PlayerCombat extends Combat {
 				&& player.getCurrentToARaid().getInvocations().contains(Invocations.OVERLY_DRAINING)) {
 			amount = 100;
 		}
-		if (player.liquidAdrenalineDelay.remaining() > 0)
+		if (player.liquidAdrenalineDelay.remaining() > 0 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player))
 			amount /= 2;
 		if (amount > energy / 10) {
 			player.sendMessage("You need at least " + amount + "% special attack energy to use this.");
@@ -5707,7 +5709,7 @@ public class PlayerCombat extends Combat {
 		boolean ignoresSpecialDrain = (target != null && target.npc != null && target.isNpc()
 				&& target.npc.getId() == 2668);
 		if (!ignoresSpecialDrain) {
-			if (player.wildernessLevel < 1) {
+			if (player.wildernessLevel < 1 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player)) {
 				if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.THE_SPECIAL_ATTACK)) {
 					int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.THE_SPECIAL_ATTACK);
 					TheSpecialAttacker c = (TheSpecialAttacker) player.getPlayerPerkHandler().getActivePerks(player)
@@ -5732,7 +5734,7 @@ public class PlayerCombat extends Combat {
 					&& player.getCurrentToARaid().getInvocations().contains(Invocations.OVERLY_DRAINING)) {
 				amount = 100;
 			}
-			if (player.liquidAdrenalineDelay.remaining() > 0)
+			if (player.liquidAdrenalineDelay.remaining() > 0 && !io.ruin.model.content.rivals.RivalsFairPlay.active(player))
 				amount /= 2;
 			int drainAmount = energy - (amount * 10);
 			VarPlayerRepository.SPECIAL_ENERGY.set(player, drainAmount); // drain special energy

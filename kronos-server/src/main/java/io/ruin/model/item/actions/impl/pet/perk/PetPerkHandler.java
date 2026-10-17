@@ -17,7 +17,7 @@ public final class PetPerkHandler {
 	}
 
 	public static PetPerk getActivePetPerk(Player player) {
-		if (player == null || player.pet == null) {
+		if (player == null || player.pet == null || player.inRivalsFight()) { // RivalsFairPlay
 			return null;
 		}
 		return player.pet.perk;

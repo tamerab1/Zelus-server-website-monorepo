@@ -1,5 +1,6 @@
 package io.ruin.model.content.rivals;
 
+import io.ruin.cache.ItemID;
 import io.ruin.cache.ObjType;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
@@ -17,8 +18,7 @@ import io.ruin.utility.Broadcast;
  * is PERMANENT (no Dismantle: the celestial items have no such option), so kits can't be recycled. The weapon keeps
  * its attributes (charges, upgrades, perks): the item changes id in place.</li>
  * <li>Rivals mystery box 31792: opened on the mystery spinner (MysteryBoxSpinner, interface 1154); Examine shows the
- * table in the loot viewer (LootsTables.RIVALS_MYSTERY_BOX). PK supplies (common), high-tier seeds (uncommon), the
- * ornament kit or a Challenger cape (rare).</li>
+ * table in the loot viewer (LootsTables.RIVALS_MYSTERY_BOX). Tiers: see {@link #BOX}.</li>
  * </ul>
  */
 public final class RivalsItems {
@@ -32,20 +32,41 @@ public final class RivalsItems {
 		{59626, 31818},   // Nightfall bow -> Nightfall bow (celestial): own look, attack animation, arrows and special
 	};
 
+	/**
+	 * Rivals mystery box (rebalanced 2026-10-17): PvP / Blood Money / Rivals only, four tiers out of 100. The Challenger
+	 * cape is no longer in it -- Rivals capes come from rank (the shop's division gates) only.
+	 */
 	public static final LootTable BOX = new LootTable()
-		.addTable(60,
-			new LootItem(6686, 10, 20, 15),    // Saradomin brew(4) (noted)
-			new LootItem(3025, 10, 20, 15),    // Super restore(4) (noted)
-			new LootItem(3145, 20, 40, 15),    // Cooked karambwan (noted)
-			new LootItem(13442, 15, 30, 15))   // Anglerfish (noted)
-		.addTable(30,
-			new LootItem(5295, 3, 6, 10),      // Ranarr seed
-			new LootItem(5300, 2, 4, 8),       // Snapdragon seed
-			new LootItem(5304, 1, 3, 7),       // Torstol seed
-			new LootItem(5316, 1, 2, 5))       // Magic seed
-		.addTable(3,
-			new LootItem(RivalsShop.ORNAMENT_KIT, 1, 2),
-			new LootItem(RivalsShop.CHALLENGER_CAPE, 1, 1));
+		.addTable("Common", 70,
+			new LootItem(ItemID.BLOOD_MONEY, 5_000, 15_000, 25),
+			new LootItem(12696, 5, 10, 15),    // Super combat potion(4) (noted)
+			new LootItem(24621, 50, 100, 15),  // Blighted vengeance sack
+			new LootItem(24599, 10, 20, 15),   // Blighted super restore(4) (noted)
+			new LootItem(13442, 20, 40, 15),   // Anglerfish (noted)
+			new LootItem(3145, 20, 40, 15))    // Cooked karambwan (noted)
+		.addTable("Uncommon", 22,
+			new LootItem(ItemID.BLOOD_MONEY, 50_000, 100_000, 30),
+			new LootItem(24607, 50, 100, 15),  // Blighted ancient ice sack
+			new LootItem(24590, 30, 60, 15),   // Blighted manta ray (noted)
+			new LootItem(12849, 1, 15),        // Granite clamp
+			new LootItem(12786, 1, 15))        // Magic shortbow scroll
+		.addTable("Rare", 7,
+			new LootItem(ItemID.BLOOD_MONEY, 250_000, 500_000, 20),
+			new LootItem(24229, 1, 15),        // Ornate maul handle
+			new LootItem(RivalsShop.ORNAMENT_KIT, 1, 10),
+			new LootItem(12757, 1, 5),         // Blue dark bow paint
+			new LootItem(12759, 1, 5),         // Green dark bow paint
+			new LootItem(12761, 1, 5),         // Yellow dark bow paint
+			new LootItem(12763, 1, 5),         // White dark bow paint
+			new LootItem(21813, 1, 10),        // Ancient statuette
+			new LootItem(22613, 1, 5),         // Vesta's longsword
+			new LootItem(22622, 1, 5),         // Statius's warhammer
+			new LootItem(22647, 1, 5),         // Zuriel's staff
+			new LootItem(22636, 50, 100, 5))   // Morrigan's javelin
+		.addTable("Unique", 1,
+			new LootItem(30221, 1, 40),        // Title: the Rival
+			new LootItem(ItemID.BLOOD_MONEY, 1_000_000, 30),
+			new LootItem(22305, 1, 30));       // Ancient relic
 
 	private RivalsItems() {
 	}

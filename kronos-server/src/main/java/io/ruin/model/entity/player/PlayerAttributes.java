@@ -843,6 +843,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int[][] rivalsSavedStats;
 	public int rivalsSavedSpellbook = -1, rivalsSavedSpecial = -1;
 	public int[] rivalsReturnPosition;
+	/** True while a Rivals match kit is on (set and cleared by RivalsSnapshot): every account buff is off (RivalsFairPlay). */
+	public transient boolean rivalsFight;
 	public int[] preTournyAttack;
 	public int[] preTournyStrength;
 	public int[] preTournyDefence;

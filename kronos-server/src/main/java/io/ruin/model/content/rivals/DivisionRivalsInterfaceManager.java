@@ -63,7 +63,7 @@ public final class DivisionRivalsInterfaceManager {
 	private static final int BADGE_SPRITE_START = 24200;
 	private static final String SESSION_KEY = "division-rivals-demo-session";
 	private static final Set<String> COMMANDS = Set.of("rivals", "rivalsdemo", "rivalsnext", "rivalsprev",
-			"rivalswin", "rivalsloss", "rivalsreset", "rivalstest", "rivalsrank", "rivalshelp", "rivalsforce", "rivalsprofile", "rivalswatch", "rivalsui");
+			"rivalswin", "rivalsloss", "rivalsreset", "rivalstest", "rivalsrank", "rivalshelp", "rivalsforce", "rivalsprofile", "rivalswatch", "rivalsui", "rivalsfair");
 	private static boolean registered;
 
 	private DivisionRivalsInterfaceManager() {}
@@ -87,6 +87,7 @@ public final class DivisionRivalsInterfaceManager {
 		// the leaderboard is the Rivals Leaderboard object in the lobby (RivalsLeaderboard.BOARD_OBJECT)
 		io.ruin.model.map.object.actions.ObjectAction.register(RivalsLeaderboard.BOARD_OBJECT, "View", (player, obj) -> RivalsLeaderboard.open(player));
 		RivalsCape.register();
+		ChallengeBell.register();
 	}
 
 	/** The Rivals lobby (::rivals) and the Rivals Overseer NPC (3351, spawned at 3360,3226 in duel_arena.json). */
@@ -162,6 +163,10 @@ public final class DivisionRivalsInterfaceManager {
 		}
 		if (command.command().equals("rivalswatch")) {
 			watch(player, command.args());
+			return HooksV2.Result.Return;
+		}
+		if (command.command().equals("rivalsfair")) {
+			RivalsFairPlay.report(player);
 			return HooksV2.Result.Return;
 		}
 		if (command.command().equals("rivalsprofile")) {

@@ -1,0 +1,3 @@
+# The Challenge Bell 62396 (2026-10-17): toward the user's war-bell reference -- dark bronze bell, dark weathered wood, black iron kept.
+# 7465 bell body -> bronze l32, 5413 bell band/light wood -> bronze shadow l27, 8596 frame top + 5524 frame wood -> dark wood.
+object 62396 7465:6688,5413:6683,8596:5517,5524:5515

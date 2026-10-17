@@ -236,7 +236,7 @@ public class Player extends PlayerAttributes {
 			4714, 4874, 4875, 4876, 4877, 4710, 4862, 4863, 4864, 4865,
 			4732, 4928, 4929, 4930, 4931, 4736, 4940, 4941, 4942, 4943,
 			4738, 4946, 4947, 4948, 4949, 4734, 4934, 4935, 4936, 4937, 22516,
-			// Wilderness Forge upgrades: Bloodrage Dharok's, Venomshot Karil's, Arcanist Ahrim's
+			// Wilderness Forge upgrades: Bloodrage Dharok's, Sanguine Karil's, Arcanist Ahrim's
 			31500, 31502, 31504, 31506, 31508, 31510, 31512, 31514, 31516, 31518, 31520, 31522);
 
 	public CustomXericRaid getCustomXericRaid() {
@@ -4638,11 +4638,16 @@ public class Player extends PlayerAttributes {
 
 	/** True while an attuned copy of this Custom Bond is in the inventory (its perks are active). */
 	public boolean hasAttunedBond(io.ruin.model.content.bonds.BondType type) {
-		return type.tier(this) > 0;
+		return getBondTier(type) > 0;
+	}
+
+	/** True during a Division Rivals match: perks, pet perks, bonds and spec discounts are all off (RivalsFairPlay). */
+	public boolean inRivalsFight() {
+		return rivalsFight;
 	}
 
 	/** Tier (1-5) of the attuned Custom Bond in the inventory, or 0 when none is attuned. */
 	public int getBondTier(io.ruin.model.content.bonds.BondType type) {
-		return type.tier(this);
+		return inRivalsFight() ? 0 : type.tier(this); // RivalsFairPlay
 	}
 }

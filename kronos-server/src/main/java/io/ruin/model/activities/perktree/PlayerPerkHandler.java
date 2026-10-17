@@ -53,7 +53,7 @@ public class PlayerPerkHandler {
 
 	public void updateActivePerkSets(Player player) {
 		reusableList.clear();
-		List<Perks> activePerks = player.getPlayerPerkHandler().getActivePerks(player);
+		List<Perks> activePerks = player.activePerksList; // the real list, even mid-Rivals (getActivePerks is empty then)
 		for (PerkSets perkSet : PERK_SETS) {
 			List<Perks> perks = perkSet.hasAnyPerksetCombination(activePerks);
 			if (perks != null) {
@@ -85,11 +85,15 @@ public class PlayerPerkHandler {
 	}
 
 	public List<PerkSets> getActivePerkSets(Player player) {
+		if (player.inRivalsFight())
+			return java.util.Collections.emptyList(); // RivalsFairPlay
 		return player.activePerkSetsList;
 	}
 
 	/** The per-player active level for a perk set, or 0 if it isn't currently active. */
 	public int getActivePerkSetLevel(Player player, PerkSets perkSet) {
+		if (player.inRivalsFight())
+			return 0; // RivalsFairPlay
 		return player.activePerkSetLevels.getOrDefault(perkSet.ordinal(), 0);
 	}
 
@@ -119,7 +123,10 @@ public class PlayerPerkHandler {
 		return player.ownedPerksList;
 	}
 
+	/** What game effects see: empty during a Rivals match (RivalsFairPlay). UIs read player.activePerksList. */
 	public List<Perks> getActivePerks(Player player) {
+		if (player.inRivalsFight())
+			return java.util.Collections.emptyList();
 		return player.activePerksList;
 	}
 

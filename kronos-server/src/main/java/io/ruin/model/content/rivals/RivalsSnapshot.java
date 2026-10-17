@@ -107,11 +107,13 @@ public final class RivalsSnapshot {
 			mode.kit.kitSpellBook().setActive(player);
 		player.getCombat().restoreSpecial(100);
 		player.getMovement().restoreEnergy(100);
+		RivalsFairPlay.enter(player); // account buffs off until restore()
 		sendAll(player);
 	}
 
 	/** Puts the saved loadout back; safe to call when there is nothing to restore. */
 	static void restore(Player player) {
+		RivalsFairPlay.leave(player); // every way out (result, forfeit, logout, login recovery) comes through here
 		if (!active(player))
 			return;
 		clear(player.getInventory());
