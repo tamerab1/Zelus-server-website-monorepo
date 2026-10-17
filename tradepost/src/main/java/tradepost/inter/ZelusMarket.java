@@ -221,6 +221,18 @@ public final class ZelusMarket {
 		open(player, -1);
 	}
 
+	/**
+	 * True (with a message) while the player carries a temporary loadout: a Rivals match / layout kit or a PvP preset.
+	 * Whatever they hold then is borrowed and wiped afterwards, so nothing may be listed (2026-10-17 ammo dupe audit).
+	 */
+	public static boolean blockedByLoadout(Player player) {
+		if (io.ruin.model.content.rivals.RivalsSnapshot.active(player) || player.pvpPresetActive) {
+			player.sendMessage("You can't use the Zelus Market while using a Rivals kit or a PvP preset.");
+			return true;
+		}
+		return false;
+	}
+
 	/** Opens the market (on a given tab, or -1 for the last one); refuses ironmen and while disabled. */
 	public static void open(Player player, int tab) {
 		if (!Module.ENABLED) {
@@ -231,6 +243,8 @@ public final class ZelusMarket {
 			player.sendMessage("Your game mode prevents you from using the Zelus Market.");
 			return;
 		}
+		if (blockedByLoadout(player))
+			return;
 		var s = state(player);
 		if (tab >= 0) {
 			s.tab = tab;

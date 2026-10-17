@@ -252,6 +252,19 @@ public final class RivalsQueueManager {
 		return null;
 	}
 
+	/**
+	 * Anti win-trading (2026-10-17): two accounts on the same IP or the same real HWID are never matched, so nobody can
+	 * farm Rivals points and boxes against their own alt. Placeholder HWIDs ("unknown...") don't count
+	 * (HWIDManager.isHwidValid, the referral check's rule). Off on dev worlds, where test clients share 127.0.0.1.
+	 */
+	static boolean sameOwner(Player a, Player b) {
+		if (World.isDev())
+			return false;
+		if (a.getIp() != null && a.getIp().equals(b.getIp()))
+			return true;
+		return io.ruin.network.HWIDManager.isHwidValid(a.hwid) && a.hwid.equals(b.hwid);
+	}
+
 	private static void pair(RivalsMode mode, List<Ticket> q) {
 		while (q.size() >= 2) {
 			Ticket bestA = null, bestB = null;
@@ -259,6 +272,8 @@ public final class RivalsQueueManager {
 			for (int i = 0; i < q.size(); i++)
 				for (int j = i + 1; j < q.size(); j++) {
 					Ticket a = q.get(i), b = q.get(j);
+					if (sameOwner(a.player, b.player))
+						continue; // never pair two accounts of one person: free points / box farming
 					int gap = Math.abs(a.player.rivalsRating - b.player.rivalsRating);
 					if (gap <= Math.max(a.window(), b.window()) && gap < bestGap) {
 						bestGap = gap;

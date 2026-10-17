@@ -32,6 +32,10 @@ public class TradePostHandler {
 			return;
 		}
 
+		if (tradepost.inter.ZelusMarket.blockedByLoadout(player)) {
+			return;
+		}
+
 		if (!item.getDef().tradeable || item.getId() == ItemID.COINS_995
 				|| item.getId() == ItemID.PLATINUM_TOKEN) {
 			player.sendMessage("You cannot sell this item.");

@@ -559,6 +559,9 @@ public class PlayerCombat extends Combat {
 		}
 		boolean assembler = hasAvaAssembler();
 		boolean ava = hasAvaDevice();
+		// Free / rental (phantom) ammo from PvP presets and Rivals kits is used up but never lands: a drop is spawned
+		// as a brand-new item WITHOUT the phantom flag, so every shot used to create real ammo anyone could keep (2026-10-17)
+		boolean phantom = io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(ammo);
 		for (Hit hit : hits) {
 			if (io.ruin.model.content.bonds.BondPerks.saveAmmo(player, target))
 				continue; // Bond of the Void Deadeye
@@ -580,7 +583,8 @@ public class PlayerCombat extends Combat {
 				} else if (ava && rollAvaDrop()) {
 					// player.sendMessage("Dropped Ammo 8% chance");
 					ammo.incrementAmount(-1);
-					hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
+					if (!phantom)
+						hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
 				}
 			} else if (SigilManager.isAttuned(player, Sigil.RIGOROUS_RANGER)
 					&& !ammo.getDef().name.toLowerCase().contains("chinchompa") && Random.rollPercent(50)) {
@@ -589,7 +593,8 @@ public class PlayerCombat extends Combat {
 				// branch above; Ava's own save/destroy/drop rolls already apply otherwise.
 			} else {
 				ammo.incrementAmount(-1);
-				hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
+				if (!phantom)
+					hit.drop(new GroundItem(ammo.getId(), 1).owner(player).position(target.getPosition()));
 			}
 		}
 	}

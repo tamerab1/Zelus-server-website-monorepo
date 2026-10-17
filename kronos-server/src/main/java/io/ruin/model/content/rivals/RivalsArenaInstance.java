@@ -346,5 +346,16 @@ final class RivalsArenaInstance {
 		p.getMovement().teleport(RivalsSnapshot.returnPosition(p));
 		p.rivalsReturnPosition = null;
 		DivisionRivalsInterfaceManager.refreshIfOpen(p);
+		// The restored look is flagged on the same tick as the teleport out of the instance, and a client could keep
+		// drawing the kit (2026-10-17, a winner stayed visually geared while their equipment was empty). Re-send the
+		// real equipment and appearance once they've arrived, after the map change.
+		World.startEvent(e -> {
+			e.delay(2);
+			if (!p.isOnline() || RivalsSnapshot.active(p))
+				return;
+			p.getEquipment().sendAll = true;
+			p.getInventory().sendAll = true;
+			p.getAppearance().update();
+		});
 	}
 }

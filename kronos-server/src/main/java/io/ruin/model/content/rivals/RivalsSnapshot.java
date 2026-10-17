@@ -142,6 +142,7 @@ public final class RivalsSnapshot {
 		player.rivalsSavedSpellbook = -1;
 		player.rivalsSavedSpecial = -1;
 		sendAll(player);
+		player.getAppearance().update(); // always redraw: the kit's look must never outlive the kit
 	}
 
 	/** Where the player queued from (home if unknown). */
