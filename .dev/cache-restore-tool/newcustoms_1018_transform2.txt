@@ -1,0 +1,4 @@
+# Ascended soulbound spire worn, round 4 (2026-10-18): turned 90 degrees about its own shaft (grip (-45,-44,92) to head
+# (-46,-102,-109)) so the lantern arms hang front / back instead of across the chest and shoulder. Reads the live
+# (round-3) model from newcustoms_1018_dec.
+model 61230 1.0 -45,-75,-14 0,0,0 -1,-58,-201 90

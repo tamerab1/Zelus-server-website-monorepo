@@ -1,0 +1,6 @@
+# New customs 2026-10-18: the tier-3 (Ascended) soul weapons get the animated gold soul texture 254 on their main
+# colours (auto: black and skin tones are never textured). TextureModelFaces <cache> <this> <outDir>, then InsertRawModels.
+model 61219 61221 254 auto:0.6
+model 61220 61222 254 auto:0.6
+model 61227 61229 254 auto:0.6
+model 61228 61230 254 auto:0.6

@@ -1,0 +1,4 @@
+# Azure Fang round 5 (2026-10-18): the mid cyan shades join the animated texture 261 (in place, on top of round 2's
+# brightest shades), so most of the blade flows; the darkest cyan, gold, leather and black stay.
+model 61236 61236 261 36791,36799
+model 61237 61237 261 34614,34622

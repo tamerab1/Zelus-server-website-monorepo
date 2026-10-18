@@ -1,0 +1,4 @@
+# Azure Fang (2026-10-18): only its two brightest cyan shades (the blade's core and edges) take the animated texture 261;
+# the darker cyan, gold, leather and black keep their exact colours. Inventory model / worn model palettes differ.
+model 61236 61236 261 33759,35674
+model 61237 61237 261 31712,33497

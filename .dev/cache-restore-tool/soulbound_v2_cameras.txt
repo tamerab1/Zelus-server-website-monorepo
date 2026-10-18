@@ -1,0 +1,22 @@
+# Soulbound v2 window cameras (WidgetModelFrame): Check 1174 (148x88), selector 1175 (134x68), Soul Tree 1176 (120x56)
+look 31824 148 88 check-31824
+look 31826 148 88 check-31826
+look 31828 148 88 check-31828
+look 31830 148 88 check-31830
+look 31832 148 88 check-31832
+look 31834 148 88 check-31834
+look 31836 148 88 check-31836
+look 31838 148 88 check-31838
+look 31840 148 88 check-31840
+look 31824 134 68 select-31824
+look 31830 134 68 select-31830
+look 31836 134 68 select-31836
+look 31824 120 56 tree-31824
+look 31826 120 56 tree-31826
+look 31828 120 56 tree-31828
+look 31830 120 56 tree-31830
+look 31832 120 56 tree-31832
+look 31834 120 56 tree-31834
+look 31836 120 56 tree-31836
+look 31838 120 56 tree-31838
+look 31840 120 56 tree-31840

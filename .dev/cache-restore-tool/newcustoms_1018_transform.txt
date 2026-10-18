@@ -1,0 +1,3 @@
+# Ascended soulbound spire worn (2026-10-18): 85% about the grip, 14 out to the right and 10 down, so the lantern head
+# clears the face and shoulder in the standard staff pose. Chained after DecimateModel (newcustoms_1018_dec).
+model 61230 0.85 -30,-100,0 -14,10,0

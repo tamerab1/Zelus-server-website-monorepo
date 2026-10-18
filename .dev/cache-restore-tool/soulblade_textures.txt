@@ -1,0 +1,4 @@
+# Soulbound blade T1 / T2 (2026-10-18 r8): the lava swirl 59 remapped like the Azure Fang's 261, so every blade tier has
+# light moving through its own colour: 262 soul violet (base blade's purple edge), 263 soul crimson (Empowered blade).
+texture 59 262 24623 - - 0:6a2ec8,0.35:7e44d8,0.58:965ee8,0.74:b084f4,0.86:ccaefc,0.95:ecdcff,1:ffffff
+texture 59 263 24624 - - 0:a8163a,0.35:c02a4c,0.58:d84462,0.74:ec6e88,0.86:f8a2b4,0.95:ffdce4,1:ffffff

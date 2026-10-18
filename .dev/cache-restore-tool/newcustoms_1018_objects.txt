@@ -1,0 +1,3 @@
+# New customs 2026-10-18: decorative objects (CreateDecorObjects), template Banquet table 12315. Spawned by the user (::pos).
+object 12315 62443 61238 2 2 solid Join_Discord Discord Statue
+object 12315 62444 61239 2 2 walk - Donator Platform

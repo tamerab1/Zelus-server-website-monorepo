@@ -1,0 +1,8 @@
+# Render priorities for the 2026-10-18 ripped worn models (SetModelPriorities), layered like Torva / held weapons.
+# Crimson Warden platebody: torso (skin 8) on 3 under the head and neck, arms (17-26) on 10
+model 61233 groups 10 2:3,4:2,5:3,8:3
+# Crimson Warden platelegs: 1 everywhere, as Torva platelegs
+model 61235 global 1
+# Soulbound spire base / Empowered worn: held weapons are 10 (were 4: sank into the torso)
+model 61224 global 10
+model 61226 global 10

@@ -127,8 +127,8 @@ public class HomeHandler {
 		// in-game and adjust if it renders wrong.
 		GameObject.spawn(44930, 3072, 3473, 0, 10, 0);
 		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
-		new NPC(5840).spawn(new Position(3125, 3464, 0), Direction.NORTH);
-		new NPC(5840).spawn(new Position(3121, 3464, 0), Direction.NORTH);
+		// The two BJ Dealers (5840) that stood at 3121/3125,3464 were removed 2026-10-18: the Zelus Blackjack Table
+		// (casino.BlackjackTable, object 62442) now sits there and opens Blackjack itself.
 		new NPC(1867).spawn(new Position(3114, 3504, 0), Direction.SOUTH);
 		NPCAction.register(1867, 1, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player));
 	}

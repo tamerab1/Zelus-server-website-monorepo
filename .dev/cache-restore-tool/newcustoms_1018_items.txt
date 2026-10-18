@@ -1,0 +1,14 @@
+# New customs 2026-10-18 ("new customs" folder): models newcustoms_1018_modelmap.txt. Stats in item_info.json.
+# CreateItemVariants apply <cache> newcustoms_1018_items.txt, then AutoFrameItems apply newcustoms_1018_framing.txt
+variant 13239 31842 31843 1 -|Wear|-|-|Drop Wyrmwing boots
+strip 31842 40,41
+models 31842 29397:61231,29250:61231,29255:61231
+variant 26384 31844 31845 1 -|Wear|-|-|Drop Crimson Warden platebody
+strip 31844 40,41
+models 31844 49458:61232,49450:61233,49454:61233
+variant 26386 31846 31847 1 -|Wear|-|-|Drop Crimson Warden platelegs
+strip 31846 40,41
+models 31846 49459:61234,49448:61235,49453:61235
+variant 23995 31848 31849 1 -|Wield|-|-|Drop Azure Fang
+strip 31848 40,41
+models 31848 37980:61236,38270:61237,38280:61237

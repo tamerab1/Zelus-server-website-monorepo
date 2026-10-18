@@ -38,7 +38,8 @@ public class TextureModelFaces {
                 String[] p = l.split("\\s+");
                 int src = Integer.parseInt(p[1]), dst = Integer.parseInt(p[2]);
                 short tex = Short.parseShort(p[3]);
-                if (models.getArchive(dst) != null) throw new IllegalStateException("model " + dst + " already exists");
+                // dst == src retextures a model in place (InsertRawModels replace); any other existing dst is refused
+                if (dst != src && models.getArchive(dst) != null) throw new IllegalStateException("model " + dst + " already exists");
                 Archive a = models.getArchive(src);
                 byte[] raw = a.decompress(store.getStorage().loadArchive(a));
                 ModelDefinition m = new ModelLoader().load(src, raw);

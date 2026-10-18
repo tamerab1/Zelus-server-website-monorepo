@@ -22,11 +22,12 @@ import java.util.*;
 //   loc opcode 24        appended before the terminator of every 60015/60016 record.
 // verify: builds everything, decodes it back with the real loaders, plays every frame on the real model and checks the base never
 // moves, the part's centroid never drifts in x/z, and a quarter of the loop turns it 90 degrees. apply: same, then writes.
-// Usage: BuildLocSpinAnims verify|apply <cachePath>
+// Usage: BuildLocSpinAnims verify|apply <cachePath> [loc,model,label,skeleton,frameGroup,seq,frames,turns,bob ...]
+//        (2026-10-18: with spin arguments only those are built, e.g. the Discord Statue 62443)
 public class BuildLocSpinAnims {
     record Spin(int loc, int model, int label, int skeleton, int frameGroup, int seq, int frames, int turns, int bob) {}
 
-    static final Spin[] SPINS = {
+    static Spin[] SPINS = {
             new Spin(60015, 59817, 1, 16100, 16100, 16201, 128, 2, 6),
             new Spin(60016, 59818, 3, 16101, 16101, 16202, 128, 1, 5),
     };
@@ -35,6 +36,13 @@ public class BuildLocSpinAnims {
     public static void main(String[] args) throws Exception {
         boolean apply = args[0].equals("apply");
         if (!apply && !args[0].equals("verify")) throw new IllegalArgumentException("verify|apply");
+        if (args.length > 2) { // 2026-10-18: spins given on the command line instead of the two upgrade stations
+            SPINS = new Spin[args.length - 2];
+            for (int i = 2; i < args.length; i++) {
+                int[] v = java.util.Arrays.stream(args[i].split(",")).mapToInt(Integer::parseInt).toArray();
+                SPINS[i - 2] = new Spin(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
+            }
+        }
         try (Store store = new Store(new File(args[1]))) {
             store.load();
             Storage storage = store.getStorage();

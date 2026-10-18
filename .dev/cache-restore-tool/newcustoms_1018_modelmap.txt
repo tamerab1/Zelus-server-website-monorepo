@@ -1,0 +1,25 @@
+SoulWeapon/melee/tier 1/drop/50941.dat|61211
+SoulWeapon/melee/tier 1/wear/50942.dat|61212
+SoulWeapon/melee/tier 2/drop/50065.dat|61213
+SoulWeapon/melee/tier 2/wear/50066.dat|61214
+SoulWeapon/bow/tier 1/drop/28678.dat|61215
+SoulWeapon/bow/tier 1/wear/28622.dat|61216
+SoulWeapon/bow/tier 2/drop/95012.dat|61217
+SoulWeapon/bow/tier 2/wear/95013.dat|61218
+SoulWeapon/bow/tier 3/drop/12323.dat|61219
+SoulWeapon/bow/tier 3/wear/12316.dat|61220
+SoulWeapon/magic/tier1/drop/94524.dat|61223
+SoulWeapon/magic/tier1/wear/94525.dat|61224
+SoulWeapon/magic/tier 2/drop/95058.dat|61225
+SoulWeapon/magic/tier 2/wear/95059.dat|61226
+SoulWeapon/magic/tier3/drop/139883.dat|61227
+SoulWeapon/magic/tier3/wear/139882.dat|61228
+new custom boots/95003.dat|61231
+new donator set/body/drop/139855.dat|61232
+new donator set/body/wear/139854.dat|61233
+new donator set/legs/drop/139857.dat|61234
+new donator set/legs/wear/139856.dat|61235
+new weapon/drop/82972.dat|61236
+new weapon/wear/82973.dat|61237
+discord object/139793.dat|61238
+donator object/90002.dat|61239

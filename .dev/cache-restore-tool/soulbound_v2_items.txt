@@ -1,0 +1,29 @@
+# Soulbound weapons v2 (2026-10-18): the user's new meshes ("new customs/SoulWeapon"), raw models 61211-61228
+# (newcustoms_1018_modelmap.txt); the tier-3 bow / spire are the gold-textured copies 61221-61222 / 61229-61230
+# (newcustoms_1018_textured.txt). Same ids, names, options and placeholders as before; the old theme recolours are
+# stripped (they were tuned to the old meshes). The Ascended blade 31828 keeps its v1 look (no new tier-3 melee mesh).
+# CreateItemVariants apply-replace <cache> soulbound_v2_items.txt, then SetItemWornOps soulbound_worn_ops.txt again.
+variant 1305 31824 31825 0 -|Wield|Check|-|Destroy Soulbound blade
+strip 31824 40,41
+models 31824 2834:61211,564:61212
+variant 23995 31826 31827 0 -|Wield|Check|-|Destroy Empowered soulbound blade
+strip 31826 40,41
+models 31826 37980:61213,38270:61214,38280:61214
+variant 23357 31830 31831 0 -|Wield|Check|-|Destroy Soulbound recurve
+strip 31830 40,41
+models 31830 37190:61215,37095:61216,37086:61216
+variant 29591 31832 31833 0 -|Wield|Check|-|Destroy Empowered soulbound recurve
+strip 31832 40,41
+models 31832 53312:61217,54040:61218,54043:61218
+variant 27655 31834 31835 0 -|Wield|Check|-|Destroy Ascended soulbound recurve
+strip 31834 40,41
+models 31834 47421:61221,47210:61222,47219:61222
+variant 4675 31836 31837 0 -|Wield|Check|-|Destroy Soulbound spire
+strip 31836 40,41
+models 31836 6235:61223,6232:61224
+variant 31113 31838 31839 0 -|Wield|Check|-|Destroy Empowered soulbound spire
+strip 31838 40,41
+models 31838 56713:61225,57168:61226,57176:61226
+variant 27788 31840 31841 0 -|Wield|Check|-|Destroy Ascended soulbound spire
+strip 31840 40,41
+models 31840 35774:61229,35773:61230

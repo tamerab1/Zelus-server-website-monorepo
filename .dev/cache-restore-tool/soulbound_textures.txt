@@ -1,0 +1,4 @@
+# Soulbound weapons (2026-10-18): animated soul energy for the Empowered (253, soul teal) and Ascended (254, gold with
+# teal-white tips) looks: the lava swirl 59 remapped, its flow kept (CreateRecoloredTextures).
+texture 59 253 24574 - - 0:020406,0.35:06141c,0.58:0a3a48,0.74:118894,0.86:2fd2d8,0.95:9ffff4,1:ffffff
+texture 59 254 24575 - - 0:0a0703,0.35:221806,0.58:5a3f0e,0.74:a8781c,0.86:f0c040,0.95:a8fff4,1:ffffff

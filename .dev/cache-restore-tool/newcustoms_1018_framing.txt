@@ -1,0 +1,5 @@
+# New customs 2026-10-18 icon framing (AutoFrameItems): armour keeps its template camera angle (Torva / Primordial)
+item 31842 147,279,0
+item 31844 518,0,0
+item 31846 435,0,0
+item 31848

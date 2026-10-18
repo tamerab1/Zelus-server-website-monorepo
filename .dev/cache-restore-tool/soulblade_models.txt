@@ -1,0 +1,5 @@
+# Soulbound blade T1 / T2 glow faces textured in place (TextureModelFaces): T1 its bright purple edge, T2 its magenta core.
+model 61211 61211 262 46941,46942,46674,46778
+model 61212 61212 262 46941,46942,46674,46778
+model 61213 61213 263 64059,64064
+model 61214 61214 263 64059,64064

@@ -33,6 +33,7 @@ public final class YoutubePackCommand {
 		{31764, 1},                                     // Frostfall Wings
 		{31796, 1},                                     // Zelus H'ween Mask
 		{31810, 1},                                     // Zelus Cosmic Wings
+		{59576, 1},                                     // Youtube Cape
 		// boxes, pet shards and combat pets
 		{31618, 3},                                     // Arcane mystery box
 		{31792, 2},                                     // Rivals mystery box

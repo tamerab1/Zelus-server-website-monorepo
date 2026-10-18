@@ -61,6 +61,19 @@ public class item_info extends DataFile {
 			def.hideHair = temp.hide_hair == Boolean.TRUE;
 			def.hideBeard = temp.hide_beard == Boolean.TRUE;
 			def.hideArms = temp.hide_arms == Boolean.TRUE;
+			// only a head-slot item may hide the head's hair / beard kits (2026-10-18 audit: a cape carrying these flags
+			// bald-headed its wearer); anything else gets them ignored, with a note, so no body or cape can cull the head
+			if ((def.hideHair || def.hideBeard) && def.equipSlot != 0) {
+				System.err.println("item_info: " + def.id + " (" + def.name + ") hides hair/beard but is not a head item (slot "
+						+ def.equipSlot + "): flags ignored");
+				def.hideHair = def.hideBeard = false;
+			}
+			// likewise only a body may hide the arm kit (Odium ward / Obsidian platelegs carried it: the arms vanished)
+			if (def.hideArms && def.equipSlot != 4) {
+				System.err.println("item_info: " + def.id + " (" + def.name + ") hides arms but is not a body item (slot "
+						+ def.equipSlot + "): flag ignored");
+				def.hideArms = false;
+			}
 			/*
 			 * Levels
 			 */

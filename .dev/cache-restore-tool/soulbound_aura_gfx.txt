@@ -1,0 +1,12 @@
+# Soulbound weapon auras (2026-10-18, SoulAura on the server): recoloured copies of the Redemption sparkle (436) and
+# the sparkle burst 1388, pulsed on the player out of combat while their own Soulbound weapon is wielded.
+#   4420 Soul Wisps (tier 5, soul teal) / 4421 Ascendant Radiance (tier 8, gold) / 4422 Eternal Soulfire (tier 10, violet)
+# Build: BuildBossVariants gfx verify|apply <cache> soulbound_aura_gfx.txt  (server STOPPED)
+#     name       pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme soulteal   33   6    1.10 6    33   4    1.00 0    4         80
+theme soulgold   8    6    1.10 8    8    5    1.05 10   4         80
+theme soulviolet 48   6    1.00 4    48   5    1.00 6    4         80
+#   src  new  theme      texture model
+gfx 436  4420 soulteal   -       -
+gfx 436  4421 soulgold   -       -
+gfx 1388 4422 soulviolet -       -

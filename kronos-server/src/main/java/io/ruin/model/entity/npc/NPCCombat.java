@@ -1246,6 +1246,7 @@ public abstract class NPCCombat extends Combat {
 						}
 					}
 					SlayerMaster.handle(killer.player, npc);
+					io.ruin.model.content.soulweapons.SoulWeapons.onNpcKill(killer.player, npc); // Soul XP
 					if (npc.getDef().name.equalsIgnoreCase("Catalyst Brute")
 							|| npc.getDef().name.equalsIgnoreCase("Catalyst Mager")
 							|| npc.getDef().name.equalsIgnoreCase("Catalyst Ranger")) {

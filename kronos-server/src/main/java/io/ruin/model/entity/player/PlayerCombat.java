@@ -123,6 +123,13 @@ public class PlayerCombat extends Combat {
 	public int chargeTicks;
 	public int forinthySkullDelay;
 
+	/** Every attack path ends here: the Soulbound Tempest talent may take a tick off a Recurve shot at a monster. */
+	@Override
+	public void updateLastAttack(int tickDelay) {
+		super.updateLastAttack(player == null ? tickDelay
+				: io.ruin.model.content.soulweapons.SoulTalents.attackDelay(player, target, tickDelay));
+	}
+
 	public void init(Player player) {
 		this.player = player;
 		this.selfHooks.clear();
@@ -1315,6 +1322,40 @@ public class PlayerCombat extends Combat {
 		if (weaponDef.id == TumekensShadow.UNCHARGED) {
 			player.sendMessage("Your Tumekens shadow has no charges left!");
 			updateLastAttack(baseAttackSpeed + attackTicks);
+			return;
+		}
+		// Soulbound spire (SoulWeapons, 2026-10-18): a built-in spell whose max hit grows with the weapon's tier; each look
+		// casts its own (base: soul bolt, Empowered: blood-bound bolt, Ascended: shadow orb + the Soul Nova special)
+		if (io.ruin.model.content.soulweapons.SoulWeapons.isSpire(weaponDef.id)) {
+			if (target.player != null) {
+				player.sendMessage(Color.RED.wrap("The Soulbound spire's spell can only be used against monsters."));
+				return;
+			}
+			int spireMax = (int) (io.ruin.model.content.soulweapons.SoulWeapons.spireMaxHit(player) * damageBoost);
+			if (specialActive != null && handleSpecial(AttackStyle.MAGIC, attackSet.type, spireMax)) {
+				updateLastAttack(baseAttackSpeed + attackTicks);
+				return;
+			}
+			int band = io.ruin.model.content.soulweapons.SoulWeaponType.MAGIC.bandOf(weaponDef.id);
+			// every look casts with 1167 (staff held): 711 hides the hand item (rightHandItem=0) and 9493 is Tumeken's
+			// front-held pose, wrong for the v2 meshes (2026-10-18)
+			int[] cast = band == 2 ? new int[]{1167, 2125, 2126, 2127} : band == 1 ? new int[]{1167, 1540, 1539, 1541}
+					: new int[]{1167, 1251, 1252, 1253}; // anim, cast gfx, projectile, impact
+			player.animate(cast[0]);
+			player.graphics(cast[1], 92, 0);
+			// the projectile homes on the target (staff head -> chest, a low arc); the hit lands on the standard OSRS
+			// magic delay for the distance, and the impact is a spot-anim ON the NPC, timed to the projectile's arrival
+			int duration = band == 2 ? new Projectile(cast[2], 62, 31, 56, 56, 10, 32, 11).send(player, target)
+					: new Projectile(cast[2], 43, 31, 51, 56, 10, 16, 11).send(player, target);
+			Hit hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost).randDamage(spireMax)
+					.delay(getMagicHitDelay(getChebyshevDistance(player, target))).setAttackWeapon(weaponDef);
+			if (target.hit(hit) > 0) {
+				target.graphics(cast[3], 92, duration);
+			} else {
+				hit.nullify();
+				target.graphics(85, 92, duration);
+			}
+			updateLastAttack(doubleAttackEffect ? 1 : baseAttackSpeed + attackTicks);
 			return;
 		}
 		if (swamp || weaponDef.id == TridentOfTheSeas.CHARGED || weaponDef.id == TridentOfTheSeas.FULLY_CHARGED

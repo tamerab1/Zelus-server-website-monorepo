@@ -461,6 +461,7 @@ public class Equipment extends ItemContainer {
 			}
 		}
 		if (wep != null) {
+			io.ruin.model.content.soulweapons.SoulWeapons.addTierBonuses(player, wep, bonuses); // tier scaling, shown on the stats screen
 			if (wep.getId() == 27275 || wep.getId() == 33000) {
 				if (player.getCurrentToARaid() != null) {
 					bonuses[EquipmentStats.MAGIC_DAMAGE] *= 4;

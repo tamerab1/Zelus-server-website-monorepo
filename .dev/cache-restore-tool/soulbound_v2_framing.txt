@@ -1,0 +1,10 @@
+# Soulbound v3 icon framing (AutoFrameItems): flat = zan2d 0, the same orientation the windows show
+item 31824 flat
+item 31826 flat
+item 31828 flat
+item 31830 flat
+item 31832 flat
+item 31834 flat
+item 31836 flat
+item 31838 flat
+item 31840 flat

@@ -1,0 +1,6 @@
+# Soulbound looks lighting (SetItemLighting, 2026-10-18): the dark meshes lit brighter in icons / windows / ground.
+item 31830 50 0
+item 31834 70 0
+item 31836 70 0
+item 31838 60 0
+item 31840 70 0

@@ -1,0 +1,10 @@
+# Soulbound weapons (2026-10-18): a worn Check option (opens the weapon's details), replacing whatever the source meshes' items had.
+item 31824 inv=-|Wield|Check|-|Destroy worn=Check
+item 31826 inv=-|Wield|Check|-|Destroy worn=Check
+item 31828 inv=-|Wield|Check|-|Destroy worn=Check
+item 31830 inv=-|Wield|Check|-|Destroy worn=Check
+item 31832 inv=-|Wield|Check|-|Destroy worn=Check
+item 31834 inv=-|Wield|Check|-|Destroy worn=Check
+item 31836 inv=-|Wield|Check|-|Destroy worn=Check
+item 31838 inv=-|Wield|Check|-|Destroy worn=Check
+item 31840 inv=-|Wield|Check|-|Destroy worn=Check

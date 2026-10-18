@@ -80,7 +80,17 @@ function NewsModal({ post, onClose }) {
             <time dateTime={post.date}>{formatNewsDate(post.date)}</time>
             <AuthorBadge />
           </div>
-          {post.body.map((para) => <p key={para.slice(0, 32)}>{para}</p>)}
+          {post.body.map((block, i) => {
+            // a body block is a paragraph string, { heading }, or { image, alt, caption } (in-game screenshots)
+            if (typeof block === 'string') return <p key={i}>{block}</p>;
+            if (block.heading) return <h3 key={i} className="zh-modal-h font-fantasy">{block.heading}</h3>;
+            return (
+              <figure key={i} className="zh-modal-fig">
+                <img src={block.image} alt={block.alt || ''} loading="lazy" />
+                {block.caption && <figcaption>{block.caption}</figcaption>}
+              </figure>
+            );
+          })}
         </div>
       </div>
     </div>

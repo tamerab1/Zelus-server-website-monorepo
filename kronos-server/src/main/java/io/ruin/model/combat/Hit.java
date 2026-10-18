@@ -74,6 +74,9 @@ public class Hit {
 		return this;
 	}
 
+	/// An extra hit made by a Soulbound talent (splash, chain, blast; SoulTalents): it never triggers talents itself.
+	public boolean soulEcho;
+
 	public Hit setResetActions(boolean resetActions) {
 		this.resetActions = resetActions;
 		return this;
@@ -517,6 +520,10 @@ public class Hit {
 			damage *= 1.5;
 		}
 
+		// Soulbound talents (Devastation crits, Executioner), PvM only: before the damage is capped to the monster's hp
+		if (!fromPet && attacker != null && attacker.player != null && target instanceof NPC npc)
+			io.ruin.model.content.soulweapons.SoulTalents.onDefend(this, attacker.player, npc);
+
 		if (target.npc != null && damage > target.getHp() && type != HitType.HEAL) {
 			damage = target.getHp();
 		}
@@ -585,6 +592,7 @@ public class Hit {
 				if (type == HitType.HEAL || type == HitType.HEAL_TOTEM_ME || type == HitType.HEAL_TOTEM_OTHER) {
 					target.incrementHp(damage);
 				} else {
+					io.ruin.model.content.soulweapons.SoulTalents.deathWard(this, target); // may lower a monster's killing blow
 					if (target.incrementHp(-damage) == 0) {
 						if (target.isPlayer() && target.player.inTob) {
 							target.player.getTheatreRoom().startDeathEvent(target.player);
@@ -612,6 +620,10 @@ public class Hit {
 			if (afterPostDamage != null) {
 				afterPostDamage.accept(target);
 			}
+
+			if (!fromPet && attacker != null && attacker.player != null && target.npc != null)
+				io.ruin.model.content.soulweapons.SoulTalents.afterDamage(this, attacker.player, target.npc);
+			io.ruin.model.content.AzureFang.onHit(this, target); // cyan sparkle on its hits
 
 			if (target.hitListener != null && target.hitListener.postDamage != null) {
 				target.hitListener.postDamage.accept(this);

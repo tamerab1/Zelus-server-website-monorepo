@@ -1,0 +1,12 @@
+# Soulbound weapons, Empowered (tiers 4-7) and Ascended (tiers 8-10) looks, 2026-10-18 (the user's mesh picks):
+# Empowered = Blade of saeldor 23995 / Scorching bow 29591 / Eye of ayak 31113, obsidian + animated teal 253;
+# Ascended  = Wilderness sword 4 13111 / Webweaver bow 27655 / Thammaron's sceptre (a) 27788, GOLD body + animated gold 254.
+# theme <name> <texId> auto <fraction> [pMul pAdd [bodyHue bodySat]]
+theme soulenh 253 auto 0.45
+theme soulasc 254 auto 0.50 1.30 16 7 6
+item 23995 31826 31827 0 -|Wield|Check|-|Destroy soulenh Empowered soulbound blade
+item 13111 31828 31829 0 -|Wield|Check|-|Destroy soulasc Ascended soulbound blade
+item 29591 31832 31833 0 -|Wield|Check|-|Destroy soulenh Empowered soulbound recurve
+item 27655 31834 31835 0 -|Wield|Check|-|Destroy soulasc Ascended soulbound recurve
+item 31113 31838 31839 0 -|Wield|Check|-|Destroy soulenh Empowered soulbound spire
+item 27788 31840 31841 0 -|Wield|Check|-|Destroy soulasc Ascended soulbound spire

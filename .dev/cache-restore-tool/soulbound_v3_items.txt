@@ -1,0 +1,6 @@
+# Soulbound v3 (2026-10-18): the Ascended blade 31828 takes the Azure Fang meshes (61236 / 61237: animated azure texture
+# 261 on the blade core, worn model decimated to 750 faces) on Blade of saeldor's record, like the Azure Fang itself.
+# CreateItemVariants apply-replace, then SetItemWornOps soulbound_worn_ops.txt again.
+variant 23995 31828 31829 0 -|Wield|Check|-|Destroy Ascended soulbound blade
+strip 31828 40,41
+models 31828 37980:61236,38270:61237,38280:61237

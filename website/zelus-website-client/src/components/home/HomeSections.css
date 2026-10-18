@@ -346,6 +346,11 @@ a.zh-link-pill:hover { border-color: #d4af37; background: #1a202c; }
 .zh-modal-cover h2 { margin: 0; font-size: clamp(20px, 3vw, 28px); color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95); }
 .zh-modal-body { padding: 18px 20px 22px; display: grid; gap: 12px; }
 .zh-modal-body p { margin: 0; font-size: 15px; line-height: 1.65; color: #e6edf3; }
+.zh-modal-h { margin: 6px 0 0; font-size: 18px; letter-spacing: 0.02em; color: #d4af37; }
+.zh-modal-fig { margin: 2px 0; }
+.zh-modal-fig img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid #3a4354; }
+.zh-modal-fig figcaption { margin-top: 6px; font-size: 12.5px; color: #9aa4b2; text-align: center; }
+.zh-modal-body code { padding: 1px 6px; border-radius: 6px; background: #161b24; border: 1px solid #2a3140; color: #5fe0ea; font-size: 13px; }
 .zh-close {
   position: absolute;
   top: 12px;

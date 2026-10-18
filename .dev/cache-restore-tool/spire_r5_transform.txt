@@ -1,0 +1,4 @@
+# Ascended soulbound spire worn, round 5 (2026-10-18): from the UNTOUCHED decimated model (spire_base, made from the
+# round-1 textured mesh), turned 90 degrees about its real shaft line (through the grip (-31,-93,10), along (0,-34,-60)).
+# The shaft stays in the fist; only the lantern arms swing from across the chest to front / back. Replaces rounds 3/4.
+model 61230 1.0 -31,-93,10 0,0,0 0,-34,-60 -90

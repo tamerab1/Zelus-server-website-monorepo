@@ -1,0 +1,7 @@
+# Soulbound weapons, base look (tiers 1-3), 2026-10-18: "soul-steel" -- dark blue-grey steel. Per-band meshes:
+# Blade = Dragon longsword 1305, Recurve = Rain bow 23357, Spire = Ancient staff 4675 (the user's "Soulbound spire").
+# GenThemeRecolors: theme <name> <pHue> <pSat> <pMul> <pAdd> <aHue> <aSat> <aMul> <aAdd> <accentSat> <accentLum>
+theme soulsteel 38 2 0.80 4   38 2 0.80 4   7 127
+item 1305 31824 31825 0 -|Wield|Check|-|Destroy soulsteel Soulbound blade
+item 23357 31830 31831 0 -|Wield|Check|-|Destroy soulsteel Soulbound recurve
+item 4675 31836 31837 0 -|Wield|Check|-|Destroy soulsteel Soulbound spire

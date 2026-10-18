@@ -21,7 +21,8 @@ import java.util.*;
 //   - everything else: matte obsidian, lum' = clamp(round(lum * pMul + pAdd), 2, 126) at hue 0 sat 1.
 // Spec lines:
 //   theme <name> <texId> <accentSat> <accentLum> [pMul pAdd]
-//   theme <name> <texId> auto <fraction> [pMul pAdd]   ranks the item's colours by sat*20 + lum and makes the
+//   theme <name> <texId> auto <fraction> [pMul pAdd [bodyHue bodySat]]   (body defaults to obsidian 0/1; 2026-10-18
+//        Soulbound Ascended uses a gold body)   ranks the item's colours by sat*20 + lum and makes the
 //        top ones accents until they cover <fraction> of the inventory model's opaque faces (a colour that would push past fraction + 0.30 is skipped)
 //   item <srcId> <newId> <placeholderId> <tradeable> <ops> <theme> <name...>
 //   keep <newId> <hsl>[,<hsl>...]
@@ -31,7 +32,7 @@ import java.util.*;
 // Prints, per item, the share of opaque faces that end up textured (aim for roughly 10-40%).
 // Usage: <cachePath> <specFile> <outDir> <firstModelId>
 public class GenForgeObsidian {
-    record Theme(int tex, int accentSat, int accentLum, double fraction, double pMul, int pAdd) {
+    record Theme(int tex, int accentSat, int accentLum, double fraction, double pMul, int pAdd, int bodyHue, int bodySat) {
         boolean auto() { return fraction > 0; }
     }
 
@@ -51,7 +52,8 @@ public class GenForgeObsidian {
                     boolean auto = p[3].equals("auto");
                     themes.put(p[1], new Theme(i(p[2]), auto ? 0 : i(p[3]), auto ? 0 : i(p[4]),
                             auto ? Double.parseDouble(p[4]) : 0, p.length > 5 ? Double.parseDouble(p[5]) : 0.22,
-                            p.length > 6 ? i(p[6]) : 4));
+                            p.length > 6 ? i(p[6]) : 4,
+                            p.length > 7 ? i(p[7]) : OBSIDIAN_HUE, p.length > 8 ? i(p[8]) : OBSIDIAN_SAT));
                 }
                 case "keep" -> {
                     Set<Integer> s = keep.computeIfAbsent(i(p[1]), k -> new HashSet<>());
@@ -126,7 +128,7 @@ public class GenForgeObsidian {
                             accentRaw.add(c);
                             nc = CRIMSON_HUE << 10 | CRIMSON_SAT << 7 | clamp((int) Math.round(l * 0.6 + 10));
                         } else {
-                            nc = OBSIDIAN_HUE << 10 | OBSIDIAN_SAT << 7 | clamp((int) Math.round(l * t.pMul + t.pAdd));
+                            nc = t.bodyHue << 10 | t.bodySat << 7 | clamp((int) Math.round(l * t.pMul + t.pAdd));
                         }
                     }
                     if (nc == c) continue;
@@ -193,7 +195,7 @@ public class GenForgeObsidian {
             if (inv.faceTransparencies != null && (inv.faceTransparencies[f] & 0xFF) >= 128) continue;
             int eff = srcRecolor.getOrDefault(inv.faceColors[f] & 0xFFFF, inv.faceColors[f] & 0xFFFF);
             total++;
-            if (kept.contains(eff) || kind(eff, new Theme(0, 99, 999, 0, 0, 0)) == 0) continue;
+            if (kept.contains(eff) || kind(eff, new Theme(0, 99, 999, 0, 0, 0, OBSIDIAN_HUE, OBSIDIAN_SAT)) == 0) continue;
             faces.merge(eff, 1, Integer::sum);
         }
         List<Integer> ranked = new ArrayList<>(faces.keySet());

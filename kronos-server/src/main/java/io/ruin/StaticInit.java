@@ -191,6 +191,9 @@ public final class StaticInit {
 		io.ruin.model.activities.wilderness.EdgevillePvpRewards.register();
 		io.ruin.model.activities.scoreboard.Scoreboard.register();
 		io.ruin.model.content.rivals.DivisionRivalsInterfaceManager.register(); // Division Rivals interface 5120 (UI preview, 2026-10-15)
+		io.ruin.model.content.soulweapons.SoulWeapons.register(); // Soulbound Living Weapons (::soulweapon, Soul XP), 2026-10-18
+		io.ruin.model.content.casino.BlackjackTable.register(); // Zelus Blackjack Table object 62442 -> BlackjackInterface, 2026-10-18
+		io.ruin.model.content.DiscordStatue.register(); // Discord Statue object 62443 -> the Discord invite, 2026-10-18
 		io.ruin.model.activities.lottery.Lottery.register();
 		io.ruin.model.content.donatordeals.DonatorDeals.register();
 		io.ruin.model.content.capeforge.CapeForge.register();

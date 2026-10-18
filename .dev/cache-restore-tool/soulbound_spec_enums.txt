@@ -1,0 +1,7 @@
+# Soulbound weapons, Ascended look (tiers 8-10), 2026-10-18: special attack bar (906 cost, 500 = 50%) + description (1739).
+int 906 31828 500
+str 1739 31828 Soul Rend: A soul-charged lunge with 50% more accuracy and 35% more damage that heals you for a quarter of the damage dealt.
+int 906 31834 550
+str 1739 31834 Soul Volley: Loose two soul-charged arrows at once, each dealing 25% more damage.
+int 906 31840 500
+str 1739 31840 Soul Nova: Unleash a surge of soul energy that hits up to 50% harder with doubled accuracy.

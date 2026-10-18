@@ -327,7 +327,8 @@ public class ActionButtonHandler {
 		if (interfaceId != ComponentID.LOGIN_CLICK_TO_PLAY_GROUP_ID && player.inTutorial && interfaceId != Interface.LOGOUT
 				&& !dialogue && interfaceId != Interface.STARTER_INTERFACE
 				&& interfaceId != Interface.APPEARANCE_CUSTOMIZATION
-				&& interfaceId != io.ruin.model.tutorial.StarterSelectInterface.INTERFACE) { // new-player path select
+				&& interfaceId != io.ruin.model.tutorial.StarterSelectInterface.INTERFACE // new-player path select
+				&& interfaceId != io.ruin.model.content.soulweapons.SoulStarterInterface.INTERFACE) { // Soulbound selector
 			return;
 		}
 		if (option == 10 && interfaceId == 149 && itemId != -1) {

@@ -102,6 +102,8 @@ public class StarterGuide {
 		player.dialogue(new NPCDialogue(npc, "Hello " + player.getName() + ", is there something I could assist you with?"),
 				new OptionsDialogue(
 						new Option("View help pages", () -> Help.open(player)),
+						new Option(player.soulWeapon == null ? "Choose my Soulbound weapon" : "My Soulbound weapon",
+								() -> io.ruin.model.content.soulweapons.SoulWeapons.claim(player)),
 						// new Option("Replay tutorial", () -> ecoTutorial(player)),
 						new Option("Change home point", () -> {
 							npc.startEvent(event -> {
@@ -247,6 +249,16 @@ public class StarterGuide {
 			}
 
 			event.waitForDialogue(player);
+			// Soulbound weapon selector (2026-10-18): right after the mode / difficulty and the kit, before the welcome and
+			// the home tour + Security PIN. The tutorial waits until a weapon is bound or the window is closed (they can
+			// still choose later via the Zelus Guide or ::soulweapon); 5 minutes at most.
+			if (player.soulWeapon == null) {
+				io.ruin.model.content.soulweapons.SoulStarterInterface.open(player);
+				event.waitForCondition(() -> player.soulWeapon != null
+						|| !player.isVisibleInterface(io.ruin.model.content.soulweapons.SoulStarterInterface.INTERFACE), 500);
+				if (player.isVisibleInterface(io.ruin.model.content.soulweapons.SoulStarterInterface.INTERFACE))
+					player.closeInterfaces();
+			}
 			// One clean announcement for everyone (no ::zelus here -- that's for the new player only)...
 			Broadcast.WORLD.sendNews(Icon.NEWCOMER_SMILE,"<col=005f9e><shad=0>[Welcome]</shad></col> <col=ffffff><shad=0>" + player.getName()
 					+ "</shad></col> <col=005f9e>has just joined " + World.type.getWorldName() + "! Welcome them to the realm!</col>");

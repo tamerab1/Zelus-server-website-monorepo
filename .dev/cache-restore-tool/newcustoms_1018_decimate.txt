@@ -1,0 +1,7 @@
+# Face budgets for the heavy ripped WORN models (DecimateModel), 2026-10-18: a player model is drawn by the GPU plugin up to
+# 6144 faces; the merged kits + gear were over it, so the head / hands / feet (merged last) vanished.
+model 61233 1000
+model 61235 850
+model 61237 750
+model 61214 750
+model 61230 750

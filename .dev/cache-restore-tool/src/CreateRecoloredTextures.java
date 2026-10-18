@@ -13,6 +13,7 @@ import net.runelite.cache.index.IndexData;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,9 +61,8 @@ public class CreateRecoloredTextures {
                 check(newSprite > 0 && newSprite < 65536, "sprite id must fit u16: " + newSprite);
                 check(sprites.getArchive(newSprite) == null, "sprite " + newSprite + " already exists");
                 check(slotOf(texFd, newTex) == -1, "texture " + newTex + " already exists");
-                int maxTex = texFd[texFd.length - 1].getId();
-                for (int[] t : newTextures) maxTex = Math.max(maxTex, t[0]);
-                check(newTex > maxTex, "new texture ids must be appended above " + maxTex);
+                // a new id may fill a gap (the archive is re-sorted on write), but never repeat one in this run
+                for (int[] t : newTextures) check(t[0] != newTex, "texture " + newTex + " twice in the spec");
 
                 byte[] srcTexBytes = texContents.get(requireSlot(texFd, srcTex));
                 TextureDefinition st = new TextureLoader().load(srcTex, srcTexBytes);
@@ -181,7 +181,16 @@ public class CreateRecoloredTextures {
                 fdList.add(fd);
                 texContents.add(newTextureBytes.get(i));
             }
-            texArchive.setFileData(fdList.toArray(new FileData[0]));
+            // keep the archive's files in id order (ids are stored as deltas): a new id may fill a gap (54, 2026-10-18)
+            Integer[] order = new Integer[fdList.size()];
+            for (int i = 0; i < order.length; i++) order[i] = i;
+            Arrays.sort(order, Comparator.comparingInt(i -> fdList.get(i).getId()));
+            List<FileData> sortedFd = new ArrayList<>();
+            List<byte[]> sortedContents = new ArrayList<>();
+            for (int i : order) { sortedFd.add(fdList.get(i)); sortedContents.add(texContents.get(i)); }
+            texContents.clear();
+            texContents.addAll(sortedContents);
+            texArchive.setFileData(sortedFd.toArray(new FileData[0]));
             byte[] joined = SpliceItemOption.joinChunks(texContents);
             Container tc = new Container(texArchive.getCompression(), -1);
             tc.compress(joined, null);

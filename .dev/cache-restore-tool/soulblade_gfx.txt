@@ -1,0 +1,6 @@
+# Soulbound blade hit sparkles (2026-10-18 r8): violet (T1) and crimson (T2) copies of the Redemption sparkle 436, like
+# the Azure Fang's cyan 4423 (T3); shrunk to 80% by SetSpotanimScale.
+theme violet 46 6 1.10 8 46 5 1.00 4 4 80
+theme crimson 0 6 1.10 8 0 5 1.00 4 4 80
+gfx 436 4426 violet - -
+gfx 436 4427 crimson - -

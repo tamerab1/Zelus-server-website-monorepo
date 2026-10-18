@@ -12,6 +12,33 @@ export const NEWS_AUTHOR = { name: 'Zelus Team', role: 'Developer' };
 
 export const NEWS = [
   {
+    id: 'soulbound-weapons',
+    image: '/assets/news/soulbound-selector.webp',
+    title: 'Soulbound Living Weapons',
+    tag: 'Major Feature',
+    date: '2026-10-18',
+    accent: '#22d3ee',
+    cover: 'radial-gradient(120% 90% at 20% 10%, rgba(34,211,238,0.45), transparent 60%), radial-gradient(90% 80% at 85% 90%, rgba(212,175,55,0.4), transparent 65%), linear-gradient(135deg, #07141a, #0b0c10)',
+    snippet: 'Progression reimagined: pick a weapon that grows with you from Tier 1 to Tier 10, evolving, awakening talents and unlocking auras as you fight.',
+    body: [
+      'Welcome to our biggest progression system yet. Your starter weapon is no longer something you throw away after twenty minutes: a Soulbound weapon grows with you from Tier 1 to Tier 10 across all of your PvM, changing its look, awakening talents and unlocking auras along the way.',
+      { heading: 'Choose your archetype' },
+      { image: '/assets/news/soulbound-selector.webp', alt: 'The Choose Your Soulbound Weapon window', caption: 'The choice is permanent, so choose wisely.' },
+      'Soulbound Blade (melee): fast aggression, crushing crits and splash hits. Talents: Devastation, Cleave and Lifesteal. Ascended special: Soul Rend, a glacial cleave that leaves frost burning in the wound.',
+      'Soulbound Recurve (ranged): high damage and multi-target pressure. Talents: Tempest, Ricochet and Executioner. Ascended special: Soul Volley.',
+      'Soulbound Spire (magic): area damage and soul leech. Talents: Soul Siphon, Arcane Surge and Death Ward. Ascended special: Soul Nova.',
+      { heading: 'Tiers, talents and the Soul Tree' },
+      { image: '/assets/news/soulbound-soul-tree.webp', alt: 'The Soul Tree window', caption: 'Spend Soul Points on talents and turn on auras as your weapon grows.' },
+      'Every kill feeds your weapon Soul XP, scaled to the monster, and bosses grant a big bonus on top (+50 to +250). Your weapon takes a new form at Tier 4 (Empowered) and Tier 8 (Ascended), and the Preview button lets you look at the next form before you reach it.',
+      'Each tier earns Soul Points to rank up your three talents, and auras unlock at Tiers 5, 8 and 10. The first reset of your tree is free.',
+      'Soulbound powers are made for PvM: every talent and special is disabled in PvP and in Division Rivals.',
+      { heading: 'The Soul Sanctuary' },
+      'Visit the Reliquary of Souls in its new sanctuary at home: commune with it to open your Soul Tree, choose your weapon, or recover a lost one with all of its progress. Type ::soultree to teleport straight to it, or ::soulweapon to choose your weapon from anywhere. Players with existing accounts can claim one too.',
+      { heading: 'Fixes and polish' },
+      'Custom capes and wings (including the KBD and YouTube capes), the Draconic set and other custom armour now layer correctly in GPU mode: no more linings, letters or weapons showing through your character. Custom animated textures now move in standard GPU mode with the new client.',
+    ],
+  },
+  {
     id: 'obsidian-reliquary',
     image: '/assets/news/obsidian-reliquary.webp',
     title: 'The Obsidian Reliquary',

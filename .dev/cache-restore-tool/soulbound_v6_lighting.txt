@@ -1,0 +1,6 @@
+# Soulbound looks lighting round 6 (2026-10-18): the Soul Tree viewport asked for 75-80% ambient -- the dark meshes lifted
+item 31830 90 0
+item 31834 100 0
+item 31836 100 0
+item 31838 90 0
+item 31840 100 0

@@ -1,0 +1,4 @@
+# Soul Sanctuary floor (2026-10-18 r10): texture 43's square flagstones recoloured to dark obsidian with faint cyan glints
+# on the bevel highlights, written into texture id 54 -- the only free id under 256, which an overlay needs (its texture
+# field is one byte). Static (no animation direction / speed changes).
+texture 43 54 24625 - - 0:0a0c11,0.35:141821,0.6:1c2230,0.8:262e3e,0.92:30485a,1:4fb3c0

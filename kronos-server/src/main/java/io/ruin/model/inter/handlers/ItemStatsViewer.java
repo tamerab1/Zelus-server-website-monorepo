@@ -74,7 +74,10 @@ public class ItemStatsViewer {
 		ObjType def = ObjType.get(itemId);
 		if (def == null || def.equipSlot == -1 || def.equipBonuses == null)
 			return false;
-		int[] b = def.equipBonuses;
+		int[] b = def.equipBonuses.clone();
+		// Soulbound weapons (2026-10-18): item_info holds the tier-1 stats; the player's own line adds its tier bonus,
+		// exactly as Equipment.sendUpdates does, so this matches the worn stats screen
+		io.ruin.model.content.soulweapons.SoulWeapons.addTierBonuses(player, new io.ruin.model.item.Item(itemId), b);
 		var ps = player.getPacketSender();
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		RETURN_TO.remove(player);
@@ -97,8 +100,11 @@ public class ItemStatsViewer {
 		ps.sendString(INTERFACE, REQUIREMENTS, requirements(def));
 
 		boolean weapon = def.equipSlot == Equipment.SLOT_WEAPON && def.weaponType != null;
+		// bows fire a tick faster on Rapid (PlayerCombat: RAPID_RANGED = attackTicks - 1)
+		boolean bow = weapon && def.rangedWeapon != null;
 		ps.sendString(INTERFACE, ATTACK_SPEED, weapon
 			? def.weaponType.attackTicks + " ticks (" + String.format("%.1f", def.weaponType.attackTicks * 0.6) + "s)"
+				+ (bow ? ", " + (def.weaponType.attackTicks - 1) + " on Rapid" : "")
 			: "Not a weapon");
 		return true;
 	}

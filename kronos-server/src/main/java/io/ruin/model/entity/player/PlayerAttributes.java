@@ -843,6 +843,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int[][] rivalsSavedStats;
 	public int rivalsSavedSpellbook = -1, rivalsSavedSpecial = -1;
 	public int[] rivalsReturnPosition;
+	/** The player's Soulbound weapon and all its progression (SoulWeapons, 2026-10-18); null until chosen. */
+	public io.ruin.model.content.soulweapons.SoulWeaponData soulWeapon;
 	/** True while a Rivals match kit is on (set and cleared by RivalsSnapshot): every account buff is off (RivalsFairPlay). */
 	public transient boolean rivalsFight;
 	public int[] preTournyAttack;

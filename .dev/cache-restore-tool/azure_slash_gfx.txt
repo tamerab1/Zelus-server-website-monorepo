@@ -1,0 +1,3 @@
+# Soul Rend (Ascended blade = Azure Fang mesh) glacial slash arc, 2026-10-18: a cyan copy of the dragon longsword cleave arc 248.
+theme azure 32 6 1.10 8 32 5 1.00 4 4 80
+gfx 248 4424 azure - -

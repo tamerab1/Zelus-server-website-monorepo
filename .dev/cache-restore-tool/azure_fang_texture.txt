@@ -1,0 +1,3 @@
+# Azure Fang (2026-10-18): the lava swirl 59 remapped into bright cyan -> foam white (flow kept), for the blade's glowing
+# core: the sword keeps its colours and the light moves through it.
+texture 59 261 24622 - - 0:3ad6e8,0.35:52e2f2,0.58:6eecf8,0.74:92f4fc,0.86:b8faff,0.95:e2feff,1:ffffff

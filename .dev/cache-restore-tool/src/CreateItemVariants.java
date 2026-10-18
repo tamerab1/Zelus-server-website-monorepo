@@ -165,9 +165,12 @@ public class CreateItemVariants {
                         && n.yan2d == s.yan2d && n.cost == s.cost && n.stackable == s.stackable
                         && java.util.Objects.equals(n.params, s.params) && java.util.Arrays.equals(n.options, s.options)
                         && n.maleModel0 == mapped.applyAsInt(s.maleModel0) && n.femaleModel0 == mapped.applyAsInt(s.femaleModel0) && n.wearPos1 == s.wearPos1, "copied fields " + newId);
-                CreateRecoloredItemSet.check(recolors.containsKey(newId) ? pairsMatch(recolors.get(newId), n.colorFind, n.colorReplace)
+                // "strip <id> 40,41" (2026-10-18, soulbound v2): the variant must carry no recolour / retexture table at all
+                boolean noRecolor = strips.containsKey(newId) && strips.get(newId).contains(40) && !recolors.containsKey(newId);
+                boolean noRetexture = strips.containsKey(newId) && strips.get(newId).contains(41) && !retextures.containsKey(newId);
+                CreateRecoloredItemSet.check(noRecolor ? n.colorFind == null : recolors.containsKey(newId) ? pairsMatch(recolors.get(newId), n.colorFind, n.colorReplace)
                         : java.util.Arrays.equals(n.colorFind, s.colorFind) && java.util.Arrays.equals(n.colorReplace, s.colorReplace), "recolor " + newId);
-                CreateRecoloredItemSet.check(retextures.containsKey(newId) ? pairsMatch(retextures.get(newId), n.textureFind, n.textureReplace)
+                CreateRecoloredItemSet.check(noRetexture ? n.textureFind == null : retextures.containsKey(newId) ? pairsMatch(retextures.get(newId), n.textureFind, n.textureReplace)
                         : java.util.Arrays.equals(n.textureFind, s.textureFind) && java.util.Arrays.equals(n.textureReplace, s.textureReplace), "retexture " + newId);
                 if (strips.containsKey(newId) && strips.get(newId).contains(100))
                     CreateRecoloredItemSet.check(n.countObj == null, "count models still present on " + newId);
