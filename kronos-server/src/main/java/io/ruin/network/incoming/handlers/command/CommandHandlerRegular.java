@@ -129,38 +129,53 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			// Lists every point-type currency the player has a balance in, pulled from the
-			// Currency enum's own registry (skipping item-backed currencies like coins/tokkul,
-			// which are already visible in the player's inventory) plus the two point systems
-			// that live outside that enum (regular Slayer Points, Perk Points).
 			case "points": {
-				// Same scrollable "scroll" interface (119) ::commands uses, so any number of
-				// entries fits cleanly instead of overflowing a fixed-height dialogue/chat spam.
-				// Rows alternate red/cyan for readability, matching the shop interfaces' style.
-				// Shaded (<col=X><shad=000000>text</shad></col>) to match the chatbox/nameplate
-				// look used elsewhere (e.g. LoyaltyTitle.shadedText()) instead of flat/bright text.
+				// Every point type that is actually awarded in game (checked 2026-10-18), grouped. Legacy / seasonal
+				// balances (loyalty, bounty, boss, appreciation, wilderness, wilderness slayer, snowballs) are never
+				// awarded any more: they show only when this player still holds some, so no old balance is hidden.
 				List<String> lines = new LinkedList<>();
-				int row = 0;
-				for (io.ruin.model.shop.Currency currency : io.ruin.model.shop.Currency.values()) {
-					if (currency.currencyHandler instanceof io.ruin.model.shop.ItemCurrencyHandler)
+				java.util.function.BiConsumer<String, Long> row = (name, amount) -> lines.add("<col=ff981f><shad=000000>"
+						+ name + ":</shad></col> <col=ffffff><shad=000000>" + NumberUtils.formatNumber(amount) + "</shad></col>");
+				java.util.function.Consumer<String> heading = title -> {
+					if (!lines.isEmpty())
+						lines.add("");
+					lines.add("<col=ffc35a><shad=000000><u>" + title + "</u></shad></col>");
+				};
+				heading.accept("Store & Account");
+				row.accept("Donator points", (long) player.getDonatorPoints());
+				row.accept("Vote points", (long) player.getVotePoints());
+				row.accept("Zelus points", (long) player.getReasonPoints());
+				row.accept("Achievement points", (long) player.getAchievementPoints());
+				heading.accept("Combat");
+				row.accept("PK points", (long) player.getPKPoints());
+				row.accept("PvM points", (long) io.ruin.model.shop.Currency.PVM_POINTS.currencyHandler.getCurrencyCount(player));
+				row.accept("Slayer points", (long) io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player));
+				row.accept("Rivals points", player.rivalsPoints);
+				row.accept("Tournament points", (long) io.ruin.model.shop.Currency.TOURNAMENT_POINTS.currencyHandler.getCurrencyCount(player));
+				heading.accept("Activities");
+				row.accept("Daily task points", (long) io.ruin.model.shop.Currency.TASK_POINTS.currencyHandler.getCurrencyCount(player));
+				row.accept("Pest Control points", (long) io.ruin.model.shop.Currency.PEST_CONTROL_POINTS.currencyHandler.getCurrencyCount(player));
+				row.accept("Wintertodt points", (long) io.ruin.model.shop.Currency.WINTERTODT_POINTS.currencyHandler.getCurrencyCount(player));
+				row.accept("Mage Arena points", (long) io.ruin.model.shop.Currency.MAGE_ARENA_POINTS.currencyHandler.getCurrencyCount(player));
+				heading.accept("Progression");
+				row.accept("Perk points", (long) player.perkPoints);
+				row.accept("Soul Points (Soulbound)", player.soulWeapon == null ? 0L : (long) player.soulWeapon.availableSoulPoints);
+				io.ruin.model.shop.Currency[] legacy = {io.ruin.model.shop.Currency.LOYALTY, io.ruin.model.shop.Currency.BH_POINTS,
+						io.ruin.model.shop.Currency.BOSS_POINTS, io.ruin.model.shop.Currency.APPRECIATION_POINTS,
+						io.ruin.model.shop.Currency.WILDERNESS_POINTS, io.ruin.model.shop.Currency.WILDERNESS_SLAYER_POINTS,
+						io.ruin.model.shop.Currency.SNOWBALL_POINTS};
+				boolean legacyHeading = false;
+				for (io.ruin.model.shop.Currency c : legacy) {
+					int amount = c.currencyHandler.getCurrencyCount(player);
+					if (amount <= 0)
 						continue;
-					// dead currencies -- nothing in the codebase ever awards these, always 0
-					if (currency == io.ruin.model.shop.Currency.BOSS_POINTS || currency == io.ruin.model.shop.Currency.LOYALTY
-							|| currency == io.ruin.model.shop.Currency.APPRECIATION_POINTS)
-						continue;
-					// excluded from this list per user request
-					if (currency == io.ruin.model.shop.Currency.TASK_POINTS || currency == io.ruin.model.shop.Currency.SNOWBALL_POINTS
-							|| currency == io.ruin.model.shop.Currency.WINTERTODT_POINTS || currency == io.ruin.model.shop.Currency.WILDERNESS_POINTS
-							|| currency == io.ruin.model.shop.Currency.WILDERNESS_SLAYER_POINTS || currency == io.ruin.model.shop.Currency.PEST_CONTROL_POINTS)
-						continue;
-					int amount = currency.currencyHandler.getCurrencyCount(player);
-					String color = row++ % 2 == 0 ? "ff0000" : "00ffff";
-					lines.add("<col=" + color + "><shad=000000>" + NumberUtils.formatNumber(amount) + " " + currency.currencyHandler.pluralName() + "</shad></col>");
+					if (!legacyHeading) {
+						heading.accept("Older balances");
+						legacyHeading = true;
+					}
+					String name = c.currencyHandler.pluralName();
+					row.accept(Character.toUpperCase(name.charAt(0)) + name.substring(1), (long) amount);
 				}
-				String slayerColor = row++ % 2 == 0 ? "ff0000" : "00ffff";
-				lines.add("<col=" + slayerColor + "><shad=000000>" + NumberUtils.formatNumber(io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player)) + " slayer points</shad></col>");
-				String perkColor = row % 2 == 0 ? "ff0000" : "00ffff";
-				lines.add("<col=" + perkColor + "><shad=000000>" + NumberUtils.formatNumber(player.perkPoints) + " perk points</shad></col>");
 				player.sendScroll("Your Points", lines.toArray(new String[0]));
 				return true;
 			}
@@ -436,22 +451,8 @@ public class CommandHandlerRegular {
 
 			case "help":
 			case "commands": {
-				player.sendScroll("<col=800000>Commands</col>",
-						"<col=800000>Teleport Commands:</col>",
-						"::home/::edge", "::train", "::sandcrabs", "::vb/::gb/::db/::malakar", "::dz",
-						"::slayer/::slay", "::shops",
-						"::cox/raids/tob", "::gwd", "::mining", "::miningguild", "::mlm/motherloadmine",
-						"::wcguild", "::abyss", "::zmi", "::astrals", "::bloods", "::wraths", "::puropuro", "::fremslayer",
-						"::ancientcavern", "::brimdung", "::lumdung", "::edgedung", "::perk/::perks",
-						"<col=800000>Misc Commands:</col>",
-						"::online/players", "::staff", "::clog", "::yell", "::donated/::claim",
-						"::vote/::claimvote/::claimed", "::clear/::empty", "::upgrade",
-						"::points/::pointshops", "::presets",
-						"::reclaimcannon", "::breakvials", "::newcomer", "::dailies",
-						"::char", "::skull", "::changepass", "::changesecuritypin", "::task/slayertask", "::bosstask",
-						"::scrolls/timers", "::raffle/votelottery",
-						"<col=800000>Website Commands:</col>",
-						"::donate", "::vote", "::discord", "::hiscores");
+				// the Zelus Command Codex (interface 1177): every player command by category, click to use, search
+				io.ruin.model.inter.handlers.CommandCodex.open(player);
 				return true;
 			}
 

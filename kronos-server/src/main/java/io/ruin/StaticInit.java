@@ -17,6 +17,7 @@ public final class StaticInit {
 	public static void register() throws DynamicMap.DynamicMapBuildException {
 		PlayerLoginWorker.start();
 		io.ruin.model.inter.handlers.TeleInterface.register();
+		io.ruin.model.inter.handlers.CommandCodex.register();
 		io.ruin.model.inter.questtab.JournalTab.Tab.init();
 		io.ruin.model.inter.questtab.JournalTab.init();
 		io.ruin.model.inter.questtab.dashboard.QuestDashboards.register();
