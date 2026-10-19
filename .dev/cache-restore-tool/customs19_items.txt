@@ -1,0 +1,27 @@
+# customs19 batch 2026-10-19 (Desktop/customs19, models customs19_modelmap.txt). Stats in item_info.json (31850-31862).
+# CreateItemVariants apply <cache> customs19_items.txt, then AutoFrameItems apply customs19_framing.txt
+# Vermilion masori: upgraded Masori (f) on the Masori (f) records
+variant 27235 31850 31851 1 -|Wear|-|-|Drop Vermilion masori mask
+strip 31850 40,41
+models 31850 46466:61250,45249:61251,45260:61251
+variant 27238 31852 31853 1 -|Wear|-|-|Drop Vermilion masori body
+strip 31852 40,41
+models 31852 46469:61252,45258:61253,45271:61253
+variant 27241 31854 31855 1 -|Wear|-|-|Drop Vermilion masori chaps
+strip 31854 40,41
+models 31854 46475:61254,45255:61255,45268:61255
+# Zaryte Stormpiercer: upgraded Zaryte, on the Bow of faerdhinen record (an ammo-free bow). No ground model was supplied:
+# the inventory model is the worn mesh (framed by AutoFrameItems). Dropping it is refused on the server (ItemDrop: an absent op4 still shows the client default "Drop").
+variant 25865 31856 31857 1 -|Wield|-|-|- Zaryte Stormpiercer
+strip 31856 40,41
+models 31856 42605:61257,42602:61256
+# Vorkath set: on the Torva records
+variant 26382 31858 31859 1 -|Wear|-|-|Drop Vorkath mask
+strip 31858 40,41
+models 31858 49456:61258,49446:61259,49452:61259
+variant 26384 31860 31861 1 -|Wear|-|-|Drop Vorkath platebody
+strip 31860 40,41
+models 31860 49458:61260,49450:61261,49454:61261
+variant 26386 31862 31863 1 -|Wear|-|-|Drop Vorkath platelegs
+strip 31862 40,41
+models 31862 49459:61262,49448:61263,49453:61263

@@ -1,0 +1,7 @@
+# Event-boss versions of two custom bosses (2026-10-19): same models / rigs, own npc ids for their own combat handlers.
+#   16215 Nidhogg -> ::gb global boss (GlobalNidhogg), bigger; stand = walk = its idle (rooted, never moves)
+#   16216 Volcanus -> ::vb vote boss (VoteVolcanus), 4x4 and bigger
+# Build: BuildCustomBosses npcs apply <cache> custom_bosses_events.txt (models 61278 / 61269 already exist).
+#    npc   raw    model size scale lvl stand walk name
+boss 16215 94435  61278 3    180   900 16230 16230 Nidhogg the Abyssal Serpent
+boss 16216 100239 61269 4    230   750 808   819  Volcanus the Earthshaker

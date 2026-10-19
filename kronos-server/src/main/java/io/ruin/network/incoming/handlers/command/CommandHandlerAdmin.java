@@ -100,6 +100,9 @@ import static io.ruin.network.incoming.handlers.command.CommandHandler.*;
 @Slf4j
 public class CommandHandlerAdmin {
 
+	/** The line ::testallbosses spawned last, removed by the next run. */
+	private static final List<NPC> testBosses = new ArrayList<>();
+
 	public static boolean handle(Player player, String query, String command, String[] args)
 			throws Exception {
 		if (!player.isAdmin()) {
@@ -723,6 +726,36 @@ public class CommandHandlerAdmin {
 				} else {
 					n.getCombat().setAllowRespawn(false);
 				}
+				return true;
+			}
+
+			case "testallbosses": {
+				// Custom bosses 16200-16214 (2026-10-19): spawned in a line east of the player, each one tile clear
+				// of the last, standing still and not respawning, for checking models and animations. Running it
+				// again (or "::testallbosses clear") removes the previous line first.
+				for (NPC old : testBosses)
+					if (!old.isRemoved())
+						old.remove();
+				testBosses.clear();
+				if (args.length > 0 && args[0].equalsIgnoreCase("clear")) {
+					player.sendMessage("Test bosses removed.");
+					return true;
+				}
+				int x = player.getPosition().getX() + 2, y = player.getPosition().getY(), z = player.getPosition().getZ();
+				for (int id = 16200; id <= 16214; id++) {
+					NPCType def = NPCType.get(id);
+					if (def == null) {
+						player.sendMessage("Missing npc " + id + " (cache not updated?)");
+						continue;
+					}
+					NPC n = new NPC(id).spawn(x, y, z, 0);
+					if (n.getCombat() != null)
+						n.getCombat().setAllowRespawn(false);
+					n.forceText(id + "");
+					testBosses.add(n);
+					x += def.size + 1;
+				}
+				player.sendMessage("Spawned " + testBosses.size() + " bosses (16200-16214) to the east. ::testallbosses clear removes them.");
 				return true;
 			}
 
@@ -1479,6 +1512,33 @@ public class CommandHandlerAdmin {
 					}
 					p2.sendMessage("You have been given the Dev kit that contains all items");
 					player.sendMessage("You have given user " + p2.getName() + " The Dev Kit!");
+				});
+				return true;
+			}
+
+			case "giveitem": {
+				// 2026-10-19: put an item straight into an ONLINE player's bank -- for making good on lost items when the
+				// item can't be traded or dropped to them (e.g. ::spawn-list items like the rune defender). The target
+				// must match an online player exactly; nothing is given if the bank refuses it (full, ultimate ironman).
+				forPlayerString(player, query, "::giveitem playerName itemId[:amount]", (p2, arg) -> {
+					String[] p = arg.split(":");
+					int id = Integer.parseInt(p[0]);
+					int amount = p.length > 1 ? Integer.parseInt(p[1]) : 1;
+					ObjType def = ObjType.get(id);
+					if (def == null || amount < 1) {
+						player.sendMessage("Invalid item " + id + " / amount " + amount + ".");
+						return;
+					}
+					int added = p2.getBank().add(id, amount);
+					if (added < amount) {
+						if (added > 0)
+							p2.getBank().remove(id, added);
+						player.sendMessage("Could not give " + amount + " x " + def.name + " to " + p2.getName()
+								+ ": their bank refused it (full or ultimate ironman). Nothing was given.");
+						return;
+					}
+					p2.sendMessage("<col=ef1020>A staff member has placed " + amount + " x " + def.name + " in your bank.");
+					player.sendMessage("Gave " + amount + " x " + def.name + " to " + p2.getName() + " (bank).");
 				});
 				return true;
 			}

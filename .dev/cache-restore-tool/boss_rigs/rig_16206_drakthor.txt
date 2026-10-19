@@ -1,0 +1,79 @@
+# Drak'thor the Ashen Wyrm (npc 16206, model 61270): its own labels are a clean dragon rig, used as bones.
+# A small dragon that hovers: slow wing beats at rest, fast beats when moving, a rear-and-breathe attack, a fall on death.
+model 61270
+ids 16111 16218
+part 1 labels 0,1,2,30,57          # body + hips
+part 2 labels 6,8                  # neck
+part 3 labels 3,4,5,7              # head
+part 4 labels 9,10                 # tail 1
+part 5 labels 39                   # tail 2
+part 6 labels 11,12                # tail tip
+part 7 labels 17,18,19,20,21       # front leg (x-)
+part 8 labels 44,45,46,47,48       # front leg (x+)
+part 9 labels 14,15,37,38          # wing (x-)
+part 10 labels 42,43,59,60         # wing (x+)
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -40 5
+bone 2 parent 1 pivot 0 -62 -12
+bone 3 parent 2 pivot 0 -84 -32
+bone 4 parent 1 pivot 0 -48 30
+bone 5 parent 4 pivot 1 -22 52
+bone 6 parent 5 pivot 0 -14 90
+bone 7 parent 1 pivot -21 -48 -22
+bone 8 parent 1 pivot 21 -48 -22
+bone 9 parent 1 pivot -30 -70 6
+bone 10 parent 1 pivot 30 -70 6
+
+anim 0 idle frames 24 len 5           # hover: 2.4 s loop, one slow wing beat
+  root ty sin 6 2 0 -70
+  9 rz sin 22 1 0 4
+  10 rz sin -22 1 0 -4
+  1 rx sin 2 1 0.25
+  2 rx sin 4 1 0.1
+  3 rx sin 4 1 0.3
+  4 ry sin 8 1 0
+  5 ry sin 10 1 0.15
+  6 ry sin 14 1 0.3
+  7 rx sin 6 1 0 18
+  8 rx sin 6 1 0.5 18
+end
+anim 1 walk frames 16 len 3           # flying: fast beats, leaning into the flight
+  root ty sin 7 2 0 -74
+  root rx sin 2 2 0 6
+  9 rz sin 34 2 0 2
+  10 rz sin -34 2 0 -2
+  2 rx sin 5 2 0.2
+  3 rx sin 4 2 0.4 -4
+  4 ry sin 10 1 0
+  5 ry sin 14 1 0.2
+  6 ry sin 18 1 0.4
+  7 rx sin 4 2 0 30
+  8 rx sin 4 2 0.5 30
+end
+anim 2 attack frames 12 len 2 hold 4   # snappy aerial dive: rears up, dives at the target, bites, pulls back up
+  root ty keys 0:-70 0.3:-92 0.55:-30 0.75:-45 1:-70
+  root tz keys 0:0 0.3:14 0.55:-58 0.75:-40 1:0
+  root rx keys 0:0 0.3:-16 0.55:24 0.75:12 1:0
+  2 rx keys 0:0 0.3:-24 0.5:26 0.6:30 1:0
+  3 rx keys 0:0 0.3:-26 0.48:-30 0.58:24 0.75:14 1:0
+  9 rz keys 0:4 0.3:-42 0.55:30 0.75:12 1:4
+  10 rz keys 0:-4 0.3:42 0.55:-30 0.75:-12 1:-4
+  9 ry keys 0:0 0.55:-18 1:0
+  10 ry keys 0:0 0.55:18 1:0
+  4 rx keys 0:0 0.3:16 0.55:-16 1:0
+  6 ry keys 0:0 0.55:20 0.8:-10 1:0
+  7 rx keys 0:18 0.45:-30 0.6:-20 1:18
+  8 rx keys 0:18 0.45:-30 0.6:-20 1:18
+end
+anim 3 death frames 18 len 4 hold 200 # it drops out of the air, wings sag to the ground, the neck slumps forward
+  root ty keys 0:-70 0.5:2 1:2
+  root rx keys 0:0 0.45:6 1:10
+  9 rz keys 0:4 0.25:-35 0.6:34 1:30
+  10 rz keys 0:-4 0.25:35 0.6:-34 1:-30
+  2 rx keys 0:0 0.3:-15 0.8:34 1:32
+  3 rx keys 0:0 0.3:-10 0.8:22 1:20
+  4 rx keys 0:0 1:6
+  6 ry keys 0:0 1:25
+  7 rx keys 0:18 1:-20
+  8 rx keys 0:18 1:-20
+end

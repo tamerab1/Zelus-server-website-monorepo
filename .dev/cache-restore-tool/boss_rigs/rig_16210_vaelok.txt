@@ -1,0 +1,79 @@
+# Vaelok the Netherwyrm (npc 16210, model 61274): a fine-grained foreign rig (a label per claw) that no OSRS skeleton
+# matches, so it is split by position. Front = -z. Quadruped gait for walking, wing beats, breath attack, collapse.
+model 61274
+ids 16112 16222
+part 1 all                                   # body
+part 2 box -40 40 * -88 * -96                # neck
+part 3 box * * * * * -165                    # head + crest
+part 4 box 24 * -140 * -125 -10              # front leg (x+)
+part 5 box * -24 -140 * -125 -10             # front leg (x-)
+part 6 box 22 * -182 * 28 140                # hind leg (x+)
+part 7 box * -22 -182 * 28 140               # hind leg (x-)
+part 8 box 52 * * -186 * *                   # wing (x+)
+part 9 box * -52 * -186 * *                  # wing (x-)
+part 10 box -28 28 -205 -100 118 205         # tail 1
+part 11 box -28 28 -310 * 205 *              # tail 2
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -150 0
+bone 2 parent 1 pivot 0 -160 -98
+bone 3 parent 2 pivot 0 -168 -165
+bone 4 parent 1 pivot 55 -125 -62
+bone 5 parent 1 pivot -55 -125 -62
+bone 6 parent 1 pivot 42 -150 72
+bone 7 parent 1 pivot -42 -150 72
+bone 8 parent 1 pivot 58 -205 -20
+bone 9 parent 1 pivot -58 -205 -20
+bone 10 parent 1 pivot 0 -176 120
+bone 11 parent 10 pivot 0 -170 205
+
+anim 0 idle frames 24 len 6            # breathing, wings settling, tail and head sway
+  1 ty sin 3 1 0
+  1 rx sin 1.5 1 0.25
+  2 rx sin 4 1 0.1
+  3 rx sin 4 1 0.35
+  3 ry sin 5 0.5 0
+  8 rz sin 5 1 0 2
+  9 rz sin -5 1 0 -2
+  10 ry sin 7 1 0
+  11 ry sin 12 1 0.2
+end
+anim 1 walk frames 16 len 3            # diagonal-pair gait, body bob, tail counter-sway
+  4 rx sin 22 1 0
+  7 rx sin 22 1 0
+  5 rx sin 22 1 0.5
+  6 rx sin 22 1 0.5
+  1 ty sin 4 2 0.25
+  1 rz sin 2.5 1 0
+  2 ry sin 4 1 0.5
+  3 rx sin 3 2 0.1
+  8 rz sin 9 2 0 4
+  9 rz sin -9 2 0 -4
+  10 ry sin 9 1 0.25
+  11 ry sin 14 1 0.4
+end
+anim 2 attack frames 12 len 3 hold 4   # rears up fast with the wings flared, then a whipping head thrust breathing dragonflame
+  1 rx keys 0:0 0.3:-14 0.5:10 0.75:6 1:0
+  1 tz keys 0:0 0.3:16 0.5:-22 0.75:-14 1:0
+  1 ty keys 0:0 0.3:-14 0.5:4 1:0
+  2 rx keys 0:0 0.3:-32 0.5:26 0.75:18 1:0
+  3 rx keys 0:0 0.3:-22 0.45:-24 0.55:22 0.75:16 1:0
+  8 rz keys 0:2 0.3:44 0.55:8 1:2
+  9 rz keys 0:-2 0.3:-44 0.55:-8 1:-2
+  4 rx keys 0:0 0.3:-20 0.5:10 1:0
+  5 rx keys 0:0 0.3:-20 0.5:10 1:0
+  10 rx keys 0:0 0.3:14 0.55:-10 1:0
+  11 ry keys 0:0 0.5:22 0.8:-12 1:0
+end
+anim 3 death frames 20 len 4 hold 200  # legs give way, the body slumps to the ground, wings droop, head falls
+  1 ty keys 0:0 0.25:-12 0.7:58 1:62
+  4 rx keys 0:0 0.7:-38 1:-40
+  5 rx keys 0:0 0.7:-38 1:-40
+  6 rx keys 0:0 0.7:36 1:38
+  7 rx keys 0:0 0.7:36 1:38
+  2 rx keys 0:0 0.25:-18 0.8:34 1:36
+  3 rx keys 0:0 0.25:-10 0.8:24 1:24
+  8 rz keys 0:2 0.25:30 1:-26
+  9 rz keys 0:-2 0.25:-30 1:26
+  10 rx keys 0:0 1:14
+  11 ry keys 0:0 1:22
+end

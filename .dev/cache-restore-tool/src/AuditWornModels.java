@@ -35,6 +35,11 @@ import java.util.*;
 // Usage: report|fix <cachePath> <item_info.json> <outDir>
 public class AuditWornModels {
     /** A torso face at this priority or above paints over the head (the Crimson Warden body was 10 everywhere). */
+    /**
+     * Hand-built worn models the audit must leave alone (2026-10-19): the Vermilion Dreadwings 61279 are double-sided
+     * with back-facing faces on 10 and their twins on 1 (DoubleSided) -- the cape rule (5 / 1) would undo that.
+     */
+    static final java.util.Set<Integer> HAND_BUILT = java.util.Set.of(61279);
     static final int CUSTOM_MODEL = 57320, TORSO_PRIORITY = 3, TORSO_TOO_HIGH = 8, ARM_PRIORITY = 10, HELD_PRIORITY = 10;
     static final Map<Integer, Integer> BUDGET = Map.ofEntries(Map.entry(0, 700), Map.entry(1, 900), Map.entry(2, 300),
             Map.entry(3, 800), Map.entry(4, 1000), Map.entry(5, 600), Map.entry(7, 900), Map.entry(9, 300), Map.entry(10, 350),
@@ -120,7 +125,7 @@ public class AuditWornModels {
             int over = 0, layered = 0, written = 0, osrs = 0;
             for (Map.Entry<Integer, Integer> e : modelBudget.entrySet()) {
                 int id = e.getKey(), budget = e.getValue();
-                if (store.getIndex(IndexType.MODELS).getArchive(id) == null) continue;
+                if (store.getIndex(IndexType.MODELS).getArchive(id) == null || HAND_BUILT.contains(id)) continue;
                 ModelDefinition m = model(store, id);
                 boolean overBudget = m.faceCount > budget;
                 // the layering rules are for ripped exports that put every face on ONE layer (Draconic body all 4,

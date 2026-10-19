@@ -36,6 +36,7 @@ public class Cyclops extends BasicCombat {
 			new GroundItem(defenderId, 1)
 				.owner(killer.player)
 				.position(npc.getPosition())
+				.loot()
 				.spawn();
 			killer.player.sendMessage("<col=804080>The cyclops has dropped a " + ObjType.get(defenderId).name + ".");
 		};

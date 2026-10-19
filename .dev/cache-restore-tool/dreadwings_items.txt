@@ -1,0 +1,5 @@
+# Vermilion Dreadwings (2026-10-19): on the Infernal cape record (cape slot, separate inventory / worn models).
+# Worn 61279 (re-rigged onto the cape label chain by RigByDistance), inventory 61280 (the same mesh, centred).
+variant 21295 31868 31869 0 -|Wear|-|-|Drop Vermilion Dreadwings
+strip 31868 40,41
+models 31868 33144:61280,33103:61279,33111:61279

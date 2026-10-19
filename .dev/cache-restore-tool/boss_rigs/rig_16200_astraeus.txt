@@ -1,0 +1,45 @@
+# Astraeus the Skybreaker (npc 16200, model 61264): player-skinned, its wings sit on the chest label 8 and so never moved.
+# The wings become two bones layered on top of the player skeleton's own frames (extend 0): it hovers with slow wing
+# beats, flies with fast ones, and its attack is a winged godsword strike with a lunge.
+model 61264
+ids 16115 16234
+extend 0
+part 101 box * -15 * * 22 * and labels 8      # wing (x-)
+part 101 box * -50 * * * * and labels 8
+part 102 box 15 * * * 22 * and labels 8       # wing (x+)
+part 102 box 50 * * * * * and labels 8
+bone root parent root pivot 0 0 0
+bone 101 parent root pivot -24 -228 24
+bone 102 parent root pivot 24 -228 24
+
+anim 0 idle base 808 subdiv 5                   # hovering on slow wing beats (2 per 5 s loop)
+  root ty sin 7 2 0 -36
+  101 rz sin 20 2 0.5
+  102 rz sin -20 2 0.5
+  101 ry sin 6 2 0.25
+  102 ry sin -6 2 0.25
+end
+anim 1 walk base 808 speed 500 subdiv 2         # flying: one strong beat per 1 s loop, leaning into the flight
+  root ty sin 8 1 0 -40
+  root rx sin 2 1 0.25 9
+  101 rz sin 32 1 0.5
+  102 rz sin -32 1 0.5
+  101 ry sin 10 1 0.25 -6
+  102 ry sin -10 1 0.25 6
+end
+anim 2 attack base 7045 subdiv 2 hold 2        # godsword strike driven by a wing beat and a lunge
+  root ty keys 0:-36 0.35:-52 0.6:-30 1:-36
+  root tz keys 0:0 0.35:14 0.6:-34 0.85:-20 1:0
+  root rx keys 0:0 0.35:-6 0.6:10 1:0
+  101 rz keys 0:0 0.35:-38 0.6:34 1:0
+  102 rz keys 0:0 0.35:38 0.6:-34 1:0
+  101 ry keys 0:0 0.35:-14 0.6:10 1:0
+  102 ry keys 0:0 0.35:14 0.6:-10 1:0
+end
+anim 3 death base 836 subdiv 2 hold 200         # wings fold as it drops out of the air
+  root ty keys 0:-36 0.5:0 1:0
+  101 rz keys 0:0 0.3:-25 1:32
+  102 rz keys 0:0 0.3:25 1:-32
+  101 ry keys 0:0 1:-18
+  102 ry keys 0:0 1:18
+end

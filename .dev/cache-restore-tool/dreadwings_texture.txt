@@ -1,0 +1,3 @@
+# Vermilion Dreadwings (2026-10-19): the lava swirl 59 remapped into deep crimson -> blood red -> ember orange (flow kept),
+# on the wings' red membrane: a slow dread glow that moves through them.
+texture 59 264 24626 - - 0:1c0003,0.4:4a0508,0.65:8c0d12,0.82:c4161c,0.93:ff4422,1:ff9a40

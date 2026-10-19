@@ -1,0 +1,2 @@
+# Vermilion Dreadwings icon (IconAngleGrid sheet): the full wingspan, symmetric, slightly tilted
+item 31868 1856,1024,0

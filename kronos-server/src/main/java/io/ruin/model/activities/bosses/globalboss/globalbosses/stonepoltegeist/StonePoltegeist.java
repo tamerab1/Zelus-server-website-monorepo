@@ -64,7 +64,8 @@ public class StonePoltegeist extends NPCCombat {
 		new LootItem(ItemID.FIVE_BOND, 1, 1, 1).broadcast(Broadcast.GLOBAL)
 
 	);
-	List<Player> damagingPlayers = new ArrayList<>();
+	/** Account ids that damaged the boss (2026-10-19: was Player objects -- a relog mid-fight lost the reward). */
+	java.util.Set<Integer> damagingPlayers = new java.util.HashSet<>();
 	private static final Projectile MAGIC_PROJECTILE = new Projectile(1471, 90, 43, 35, 40, 6, 16, 192);
 	private static final Projectile RANGED_PROJECTILE = new Projectile(1329, 90, 43, 35, 40, 6, 16, 192);
 	private static final Projectile BOULDER_DROP_PROJECTILE = new Projectile(856, 150, 0, 0, 135, 0, 0, 127);
@@ -76,12 +77,21 @@ public class StonePoltegeist extends NPCCombat {
 	@Override
 	public void init() {
 		npc.deathEndListener = (entity, killer, killHit) -> {
-			npc.localPlayers().forEach(p -> {
-				if (damagingPlayers.contains(p)) {
-					rewardPlayer(p);
+			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
+			try {
+				for (Player p : new java.util.ArrayList<>(npc.localPlayers())) {
+					if (!damagingPlayers.contains(p.getUserId()))
+						continue;
+					try {
+						rewardPlayer(p);
+					} catch (Exception e) {
+						System.err.println("[Stone Poltegeist] reward failed for " + p.getName() + ": " + e);
+						e.printStackTrace();
+					}
 				}
-			});
-			npc.remove();
+			} finally {
+				npc.remove();
+			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend);
 	}
@@ -95,9 +105,9 @@ public class StonePoltegeist extends NPCCombat {
 		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the Stone Poltegeist!"));
 		for (int i = 0; i < rolls; i++) {
 			Item reward = table.rollItem();
-			new GroundItem(reward).owner(player).position(player.getPosition()).spawn();
+			new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
 			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from a Blood Reaper!");
+				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from the Stone Poltegeist!");
 		}
 	}
 
@@ -108,8 +118,8 @@ public class StonePoltegeist extends NPCCombat {
 
 	private void postDamage(Hit hit) {
 		if (hit.damage > 0 && hit.attacker != null) {
-			if (!damagingPlayers.contains(hit.attacker.player))
-				damagingPlayers.add(hit.attacker.player);
+			if (hit.attacker.player != null)
+				damagingPlayers.add(hit.attacker.player.getUserId());
 		}
 	}
 
@@ -187,6 +197,8 @@ public class StonePoltegeist extends NPCCombat {
 
 	private void aoeMeteorFall() {
 		npc.animate(1842);
+		if (npc.localPlayers().isEmpty())
+			return; // nobody in view (crashed 7x on prod, 2026-10-19)
 		Player target = Random.get(npc.localPlayers());
 		npc.face(target);
 		List<Position> meteorPositions = new ArrayList<>();

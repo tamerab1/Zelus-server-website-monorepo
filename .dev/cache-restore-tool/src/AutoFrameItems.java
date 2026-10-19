@@ -78,7 +78,8 @@ public class AutoFrameItems {
                 int[] fz = geo.fit(xan, yan, zan);
                 int zoom = fz[0], xo = fz[1], yo = fz[2];
                 BufferedImage img = render(ip, mp, sprites, textures, framed(base, zoom, xan, yan, zan, xo, yo));
-                ImageIO.write(img, "png", new File(outDir, id + ".png"));
+                if (img != null) // the icon renderer's sprite loader can miss new texture sprites: framing is geometric anyway
+                    ImageIO.write(img, "png", new File(outDir, id + ".png"));
                 System.out.printf("item %d \"%s\": zoom2d=%d xan2d=%d yan2d=%d zan2d=%d xOffset2d=%d yOffset2d=%d (was %d/%d/%d/%d off %d,%d)%n",
                         id, base.name, zoom, xan, yan, zan, xo, yo, base.zoom2d, base.xan2d, base.yan2d, base.zan2d, base.xOffset2d, base.yOffset2d);
                 if (apply) {

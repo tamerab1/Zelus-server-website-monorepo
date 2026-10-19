@@ -1,0 +1,14 @@
+upgraded masori set/mask/drop/83346.dat|61250
+upgraded masori set/mask/wear/83347.dat|61251
+upgraded masori set/body/drop/83350.dat|61252
+upgraded masori set/body/wear/83351.dat|61253
+upgraded masori set/chaps/drop/83348.dat|61254
+upgraded masori set/chaps/wear/83349.dat|61255
+upgraded zaryte bow/wear/79411.dat|61256
+upgraded zaryte bow/wear/79411.dat|61257
+Vorkath set/Vorkath Mask/Drop/139910.dat|61258
+Vorkath set/Vorkath Mask/wear/139909.dat|61259
+Vorkath set/Vorkath Platebody/drop/139902.dat|61260
+Vorkath set/Vorkath Platebody/wear/139901.dat|61261
+Vorkath set/Vorkath Platelegs/drop/139904.dat|61262
+Vorkath set/Vorkath Platelegs/wear/139903.dat|61263

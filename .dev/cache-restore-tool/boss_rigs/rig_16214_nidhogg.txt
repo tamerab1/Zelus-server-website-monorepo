@@ -1,0 +1,56 @@
+# Nidhogg the Abyssal Serpent (npc 16214, model 61278): an upright coiled serpent, stacked in height slices. Rigged as a
+# five-segment spine (each slice rides on the one below) so idle sways, moving slithers in a travelling wave, the cast
+# rears back and strikes forward (the projectile leaves at the strike: CustomBossCombat delay), death folds it over.
+model 61278
+ids 16114 16230
+part 1 all                                   # base coil
+part 2 box * * * -70 * *                     # segment 2
+part 3 box * * * -160 * *                    # segment 3
+part 4 box * * * -250 * *                    # neck
+part 5 box * * * -310 * *                    # head + hood
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -10 0
+bone 2 parent 1 pivot 0 -70 0
+bone 3 parent 2 pivot 0 -160 0
+bone 4 parent 3 pivot 0 -250 0
+bone 5 parent 4 pivot 0 -310 -10
+
+anim 0 idle frames 24 len 6            # a slow swaying wave up the body
+  2 rz sin 3 1 0
+  3 rz sin 3.5 1 0.12
+  4 rz sin 4 1 0.24
+  5 rz sin 4 1 0.36
+  2 rx sin 2 1 0.25
+  3 rx sin 2 1 0.37
+  4 rx sin 2.5 1 0.49
+  5 ry sin 8 0.5 0
+  1 ty sin 3 1 0
+end
+anim 1 walk frames 16 len 3            # slithering: a strong lateral wave travelling up, the base rippling
+  1 rz sin 4 1 0
+  2 rz sin 7 1 0.15
+  3 rz sin 8 1 0.3
+  4 rz sin 8 1 0.45
+  5 rz sin 6 1 0.6
+  1 ry sin 6 1 0.1
+  3 ry sin 5 1 0.35
+  5 ry sin 6 1 0.6
+  1 ty sin 4 2 0
+  4 rx sin 3 2 0.2
+end
+anim 2 attack frames 15 len 3 hold 6   # rears back, then strikes forward: the spell is released at the strike (~frame 7)
+  2 rx keys 0:0 0.35:-7 0.5:8 0.75:6 1:0
+  3 rx keys 0:0 0.35:-9 0.5:10 0.75:8 1:0
+  4 rx keys 0:0 0.35:-12 0.5:14 0.75:10 1:0
+  5 rx keys 0:0 0.35:-16 0.5:20 0.75:14 1:0
+  1 tz keys 0:0 0.35:10 0.5:-14 1:0
+end
+anim 3 death frames 20 len 4 hold 200  # the coils give way and it folds forward onto the ground
+  2 rx keys 0:0 0.3:-6 1:18
+  3 rx keys 0:0 0.3:-6 1:24
+  4 rx keys 0:0 0.3:-8 1:26
+  5 rx keys 0:0 0.3:-10 1:20
+  2 rz keys 0:0 1:8
+  4 rz keys 0:0 1:-10
+  1 ty keys 0:0 1:12
+end

@@ -1,0 +1,7 @@
+# customs19 worn models layered like the real pieces they replace (TransferPriorities)
+61251 45249   # Vermilion masori mask <- Masori mask (f)
+61253 45258   # Vermilion masori body <- Masori body (f)
+61255 45255   # Vermilion masori chaps <- Masori chaps (f)
+61259 49446   # Vorkath mask <- Torva full helm
+61261 49450   # Vorkath platebody <- Torva platebody
+61263 49448   # Vorkath platelegs <- Torva platelegs

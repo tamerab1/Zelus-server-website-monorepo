@@ -1,0 +1,2 @@
+# Vermilion Dreadwings inventory / ground model 61280: the worn mesh centred on x / z with its lowest point on the ground
+model 61280 1 0,0,0 -1,112,-86

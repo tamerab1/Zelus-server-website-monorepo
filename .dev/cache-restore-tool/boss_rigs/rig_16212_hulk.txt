@@ -1,0 +1,35 @@
+# Hulk (npc 16212, model 61276): keeps the player stand / walk / death (its labels are untouched); this rig adds two
+# attacks -- the two-fisted overhead ground smash (16250, its special) and a two-handed boulder throw (16251). Bones own the original player labels (torso 8/29 + head 1-3, upper arms
+# 21/20/17 and 25/26/23, forearms 19 / 22). Impact at ~60% (26 cycles): the server lands the hit a tick later with an
+# earthquake burst around the target (CustomBossCombat).
+model 61276
+ids 16119 16250
+bone root parent root pivot 0 0 0
+bone 501 parent root pivot 0 -112 0 labels 8,29,1,2,3        # torso + head
+bone 502 parent 501 pivot -46 -186 10 labels 21,20,17        # upper arm (x-)
+bone 503 parent 502 pivot -97 -132 5 labels 19               # forearm + fist (x-)
+bone 504 parent 501 pivot 46 -186 10 labels 25,26,23         # upper arm (x+)
+bone 505 parent 504 pivot 97 -132 5 labels 22                # forearm + fist (x+)
+
+anim 0 smash frames 22 len 2 hold 6    # wind up overhead with both fists, rise, then drive them into the ground in a crouch
+  502 rx keys 0:0 0.42:-150 0.5:-158 0.64:-52 0.82:-46 1:0
+  504 rx keys 0:0 0.42:-150 0.5:-158 0.64:-52 0.82:-46 1:0
+  502 rz keys 0:0 0.42:18 0.64:-10 1:0
+  504 rz keys 0:0 0.42:-18 0.64:10 1:0
+  503 rx keys 0:0 0.42:-38 0.55:-20 0.64:12 1:0
+  505 rx keys 0:0 0.42:-38 0.55:-20 0.64:12 1:0
+  501 rx keys 0:0 0.42:-16 0.64:46 0.82:42 1:0
+  root ty keys 0:0 0.42:-12 0.64:20 0.82:18 1:0
+  root tz keys 0:0 0.42:6 0.64:-12 1:0
+end
+
+anim 1 throw frames 18 len 2 hold 4    # heaves a boulder overhead with both hands and hurls it forward (release ~60%)
+  502 rx keys 0:0 0.45:-165 0.6:-82 0.8:-70 1:0
+  504 rx keys 0:0 0.45:-165 0.6:-82 0.8:-70 1:0
+  502 rz keys 0:0 0.45:22 0.6:12 1:0
+  504 rz keys 0:0 0.45:-22 0.6:-12 1:0
+  503 rx keys 0:0 0.45:-55 0.6:-6 1:0
+  505 rx keys 0:0 0.45:-55 0.6:-6 1:0
+  501 rx keys 0:0 0.45:-18 0.62:20 0.8:14 1:0
+  root tz keys 0:0 0.45:8 0.62:-14 1:0
+end

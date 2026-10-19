@@ -1,0 +1,48 @@
+# Malakor, the Soulreaver (npc 16204, model 61268): player-skinned, wings + robe + body all on label 8. The wings become
+# two bones over the player frames (extend 0): hovering, wing-beat flight, a winged casting attack. Its two flat reds
+# are re-lit (gradient + fold / rib bands) so the robe and wings read as cloth and membrane, not one red block.
+model 61268
+ids 16116 16238
+extend 0
+shade 946,947 y -240 10 58 30 bands x 16 -8
+shade 911,915 y -240 10 26 12 bands x 16 -4
+part 101 box * -8 * -150 12 * and labels 8     # wing (x-): upper membrane behind the shoulders
+part 101 box * -8 -150 -40 38 * and labels 8   #   lower membrane, well behind the robe
+part 101 box * -45 * -60 * * and labels 8      #   the spread beyond the body
+part 102 box 8 * * -150 12 * and labels 8      # wing (x+)
+part 102 box 8 * -150 -40 38 * and labels 8
+part 102 box 45 * * -60 * * and labels 8
+bone root parent root pivot 0 0 0
+bone 101 parent root pivot -14 -200 14
+bone 102 parent root pivot 14 -200 14
+
+anim 0 idle base 808 subdiv 5                   # hovering, robe clear of the ground, slow beats
+  root ty sin 6 2 0 -30
+  101 rz sin 14 2 0.5
+  102 rz sin -14 2 0.5
+  101 ry sin 8 2 0.25
+  102 ry sin -8 2 0.25
+end
+anim 1 walk base 808 speed 500 subdiv 2         # gliding: strong beats, leaning forward
+  root ty sin 7 1 0 -34
+  root rx sin 2 1 0.25 8
+  101 rz sin 26 1 0.5
+  102 rz sin -26 1 0.5
+  101 ry sin 12 1 0.25 -6
+  102 ry sin -12 1 0.25 6
+end
+anim 2 attack base 1167 subdiv 2 hold 2        # wings flare wide and snap forward as the soul bolt is cast
+  root ty keys 0:-30 0.4:-44 0.65:-26 1:-30
+  root tz keys 0:0 0.4:10 0.65:-16 1:0
+  101 rz keys 0:0 0.4:-34 0.65:20 1:0
+  102 rz keys 0:0 0.4:34 0.65:-20 1:0
+  101 ry keys 0:0 0.4:-22 0.65:16 1:0
+  102 ry keys 0:0 0.4:22 0.65:-16 1:0
+end
+anim 3 death base 836 subdiv 2 hold 200         # wings fold around it as it sinks to the ground
+  root ty keys 0:-30 0.5:0 1:0
+  101 rz keys 0:0 0.3:-20 1:24
+  102 rz keys 0:0 0.3:20 1:-24
+  101 ry keys 0:0 1:-26
+  102 ry keys 0:0 1:26
+end

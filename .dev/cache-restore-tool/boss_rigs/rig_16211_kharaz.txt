@@ -1,0 +1,69 @@
+# Kharaz, the Brood Goliath (npc 16211, model 61275): the rip had NO vertex skins, so it is rigged from scratch by
+# position. Front = -z: two raised pincers, four legs, a segmented abdomen curling down behind.
+model 61275
+ids 16113 16226
+part 1 all                                   # body + crest
+part 2 box * -35 * * * -150                  # pincer (x-)
+part 3 box 35 * * * * -150                   # pincer (x+)
+part 4 box * -110 -300 * -170 20             # front leg (x-)
+part 5 box 110 * -300 * -170 20              # front leg (x+)
+part 6 box * -110 -300 * 20 220              # rear leg (x-)
+part 7 box 110 * -300 * 20 220               # rear leg (x+)
+part 8 box -110 110 * * 170 300              # abdomen 1
+part 9 box -110 110 * * 300 *                # abdomen 2 (tip)
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -230 0
+bone 2 parent 1 pivot -50 -280 -150
+bone 3 parent 1 pivot 50 -280 -150
+bone 8 parent 1 pivot 0 -250 165
+bone 9 parent 8 pivot 0 -200 300
+bone 4 parent root pivot -120 -230 -80
+bone 5 parent root pivot 120 -230 -80
+bone 6 parent root pivot -120 -190 100
+bone 7 parent root pivot 120 -190 100
+
+anim 0 idle frames 24 len 6            # breathing, pincers twitching open and shut, abdomen flexing
+  1 ty sin 5 1 0
+  1 rx sin 1.5 1 0.25
+  2 ry sin 7 2 0
+  3 ry sin -7 2 0
+  2 rx sin 3 1 0.2
+  3 rx sin 3 1 0.7
+  8 rx sin 4 1 0.1
+  9 rx sin 7 1 0.3
+end
+anim 1 walk frames 16 len 3            # alternating leg pairs, body sway, abdomen swinging
+  4 rx sin 20 1 0
+  7 rx sin 20 1 0
+  5 rx sin 20 1 0.5
+  6 rx sin 20 1 0.5
+  4 rz sin 6 1 0.25
+  5 rz sin -6 1 0.75
+  1 ty sin 6 2 0.25
+  1 rz sin 2 1 0
+  2 ry sin 6 1 0
+  3 ry sin 6 1 0
+  8 ry sin 6 1 0.25
+  9 ry sin 10 1 0.4
+end
+anim 2 attack frames 15 len 3 hold 6   # rears up with the pincers spread, then lunges and snaps them shut
+  1 tz keys 0:0 0.35:20 0.55:-34 0.8:-20 1:0
+  1 rx keys 0:0 0.35:-10 0.55:8 1:0
+  2 ry keys 0:0 0.35:-22 0.55:18 0.75:16 1:0
+  3 ry keys 0:0 0.35:22 0.55:-18 0.75:-16 1:0
+  2 rx keys 0:0 0.35:-28 0.55:16 1:0
+  3 rx keys 0:0 0.35:-28 0.55:16 1:0
+  8 rx keys 0:0 0.35:-18 0.55:10 1:0
+  9 rx keys 0:0 0.35:-22 0.55:14 1:0
+end
+anim 3 death frames 20 len 4 hold 200  # legs splay, the body crashes down, pincers and abdomen go limp
+  1 ty keys 0:0 0.25:-15 0.7:95 1:100
+  4 rz keys 0:0 0.7:-30 1:-32
+  6 rz keys 0:0 0.7:-30 1:-32
+  5 rz keys 0:0 0.7:30 1:32
+  7 rz keys 0:0 0.7:30 1:32
+  2 rx keys 0:0 0.3:-15 1:22
+  3 rx keys 0:0 0.3:-15 1:22
+  8 rx keys 0:0 1:16
+  9 rx keys 0:0 1:-12
+end

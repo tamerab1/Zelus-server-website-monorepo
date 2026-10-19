@@ -1,0 +1,7 @@
+# Zaryte Stormpiercer special "Glacial Evoke" (2026-10-19, server GlacialEvoke): the Zaryte crossbow's Evoke bolt (1995)
+# recoloured ice -- pale glacier blue body, white-cyan highlights. Impact = Ice Barrage's own splash 369 (no copy).
+# Build: BuildBossVariants gfx verify|apply <cache> stormpiercer_gfx.txt  (server STOPPED)
+#     name       pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme glacier    35   4    0.70 52   32   3    0.55 82   3         96
+#   src  new  theme    texture model
+gfx 1995 4428 glacier  -       -

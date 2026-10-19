@@ -1,0 +1,4 @@
+# Custom bosses over the GPU plugin's 6144-face model cap (GpuPlugin.MAX_TRIANGLE): DecimateModel, then InsertRawModels replace
+model 61265 5600
+model 61266 5600
+model 61276 5600

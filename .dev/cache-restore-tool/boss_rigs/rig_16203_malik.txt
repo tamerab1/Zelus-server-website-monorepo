@@ -1,0 +1,58 @@
+# Malik, Master of the Void (npc 16203, model 61267): six coarse labels (body, staff arm, a floating gauntlet, legs, skirt).
+# The Icefiend rig it borrowed bent the whole body like a head-butt; now the gauntlet thrusts the spell forward from hand
+# height (CustomBossCombat start height) while the staff rises behind it.
+model 61267
+ids 16117 16242
+part 1 labels 8,41                           # body + skirt
+part 2 labels 19                             # staff + staff hand
+part 3 labels 22                             # floating gauntlet
+part 4 labels 32                             # leg (x-)
+part 5 labels 38                             # leg (x+)
+bone root parent root pivot 0 0 30
+bone 1 parent root pivot 0 -150 0
+bone 2 parent 1 pivot -140 -160 -30
+bone 3 parent 1 pivot 221 -155 -6
+bone 4 parent root pivot -44 -60 -29
+bone 5 parent root pivot 44 -60 -29
+
+anim 0 idle frames 24 len 6            # floating gauntlet hovering and turning, staff and robe swaying
+  1 ty sin 5 1 0
+  1 rx sin 1.5 1 0.25
+  2 rz sin 3 1 0.1
+  3 ty sin 12 1 0.3
+  3 ry sin 14 1 0
+  3 rz sin 6 2 0
+end
+anim 1 walk frames 24 len 2            # smooth stride: legs swing, hips sway, the body dips at each footfall
+  4 rx sin 22 1 0
+  5 rx sin 22 1 0.5
+  1 ty sin 4 2 0.25 2
+  1 rz sin 3 1 0
+  1 ry sin 4 1 0.25
+  1 rx sin 1.5 2 0 3
+  2 rx sin 7 1 0.5
+  2 rz sin 3 1 0.25
+  3 ty sin 7 1 0.2
+  3 tz sin 8 1 0.45 10
+  3 ry sin 8 1 0
+end
+anim 2 attack frames 15 len 3 hold 6   # gauntlet draws back, then punches the spell forward; the staff rises behind it
+  1 rx keys 0:0 0.35:-5 0.55:8 1:0
+  1 ry keys 0:0 0.35:-12 0.55:14 1:0
+  2 rx keys 0:0 0.35:-24 0.55:14 1:0
+  2 rz keys 0:0 0.35:10 0.55:-4 1:0
+  3 tz keys 0:0 0.35:50 0.55:-140 0.75:-120 1:0
+  3 tx keys 0:0 0.35:20 0.55:-110 0.75:-95 1:0
+  3 ty keys 0:0 0.35:-40 0.55:-60 1:0
+  3 rx keys 0:0 0.35:-25 0.55:30 1:0
+end
+anim 3 death frames 20 len 4 hold 200  # slumps forward and sinks into his robes, the staff falls, the gauntlet drops
+  1 rx keys 0:0 0.25:-6 0.7:22 1:24
+  1 ty keys 0:0 0.25:-10 0.8:130 1:140
+  2 rz keys 0:0 0.3:6 0.8:-62 1:-66
+  2 ty keys 0:0 0.8:60 1:60
+  3 ty keys 0:0 0.25:-25 0.7:120 1:120
+  3 rx keys 0:0 1:70
+  4 rx keys 0:0 1:-10
+  5 rx keys 0:0 1:-6
+end

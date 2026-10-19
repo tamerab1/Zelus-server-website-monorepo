@@ -49,12 +49,21 @@ public class VoteBoss extends NPCCombat {
 	public void init() {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			VoteBossHandler.boss = null;
-			npc.getPosition().getRegion().players.forEach(p -> {
-				if (damagingPlayers.contains(p)) {
-					rewardPlayer(p);
+			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
+			try {
+				for (Player p : new java.util.ArrayList<>(npc.getPosition().getRegion().players)) {
+					if (!damagingPlayers.contains(p.getUserId()))
+						continue;
+					try {
+						rewardPlayer(p);
+					} catch (Exception e) {
+						System.err.println("[vote boss] reward failed for " + p.getName() + ": " + e);
+						e.printStackTrace();
+					}
 				}
-			});
-			npc.remove();
+			} finally {
+				npc.remove();
+			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend);
 	}
@@ -100,7 +109,7 @@ public class VoteBoss extends NPCCombat {
 		lastGraphicUpdate--;
 	}
 
-	private static final LootTable table = new LootTable().addTable(1,
+	static final LootTable table = new LootTable().addTable(1, // shared with VoteVolcanus
 		new LootItem(ItemID.SHINY_MINERALS, 15, 25, 60),
 		new LootItem(ItemID.GLISTENING_MINERALS, 2, 5, 10),
 		new LootItem(620, 2, 6, 100), //Vote point ticket
@@ -127,12 +136,13 @@ public class VoteBoss extends NPCCombat {
 		player.perkPoints += perkPointReward;
 		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the vote boss!"));
 		Item reward = table.rollItem();
-		new GroundItem(reward).owner(player).position(player.getPosition()).spawn();
+		new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
 		if (reward.lootBroadcast != null)
 			Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from the vote boss!");
 	}
 
-	List<Player> damagingPlayers = new ArrayList<>();
+	/** Account ids that damaged the boss (2026-10-19: was Player objects -- a relog mid-fight lost the reward). */
+	java.util.Set<Integer> damagingPlayers = new java.util.HashSet<>();
 
 	private void preHitDefend(Hit hit) {
 		if (hit.damage > 50)
@@ -141,8 +151,8 @@ public class VoteBoss extends NPCCombat {
 
 	private void postDamage(Hit hit) {
 		if (hit.damage > 0 && hit.attacker != null) {
-			if (!damagingPlayers.contains(hit.attacker.player))
-				damagingPlayers.add(hit.attacker.player);
+			if (hit.attacker.player != null)
+				damagingPlayers.add(hit.attacker.player.getUserId());
 		}
 	}
 

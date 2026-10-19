@@ -18,6 +18,36 @@ import static io.ruin.cache.ItemID.MORYTANIA_ECHO_ORB;
 //@formatter:off
 public enum UpgradeItems {
 
+	// Vermilion masori (customs19, 2026-10-19): the Masori (f) piece + the plain Masori piece, bound with Zulrah's scales
+	VERMILION_MASORI_MASK(
+		new Item(31850),
+		new Ingredient[]{new Ingredient(27235), new Ingredient(27226)},
+		80,
+		new Item(12934, 1250),
+		"Fortified masori reforged in blood-red, giving more ranged accuracy and strength than the Masori mask (f)."
+	),
+	VERMILION_MASORI_BODY(
+		new Item(31852),
+		new Ingredient[]{new Ingredient(27238), new Ingredient(27229)},
+		80,
+		new Item(12934, 3500),
+		"Fortified masori reforged in blood-red, giving more ranged accuracy and strength than the Masori body (f)."
+	),
+	VERMILION_MASORI_CHAPS(
+		new Item(31854),
+		new Ingredient[]{new Ingredient(27241), new Ingredient(27232)},
+		80,
+		new Item(12934, 3500),
+		"Fortified masori reforged in blood-red, giving more ranged accuracy and strength than the Masori chaps (f)."
+	),
+	// Zaryte Stormpiercer (customs19, 2026-10-19): the Zaryte crossbow + a Dragon hunter crossbow, bound with a Snake tail
+	ZARYTE_STORMPIERCER(
+		new Item(31856),
+		new Ingredient[]{new Ingredient(26374), new Ingredient(new int[]{ItemID.DRAGON_HUNTER_CROSSBOW, 25916, 25918})}, // any DHCB: plain / (t) / (b)
+		80,
+		new Item(30622),
+		"The Zaryte crossbow strung with the storm: it fires its own bolts, hits harder than the Zaryte crossbow and its special, Glacial Evoke, freezes the target."
+	),
 	MORVETH_PLATELEGS_OR(
 		new Item(59593),
 		new Ingredient[]{new Ingredient(59590), new Ingredient(12415)},

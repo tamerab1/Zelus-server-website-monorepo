@@ -181,6 +181,13 @@ public class GroundItem extends Position {
 	private long timeDropped;
 	private String dropperName, dropperIp;
 	private Map<String, String> attributes;
+	/**
+	 * Loot the world created (an npc drop), not an item a player put down. The economy-protection ground guard deletes
+	 * SPAWNABLE ids by id to stop ::spawn -> drop -> alt pick-up duping, which also deleted every legitimate drop of
+	 * those ids (2026-10-19: Warriors' Guild rune defenders logged to the collection log but never appeared, so the
+	 * player kept rolling and "getting" them). World loot can't be a spawned copy, so the guard lets it through.
+	 */
+	public boolean worldLoot;
 
 	public GroundItem(Item item) {
 		this(item.getId(), item.getAmount(), item.copyOfAttributes());
@@ -204,6 +211,12 @@ public class GroundItem extends Position {
 	public GroundItem owner(String ownerId) {
 		this.originalOwner = ownerId;
 		this.activeOwner = ownerId;
+		return this;
+	}
+
+	/** Marks this as npc / world loot (see {@link #worldLoot}). */
+	public GroundItem loot() {
+		this.worldLoot = true;
 		return this;
 	}
 

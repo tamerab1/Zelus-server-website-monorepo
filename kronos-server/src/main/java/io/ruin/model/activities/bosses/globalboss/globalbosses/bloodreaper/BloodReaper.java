@@ -62,7 +62,8 @@ public class BloodReaper extends NPCCombat {
 		new LootItem(ItemID.FIVE_BOND, 1, 1, 1).broadcast(Broadcast.GLOBAL)
 
 	);
-	List<Player> damagingPlayers = new ArrayList<>();
+	/** Account ids that damaged the boss (2026-10-19: was Player objects -- a relog mid-fight lost the reward). */
+	java.util.Set<Integer> damagingPlayers = new java.util.HashSet<>();
 	private static final Projectile MAGIC_PROJECTILE = new Projectile(1700, 90, 43, 35, 40, 6, 16, 192);
 	private static final Projectile BOMB_PROJECTILE = new Projectile(1495, 90, 0, 35, 40, 6, 16, 192);
 
@@ -78,12 +79,21 @@ public class BloodReaper extends NPCCombat {
 	@Override
 	public void init() {
 		npc.deathEndListener = (entity, killer, killHit) -> {
-			damagingPlayers.forEach(p -> {
-				if (p != null) {
-					rewardPlayer(p);
+			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
+			try {
+				for (Player p : World.players()) { // online only: an offline damager can't receive (it used to drop to logged-out players)
+					if (!damagingPlayers.contains(p.getUserId()))
+						continue;
+					try {
+						rewardPlayer(p);
+					} catch (Exception e) {
+						System.err.println("[Blood Reaper] reward failed for " + p.getName() + ": " + e);
+						e.printStackTrace();
+					}
 				}
-			});
-			npc.remove();
+			} finally {
+				npc.remove();
+			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend);
 	}
@@ -97,7 +107,7 @@ public class BloodReaper extends NPCCombat {
 		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the Blood Reaper!"));
 		for (int i = 0; i < rolls; i++) {
 			Item reward = table.rollItem();
-			new GroundItem(reward).owner(player).position(player.getPosition()).spawn();
+			new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
 			if (reward.lootBroadcast != null)
 				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from a Blood Reaper!");
 		}
@@ -110,8 +120,8 @@ public class BloodReaper extends NPCCombat {
 
 	private void postDamage(Hit hit) {
 		if (hit.attacker != null && hit.damage > 0) {
-			if (!damagingPlayers.contains(hit.attacker.player))
-				damagingPlayers.add(hit.attacker.player);
+			if (hit.attacker.player != null)
+				damagingPlayers.add(hit.attacker.player.getUserId());
 		}
 	}
 

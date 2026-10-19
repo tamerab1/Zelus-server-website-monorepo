@@ -554,7 +554,9 @@ public enum CollectionLogData {
 	VORKATH(CollectionLogUpdated.Categories.BOSSES, "Vorkath", new Item[] { (new Item(21992)/* Vorki */),
 			(new Item(2425)/* Vork head */),
 			(new Item(11286)/* Draconic visage */), (new Item(22006)/* Skele visage */), (new Item(22106)/* Jar of decay */),
-			(new Item(22111)/* Dragonbone necklace */) },
+			(new Item(22111)/* Dragonbone necklace */),
+			(new Item(31858)/* Vorkath mask */), (new Item(31860)/* Vorkath platebody */),
+			(new Item(31862)/* Vorkath platelegs */) },
 			// completion rewards
 			new Item[] {
 					new Item(7478, 12),

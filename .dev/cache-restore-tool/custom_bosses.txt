@@ -1,0 +1,28 @@
+# Custom bosses 2026-10-19 (source: Desktop/new customs/bosses). Build: build_custom_bosses.sh (BuildCustomBosses).
+# Server: npcs/combat/Custom_bosses.json (stats, attack / defend / death animations) + CustomBossCombat; ::testallbosses.
+# Animations picked with FindBossRig (edge stretch of the ripped mesh under each candidate skeleton's frames):
+#   player skeleton 0 (stretch 0.02-0.10): 100000 100002 100003 100083 100239 100298 100300 94259
+#   100075 -> Icefiend 1578/1579 (0.000-0.035)   100242 -> Tree spirit 96/93 (0.016-0.045)
+#   13558 / 139755 -> Giant Mole 3309/3313        94388 -> Ogre 357/358 (0.004-0.122)
+#   94435 -> Giant Mole stand 3309 as stand AND walk (rooted serpent)   70009 has no vertex skins: static
+# Round 2 (2026-10-19): hand-made rigs (BossRig, boss_rigs/) for 16200 16203 16204 16206 16210 16211 16214 -- their
+#   stand / walk ids below are those rigs' sequences; Gorgar x1.4 + size 3; 16212 renamed Hulk, x1.7 + size 3.
+# Round 3: Terrax rig (it is player-skinned: player frames + tail), Hulk smash rig (attack 16250 only), Malik x1.3,
+#   Nidhogg x1.36 + size 3.
+# Over the GPU plugin's 6144-face cap (decimated after insert, custom_bosses_decimate.txt): 61265 61266 61276
+#    npc   raw    model size scale lvl stand walk name
+boss 16200 100000 61264 3    150   720 16234 16235 Astraeus the Skybreaker
+boss 16201 100002 61265 1    128   250 808   819  Chronos the Timekeeper
+boss 16202 100003 61266 1    100   540 808   819  Astrid, Arcane Enchantress
+boss 16203 100075 61267 1    91    680 16242 16243 Malik, Master of the Void
+boss 16204 100083 61268 2    140   780 16238 16239 Malakor, the Soulreaver
+boss 16205 100239 61269 3    170   650 808   819  Volcanus the Earthshaker
+boss 16206 100242 61270 3    190   600 16218 16219 Drak'thor the Ashen Wyrm
+boss 16207 100298 61271 3    168   480 808   819  Gorgar the Enraged
+boss 16208 100300 61272 1    140   590 813   1205 Sylphira, Warden of the Grove
+boss 16209 13558  61273 3    100   510 3309  3313 Spineback Horror
+boss 16210 139755 61274 4    160   740 16222 16223 Vaelok the Netherwyrm
+boss 16211 70009  61275 3    80    680 16226 16227 Kharaz, the Brood Goliath
+boss 16212 94259  61276 3    220   580 808   819  Hulk
+boss 16213 94388  61277 3    150   710 16246 16247 Terrax the Earth Titan
+boss 16214 94435  61278 3    150   620 16230 16231 Nidhogg the Abyssal Serpent

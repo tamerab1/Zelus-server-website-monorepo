@@ -46,15 +46,21 @@ public class VoteBossHandler {
 		}
 	}
 
+	/** The vote bosses, alternating so every spawn is a different one (2026-10-19: + Volcanus 16216, VoteVolcanus). */
+	private static final int[] BOSSES = {8262, 16216};
+	private static int nextBoss = 0;
+
 	private static void spawnBoss() {
 		if (boss != null)
 			return;
+		int id = BOSSES[nextBoss];
+		nextBoss = (nextBoss + 1) % BOSSES.length;
 		broadcastEvent("The Vote boss will spawn in 60 seconds, type ::vb to teleport to it!");
 		GlobalBroadcastHook.sendEventSpawnWarning("The vote boss", null);
 
 		World.startEvent(e -> {
 			e.delay(100);
-			boss = new NPC(8262).spawn(new Position(map.convertX(2912), map.convertY(3616)));
+			boss = new NPC(id).spawn(new Position(map.convertX(2912), map.convertY(3616)));
 			GlobalBroadcastHook.sendEventSpawnAnnouncement(boss.getName(), null);
 		});
 	}

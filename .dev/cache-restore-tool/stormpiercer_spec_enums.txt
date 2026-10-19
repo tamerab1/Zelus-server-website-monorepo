@@ -1,0 +1,3 @@
+# Zaryte Stormpiercer 31856 special attack bar (2026-10-19): cache enums 906 (cost, 750 = 75%) + 1739 (description).
+int 906 31856 750
+str 1739 31856 Glacial Evoke: A frost-charged shot with Zaryte precision that bursts into ice for 20% more damage and freezes the target.

@@ -3026,7 +3026,7 @@ public abstract class NPCCombat extends Combat {
 				if (killer.player.getInventory().hasRoomFor(23182))
 					killer.player.getInventory().add(23182, 1);
 				else
-					new GroundItem(23182, 1).owner(killer.player).position(dropPosition).spawn();
+					new GroundItem(23182, 1).owner(killer.player).position(dropPosition).loot().spawn();
 				continue;
 			}
 
@@ -3037,7 +3037,7 @@ public abstract class NPCCombat extends Combat {
 				if (killer.player.getInventory().hasRoomFor(2677))
 					killer.player.getInventory().add(2677, 1);
 				else
-					new GroundItem(2677, 1).owner(killer.player).position(dropPosition).spawn();
+					new GroundItem(2677, 1).owner(killer.player).position(dropPosition).loot().spawn();
 				continue;
 			}
 			if (killer.player.getEquipment().get(Equipment.SLOT_RING) != null
@@ -3047,7 +3047,7 @@ public abstract class NPCCombat extends Combat {
 				if (killer.player.getInventory().hasRoomFor(2801))
 					killer.player.getInventory().add(2801, 1);
 				else
-					new GroundItem(2801, 1).owner(killer.player).position(dropPosition).spawn();
+					new GroundItem(2801, 1).owner(killer.player).position(dropPosition).loot().spawn();
 				continue;
 			}
 			if (killer.player.getEquipment().get(Equipment.SLOT_RING) != null
@@ -3593,7 +3593,7 @@ public abstract class NPCCombat extends Combat {
 			this.notifyDrop(owner, item.getId(), item.getAmount());
 			return;
 		}
-		new GroundItem(item).owner(owner).position(position).spawn();
+		new GroundItem(item).owner(owner).position(position).loot().spawn();
 		this.notifyDrop(owner, item.getId(), item.getAmount());
 	}
 
@@ -3602,7 +3602,7 @@ public abstract class NPCCombat extends Combat {
 			this.notifyDrop(owner, id, amount);
 			return;
 		}
-		new GroundItem(id, amount).owner(owner).position(position).spawn();
+		new GroundItem(id, amount).owner(owner).position(position).loot().spawn();
 		this.notifyDrop(owner, id, amount);
 	}
 

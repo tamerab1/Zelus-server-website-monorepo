@@ -1,0 +1,2 @@
+# Vermilion Dreadwings worn mesh: halved before DoubleSided doubles it back to the 900-face cape budget
+model 61279 450

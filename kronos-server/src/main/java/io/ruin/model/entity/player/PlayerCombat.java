@@ -410,7 +410,8 @@ public class PlayerCombat extends Combat {
 		if (target.isNpc() && target.npc.getDef() != null) {
 			NPC npc = (NPC) target;
 			global = npc.getId() == 8262 || npc.getId() == 1787 || npc.getId() == 11895 || npc.getId() == 11896
-					|| npc.getId() == 84 || npc.getId() == 30557;
+					|| npc.getId() == 84 || npc.getId() == 30557
+					|| npc.getId() == 16215 || npc.getId() == 16216; // Nidhogg (::gb) / Volcanus (::vb), 2026-10-19
 		}
 
 		if (target.isNpc() && target.npc.getDef() != null) {
@@ -3386,7 +3387,8 @@ public class PlayerCombat extends Combat {
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_CYAN
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_GREEN
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_BLACK
-					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_PURPLE)
+					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_PURPLE
+					&& rangedWep != RangedWeapon.ZARYTE_STORMPIERCER) // fires its own bolts: never ammo itself
 				ammo = wep;
 		} else {
 			var quivers = List.of(DIZANAS_MAX_CAPE, DIZANAS_QUIVER, DIZANAS_BLESSED_QUIVER);

@@ -74,6 +74,8 @@ public enum RangedWeapon {
 	BOW_OF_FAERDHINEN_CYAN(new RangedData(1935, Projectile.arrow(1934))),
 
 	BOW_OF_FAERDHINEN_PURPLE(new RangedData(1929, Projectile.arrow(1928))),
+	/** Zaryte Stormpiercer 31856 (customs19, 2026-10-19): the upgraded Zaryte crossbow, fires its own bolts (no ammo). */
+	ZARYTE_STORMPIERCER(new RangedData(Projectile.BOLT)),
 	/**
 	 * Fired (ammo)
 	 */
@@ -210,7 +212,8 @@ public enum RangedWeapon {
 				 BOW_OF_FAERDHINEN_CYAN,
 				 BOW_OF_FAERDHINEN_GREEN,
 				 BOW_OF_FAERDHINEN_BLACK,
-				 BOW_OF_FAERDHINEN_PURPLE -> true;
+				 BOW_OF_FAERDHINEN_PURPLE,
+				 ZARYTE_STORMPIERCER -> true;
 			default -> false;
 		};
 	}

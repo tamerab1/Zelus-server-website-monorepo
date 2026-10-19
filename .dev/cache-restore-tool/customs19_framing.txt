@@ -1,0 +1,12 @@
+# customs19 icon framing (AutoFrameItems). Vermilion masori: the rip's drop models are NOT oriented like the real
+# Masori (f) inventory models. Angles SOLVED by OrientIcon (worn mesh -> drop mesh rigid fit carries up / front into the
+# drop model; the icon camera then shows up = screen up, front facing): mask 104/0 (128,0 kept, also upright-front),
+# body + chaps 512,1792. (Eyeballed picks before: body 512,768 and 1536,1792 were both UPSIDE DOWN; chaps 1664,768 showed
+# the back.)
+item 31850 128,0,0
+item 31852 512,1792,0
+item 31854 512,1792,0
+item 31856
+item 31858 front
+item 31860 front
+item 31862 front

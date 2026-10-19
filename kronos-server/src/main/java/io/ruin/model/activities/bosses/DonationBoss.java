@@ -20,6 +20,7 @@ import io.ruin.model.item.loot.LootTable;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.Projectile;
 import io.ruin.model.map.Tile;
+import io.ruin.model.map.ground.GroundItem;
 import io.ruin.model.map.route.routes.DumbRoute;
 import io.ruin.model.skills.prayer.Prayer;
 import io.ruin.utility.Broadcast;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@lombok.extern.slf4j.Slf4j
 public class DonationBoss extends NPCCombat {
 	private static final LootTable table = new LootTable().addTable(1,
 		new LootItem(607, 1, 4, 100),
@@ -53,21 +55,40 @@ public class DonationBoss extends NPCCombat {
 	private static final Projectile MAGIC_PROJECTILE = new Projectile(1046, 90, 43, 35, 60, 6, 16, 192);
 	private static final Projectile RANGED_PROJECTILE = new Projectile(1043, 90, 43, 35, 90, 6, 16, 192);
 
+	/** Damage (sum of each hit's max) a player needs to deal to be rewarded. */
+	private static final int REWARD_THRESHOLD = 100;
+
 	@Override
 	public void init() {
+		// 2026-10-19 ("sometimes the ::db didn't drop anything"): each reward is isolated -- one failure used to stop every
+		// player after it AND skip onBossDeath (the next boss never queued); players under the threshold are now told
+		// why they got nothing; a summary line is logged per kill.
 		npc.deathEndListener = (entity, killer, killHit) -> {
-			List<Integer> rewardingPlayers = damagingPlayers.entrySet().stream()
-				.filter(entry -> entry.getValue() >= 100)
-				.map(Map.Entry::getKey)
-				.toList();
-			npc.getPosition().getRegion().players.forEach(p -> {
-				if (rewardingPlayers.contains(p.getUserId())) {
-					rewardPlayer(p);
+			int rewarded = 0, under = 0, failed = 0;
+			try {
+				for (Player p : new ArrayList<>(npc.getPosition().getRegion().players)) {
+					int dealt = damagingPlayers.getOrDefault(p.getUserId(), 0);
+					if (dealt <= 0)
+						continue;
+					if (dealt < REWARD_THRESHOLD) {
+						under++;
+						p.sendMessage(Color.RED.wrap("You didn't deal enough damage to the donation boss for a reward ("
+							+ dealt + "/" + REWARD_THRESHOLD + ")."));
+						continue;
+					}
+					try {
+						rewardPlayer(p);
+						rewarded++;
+					} catch (Exception e) {
+						failed++;
+						log.error("Donation boss reward failed for " + p.getName(), e);
+					}
 				}
-			});
-			// Call onBossDeath to handle queued spawns
-			DonationBossHandler.onBossDeath();
-			npc.remove();
+			} finally {
+				log.info("Donation boss died: {} rewarded, {} under the damage threshold, {} failed", rewarded, under, failed);
+				DonationBossHandler.onBossDeath(); // queued / overflow spawns
+				npc.remove();
+			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend)
 			.preDamage(this::preHitDamage);
@@ -84,8 +105,19 @@ public class DonationBoss extends NPCCombat {
 
 	private void rewardPlayer(Player player) {
 		Item reward = table.rollItem();
-		player.sendMessage(Color.RED.wrap("You have received " + reward.getDef().name + "!"));
-		player.getInventory().addOrDrop(reward.getId(), reward.getAmount());
+		// the donation boss gives its reward directly (it never dropped on the ground): inventory, else bank, else feet
+		int left = reward.getAmount() - Math.max(0, player.getInventory().add(reward.getId(), reward.getAmount()));
+		String where = "in your inventory";
+		if (left > 0) {
+			left -= Math.max(0, player.getBank().add(reward.getId(), left));
+			where = "in your bank (inventory full)";
+		}
+		if (left > 0) {
+			new GroundItem(reward.getId(), left).owner(player).position(player.getPosition()).loot().spawn();
+			where = "at your feet (inventory and bank full)";
+		}
+		player.sendMessage(Color.RED.wrap("You have received " + reward.getAmount() + " x " + reward.getDef().name
+			+ " from the donation boss! (" + where + ")"));
 		int perkPointReward = VoteHandler.playerDonatedRecently(player) ? 8 : 4;
 		player.perkPoints += perkPointReward;
 		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the donation boss!"));

@@ -1,0 +1,3 @@
+# Vermilion Dreadwings: the red membrane (colour 664) carries the animated crimson texture 264; the black frame stays black
+model 61279 61279 264 664
+model 61280 61280 264 664
