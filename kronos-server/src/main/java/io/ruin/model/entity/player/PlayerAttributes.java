@@ -1433,6 +1433,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public HashMap<Integer, Integer> ownedPerks = new HashMap<>();
 	public HashMap<Integer, Boolean> combatAchievementStore = new HashMap<>();
 	public HashMap<String, Integer> DiaryRecorder = new HashMap<>();
+	/** Zelus Codex (2026-10-20): ZelusTask progress by name, and "claimed.<name>" = 1 once its reward is taken. */
+	public HashMap<String, Integer> zelusCodex = new HashMap<>();
 	public HashMap<Integer, Integer> savedConfigs = new HashMap<>();
 	public Map<Integer, List<Integer>> toaInvocationFavourites = new HashMap<>();
 	public Map<Integer, Integer> weaponAutocastIds = new HashMap<>();

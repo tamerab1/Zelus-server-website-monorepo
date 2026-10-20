@@ -1312,11 +1312,9 @@ public enum ClueType {
 				});
 			});
 			ItemAction.registerInventory(casketDef.id, "open", (player, item) -> {
-				if (DonationBossHandler.map != null) {
-					if (player.getPosition().getRegion().id == DonationBossHandler.map.swRegion.id) {
-						player.sendMessage("You can't open this here.");
-						return;
-					}
+				if (io.ruin.model.activities.bosses.EventBossArea.isIn(player)) {
+					player.sendMessage("You can't open this here.");
+					return;
 				}
 				int saveCasketChance = 0;
 				if (player.totalDonated >= 2500)

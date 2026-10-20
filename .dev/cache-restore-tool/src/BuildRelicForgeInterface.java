@@ -1,407 +1,190 @@
-import net.runelite.cache.IndexType;
 import net.runelite.cache.definitions.InterfaceDefinition;
-import net.runelite.cache.definitions.loaders.InterfaceLoader;
-import net.runelite.cache.fs.*;
+import net.runelite.cache.fs.Store;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.*;
 
-// Builds interface group 1158, The Zelus Relic Forge (RelicForge.java, server), replacing the legacy item upgrader 1110
-// (::upgrade > Item Upgrade, the Zelus Upgrader object). Same frame / warm-stone theme as the Workbench (1153):
-//  - left (150): Weapons / Armour / Utility tabs, then a scrolling catalogue of recipe cards (outcome icon, name,
-//    tier + rate line) with hover and a gold selected frame;
-//  - centre (170), the Transmutation Altar: "Base Item" in a recessed socket, a gold energy line, the "Outcome" in a
-//    gold socket, then the stat changes;
-//  - right (136): 6 reagent slots (item + owned/required), a 20-segment success gauge with its breakdown, the failure
-//    rule, and the Forge Upgrade button.
-// Every section has its own box (no overlap). Encoder/verification shared with BuildWorkbenchInterface.
-// Prints "CONST name = id" lines for RelicForge.java. Usage: verify|apply|rebuild <cachePath>
+// Builds interface group 1158, The Zelus Relic Forge (RelicForge.java, server), the item upgrader. 2026-10-20 redesign
+// on IfKit (the Trading Post's OSRS stone buttons) after "cramped, flat buttons, crude dashed line":
+//  - sub-header row: the line under the title (left) and the recipe search box + Clear (right);
+//  - left (170): Weapons / Armour / Utility stone tabs (active = pressed), then a scrolling catalogue of recipe
+//    cards: an inset item well, the name (2 lines), a tier pill and the success rate; selected = recessed stone;
+//  - centre (150), the Transmutation Altar: Base Item socket (the item, or its translucent silhouette while it is
+//    missing), an ornamental gold divider with a down marker, the gold Outcome socket, and the stat changes in their
+//    own inset panel;
+//  - right (136): 6 reagent slots (inventory size, owned/required in the slot's bottom corner), the success rate over
+//    a smooth meter (clientscript 10754 sizes the fill), its breakdown, the failure rule, and the Forge Upgrade stone
+//    button (its pressed state = not ready).
+// Prints "CONST name = id" lines for RelicForge.java. Usage: verify|rebuild <cachePath>
 public class BuildRelicForgeInterface {
-    static final int GROUP = 1158, SRC = 1002;
-    static final int GOLD = 0xffc35a, ORANGE = 0xff981f, TEXT = 0xd8d0c0, GREY = 0x9a9a9a, WHITE = 0xffffff;
-    static final int HEADING_FONT = 496, TEXT_FONT = 494;
-    static final int TITLE_Y = 14, SUB_Y = 45;
-    static final int BOX = 0x433b31, BOX_HOVER = 0x524737, BORDER = 0x5a4d3a;
-    static final int SLOT_FILL = 0x2a2520, SLOT_SHADOW = 0x1a1612, SLOT_BORDER = 0x5a4d3a;
-    static final int OUTCOME_FILL = 0x3a2e14, GAUGE_BACK = 0x1a1612;
-    /** Selected card / active tab: recessed fill + soft gold trim (feedback: no neon 1px outlines). */
-    static final int ACTIVE_FILL = 0x1c1814, ACTIVE_TRIM = 0x4a3a24; // dark bronze: b08d4a still read as yellow
-    static final int TABS = 3, CARDS = 40, CARD_H = 34, CARD_PITCH = 40, REAGENTS = 6, SEGMENTS = 20;
-    static final int COMPONENTS = 472;
+    static final int GROUP = 1158, TABS = 3, CARDS = 40, CARD_H = 36, CARD_PITCH = 40, REAGENTS = 6, SEGMENTS = 20;
+    static final int PANEL_EDGE = 0x1d1915, PANEL_RIM = 0x2b2620, PANEL_FILL = 0x3d362d, WELL = 0x2c2721;
+    static final int CARD_A = 0x463f34, CARD_B = 0x423b31, CARD_HOVER = 0x4f4739, CARD_SELECTED = 0x2b251d;
+    static final int GOLD_LINE = 0x8a6a3a, OUTCOME_WELL = 0x3a2e14;
 
     public static void main(String[] args) throws Exception {
-        boolean rebuild = args[0].equals("rebuild");
-        boolean apply = args[0].equals("apply") || rebuild;
+        boolean apply = args[0].equals("rebuild");
         try (Store store = new Store(new File(args[1]))) {
             store.load();
-            Storage storage = store.getStorage();
-            Index index = store.getIndex(IndexType.INTERFACES);
-            if (index.getArchive(GROUP) != null && apply && !rebuild)
-                throw new IllegalStateException("interface " + GROUP + " already exists (use rebuild)");
-            Archive srcArchive = index.getArchive(SRC);
-            ArchiveFiles src = srcArchive.getFiles(storage.loadArchive(srcArchive));
-            InterfaceLoader loader = new InterfaceLoader();
+            IfKit k = new IfKit(GROUP, store, true);
 
-            List<byte[]> comps = new ArrayList<>();
-            List<InterfaceDefinition> want = new ArrayList<>();
-            Map<String, Integer> ids = new LinkedHashMap<>();
-            // 0-3: root, background, close, title (title moved up to TITLE_Y)
-            for (int c = 0; c <= 2; c++) {
-                InterfaceDefinition d = loader.load((GROUP << 16) | c, src.findFile(c).getContents());
-                if (d.parentId != -1)
-                    d.parentId = (GROUP << 16) | (d.parentId & 0xffff);
-                add(comps, want, d);
-            }
-            InterfaceDefinition title = loader.load((GROUP << 16) | 3, src.findFile(3).getContents());
-            title.parentId = (GROUP << 16) | (title.parentId & 0xffff);
-            title.originalY = TITLE_Y;
-            add(comps, want, title);
-            InterfaceDefinition layerT = loader.load(0, src.findFile(153).getContents());
-            InterfaceDefinition[] rectT = {loader.load(0, src.findFile(159).getContents()),
-                    loader.load(0, src.findFile(160).getContents()), loader.load(0, src.findFile(161).getContents())};
-            InterfaceDefinition textT = loader.load(0, src.findFile(144).getContents());
-            InterfaceDefinition buttonT = loader.load(0, src.findFile(169).getContents());
-            InterfaceDefinition labelT = loader.load(0, src.findFile(170).getContents());
-            InterfaceDefinition rect = rectT[1];
+            k.mark("SUB_HEADER");
+            k.add(k.text(0, 26, 44, 300, 16, IfKit.TEXT_FONT, 0xb0a898, ""));
+            k.mark("SEARCH");
+            searchBar(k, 330, 42, 158, 20);
 
-            // 4: the sub-bar under the title
-            ids.put("SUB_HEADER", comps.size());
-            InterfaceDefinition sub = text(textT, 0, 26, SUB_Y, 300, 13, TEXT_FONT, 0xa0a0a0, "");
-            sub.xTextAlignment = 0;
-            add(comps, want, sub);
-
-            // ---- left: category tabs + recipe catalogue ----
-            int left = BuildWorkbenchInterface.panel(comps, want, layerT, rectT, 0, 24, 62, 160, 243);
-            fix(want, comps, left);
-            ids.put("FIRST_TAB", comps.size());
-            for (int t = 0; t < TABS; t++) {
-                int x = 4 + t * 51;
-                bezelTab(comps, want, rect, buttonT, left, x, 4, 50, 24, "View");
-                InterfaceDefinition l = text(textT, left, x, 4, 50, 24, TEXT_FONT, TEXT, "");
-                l.xTextAlignment = 1;
-                add(comps, want, l);
-            }
-            ids.put("SCROLL", comps.size());
-            ids.put("SCROLLBAR", comps.size() + 1);
-            add(comps, want, layer(layerT, left, 4, 32, 136, 207));
-            add(comps, want, layer(layerT, left, 142, 32, 16, 207));
-            int scroll = ids.get("SCROLL");
-            ids.put("FIRST_CARD", comps.size());
+            // ---- left: tabs + catalogue ----
+            int left = framed(k, 24, 64, 170, 242);
+            k.mark("FIRST_TAB");
+            for (int t = 0; t < TABS; t++)
+                k.stoneButton(left, 4 + t * 54, 4, 52, 22, "View", IfKit.TEXT_FONT, "");
+            k.mark("SCROLL");
+            int scroll = k.add(k.layer(left, 4, 30, 146, 208));
+            k.mark("SCROLLBAR");
+            k.add(k.layer(left, 152, 30, 16, 208));
+            k.mark("FIRST_CARD");
             for (int c = 0; c < CARDS; c++) {
-                int card = comps.size();
-                add(comps, want, layer(layerT, scroll, 0, c * CARD_PITCH, 136, CARD_H));
-                selectable(comps, want, rect, card, 0, 0, 136, CARD_H, "Select");
-                add(comps, want, itemSlot(buttonT, card, 0, 1, 36, 32, null));
-                // name wraps to 2 lines (long names used to clip into the scrollbar); tier + rate share the 3rd line
-                InterfaceDefinition cardName = text(textT, card, 41, 1, 94, 22, TEXT_FONT, ORANGE, "");
-                cardName.yTextAlignment = 0;
-                cardName.lineHeight = 11;
-                add(comps, want, cardName);
-                add(comps, want, text(textT, card, 41, 23, 46, 11, TEXT_FONT, TEXT, ""));
-                InterfaceDefinition cardRate = text(textT, card, 87, 23, 48, 11, TEXT_FONT, TEXT, "");
-                cardRate.xTextAlignment = 2;
-                add(comps, want, cardRate);
+                int card = k.add(k.layer(scroll, 0, c * CARD_PITCH, 146, CARD_H));           // +0
+                int zebra = c % 2 == 0 ? CARD_A : CARD_B;
+                InterfaceDefinition fill = k.solid(card, 0, 0, 146, CARD_H, zebra);           // +1 click
+                fill.clickMask = 2;
+                fill.actions = new String[]{"Select"};
+                fill.onMouseOverListener = new Object[]{45, -2147483645, CARD_HOVER};
+                fill.onMouseLeaveListener = new Object[]{45, -2147483645, zebra};
+                fill.hasListener = true;
+                k.add(fill);
+                k.add(IfKit.hidden(k.solid(card, 0, 0, 146, CARD_H, CARD_SELECTED)));          // +2 selected recess
+                k.add(IfKit.hidden(k.outline(card, 0, 0, 146, CARD_H, IfKit.SHADOW, true)));   // +3 its inner shadow
+                k.add(k.outline(card, 0, 0, 146, CARD_H, PANEL_RIM, false));                   // +4 divider
+                k.add(k.solid(card, 2, 2, 36, 32, WELL));                                     // +5 item well
+                k.add(k.itemSlot(card, 2, 2, 36, 32, null));                                  // +6 item
+                InterfaceDefinition name = k.text(card, 42, 2, 102, 22, IfKit.TEXT_FONT, IfKit.ORANGE, ""); // +7
+                name.yTextAlignment = 0;
+                name.lineHeight = 11;
+                k.add(name);
+                k.add(k.solid(card, 42, 24, 44, 11, 0x221c16));                              // +8 tier pill
+                k.add(IfKit.centred(k.text(card, 42, 24, 44, 11, IfKit.TEXT_FONT, IfKit.GOLD, ""))); // +9 tier
+                k.add(IfKit.right(k.text(card, 88, 24, 56, 11, IfKit.TEXT_FONT, IfKit.TEXT, "")));  // +10 rate
             }
 
             // ---- centre: the Transmutation Altar ----
-            int centre = BuildWorkbenchInterface.panel(comps, want, layerT, rectT, 0, 188, 62, 160, 243);
-            fix(want, comps, centre);
-            InterfaceDefinition altar = text(textT, centre, 5, 2, 150, 15, HEADING_FONT, GOLD, "Transmutation Altar");
-            altar.xTextAlignment = 1;
-            add(comps, want, altar);
-            // base socket: label, recessed 44x40 socket (fill, top + left shadow, border), item, name
-            InterfaceDefinition baseLabel = text(textT, centre, 5, 17, 150, 12, TEXT_FONT, WHITE, "Base Item");
-            baseLabel.xTextAlignment = 1;
-            add(comps, want, baseLabel);
-            int sx = (160 - 44) / 2;
-            add(comps, want, solid(rect, centre, sx, 29, 44, 40, SLOT_FILL));
-            add(comps, want, solid(rect, centre, sx, 29, 44, 2, SLOT_SHADOW));
-            add(comps, want, solid(rect, centre, sx, 29, 2, 40, SLOT_SHADOW));
-            add(comps, want, outline(rect, centre, sx, 29, 44, 40, SLOT_BORDER, false));
-            ids.put("BASE_ITEM", comps.size());
-            add(comps, want, itemSlot(buttonT, centre, sx + 4, 33, 36, 32, "Examine"));
-            ids.put("BASE_NAME", comps.size());
-            // 2 lines under the socket: the name, then (owned)/(missing)
-            InterfaceDefinition baseName = text(textT, centre, 3, 69, 154, 24, TEXT_FONT, TEXT, "");
-            baseName.xTextAlignment = 1;
+            int centre = framed(k, 198, 64, 150, 242);
+            k.add(IfKit.centred(k.text(centre, 4, 3, 142, 16, IfKit.HEADING_FONT, IfKit.ORANGE, "Transmutation Altar")));
+            k.add(IfKit.centred(k.text(centre, 4, 20, 142, 12, IfKit.TEXT_FONT, IfKit.WHITE, "Base Item")));
+            int sx = (150 - 44) / 2;
+            socket(k, centre, sx, 33, WELL, PANEL_EDGE);
+            k.mark("BASE_ITEM");
+            k.add(k.itemSlot(centre, sx + 4, 37, 36, 32, "Examine"));
+            k.mark("BASE_GHOST");
+            InterfaceDefinition ghost = k.itemSlot(centre, sx + 4, 37, 36, 32, "Examine");
+            ghost.opacity = 150;   // the missing base: a translucent silhouette
+            k.add(IfKit.hidden(ghost));
+            k.mark("BASE_NAME");
+            InterfaceDefinition baseName = IfKit.centred(k.text(centre, 4, 75, 142, 22, IfKit.TEXT_FONT, IfKit.TEXT, ""));
             baseName.yTextAlignment = 0;
             baseName.lineHeight = 11;
-            add(comps, want, baseName);
-            // energy flow: a short gold line between the sockets, with a caption
-            add(comps, want, solid(rect, centre, 79, 94, 2, 8, GOLD));
-            InterfaceDefinition flow = text(textT, centre, 85, 92, 70, 11, TEXT_FONT, GREY, "transmutes");
-            add(comps, want, flow);
-            // outcome socket: label, gold-framed 44x40 socket (fill, 2 gold outlines), item, name
-            InterfaceDefinition outLabel = text(textT, centre, 5, 103, 150, 12, TEXT_FONT, ORANGE, "Outcome");
-            outLabel.xTextAlignment = 1;
-            add(comps, want, outLabel);
-            add(comps, want, solid(rect, centre, sx, 115, 44, 40, OUTCOME_FILL));
-            add(comps, want, outline(rect, centre, sx, 115, 44, 40, ACTIVE_TRIM, false));
-            add(comps, want, outline(rect, centre, sx + 1, 116, 42, 38, 0x6b5330, false));
-            ids.put("OUTCOME_ITEM", comps.size());
-            add(comps, want, itemSlot(buttonT, centre, sx + 4, 119, 36, 32, "Examine"));
-            ids.put("OUTCOME_NAME", comps.size());
-            InterfaceDefinition outName = text(textT, centre, 3, 156, 154, 22, TEXT_FONT, GOLD, "");
-            outName.xTextAlignment = 1;
-            outName.yTextAlignment = 0;
-            outName.lineHeight = 11;
-            add(comps, want, outName);
-            // stat changes
-            add(comps, want, text(textT, centre, 6, 179, 148, 13, TEXT_FONT, GOLD, "Stat changes"));
-            ids.put("STAT_DIFF", comps.size());
-            InterfaceDefinition diff = text(textT, centre, 6, 192, 148, 49, TEXT_FONT, TEXT, "");
-            diff.yTextAlignment = 0;
-            diff.lineHeight = 11;
-            add(comps, want, diff);
+            k.add(baseName);
+            // ornamental divider: two gold rules either side of a gold down marker
+            k.add(k.solid(centre, 14, 103, 50, 1, GOLD_LINE));
+            k.add(k.solid(centre, 86, 103, 50, 1, GOLD_LINE));
+            k.add(k.solid(centre, 14, 104, 50, 1, 0x15120f));
+            k.add(k.solid(centre, 86, 104, 50, 1, 0x15120f));
+            k.add(k.sprite(centre, 68, 100, 14, 7, 1114, false));
+            k.add(IfKit.centred(k.text(centre, 4, 106, 142, 12, IfKit.TEXT_FONT, IfKit.ORANGE, "Outcome")));
+            socket(k, centre, sx, 118, OUTCOME_WELL, GOLD_LINE);
+            k.mark("OUTCOME_ITEM");
+            k.add(k.itemSlot(centre, sx + 4, 122, 36, 32, "Examine"));
+            k.mark("OUTCOME_NAME");
+            k.add(IfKit.centred(k.text(centre, 4, 159, 142, 12, IfKit.TEXT_FONT, IfKit.GOLD, "")));
+            // stat changes: an inset panel of their own, one stat per line (4 lines + a bottom margin)
+            k.add(k.solid(centre, 4, 172, 142, 66, WELL));
+            k.add(k.outline(centre, 4, 172, 142, 66, PANEL_EDGE, false));
+            k.add(k.text(centre, 9, 173, 132, 13, IfKit.TEXT_FONT, IfKit.GOLD, "Stat changes"));
+            k.mark("STAT_DIFF");
+            k.add(k.block(centre, 9, 187, 132, 47, IfKit.TEXT, 11, false));
 
-            // ---- right: reagents, success gauge, forge ----
-            int right = BuildWorkbenchInterface.panel(comps, want, layerT, rectT, 0, 352, 62, 136, 243);
-            fix(want, comps, right);
-            add(comps, want, text(textT, right, 6, 3, 124, 14, TEXT_FONT, GOLD, "Required Reagents"));
-            // 6 reagents, 3 per row: fill, border, item (Examine), owned / required
-            ids.put("FIRST_REAGENT", comps.size());
-            for (int k = 0; k < REAGENTS; k++) {
-                int cx = 2 + (k % 3) * 44, y = 19 + (k / 3) * 46;
-                add(comps, want, solid(rect, right, cx + 4, y, 36, 32, SLOT_FILL));
-                add(comps, want, outline(rect, right, cx + 4, y, 36, 32, SLOT_BORDER, false));
-                add(comps, want, itemSlot(buttonT, right, cx + 4, y, 36, 32, "Examine"));
-                InterfaceDefinition count = text(textT, right, cx, y + 33, 44, 11, TEXT_FONT, TEXT, "");
-                count.xTextAlignment = 1;
-                add(comps, want, count);
+            // ---- right: reagents, success meter, forge ----
+            int right = framed(k, 352, 64, 136, 242);
+            k.add(k.text(right, 6, 3, 124, 14, IfKit.TEXT_FONT, IfKit.GOLD, "Required Reagents"));
+            k.mark("FIRST_REAGENT");
+            for (int r = 0; r < REAGENTS; r++) {
+                int x = 6 + (r % 3) * 42, y = 20 + (r / 3) * 50;
+                k.add(k.solid(right, x, y, 38, 36, WELL));                                     // +0 well
+                k.add(k.outline(right, x, y, 38, 36, PANEL_EDGE, false));                     // +1 rim
+                k.add(k.itemSlot(right, x + 1, y + 2, 36, 32, "Examine"));                    // +2 item (its own stack number)
+                // +3 owned / required, BELOW the slot (the item's stack number sits inside it)
+                k.add(IfKit.centred(k.text(right, x - 3, y + 37, 44, 12, IfKit.TEXT_FONT, IfKit.TEXT, "")));
             }
-            // success rate line + 20-segment gauge (red -> amber -> green) over a dark track
-            ids.put("RATE", comps.size());
-            add(comps, want, text(textT, right, 6, 112, 124, 13, TEXT_FONT, WHITE, ""));
-            add(comps, want, solid(rect, right, 6, 127, 123, 10, GAUGE_BACK));
-            ids.put("FIRST_SEGMENT", comps.size());
-            for (int s = 0; s < SEGMENTS; s++) {
-                InterfaceDefinition seg = solid(rect, right, 8 + s * 6, 129, 5, 6, segmentColour(s));
-                seg.isHidden = true;
-                add(comps, want, seg);
-            }
-            ids.put("BREAKDOWN", comps.size());
-            InterfaceDefinition breakdown = text(textT, right, 6, 139, 124, 24, TEXT_FONT, GREY, "");
-            breakdown.yTextAlignment = 0;
-            breakdown.lineHeight = 11;
-            add(comps, want, breakdown);
-            ids.put("FAILURE", comps.size());
-            InterfaceDefinition failure = text(textT, right, 6, 165, 124, 38, TEXT_FONT, ORANGE, "");
-            failure.yTextAlignment = 0;
-            failure.lineHeight = 11;
-            add(comps, want, failure);
-            ids.put("FORGE", comps.size());
-            InterfaceDefinition forge = copy(buttonT);
-            place(forge, right, 4, 207, 128, 31);
-            forge.clickMask = 2;
-            forge.actions = new String[]{"Forge Upgrade"};
-            forge.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-            forge.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
-            forge.hasListener = true;
-            add(comps, want, forge);
-            InterfaceDefinition forgeLabel = copy(labelT);
-            place(forgeLabel, right, 5, 209, 126, 27);
-            forgeLabel.text = "";
-            add(comps, want, forgeLabel);
+            k.mark("RATE");
+            k.add(k.text(right, 6, 122, 124, 14, IfKit.TEXT_FONT, IfKit.WHITE, ""));
+            // the segmented meter: 20 blocks red -> amber -> green over a dark track (the server lights them)
+            k.add(k.solid(right, 6, 137, 124, 10, 0x1a1612));
+            k.add(k.outline(right, 6, 137, 124, 10, PANEL_EDGE, false));
+            k.mark("FIRST_SEGMENT");
+            for (int s = 0; s < SEGMENTS; s++)
+                k.add(IfKit.hidden(k.solid(right, 8 + s * 6, 139, 5, 6, segmentColour(s))));
+            k.mark("BREAKDOWN");
+            k.add(k.block(right, 6, 150, 124, 24, 0xb0a898, 11, false));
+            k.mark("FAILURE");
+            k.add(k.block(right, 6, 176, 124, 24, IfKit.ORANGE, 11, false));
+            // the primary action: raised stone, a warm gold lift on hover, a bold label
+            k.mark("FORGE");
+            k.stoneButton(right, 4, 204, 128, 34, "Forge Upgrade", IfKit.HEADING_FONT, "", 0x6b5a33);
 
-            ids.put("SEARCH", comps.size());
-            searchBar(comps, want, rect, textT, buttonT);
-
-            if (comps.size() != COMPONENTS)
-                throw new IllegalStateException("component count " + comps.size() + " != " + COMPONENTS);
-            for (Map.Entry<String, Integer> e : ids.entrySet())
-                System.out.println("CONST " + e.getKey() + " = " + e.getValue());
-
-            for (int c = 0; c < comps.size(); c++) {
-                InterfaceDefinition got = loader.load((GROUP << 16) | c, comps.get(c));
-                InterfaceDefinition exp = want.get(c);
-                exp.id = (GROUP << 16) | c;
-                for (Field f : InterfaceDefinition.class.getFields()) {
-                    if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
-                    if (!Objects.deepEquals(f.get(got), f.get(exp)))
-                        throw new IllegalStateException("component " + c + ": " + f.getName() + " " + f.get(got) + " != " + f.get(exp));
-                }
-            }
-            if (!apply) {
-                System.out.println("VERIFY OK -- " + comps.size() + " components, nothing written.");
-                return;
-            }
-            BuildSpinnerInterface.write(storage, index, srcArchive, comps, GROUP);
-            System.out.println("APPLY complete -- interface " + GROUP + " with " + comps.size() + " components.");
+            k.finish(apply);
         }
     }
 
+    /** The meter's block colours: red, amber, then green as the rate climbs. */
+    static int segmentColour(int s) {
+        if (s < 6) return 0xb33a2a;
+        if (s < 12) return 0xc69e38;
+        return 0x3fa34d;
+    }
+
+    /** A framed column: layer, fill, a dark edge and an inner rim. Returns the layer. */
+    static int framed(IfKit k, int x, int y, int w, int h) {
+        int id = k.add(k.layer(0, x, y, w, h));
+        k.add(k.solid(id, 0, 0, w, h, PANEL_FILL));
+        k.add(k.outline(id, 0, 0, w, h, PANEL_EDGE, false));
+        k.add(k.outline(id, 1, 1, w - 2, h - 2, PANEL_RIM, false));
+        return id;
+    }
+
+    /** A 44x40 item socket: well, top + left inner shadow, rim. */
+    static void socket(IfKit k, int parent, int x, int y, int fill, int rim) {
+        k.add(k.solid(parent, x, y, 44, 40, fill));
+        k.add(k.solid(parent, x, y, 44, 2, 0x15120f));
+        k.add(k.solid(parent, x, y, 2, 40, 0x15120f));
+        k.add(k.outline(parent, x, y, 44, 40, rim, false));
+    }
+
     /**
-     * The search bar (6 comps) at the right of the sub-header row: a recessed stone input box (click = search), its
-     * text (placeholder / query), a border, a magnifier, and an inset Clear button (box + label) the server lights up
-     * while a search is active.
+     * 6 comps + bevel: input box (click = search), its text, rim, magnifier, Clear box + label, then the inset bevel
+     * (shadow top + left, light edge bottom + right) and the Clear button's rim, so the whole bar reads as one recess.
      */
-    static void searchBar(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, InterfaceDefinition textT,
-                          InterfaceDefinition buttonT) {
-        int x = 330, y = 43, w = 158, h = 16;
-        InterfaceDefinition box = solid(rect, 0, x, y, w, h, 0x25201b);
+    static void searchBar(IfKit k, int x, int y, int w, int h) {
+        InterfaceDefinition box = k.solid(0, x, y, w, h, 0x221c16);
         box.clickMask = 2;
         box.actions = new String[]{"Search"};
-        box.onMouseOverListener = new Object[]{45, -2147483645, 0x2f2924};
-        box.onMouseLeaveListener = new Object[]{45, -2147483645, 0x25201b};
+        box.onMouseOverListener = new Object[]{45, -2147483645, 0x2c251d};
+        box.onMouseLeaveListener = new Object[]{45, -2147483645, 0x221c16};
         box.hasListener = true;
-        add(comps, want, box);
-        add(comps, want, text(textT, 0, x + 19, y, w - 64, h, TEXT_FONT, GREY, ""));
-        add(comps, want, outline(rect, 0, x, y, w, h, SLOT_BORDER, false));
-        InterfaceDefinition glass = itemSlot(buttonT, 0, x + 3, y + 1, 14, 14, null);
-        glass.borderType = 0;
-        glass.shadowColor = 0;
-        glass.spriteId = 1043;
-        add(comps, want, glass);
-        InterfaceDefinition clear = solid(rect, 0, x + w - 42, y + 2, 40, h - 4, BOX);
+        k.add(box);
+        k.add(k.text(0, x + 20, y, w - 68, h, IfKit.TEXT_FONT, IfKit.GREY, ""));
+        k.add(k.outline(0, x, y, w, h, PANEL_EDGE, false));
+        k.add(k.sprite(0, x + 4, y + 3, 14, 14, 1043, false));
+        InterfaceDefinition clear = k.solid(0, x + w - 45, y + 3, 42, h - 6, IfKit.STONE_FILL);
         clear.clickMask = 2;
         clear.actions = new String[]{"Clear search"};
-        clear.onMouseOverListener = new Object[]{45, -2147483645, BOX_HOVER};
-        clear.onMouseLeaveListener = new Object[]{45, -2147483645, BOX};
+        clear.onMouseOverListener = new Object[]{45, -2147483645, IfKit.STONE_HOVER};
+        clear.onMouseLeaveListener = new Object[]{45, -2147483645, IfKit.STONE_FILL};
         clear.hasListener = true;
-        add(comps, want, clear);
-        InterfaceDefinition clearLabel = text(textT, 0, x + w - 42, y + 2, 40, h - 4, TEXT_FONT, GREY, "Clear");
-        clearLabel.xTextAlignment = 1;
-        add(comps, want, clearLabel);
-    }
-
-    /** BuildWorkbenchInterface.panel places its comps under group 1153: re-point the 5 it just added at this group. */
-    static void fix(List<InterfaceDefinition> want, List<byte[]> comps, int first) {
-        for (int c = first; c < first + 5; c++) {
-            InterfaceDefinition d = want.get(c);
-            int parent = d.parentId & 0xffff;
-            d.parentId = (GROUP << 16) | parent;
-            comps.set(c, BuildBondsInterface.encodeIf3(d));
-        }
-    }
-
-    static int segmentColour(int s) {
-        if (s < 7)
-            return 0xc83c28;
-        if (s < 13)
-            return 0xe0a030;
-        return 0x3cc83c;
-    }
-
-    /** A graphic component the server fills with an item (if_setobject), optionally with an op. */
-    static InterfaceDefinition itemSlot(InterfaceDefinition buttonT, int parent, int x, int y, int w, int h, String op) {
-        InterfaceDefinition s = copy(buttonT);
-        place(s, parent, x, y, w, h);
-        s.spriteId = -1;
-        s.spriteTiling = false;
-        s.onMouseOverListener = null;
-        s.onMouseLeaveListener = null;
-        s.hasListener = false;
-        s.borderType = 1;
-        s.shadowColor = 0x302020;
-        if (op != null) {
-            s.clickMask = 2;
-            s.actions = new String[]{op};
-        }
-        return s;
-    }
-
-    static void selectable(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, int parent,
-                           int x, int y, int w, int h, String action) {
-        InterfaceDefinition b = solid(rect, parent, x, y, w, h, BOX);
-        b.clickMask = 2;
-        b.actions = new String[]{action};
-        b.onMouseOverListener = new Object[]{45, -2147483645, BOX_HOVER};
-        b.onMouseLeaveListener = new Object[]{45, -2147483645, BOX};
-        b.hasListener = true;
-        add(comps, want, b);
-        add(comps, want, outline(rect, parent, x, y, w, h, BORDER, false));
-        // selected (shown by the server, +2/+3): a recessed dark fill inside the border + a soft gold trim. These were
-        // two neon gold 1px outlines (rejected 2026-10-15: "harsh yellow wireframe boxes").
-        InterfaceDefinition recess = solid(rect, parent, x + 1, y + 1, w - 2, h - 2, ACTIVE_FILL);
-        recess.isHidden = true;
-        add(comps, want, recess);
-        add(comps, want, outline(rect, parent, x, y, w, h, ACTIVE_TRIM, true));
-    }
-
-    /**
-     * Category tab, same 4-comp layout as selectable() so RelicForge's ids stay put: +0 real OSRS bezel button (sprite
-     * 1002:169, hover script 44), +1 a permanently hidden spacer, +2 dark recess (opacity 110) and +3 soft gold trim,
-     * both shown on the active tab.
-     */
-    static void bezelTab(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, InterfaceDefinition buttonT,
-                         int parent, int x, int y, int w, int h, String action) {
-        InterfaceDefinition b = copy(buttonT);
-        place(b, parent, x, y, w, h);
-        b.clickMask = 2;
-        b.actions = new String[]{action};
-        b.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-        b.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
-        b.hasListener = true;
-        add(comps, want, b);
-        InterfaceDefinition spacer = solid(rect, parent, x, y, 1, 1, 0);
-        spacer.isHidden = true;
-        add(comps, want, spacer);
-        InterfaceDefinition recess = solid(rect, parent, x + 2, y + 2, w - 4, h - 4, 0x120f0c);
-        recess.opacity = 70; // deeper pressed-stone recess
-        recess.isHidden = true;
-        add(comps, want, recess);
-        add(comps, want, outline(rect, parent, x + 1, y + 1, w - 2, h - 2, ACTIVE_TRIM, true));
-    }
-
-    static InterfaceDefinition outline(InterfaceDefinition rect, int parent, int x, int y, int w, int h, int colour, boolean hidden) {
-        InterfaceDefinition o = copy(rect);
-        place(o, parent, x, y, w, h);
-        o.filled = false;
-        o.textColor = colour;
-        o.isHidden = hidden;
-        return o;
-    }
-
-    static InterfaceDefinition solid(InterfaceDefinition rect, int parent, int x, int y, int w, int h, int colour) {
-        InterfaceDefinition d = copy(rect);
-        place(d, parent, x, y, w, h);
-        d.filled = true;
-        d.textColor = colour;
-        d.opacity = 0;
-        return d;
-    }
-
-    static void add(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition d) {
-        comps.add(BuildBondsInterface.encodeIf3(d));
-        want.add(d);
-    }
-
-    static InterfaceDefinition layer(InterfaceDefinition t, int parent, int x, int y, int w, int h) {
-        InterfaceDefinition d = copy(t);
-        place(d, parent, x, y, w, h);
-        d.scrollWidth = 0;
-        d.scrollHeight = 0;
-        return d;
-    }
-
-    static InterfaceDefinition text(InterfaceDefinition t, int parent, int x, int y, int w, int h, int font, int colour, String s) {
-        InterfaceDefinition d = copy(t);
-        place(d, parent, x, y, w, h);
-        d.fontId = font;
-        d.textColor = colour;
-        d.text = s;
-        d.xTextAlignment = 0;
-        d.yTextAlignment = 1;
-        d.textShadowed = true;
-        return d;
-    }
-
-    static void place(InterfaceDefinition d, int parent, int x, int y, int w, int h) {
-        d.parentId = (GROUP << 16) | parent;
-        d.originalX = x;
-        d.originalY = y;
-        d.originalWidth = w;
-        d.originalHeight = h;
-        d.widthMode = d.heightMode = d.xPositionMode = d.yPositionMode = 0;
-        d.isHidden = false;
-        d.clickMask = 0;
-        d.actions = null;
-        d.name = "";
-        d.targetVerb = "";
-    }
-
-    static InterfaceDefinition copy(InterfaceDefinition s) {
-        return BuildBondsInterface.copy(s);
+        k.add(clear);
+        k.add(IfKit.centred(k.text(0, x + w - 45, y + 3, 42, h - 6, IfKit.TEXT_FONT, IfKit.GREY, "Clear")));
+        k.add(k.solid(0, x + 1, y + 1, w - 2, 1, IfKit.SHADOW));
+        k.add(k.solid(0, x + 1, y + 1, 1, h - 2, IfKit.SHADOW));
+        k.add(k.solid(0, x + 1, y + h - 1, w - 1, 1, 0x5a4d3a));
+        k.add(k.solid(0, x + w - 1, y + 1, 1, h - 1, 0x5a4d3a));
+        k.add(k.outline(0, x + w - 45, y + 3, 42, h - 6, 0x2b2620, false));
     }
 }

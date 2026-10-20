@@ -318,9 +318,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			case "vor", "vorath": {
-				if (VorathHandler.teleportPosition == null) {
-					player.sendMessage("Vorath's lair is currently unavailable.");
+			case "pandora", "vor", "vorath": {
+				if (VorathHandler.boss == null) {
+					String wait = VorathHandler.timeUntilNext();
+					player.sendMessage(wait == null
+							? "Pandora is about to burst out of its chest -- try again in a moment!"
+							: "Pandora, the Enigma Keeper is sealed in its chest. It returns in about " + wait + ".");
 					return true;
 				}
 				teleport(player, VorathHandler.teleportPosition);
@@ -614,7 +617,7 @@ public class CommandHandlerRegular {
 			}
 			case "globalboss":
 			case "gb": {
-				teleport(player, new Position(2900, 3616, 0));
+				teleport(player, io.ruin.model.activities.bosses.EventBossArea.TELEPORT);
 				return true;
 			}
 			case "reclaimcannon": {
@@ -660,6 +663,7 @@ public class CommandHandlerRegular {
 				else
 					code = "returning";
 				RefSystem.claimReferral(player, code);
+				io.ruin.model.content.codex.ZelusTask.AWAKENING_IN_ZELUS.step(player, io.ruin.model.content.codex.ZelusTask.STEP_KIT);
 				return true;
 			}
 
@@ -668,6 +672,7 @@ public class CommandHandlerRegular {
 			// (see RefSystem) - that's retired, "ref" is now just an alias for "referfriend".
 			case "referfriend",
 					"invite",
+					"refer",
 					"ref": {
 				return ReferralCommand.handle(player, args);
 			}

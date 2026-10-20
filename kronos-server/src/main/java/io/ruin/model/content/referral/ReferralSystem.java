@@ -33,9 +33,6 @@ public final class ReferralSystem {
 	public static final int MILESTONE_PLAYTIME_SECONDS = 60 * 60;
 	public static final int MILESTONE_TOTAL_LEVEL = 120;
 
-	/** Only accounts younger than this (playTime, seconds) may submit a referral link at all. */
-	public static final int REFERRAL_ELIGIBLE_PLAYTIME_SECONDS = 2 * 3600;
-
 	public static final int REFERRER_POINT_REWARD = 500;
 
 	// Refer Package - a brand-new item id (60235), not a repurposed existing one. See

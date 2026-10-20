@@ -84,6 +84,27 @@ public class FindBossRig {
                 }
                 return;
             }
+            if (args[3].startsWith("seqs=")) {
+                // chosen sets on one model (2026-10-20): seqs=label:a,b,c;label2:d,e -> stretch per seq + one strip row per set
+                File file = new File(args[4]);
+                ModelDefinition m = new ModelLoader().load(0, Files.readAllBytes(file.toPath()));
+                int[] rest = bounds(m);
+                BufferedImage strip = null;
+                for (String set : args[3].substring(5).split(";")) {
+                    String[] p = set.split(":");
+                    int[] anims = Arrays.stream(p[1].split(",")).mapToInt(Integer::parseInt).toArray();
+                    StringBuilder sb = new StringBuilder();
+                    for (int a : anims) {
+                        double[] s = stretch(m, a, skeletonOf(a));
+                        sb.append(s == null ? " " + a + "(missing)" : String.format(" %d(skel %d str %.3f mov %.0f)", a, skeletonOf(a), s[0], s[1]));
+                    }
+                    System.out.printf("%s %s:%s%n", file.getName(), p[0], sb);
+                    BufferedImage row = renderRow(m, rest, anims, file.getName() + " " + p[0]);
+                    strip = strip == null ? row : stack(strip, row);
+                }
+                ImageIO.write(strip, "png", new File(out, file.getName().replace(".dat", "") + "_seqs.png"));
+                return;
+            }
             for (int a = 4; a < args.length; a++)
                 analyse(new File(args[a]), npcs, out, top);
         }

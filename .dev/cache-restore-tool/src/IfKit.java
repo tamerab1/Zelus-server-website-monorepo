@@ -163,6 +163,65 @@ public class IfKit {
         return id;
     }
 
+    /** OSRS stone button pieces (2026-10-20, Trading Post redesign): rivet corners TL/TR/BL/BR, edges L/T/R/B. */
+    static final int[] STONE = {913, 914, 915, 916, 917, 918, 919, 920}, STONE_PRESSED = {929, 930, 931, 932, 933, 934, 935, 936};
+    static final int STONE_FILL = 0x524b40, STONE_HOVER = 0x5f5749, STONE_PRESSED_FILL = 0x3b352d, STONE_LABEL = 0xff981f;
+    /** Comps per stoneButton: fill, 8 pieces, pressed layer + its fill + 8 pieces, label. */
+    static final int STONE_COMPS = 20, STONE_PRESSED_LAYER = 9, STONE_LABEL_OFFSET = 19;
+
+    /** A sprite graphic (no ops), tiled or stretched. */
+    InterfaceDefinition sprite(int parent, int x, int y, int w, int h, int spriteId, boolean tiled) {
+        InterfaceDefinition s = copy(buttonT);
+        place(s, parent, x, y, w, h);
+        s.spriteId = spriteId;
+        s.spriteTiling = tiled;
+        s.borderType = 0;
+        s.shadowColor = 0;
+        return s;
+    }
+
+    /** The 8 border pieces of a stone button around (x, y, w, h). */
+    void stoneFrame(int parent, int x, int y, int w, int h, int[] pieces) {
+        add(sprite(parent, x, y, 9, 9, pieces[0], false));
+        add(sprite(parent, x + w - 9, y, 9, 9, pieces[1], false));
+        add(sprite(parent, x, y + h - 9, 9, 9, pieces[2], false));
+        add(sprite(parent, x + w - 9, y + h - 9, 9, 9, pieces[3], false));
+        // the edges are 3px lines on a 9x9 canvas (right / bottom at offset 6): the client tiles by the canvas, so each
+        // edge component is 9px thick and sits flush with its side
+        add(sprite(parent, x, y + 9, 9, h - 18, pieces[4], true));
+        add(sprite(parent, x + 9, y, w - 18, 9, pieces[5], true));
+        add(sprite(parent, x + w - 9, y + 9, 9, h - 18, pieces[6], true));
+        add(sprite(parent, x + 9, y + h - 9, w - 18, 9, pieces[7], true));
+    }
+
+    /**
+     * {@link #STONE_COMPS} comps: the OSRS stone button (the Trading Post / settings button with rivet corners, sprites
+     * 913-920): fill (click; hover brightens it), the 8 border pieces, a hidden pressed layer (+9: darker fill and the
+     * 929-936 pieces, shown by the server for an active tab / toggle), and the label (+19). Returns the fill's id.
+     */
+    int stoneButton(int parent, int x, int y, int w, int h, String action, int font, String label) {
+        return stoneButton(parent, x, y, w, h, action, font, label, STONE_HOVER);
+    }
+
+    /** {@link #stoneButton} with its own hover colour (e.g. a warm gold lift on a primary action). */
+    int stoneButton(int parent, int x, int y, int w, int h, String action, int font, String label, int hover) {
+        InterfaceDefinition fill = solid(parent, x, y, w, h, STONE_FILL);
+        if (action != null) {
+            fill.clickMask = 2;
+            fill.actions = new String[]{action};
+            fill.onMouseOverListener = new Object[]{45, -2147483645, hover};
+            fill.onMouseLeaveListener = new Object[]{45, -2147483645, STONE_FILL};
+            fill.hasListener = true;
+        }
+        int id = add(fill);
+        stoneFrame(parent, x, y, w, h, STONE);
+        int pressed = add(hidden(layer(parent, x, y, w, h)));
+        add(solid(pressed, 0, 0, w, h, STONE_PRESSED_FILL));
+        stoneFrame(pressed, 0, 0, w, h, STONE_PRESSED);
+        add(centred(text(parent, x + 3, y + 1, w - 6, h - 2, font, STONE_LABEL, label)));
+        return id;
+    }
+
     /** A graphic component the server fills with an item (if_setobject), optionally with an op. */
     InterfaceDefinition itemSlot(int parent, int x, int y, int w, int h, String op) {
         InterfaceDefinition s = copy(buttonT);

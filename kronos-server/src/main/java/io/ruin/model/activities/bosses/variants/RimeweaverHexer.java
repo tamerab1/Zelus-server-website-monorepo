@@ -13,7 +13,7 @@ public class RimeweaverHexer extends BossVariant {
 
 	private static final int GFX_FROST = 4284, GFX_FROST_HIT = 4285, GFX_SHARD = 4286, GFX_PERMAFROST = 4287;
 	private static final int ANIM_ATTACK = 1540;
-	private static final int FREEZE_SECONDS = 5;
+	private static final int FREEZE_SECONDS = 3; // Sanctum guardian nerf 2026-10-20 (players: "so aggressive"): was 5 s, special every 5, 18-32
 
 	@Override
 	protected int attackRange() {
@@ -22,7 +22,7 @@ public class RimeweaverHexer extends BossVariant {
 
 	@Override
 	protected int specialEvery() {
-		return 5;
+		return 8;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class RimeweaverHexer extends BossVariant {
 			if (target.player != null)
 				target.player.sendMessage("<col=0055ff>Permafrost locks you in place!</col>");
 		}
-		target.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(18, 32).delay(2));
+		target.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(10, 20).delay(2));
 		return true;
 	}
 }

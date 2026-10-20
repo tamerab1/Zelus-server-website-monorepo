@@ -68,7 +68,11 @@ public class CustomBossCombat extends NPCCombat {
 			Map.entry(HULK, new Tune(1, -1, 0, 0, 0)),             // Hulk: see hulkAttack
 			Map.entry(16213, new Tune(1, -1, 0, 0, 1)),            // Terrax: two-hit strike
 			// Nidhogg: Infernal Fire Blast (Fire Surge 1465 / 1466) from its jaws over its own tiles, arcing, on the strike
-			Map.entry(16214, new Tune(4, 1465, 88, 22, 0, 8, 16, false, 1466, 124))
+			Map.entry(16214, new Tune(4, 1465, 88, 22, 0, 8, 16, false, 1466, 124)),
+			// Round 2 (2026-10-20, 16217-16225): the melee ones need no tune
+			Map.entry(16218, new Tune(8, 1459, 60, 18, 0, 10, 15, true, 1460, 92)), // Kaelen: Water Surge from the staff thrust
+			Map.entry(16220, new Tune(8, MAGIC_GFX, 55, 16, 0)),                    // Zephyros: bolt off the cast hand
+			Map.entry(16223, new Tune(7, 1044, 70, 20, 0, 10, 24, true, -1, 0))     // Malakor: toxic flask lobbed at the toss
 	);
 
 	private Tune tune;

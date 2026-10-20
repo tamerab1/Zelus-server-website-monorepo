@@ -642,6 +642,11 @@ public enum SlayerUnlock {
 		if (id == TuraelTask.SOURHOG.getTaskId()) {
 			return TuraelTask.SOURHOG.getTaskName();
 		}
+		// 2026-10-20 bug report ("says bird, but is chickens on Turael"): the cache name is just "Birds", while the task
+		// teleport goes to the Lumbridge chickens -- chickens (and ducks, seagulls, terrorbirds...) all count
+		if (id == TuraelTask.CHICKEN.getTaskId()) {
+			return "Birds (chickens count)";
+		}
 		return EnumMap.get(693).strings().get(id);
 	}
 

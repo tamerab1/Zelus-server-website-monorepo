@@ -971,9 +971,7 @@ public enum Pet {
 		if (player.wildernessLevel > 0)
 			return Color.RED.wrap("You cannot bring battle pets to the wilderness!");
 		int region = player.getPosition().getRegionId();
-		if (DonationBossHandler.map != null && DonationBossHandler.map.swRegion.id == region)
-			return "You cannot drop pets here.";
-		if (VoteBossHandler.map != null && VoteBossHandler.map.swRegion.id == region)
+		if (io.ruin.model.activities.bosses.EventBossArea.isIn(player))
 			return "You cannot drop pets here.";
 		if (SummerEvent.map != null && SummerEvent.map.isIn(player))
 			return "You can't place a pet here.";

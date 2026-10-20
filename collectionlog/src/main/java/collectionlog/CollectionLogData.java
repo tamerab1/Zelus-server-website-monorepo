@@ -1279,6 +1279,22 @@ public enum CollectionLogData {
 		return false;
 	}
 
+	/** True if every collection log page holding this item is a Clues page (clue scroll rewards only). */
+	public static boolean isClueRewardOnly(Item item) {
+		boolean found = false;
+		for (CollectionLogData data : VALUES) {
+			for (Item uniqueItem : data.getUniqueItems()) {
+				if (uniqueItem.getId() == item.getId()) {
+					if (data.categories != CollectionLogUpdated.Categories.CLUES) {
+						return false;
+					}
+					found = true;
+				}
+			}
+		}
+		return found;
+	}
+
 	public CollectionLogUpdated.Categories getCategories() {
 		return categories;
 	}

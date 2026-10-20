@@ -55,7 +55,7 @@ public class VoteVolcanus extends NPCCombat {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			VoteBossHandler.boss = null;
 			try {
-				for (Player p : new ArrayList<>(npc.getPosition().getRegion().players)) {
+				for (Player p : io.ruin.model.activities.bosses.EventBossArea.players(npc)) {
 					if (!damagingPlayers.contains(p.getUserId()))
 						continue;
 					try {
@@ -80,6 +80,7 @@ public class VoteVolcanus extends NPCCombat {
 
 	private void rewardPlayer(Player player) {
 		player.voteBossKills.increment(player);
+		io.ruin.model.content.codex.ZelusTask.EARTHSHAKERS_DOWNFALL.increment(player, 1);
 		int perkPoints = VoteHandler.playerVotedRecently(player) ? 2 : 1;
 		player.perkPoints += perkPoints;
 		player.sendMessage(Color.RED.wrap("Your reward has been dropped to your feet! (+" + perkPoints + " perk points from Volcanus)"));

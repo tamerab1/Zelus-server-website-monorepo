@@ -1,0 +1,17 @@
+# Armor fix 1 (2026-10-20): Hellfang claws -> Hellfang crossbow on the Armadyl crossbow record (same models 61332 / 61333);
+# the Assassin set's Drop option becomes Destroy. Generated from armor_1020_items.txt (gen_armor_1020.py).
+variant 26382 31878 31879 1 -|Wear|-|-|Destroy Assassin hood
+strip 31878 40,41
+models 31878 49456:61298,49446:61299,49452:61299
+variant 26384 31880 31881 1 -|Wear|-|-|Destroy Assassin garb
+strip 31880 40,41
+models 31880 49458:61300,49450:61301,49454:61301
+variant 26386 31882 31883 1 -|Wear|-|-|Destroy Assassin legs
+strip 31882 40,41
+models 31882 49459:61302,49448:61303,49453:61303
+variant 11802 31884 31885 1 -|Wield|-|-|Destroy Assassin greatsword
+strip 31884 40,41
+models 31884 28075:61304,27649:61305,42644:61305
+variant 11785 31912 31913 1 -|Wield|-|-|Drop Hellfang crossbow
+strip 31912 40,41
+models 31912 19967:61332,19839:61333,42611:61333

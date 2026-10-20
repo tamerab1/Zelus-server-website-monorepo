@@ -102,12 +102,9 @@ public class CollectionLog {
 			}
 
 			// Every collection log slot fires this, including common minigame/clue rewards --
-			// gate the public Discord embed to pets and items above a configurable value so the
-			// rare-drops channel isn't spammed on practically every unlock.
-			long value = (long) item.getDef().highAlchValue * item.getAmount();
-			boolean notable = Pet.getByItemId(item.getId()) != null
-					|| value >= DiscordAnnounceThresholds.collectionLogMinValue();
-			if (notable) {
+			// the public Discord embed is only for notable unlocks, so #ingame-drops isn't spammed.
+			// (The client's loot logger no longer posts collection log unlocks: this is the only one.)
+			if (isNotableDrop(item)) {
 				CollectionLogHook.sendDiscordMessage(() -> {
 					var jsonObject = new JSONObject();
 					// Strip any OSRS chat markup (<col=>, <shad=>, <img=>) -- Discord doesn't
@@ -121,6 +118,23 @@ public class CollectionLog {
 		}
 
 		player.collectionLog().collect(player, item.getId(), item.getAmount());
+	}
+
+	/**
+	 * Worth a public Discord post (2026-10-20, #ingame-drops spam): a pet; anything whose high alch value (x amount)
+	 * meets "discord_collectionlog_min_value" (10M); or a rare unique flagged dropAnnounce (item_info.json, or protect
+	 * value over 500K: raid purples, boss and custom boss gear, sigils, donator boxes) that isn't a clue scroll reward.
+	 * Trimmed / gilded clue cosmetics below the value line still unlock in the log, silently.
+	 */
+	static boolean isNotableDrop(Item item) {
+		if (Pet.getByItemId(item.getId()) != null) {
+			return true;
+		}
+		long value = (long) item.getDef().highAlchValue * item.getAmount();
+		if (value >= DiscordAnnounceThresholds.collectionLogMinValue()) {
+			return true;
+		}
+		return item.getDef().dropAnnounce && !CollectionLogData.isClueRewardOnly(item);
 	}
 
 	private void notifyNewItemAdded(Player player, Item item) {

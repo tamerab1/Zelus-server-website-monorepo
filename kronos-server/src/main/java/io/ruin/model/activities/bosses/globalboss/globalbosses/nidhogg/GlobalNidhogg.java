@@ -108,6 +108,7 @@ public class GlobalNidhogg extends NPCCombat {
 
 	private void rewardPlayer(Player player) {
 		player.globalBossKills.increment(player);
+		io.ruin.model.content.codex.ZelusTask.ABYSSAL_CONQUEROR.increment(player, 1);
 		int rolls = Random.get(4, 7);
 		int perkPoints = VoteHandler.playerVotedRecently(player) ? 3 : 2;
 		player.perkPoints += perkPoints;

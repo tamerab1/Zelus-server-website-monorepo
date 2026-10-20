@@ -66,7 +66,7 @@ public class DonationBoss extends NPCCombat {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			int rewarded = 0, under = 0, failed = 0;
 			try {
-				for (Player p : new ArrayList<>(npc.getPosition().getRegion().players)) {
+				for (Player p : io.ruin.model.activities.bosses.EventBossArea.players(npc)) {
 					int dealt = damagingPlayers.getOrDefault(p.getUserId(), 0);
 					if (dealt <= 0)
 						continue;

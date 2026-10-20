@@ -1,6 +1,12 @@
 package discord.webhooks;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,9 +27,20 @@ public class WebhookSender {
 			.connectTimeout(Duration.ofSeconds(5))
 			.build();
 
+	/** {@code attachment://item_<id>.png} thumbnails ({@link ItemIcons}): their PNGs go up with the message. */
+	private static final Pattern ITEM_ATTACHMENT = Pattern.compile(Pattern.quote(ItemIcons.PREFIX) + "(" + ItemIcons.FILE_PREFIX + "\\d+\\.png)");
+
 	public static CompletableFuture<Result> send(String target, Message message) {
-		var request = buildRequest(target, message.toJson().toString());
-		return send(request);
+		var json = message.toJson().toString();
+		var files = new LinkedHashMap<String, byte[]>();
+		var matcher = ITEM_ATTACHMENT.matcher(json);
+		while (matcher.find()) {
+			var bytes = ItemIcons.read(matcher.group(1));
+			if (bytes != null) {
+				files.putIfAbsent(matcher.group(1), bytes);
+			}
+		}
+		return send(files.isEmpty() ? buildRequest(target, json) : buildMultipartRequest(target, json, files));
 	}
 
 	private static CompletableFuture<Result> send(HttpRequest request) {
@@ -34,8 +51,9 @@ public class WebhookSender {
 					if (status >= 200 && status < 300) {
 						return CompletableFuture.completedFuture(new Result(Result.Status.Ok, status, body, 0));
 					} else if (status == 429) {
+						// rate limited: Retry re-queues it (it was Ok, which silently dropped the message)
 						var delayMs = computeRetryDelayMs(response);
-						return CompletableFuture.completedFuture(new Result(Result.Status.Ok, status, body, delayMs));
+						return CompletableFuture.completedFuture(new Result(Result.Status.Retry, status, body, delayMs));
 					}
 					return CompletableFuture.completedFuture(new Result(Result.Status.Error, status, body, 0));
 				});
@@ -68,6 +86,32 @@ public class WebhookSender {
 				.timeout(Duration.ofSeconds(10))
 				.header("Content-Type", "application/json")
 				.POST(HttpRequest.BodyPublishers.ofString(json))
+				.build();
+	}
+
+	/** multipart/form-data: the JSON as payload_json, then each file as files[n] (Discord's upload format). */
+	private static HttpRequest buildMultipartRequest(String url, String json, Map<String, byte[]> files) {
+		var boundary = "zelus" + UUID.randomUUID().toString().replace("-", "");
+		var body = new ByteArrayOutputStream();
+		var crlf = "\r\n";
+		body.writeBytes(("--" + boundary + crlf
+				+ "Content-Disposition: form-data; name=\"payload_json\"" + crlf
+				+ "Content-Type: application/json" + crlf + crlf
+				+ json + crlf).getBytes(StandardCharsets.UTF_8));
+		int n = 0;
+		for (var file : files.entrySet()) {
+			body.writeBytes(("--" + boundary + crlf
+					+ "Content-Disposition: form-data; name=\"files[" + n++ + "]\"; filename=\"" + file.getKey() + "\"" + crlf
+					+ "Content-Type: image/png" + crlf + crlf).getBytes(StandardCharsets.UTF_8));
+			body.writeBytes(file.getValue());
+			body.writeBytes(crlf.getBytes(StandardCharsets.UTF_8));
+		}
+		body.writeBytes(("--" + boundary + "--" + crlf).getBytes(StandardCharsets.UTF_8));
+		return HttpRequest.newBuilder()
+				.uri(URI.create(url))
+				.timeout(Duration.ofSeconds(10))
+				.header("Content-Type", "multipart/form-data; boundary=" + boundary)
+				.POST(HttpRequest.BodyPublishers.ofByteArray(body.toByteArray()))
 				.build();
 	}
 }

@@ -21,7 +21,7 @@ public class ThunderbornWarlord extends BossVariant {
 
 	@Override
 	protected int specialEvery() {
-		return 6;
+		return 8; // Sanctum guardian nerf 2026-10-20 (players: "so aggressive"): was 6, 15-30 + 2-tick stun + ALL prayers switched off
 	}
 
 	@Override
@@ -43,10 +43,9 @@ public class ThunderbornWarlord extends BossVariant {
 		npc.forceText("Feel the storm!");
 		for (Player p : victims) {
 			p.graphics(GFX_LIGHTNING, 0, 0);
-			p.hit(new Hit(npc).randDamage(15, 30).delay(1));
-			p.stun(2, true);
-			p.getPrayer().deactivateAll();
-			p.sendMessage("<col=8A0707>The storm shatters your prayers!</col>");
+			p.hit(new Hit(npc).randDamage(10, 20).delay(1));
+			p.stun(1, true);
+			p.sendMessage("<col=8A0707>The storm staggers you!</col>");
 		}
 		return true;
 	}

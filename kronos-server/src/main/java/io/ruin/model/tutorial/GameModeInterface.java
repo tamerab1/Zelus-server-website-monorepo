@@ -406,6 +406,10 @@ public class GameModeInterface {
 				break;
 		}
 		player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.NONE.id));
+		// the Zelus Codex's first task: the path is chosen (2026-10-20)
+		io.ruin.model.content.codex.ZelusTask.AWAKENING_IN_ZELUS.step(player, io.ruin.model.content.codex.ZelusTask.STEP_PATH);
+		player.sendMessage("<col=ff981f><shad=000000>Welcome to Zelus!</shad></col> Open your Zelus Codex to track your "
+			+ "milestones and unlock unique rewards.");
 		StarterGuide.continueTutorial(player);
 
 	}

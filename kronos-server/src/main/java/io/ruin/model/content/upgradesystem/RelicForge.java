@@ -30,18 +30,21 @@ public final class RelicForge {
 
 	public static final int INTERFACE = 1158;
 	private static final int CLOSE = 2, TITLE = 3, SUB_HEADER = 4;
-	/** Tabs: box (hover), border, gold outline x2, label. */
-	private static final int FIRST_TAB = 10, TAB_STRIDE = 5, TAB_OUTLINE = 2, TAB_LABEL = 4;
-	private static final int SCROLL = 25, SCROLLBAR = 26, SCROLL_HEIGHT = 207;
-	/** Cards: layer, box, border, gold outline x2, item, name, tier line, rate line. */
-	private static final int FIRST_CARD = 27, CARD_STRIDE = 9, CARD_BOX = 1, CARD_OUTLINE = 3, CARD_ITEM = 5, CARD_NAME = 6,
-		CARD_TIER = 7, CARD_RATE = 8, CARD_PITCH = 40, CARDS = 40;
-	private static final int BASE_ITEM = 398, BASE_NAME = 399, OUTCOME_ITEM = 406, OUTCOME_NAME = 407, STAT_DIFF = 409;
-	/** Reagents: fill, border, item, owned/required. */
-	private static final int FIRST_REAGENT = 416, REAGENT_STRIDE = 4, REAGENT_ITEM = 2, REAGENT_COUNT = 3, REAGENTS = 6;
-	private static final int RATE = 440, FIRST_SEGMENT = 442, SEGMENTS = 20, BREAKDOWN = 462, FAILURE = 463, FORGE = 464;
-	/** Search bar: input box (click = search), its text, border, magnifier, Clear box + label. */
-	private static final int SEARCH = 466, SEARCH_TEXT = 467, SEARCH_CLEAR = 470;
+	/** Stone buttons (IfKit.stoneButton, 2026-10-20 redesign): fill (click), +9 pressed layer, +19 label. */
+	private static final int PRESSED = 9, LABEL = 19;
+	private static final int FIRST_TAB = 20, TAB_STRIDE = 20;
+	private static final int SCROLL = 80, SCROLLBAR = 81, SCROLL_HEIGHT = 208;
+	/** Cards: layer, fill (click), selected recess + shadow, divider, item well, item, name, tier pill + text, rate. */
+	private static final int FIRST_CARD = 82, CARD_STRIDE = 11, CARD_BOX = 1, CARD_SELECTED = 2, CARD_ITEM = 6, CARD_NAME = 7,
+		CARD_TIER = 9, CARD_RATE = 10, CARD_PITCH = 40, CARDS = 40;
+	/** The base socket holds the item, or its translucent silhouette (BASE_GHOST) while the player lacks it. */
+	private static final int BASE_ITEM = 532, BASE_GHOST = 533, BASE_NAME = 534, OUTCOME_ITEM = 545, OUTCOME_NAME = 546, STAT_DIFF = 550;
+	/** Reagents: well, rim, item, owned/required (under the slot, clear of the item's stack number). */
+	private static final int FIRST_REAGENT = 556, REAGENT_STRIDE = 4, REAGENT_ITEM = 2, REAGENT_COUNT = 3, REAGENTS = 6;
+	/** The segmented success meter: 20 blocks, red -> amber -> green, lit by the server. */
+	private static final int RATE = 580, FIRST_SEGMENT = 583, SEGMENTS = 20, BREAKDOWN = 603, FAILURE = 604, FORGE = 605;
+	/** Search bar: input box (click = search), its text, rim, magnifier, Clear box + label. */
+	private static final int SEARCH = 5, SEARCH_TEXT = 6, SEARCH_CLEAR = 9;
 
 	private static final String[] CATEGORIES = {"Weapons", "Armour", "Utility"};
 	private static final String[] BONUS_NAMES = {"Stab", "Slash", "Crush", "Magic", "Range", "Stab def", "Slash def",
@@ -82,6 +85,7 @@ public final class RelicForge {
 				};
 			}
 			h.actions[BASE_ITEM] = (SimpleAction) p -> examine(p, baseItem(p, selected(p)));
+			h.actions[BASE_GHOST] = (SimpleAction) p -> examine(p, baseItem(p, selected(p)));
 			h.actions[OUTCOME_ITEM] = (SimpleAction) p -> examine(p, selected(p) == null ? null : selected(p).outcome());
 			for (int k = 0; k < REAGENTS; k++) {
 				int slot = k;
@@ -138,9 +142,8 @@ public final class RelicForge {
 		for (int t = 0; t < CATEGORIES.length; t++) {
 			int tab = FIRST_TAB + t * TAB_STRIDE;
 			boolean active = t == s.forgeCategory && s.forgeSearch == null;
-			ps.setHidden(INTERFACE, tab + TAB_OUTLINE, !active);
-			ps.setHidden(INTERFACE, tab + TAB_OUTLINE + 1, !active);
-			ps.sendString(INTERFACE, tab + TAB_LABEL, (active ? GOLD : WHITE) + CATEGORIES[t] + END);
+			ps.setHidden(INTERFACE, tab + PRESSED, !active);
+			ps.sendString(INTERFACE, tab + LABEL, (active ? GOLD : ORANGE) + CATEGORIES[t] + END);
 		}
 		List<UpgradeItems> list = list(player);
 		ps.sendString(INTERFACE, SEARCH_TEXT, s.forgeSearch != null ? WHITE + s.forgeSearch + END : GREY + "Search recipes..." + END);
@@ -151,15 +154,15 @@ public final class RelicForge {
 			ps.setHidden(INTERFACE, card, recipe == null);
 			if (recipe == null)
 				continue;
-			ps.setHidden(INTERFACE, card + CARD_OUTLINE, recipe != s.currentSection);
-			ps.setHidden(INTERFACE, card + CARD_OUTLINE + 1, recipe != s.currentSection);
+			ps.setHidden(INTERFACE, card + CARD_SELECTED, recipe != s.currentSection);
+			ps.setHidden(INTERFACE, card + CARD_SELECTED + 1, recipe != s.currentSection);
 			if (listChanged) {
 				ps.sendItem(INTERFACE, card + CARD_ITEM, recipe.outcome().getId(), 1);
 				ps.sendString(INTERFACE, card + CARD_NAME, ORANGE + shorten(recipe.outcome().getDef().name, 40) + END); // wraps to 2 lines
 				opBase(ps, card + CARD_BOX, ORANGE + recipe.outcome().getDef().name + END);
 				ps.sendString(INTERFACE, card + CARD_TIER, tier(recipe));
 			}
-			ps.sendString(INTERFACE, card + CARD_RATE, "<col=40ac3b>" + rate(player, recipe) + "% Rate" + END);
+			ps.sendString(INTERFACE, card + CARD_RATE, "<col=40ac3b>" + rate(player, recipe) + "% rate" + END);
 		}
 		if (listChanged) {
 			int contentHeight = list.size() * CARD_PITCH - 2;
@@ -174,6 +177,7 @@ public final class RelicForge {
 	private static void sendRecipe(Player player, UpgradeItems recipe) {
 		PacketSender ps = player.getPacketSender();
 		ps.setHidden(INTERFACE, BASE_ITEM, recipe == null);
+		ps.setHidden(INTERFACE, BASE_GHOST, true);
 		ps.setHidden(INTERFACE, OUTCOME_ITEM, recipe == null);
 		if (recipe == null) {
 			ps.sendString(INTERFACE, BASE_NAME, GREY + "No recipes here" + END);
@@ -186,15 +190,19 @@ public final class RelicForge {
 				ps.setHidden(INTERFACE, FIRST_SEGMENT + seg, true);
 			ps.sendString(INTERFACE, BREAKDOWN, "");
 			ps.sendString(INTERFACE, FAILURE, "");
-			ps.sendString(INTERFACE, FORGE + 1, GREY + "Forge Upgrade" + END);
+			ps.setHidden(INTERFACE, FORGE + PRESSED, true);
+			ps.sendString(INTERFACE, FORGE + LABEL, GREY + "Forge Upgrade" + END);
 			return;
 		}
 		// base -> outcome
 		Item base = baseItem(player, recipe);
 		boolean haveBase = UpgradeItems.ownedVariant(player, recipe.ingredientList()[0]) != null;
-		ps.sendItem(INTERFACE, BASE_ITEM, base.getId(), base.getAmount());
+		// owned: the item; missing: its translucent silhouette (no more red text in the frame)
+		ps.setHidden(INTERFACE, BASE_ITEM, !haveBase);
+		ps.setHidden(INTERFACE, BASE_GHOST, haveBase);
+		ps.sendItem(INTERFACE, haveBase ? BASE_ITEM : BASE_GHOST, base.getId(), base.getAmount());
 		opBase(ps, BASE_ITEM, ORANGE + base.getDef().name + END + adminId(player, base.getId()));
-		ps.sendString(INTERFACE, BASE_NAME, shorten(base.getDef().name, 28) + "<br>" + (haveBase ? GREEN + "(owned)" + END : RED + "(missing)" + END));
+		ps.sendString(INTERFACE, BASE_NAME, shorten(base.getDef().name, 28) + "<br>" + (haveBase ? GREEN + "In your inventory" + END : GREY + "Not in your inventory" + END));
 		ps.sendItem(INTERFACE, OUTCOME_ITEM, recipe.outcome().getId(), 1);
 		opBase(ps, OUTCOME_ITEM, ORANGE + recipe.outcome().getDef().name + END + adminId(player, recipe.outcome().getId()));
 		ps.sendString(INTERFACE, OUTCOME_NAME, shorten(recipe.outcome().getDef().name, 44)); // wraps to 2 lines
@@ -217,7 +225,8 @@ public final class RelicForge {
 			ps.sendItem(INTERFACE, slot + REAGENT_ITEM, item.getId(), item.getAmount());
 			opBase(ps, slot + REAGENT_ITEM, ORANGE + item.getDef().name + END + " (x" + item.getAmount() + " required"
 				+ (catalyst ? ", catalyst" : "") + ")");
-			ps.sendString(INTERFACE, slot + REAGENT_COUNT, (ok ? GREEN : RED) + Math.min(owned, 99_999) + "/" + item.getAmount() + END);
+			// owned/required under the slot, kept to one line in its 44px ("0/1,250", "12/25K")
+			ps.sendString(INTERFACE, slot + REAGENT_COUNT, (ok ? GREEN : "<col=ff6b5a>") + compact(owned) + "/" + compact(item.getAmount()) + END);
 		}
 
 		// success gauge + breakdown
@@ -231,9 +240,19 @@ public final class RelicForge {
 		ps.sendString(INTERFACE, BREAKDOWN, "Base " + recipe.baseRate() + "%" + (donator > 0 ? " · Donator +" + donator + "%" : "")
 			+ (pity > 0 ? "<br>Pity +" + pity + "% (from failed tries)" : ""));
 		ps.sendString(INTERFACE, FAILURE, total >= 100 ? GREEN + "Guaranteed success." + END
-			: "On failure:<br>catalyst consumed,<br>base and materials " + GREEN + "kept" + END + ".");
+			: "On failure: catalyst lost,<br>base and materials " + GREEN + "kept" + END + ".");
+		// always raised stone (gold lift on hover); the label says whether it can run: bright green when ready, gold
+		// "Missing reagents" otherwise (both high contrast on the stone)
 		boolean ready = recipe.ready(player);
-		ps.sendString(INTERFACE, FORGE + 1, ready ? ORANGE + "Forge Upgrade" + END : GREY + "Forge Upgrade" + END);
+		ps.setHidden(INTERFACE, FORGE + PRESSED, true);
+		ps.sendString(INTERFACE, FORGE + LABEL, ready ? "<col=7dff6a>Forge Upgrade" + END : GOLD + "Missing reagents" + END);
+	}
+
+	/** 950 / 1,250 / 12K / 1.5M: short enough for the reagent count line. */
+	private static String compact(int n) {
+		if (n < 10_000) return String.format("%,d", n);
+		if (n < 1_000_000) return (n / 1000) + "K";
+		return String.format("%.1fM", n / 1_000_000D).replace(".0M", "M");
 	}
 
 	private static void hideReagent(PacketSender ps, int k) {
@@ -266,8 +285,10 @@ public final class RelicForge {
 				return;
 			int before = player.getInventory().count(recipe.outcome().getId());
 			recipe.createItem(player);
-			if (player.getInventory().count(recipe.outcome().getId()) > before)
+			if (player.getInventory().count(recipe.outcome().getId()) > before) {
 				player.graphics(SUCCESS_GFX);
+				io.ruin.model.content.codex.ZelusTask.MASTER_OF_THE_FORGE.increment(player, 1);
+			}
 			open(player);
 		};
 		double rate = recipe.getSuccessRate(player);
@@ -364,14 +385,14 @@ public final class RelicForge {
 	private static String tier(UpgradeItems recipe) {
 		int base = recipe.baseRate();
 		if (base >= 100)
-			return "<col=c0c0c0>[Tier I]</col>";
+			return "<col=c0c0c0>Tier I</col>";
 		if (base >= 85)
-			return "<col=3cb043>[Tier II]</col>";
+			return "<col=3cb043>Tier II</col>";
 		if (base >= 75)
-			return "<col=00aaff>[Tier III]</col>";
+			return "<col=00aaff>Tier III</col>";
 		if (base >= 60)
-			return "<col=ff981f>[Tier IV]</col>";
-		return "<col=ff3333>[Tier V]</col>";
+			return "<col=ff981f>Tier IV</col>";
+		return "<col=ff3333>Tier V</col>";
 	}
 
 	private static String rate(Player player, UpgradeItems recipe) {
@@ -391,12 +412,13 @@ public final class RelicForge {
 			}
 		}
 		if (diffs.isEmpty())
-			return GREY + sentences(recipe.description(), 150) + END;
+			return GREY + sentences(recipe.description(), 90) + END;
 		diffs.sort((x, y) -> Integer.compare(Math.abs(y[1]), Math.abs(x[1])));
 		StringBuilder sb = new StringBuilder();
-		for (int k = 0; k < Math.min(6, diffs.size()); k++) {
+		// one stat per line, the 4 biggest (4 lines fit the stat panel with a bottom margin)
+		for (int k = 0; k < Math.min(4, diffs.size()); k++) {
 			int[] d = diffs.get(k);
-			sb.append(k == 0 ? "" : k % 2 == 0 ? "<br>" : " · ")
+			sb.append(k == 0 ? "" : "<br>")
 				.append(d[1] > 0 ? GREEN + "+" : RED).append(d[1]).append(" ").append(BONUS_NAMES[d[0]]).append(END);
 		}
 		return sb.toString();

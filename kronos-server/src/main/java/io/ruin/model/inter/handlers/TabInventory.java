@@ -142,11 +142,9 @@ public class TabInventory {
 				return;
 			}
 
-			if (DonationBossHandler.map != null) {
-				if (player.getPosition().getRegion().id == DonationBossHandler.map.swRegion.id) {
-					player.sendMessage("You can't drop items here.");
-					return;
-				}
+			if (io.ruin.model.activities.bosses.EventBossArea.isIn(player)) {
+				player.sendMessage("You can't drop items here.");
+				return;
 			}
 
 			if (item.getId() == 30464 && !item.copyOfAttributes().isEmpty()) {

@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import core.task.Continuations;
 import io.ruin.cache.ObjType;
 import io.ruin.model.ScrollbarClientScript;
 import io.ruin.model.World;
@@ -25,6 +24,7 @@ import io.ruin.model.inter.dialogue.YesNoDialogue;
 import io.ruin.model.inter.handlers.ItemStatsViewer;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.network.PacketSender;
+import core.task.Continuations;
 import lombok.experimental.ExtensionMethod;
 import tradepost.TradePost;
 import tradepost.TradePostCache;
@@ -33,20 +33,19 @@ import tradepost.TradePostFeatured;
 import tradepost.TradePostHandler;
 import tradepost.TradePostHistory;
 import tradepost.TradePostOffer;
-import tradepost.db.TradePostCoffersDb;
 import tradepost.hook.Attributes;
 import tradepost.module.Module;
 
 /**
- * The Zelus Market (interface 1161, built by .dev/cache-restore-tool/src/BuildMarketInterface.java), the player
- * exchange that replaced the Reason trade post screens 1131/1132. It only draws and dispatches; every trade goes
- * through the {@link TradePost} engine (atomic instant buys, offer matching, the collection box).
+ * The Zelus Trading Post (interface 1161, built by .dev/cache-restore-tool/src/BuildTradingPostInterface.java after
+ * the classic OSRS Trading Post layout, 2026-10-20; it replaced the tabbed Zelus Market of the same group). It only
+ * draws and dispatches; every trade goes through the {@link TradePost} engine (atomic instant buys, offer matching,
+ * the collection box).
  * <ul>
- *     <li>Browse: every live sell listing (search by item or seller, sort, pages of 40);</li>
- *     <li>Featured: promoted listings (gold framed);</li>
- *     <li>My Shop: your offer slots (cancel / feature) and collection box (coins + items), Sell item / Buy offer;</li>
- *     <li>History: your recent buys and sales;</li>
- *     <li>Lookup: every seller with a shop, then one seller's listings.</li>
+ *     <li>left: Search for Item / Player, Recent Listings, View History; the collection box (Collect Items /
+ *     Collect Earnings, with live counts);</li>
+ *     <li>right: My Offers (used / max slots, cancel or feature), or the chosen view (listings, search results, a
+ *     seller's shop, the seller list, history) with Sort and Back; Buy Offer / Sell Offer underneath.</li>
  * </ul>
  * The 1133 inventory side panel stays open beside it: clicking an inventory item lists it for sale.
  */
@@ -55,72 +54,51 @@ public final class ZelusMarket {
 
 	public static final int INTERFACE = 1161;
 	private static final int SIDE_INVENTORY = 1133;
-	public static final String TAG = "<col=ff981f><shad=000000>[Zelus Market]</shad></col> ";
+	public static final String TAG = "<col=ff981f><shad=000000>[Trading Post]</shad></col> ";
 
-	private static final int CLOSE = 2, TITLE = 3, COFFER = 4, STATS = 5;
-	/**
-	 * Tabs, toggles, sort and pager are OSRS bezel buttons: button (click), active parts (dark recess + gold trim) at
-	 * +1..+2, label +3.
-	 */
-	private static final int FIRST_TAB = 6, TAB_STRIDE = 4, TAB_ACTIVE = 1, TAB_ACTIVE_PARTS = 2, TAB_LABEL = 3;
-	private static final int FILTER_BAR = 26, SEARCH = 27, SEARCH_TEXT = 28, SEARCH_CLEAR = 31;
-	private static final int TOGGLE_ITEMS = 33, TOGGLE_PLAYERS = 37, SEGMENT_LABEL = 3, SORT = 41, BUTTON_LABEL = 3;
-	private static final int ACTION_BAR = 45, ACTION_SELL = 46, ACTION_BUY = 48, ACTION_COINS = 50, ACTION_ITEMS = 52;
-	private static final int SCROLL = 68, SCROLLBAR = 69, LIST_HEIGHT = 176;
-	private static final int SHOWING = 872, PREV = 873, PAGE = 877, NEXT = 878;
-	/** Pager arrow sprites over the buttons (BuildBrandIcons): gold when the page can turn, dim otherwise. */
-	private static final int PREV_ARROW = 901, NEXT_ARROW = 902, ARROW_LEFT = 24528, ARROW_RIGHT = 24529,
-		ARROW_LEFT_DIM = 24530, ARROW_RIGHT_DIM = 24531;
-	/**
-	 * Rows (46px): layer, box, border, featured trim + stripe, item, name, seller line, then the stock bar (track, fill,
-	 * fill highlight, border, text over it), price, total, button + label.
-	 */
-	private static final int FIRST_ROW = 70, ROW_STRIDE = 20, ROWS = 40, ROW_PITCH = 48;
-	/** +5/+6: the sunken item slot (well + rim, 2026-10-15) sits under the item. */
-	private static final int R_BOX = 1, R_GOLD = 3, R_ITEM = 7, R_NAME = 8, R_INFO = 9, R_TRACK = 10, R_FILL = 11,
-		R_SHINE = 12, R_DEPTH = 13, R_EDGE = 14, R_BAR_TEXT = 15, R_PRICE = 16, R_TOTAL = 17, R_BUTTON = 18, BAR_WIDTH = 66;
-	private static final int EMPTY = 870;
-	private static final int MODAL = 882, MODAL_ITEM = 888, MODAL_TITLE = 889, MODAL_INFO = 890, MODAL_BUY_1 = 891,
-		MODAL_BUY_5 = 893, MODAL_BUY_X = 895, MODAL_BUY_ALL = 897, MODAL_CANCEL = 899;
+	private static final int CLOSE = 2, TITLE = 3;
+	/** Stone buttons (IfKit.stoneButton): fill (click), +9 pressed layer, +19 label. */
+	private static final int PRESSED = 9, LABEL = 19;
+	private static final int SEARCH_ITEM = 5, SEARCH_PLAYER = 25, RECENT = 45, HISTORY = 65;
+	private static final int COLLECT_ITEMS = 86, COLLECT_EARNINGS = 107, COLLECT_ITEMS_LABEL = 1430, COLLECT_EARNINGS_LABEL = 1431;
+	private static final int HEADING = 128, COUNT = 129, SORT = 130, SORT_BUTTON = 131, BACK = 151, BACK_BUTTON = 152;
+	private static final int SCROLL = 176, SCROLLBAR = 177, LIST_HEIGHT = 150;
+	/** Rows (40px on a 42px pitch): +1 fill (click), +3 featured trim, +6 item, +7 name, +8 detail, +9 button layer, +10 button. */
+	private static final int FIRST_ROW = 178, ROW_STRIDE = 30, ROWS = 40, ROW_PITCH = 42;
+	private static final int R_FILL = 1, R_GOLD = 3, R_ITEM = 6, R_NAME = 7, R_INFO = 8, R_BUTTON_LAYER = 9, R_BUTTON = 10;
+	private static final int EMPTY = 1378, FOOTER = 1381, PAGER = 1382, PREV = 1383, PAGE = 1384, NEXT = 1385;
+	private static final int ARROW_LEFT = 24528, ARROW_RIGHT = 24529, ARROW_LEFT_DIM = 24530, ARROW_RIGHT_DIM = 24531;
+	private static final int BUY_OFFER = 1386, SELL_OFFER = 1408;
+	private static final int MODAL = 1432, MODAL_ITEM = 1438, MODAL_TITLE = 1439, MODAL_INFO = 1440, MODAL_BUY_1 = 1441,
+		MODAL_BUY_5 = 1461, MODAL_BUY_X = 1481, MODAL_BUY_ALL = 1501, MODAL_CANCEL = 1521;
 
-	/**
-	 * Clientscript 10754: set the stock bar fill's width at the slim bar's 6px height (a copy of 10606, which forces an
-	 * 18px height and stretched the old bar over the "(total)" line). Clientscript 45: set a component's colour.
-	 */
-	private static final int SET_FILL_WIDTH = 10754, SET_COLOUR = 45;
-	/** Muted green while healthy, dark gold when half or less is left (was neon green / orange). */
-	private static final int BAR_GREEN = 0x2e7d32, BAR_LOW = 0xc69e38;
+	/** The right panel's views. */
+	private static final int MY_OFFERS = 0, LISTINGS = 1, ITEM_SEARCH = 2, SELLERS = 3, SHOP = 4, HISTORY_VIEW = 5;
+	private static final String[] SORTS = {"Newest first", "Price: Low-High", "Price: High-Low"};
 
-	private static final int BROWSE = 0, FEATURED = 1, MY_SHOP = 2, HISTORY = 3, LOOKUP = 4;
-	private static final String[] TABS = {"Browse", "Featured", "My Shop", "History", "Lookup"};
-	private static final String[] SORTS = {"Newest first", "Price: Low to High", "Price: High to Low"};
-
-	private static final String FEATURED_COL = "<col=c8a050>";
-	private static final String ORANGE = "<col=ff981f>", GOLD = "<col=ffc35a>", YELLOW = "<col=ffff00>",
-		GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>", GREEN = "<col=00ff00>", RED = "<col=ff0000>",
-		DIM = "<col=9e9e9e>", PLAYER = "<col=e0e0e0>", TAN = "<col=d8d0c0>", DARK = "<col=5a5045>", VACANT = "<col=6f6f6f>", END = "</col>";
+	private static final String ORANGE = "<col=ff981f>", GOLD = "<col=ffc35a>", WHITE = "<col=ffffff>", GREEN = "<col=00ff00>",
+		YELLOW = "<col=ffff00>", RED = "<col=ff4040>", SOFT = "<col=c8b896>", DIM = "<col=9e9e9e>", PLAYER = "<col=e0e0e0>", END = "</col>";
 
 	/** Per-player view state (lives on TradePostPlayer). */
 	public static final class State {
-		int tab = BROWSE;
+		int view = MY_OFFERS;
+		/** The view Back returns to (the seller list when a shop was opened from it). */
+		int backTo = MY_OFFERS;
+		/** Item / player search text (lower case), or the seller whose shop is open. */
 		String search;
-		boolean searchPlayers;
+		String shop;
 		int sort;
 		int page;
-		/** Lookup tab: whose shop is being viewed (null = the seller list). */
-		String lookup;
 		final List<Row> rows = new ArrayList<>();
 		int pages = 1;
-		/** Rows on all pages of the current view. */
 		int total;
 		int sentRows = -1;
 		/** The listing in the buy modal (null = closed). */
 		TradePostOffer modalOffer;
 	}
 
-	/** One list row: exactly one of offer / entry / history / seller is set. */
-	record Row(TradePostOffer offer, TradePostCoffersDb.CofferEntry entry, TradePostHistory history, String seller,
-			int count) {
+	/** One list row: exactly one of offer / history / seller is set. */
+	record Row(TradePostOffer offer, TradePostHistory history, String seller, int count) {
 	}
 
 	private ZelusMarket() {
@@ -129,46 +107,30 @@ public final class ZelusMarket {
 	public static void register() {
 		InterfaceHandler.register(INTERFACE, h -> {
 			h.actions[CLOSE] = (SimpleAction) Player::closeInterfaces;
-			for (int t = 0; t < TABS.length; t++) {
-				int tab = t;
-				h.actions[FIRST_TAB + t * TAB_STRIDE] = (SimpleAction) p -> {
-					var s = state(p);
-					s.tab = tab;
-					s.page = 0;
-					s.lookup = null;
-					s.search = null;
-					s.modalOffer = null;
-					draw(p, true);
-				};
-			}
-			h.actions[SEARCH] = (SimpleAction) ZelusMarket::promptSearch;
-			h.actions[SEARCH_CLEAR] = (SimpleAction) p -> {
-				var s = state(p);
-				if (s.search != null) {
-					s.search = null;
-					s.page = 0;
-					draw(p, true);
-				}
-			};
-			h.actions[TOGGLE_ITEMS] = (SimpleAction) p -> setSearchPlayers(p, false);
-			h.actions[TOGGLE_PLAYERS] = (SimpleAction) p -> setSearchPlayers(p, true);
-			h.actions[SORT] = (SimpleAction) p -> {
+			h.actions[SEARCH_ITEM] = (SimpleAction) p -> promptSearch(p, false);
+			h.actions[SEARCH_PLAYER] = (SimpleAction) p -> promptSearch(p, true);
+			h.actions[RECENT] = (SimpleAction) p -> show(p, LISTINGS, MY_OFFERS);
+			h.actions[HISTORY] = (SimpleAction) p -> show(p, HISTORY_VIEW, MY_OFFERS);
+			h.actions[COLLECT_ITEMS] = (SimpleAction) TradePostCoffer::collectAll;
+			h.actions[COLLECT_EARNINGS] = (SimpleAction) TradePostCoffer::collectCoins;
+			h.actions[SORT_BUTTON] = (SimpleAction) p -> {
 				var s = state(p);
 				s.sort = (s.sort + 1) % SORTS.length;
 				s.page = 0;
 				draw(p, true);
 			};
+			h.actions[BACK_BUTTON] = (SimpleAction) p -> {
+				var s = state(p);
+				show(p, s.view == SHOP ? s.backTo : MY_OFFERS, MY_OFFERS);
+			};
 			h.actions[PREV] = (SimpleAction) p -> turnPage(p, -1);
 			h.actions[NEXT] = (SimpleAction) p -> turnPage(p, 1);
-			h.actions[ACTION_SELL] = (SimpleAction) p -> p.sendMessage(TAG
-					+ "Click an item in your inventory to list it for sale.");
-			h.actions[ACTION_BUY] = (SimpleAction) TradePostHandler::promptBuyOffer;
-			h.actions[ACTION_COINS] = (SimpleAction) TradePostCoffer::collectCoins;
-			h.actions[ACTION_ITEMS] = (SimpleAction) TradePostCoffer::collectAll;
+			h.actions[BUY_OFFER] = (SimpleAction) TradePostHandler::promptBuyOffer;
+			h.actions[SELL_OFFER] = (SimpleAction) p -> p.sendMessage(TAG + "Click an item in your inventory to list it for sale.");
 			for (int r = 0; r < ROWS; r++) {
 				int index = r;
 				int row = FIRST_ROW + r * ROW_STRIDE;
-				h.actions[row + R_BOX] = (SimpleAction) p -> select(p, index, false);
+				h.actions[row + R_FILL] = (SimpleAction) p -> select(p, index, false);
 				h.actions[row + R_BUTTON] = (SimpleAction) p -> select(p, index, true);
 				h.actions[row + R_ITEM] = (SimpleAction) p -> {
 					var item = rowItem(row(p, index));
@@ -227,30 +189,31 @@ public final class ZelusMarket {
 	 */
 	public static boolean blockedByLoadout(Player player) {
 		if (io.ruin.model.content.rivals.RivalsSnapshot.active(player) || player.pvpPresetActive) {
-			player.sendMessage("You can't use the Zelus Market while using a Rivals kit or a PvP preset.");
+			player.sendMessage("You can't use the Trading Post while using a Rivals kit or a PvP preset.");
 			return true;
 		}
 		return false;
 	}
 
-	/** Opens the market (on a given tab, or -1 for the last one); refuses ironmen and while disabled. */
-	public static void open(Player player, int tab) {
+	/** Opens the Trading Post (on a view, or -1 for the last one); refuses ironmen and while disabled. */
+	public static void open(Player player, int view) {
 		if (!Module.ENABLED) {
-			player.sendMessage("The Zelus Market is closed for maintenance; please try again later.");
+			player.sendMessage("The Trading Post is closed for maintenance; please try again later.");
 			return;
 		}
 		if (player.getGameMode().isIronMan()) {
-			player.sendMessage("Your game mode prevents you from using the Zelus Market.");
+			player.sendMessage("Your game mode prevents you from using the Trading Post.");
 			return;
 		}
 		if (blockedByLoadout(player))
 			return;
 		var s = state(player);
-		if (tab >= 0) {
-			s.tab = tab;
+		if (view >= 0) {
+			s.view = view;
+			s.backTo = MY_OFFERS;
 			s.page = 0;
-			s.lookup = null;
 			s.search = null;
+			s.shop = null;
 		}
 		s.modalOffer = null;
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
@@ -258,13 +221,13 @@ public final class ZelusMarket {
 			player.openInterface(ToplevelComponent.INVENTORY_TAB_AREA, SIDE_INVENTORY);
 			player.getPacketSender().sendIfEvents(SIDE_INVENTORY, 0, 0, 27, 1086);
 		}
-		var ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "Zelus Market" + END);
+		player.getPacketSender().sendString(INTERFACE, TITLE, "Trading Post");
 		draw(player, true);
 	}
 
+	/** The view opened after placing an offer (the player's own offers). */
 	public static int myShopTab() {
-		return MY_SHOP;
+		return MY_OFFERS;
 	}
 
 	/** After an input box (which closes the screen): reopen on the same view. */
@@ -274,11 +237,24 @@ public final class ZelusMarket {
 		}
 	}
 
-	/** Engine callback: redraw if the market is open (keeps the scroll position unless the row count changed). */
+	/** Engine callback: redraw if the Trading Post is open (keeps the scroll position unless the row count changed). */
 	public static void refresh(Player player) {
 		if (player != null && player.isVisibleInterface(INTERFACE)) {
 			draw(player, false);
 		}
+	}
+
+	private static void show(Player player, int view, int backTo) {
+		var s = state(player);
+		s.view = view;
+		s.backTo = backTo;
+		s.page = 0;
+		s.modalOffer = null;
+		if (view == MY_OFFERS || view == LISTINGS || view == HISTORY_VIEW) {
+			s.search = null;
+			s.shop = null;
+		}
+		draw(player, true);
 	}
 
 	/* ---------------- drawing ---------------- */
@@ -288,58 +264,38 @@ public final class ZelusMarket {
 		var ps = player.getPacketSender();
 		var pTradePost = player.tradePost();
 
-		// header
-		ps.sendString(INTERFACE, COFFER, DIM + "Coffer:" + END + " " + GREEN + coins(pTradePost.cofferCoins) + " gp" + END
-				+ (pTradePost.coffer.isEmpty() ? "" : DIM + "  +  " + END + YELLOW + pTradePost.coffer.size() + " item"
-						+ (pTradePost.coffer.size() == 1 ? "" : "s") + END));
-		var live = TradePostCache.offers().filter(o -> o.isSell() && !o.isEmpty()).count();
-		ps.sendString(INTERFACE, STATS, s.tab == LOOKUP && s.lookup != null
-				? DIM + "Viewing: " + END + RED + display(s.lookup) + END + DIM + "'s shop" + END
-				: DIM + "Listings:" + END + " " + WHITE + live + " active" + END);
+		// left column: the active view's button sits pressed; the collection box shows what is waiting
+		pressed(ps, SEARCH_ITEM, s.view == ITEM_SEARCH);
+		pressed(ps, SEARCH_PLAYER, s.view == SELLERS || s.view == SHOP);
+		pressed(ps, RECENT, s.view == LISTINGS);
+		pressed(ps, HISTORY, s.view == HISTORY_VIEW);
+		int waiting = pTradePost.coffer.size();
+		ps.sendString(INTERFACE, COLLECT_ITEMS_LABEL, "Collect Items<br>" + (waiting > 0 ? GREEN : SOFT)
+				+ "(" + waiting + " item" + (waiting == 1 ? "" : "s") + ")" + END);
+		boolean earned = pTradePost.cofferCoins.signum() > 0;
+		ps.sendString(INTERFACE, COLLECT_EARNINGS_LABEL, "Collect Earnings<br>" + (earned ? GREEN : SOFT)
+				+ "(" + coins(pTradePost.cofferCoins) + " coins)" + END);
 
-		// tabs
-		for (int t = 0; t < TABS.length; t++) {
-			int tab = FIRST_TAB + t * TAB_STRIDE;
-			boolean active = t == s.tab;
-			for (int k = 0; k < TAB_ACTIVE_PARTS; k++) {
-				ps.setHidden(INTERFACE, tab + TAB_ACTIVE + k, !active);
-			}
-			ps.sendString(INTERFACE, tab + TAB_LABEL, (active ? GOLD : TAN) + TABS[t] + END);
-		}
-
-		// filter bar / My Shop action bar
-		boolean shop = s.tab == MY_SHOP;
-		ps.setHidden(INTERFACE, FILTER_BAR, shop);
-		ps.setHidden(INTERFACE, ACTION_BAR, !shop);
+		// heading: My Offers + slots, or the view's title with Sort and Back
 		buildRows(player);
-		if (shop) {
-			ps.sendString(INTERFACE, ACTION_SELL + 1, ORANGE + "Sell item" + END);
-			ps.sendString(INTERFACE, ACTION_BUY + 1, ORANGE + "Buy offer" + END);
+		boolean mine = s.view == MY_OFFERS;
+		ps.sendString(INTERFACE, HEADING, heading(s));
+		ps.sendString(INTERFACE, COUNT, mine ? "(" + usedSlots(player) + "/" + TradePost.maxOfferSlots(player) + ")" : "");
+		ps.setHidden(INTERFACE, SORT, mine || s.view == SELLERS);
+		ps.sendString(INTERFACE, SORT_BUTTON + LABEL, SORTS[s.sort]);
+		ps.setHidden(INTERFACE, BACK, mine);
 
-			boolean coins = pTradePost.cofferCoins.signum() > 0;
-			ps.sendString(INTERFACE, ACTION_COINS + 1, coins ? GREEN + "Collect (" + coins(pTradePost.cofferCoins) + " gp)" + END
-					: VACANT + "Collect (0 gp)" + END);
-			ps.sendString(INTERFACE, ACTION_ITEMS + 1, pTradePost.coffer.isEmpty() ? VACANT + "Collect items (0)" + END
-					: GREEN + "Collect items (" + pTradePost.coffer.size() + ")" + END);
-		} else {
-			boolean lookupList = s.tab == LOOKUP && s.lookup == null;
-			String placeholder = lookupList ? "Search players..." : "Search items or players...";
-			ps.sendString(INTERFACE, SEARCH_TEXT, s.search != null ? WHITE + s.search + END : GREY + placeholder + END);
-			ps.sendString(INTERFACE, SEARCH_CLEAR + 1, s.search != null ? ORANGE + "Clear" + END : GREY + "Clear" + END);
-			boolean players = s.searchPlayers || lookupList;
-			segment(ps, TOGGLE_ITEMS, !players, "Items");
-			segment(ps, TOGGLE_PLAYERS, players, "Players");
-			ps.sendString(INTERFACE, SORT + BUTTON_LABEL, TAN + SORTS[s.sort] + END);
-		}
-		// footer: range + pager (all tabs)
+		// footer: a hint on My Offers, else the range and (with more than one page) the pager
 		int first = s.page * ROWS;
-		ps.sendString(INTERFACE, SHOWING, s.total == 0 ? "" : "Showing " + (first + 1) + "-" + (first + s.rows.size())
-				+ " of " + s.total);
-		ps.sendString(INTERFACE, PAGE, (s.page + 1) + " / " + s.pages);
-		ps.sendString(INTERFACE, PREV + BUTTON_LABEL, "");
-		ps.sendString(INTERFACE, NEXT + BUTTON_LABEL, "");
-		ps.setGraphic(INTERFACE, PREV_ARROW, s.page > 0 ? ARROW_LEFT : ARROW_LEFT_DIM);
-		ps.setGraphic(INTERFACE, NEXT_ARROW, s.page + 1 < s.pages ? ARROW_RIGHT : ARROW_RIGHT_DIM);
+		ps.sendString(INTERFACE, FOOTER, mine ? DIM + "Click an inventory item to sell it." + END
+				: s.total == 0 ? "" : DIM + "Showing " + (first + 1) + "-" + (first + s.rows.size()) + " of " + s.total + END);
+		boolean paged = !mine && s.pages > 1;
+		ps.setHidden(INTERFACE, PAGER, !paged);
+		if (paged) {
+			ps.sendString(INTERFACE, PAGE, (s.page + 1) + " / " + s.pages);
+			ps.setGraphic(INTERFACE, PREV, s.page > 0 ? ARROW_LEFT : ARROW_LEFT_DIM);
+			ps.setGraphic(INTERFACE, NEXT, s.page + 1 < s.pages ? ARROW_RIGHT : ARROW_RIGHT_DIM);
+		}
 
 		// rows
 		for (int r = 0; r < ROWS; r++) {
@@ -365,112 +321,98 @@ public final class ZelusMarket {
 		drawModal(player, ps);
 	}
 
-	private static String emptyText(State s) {
-		return switch (s.tab) {
-			case FEATURED -> "No featured listings right now.<br>" + GREY + "Feature one of yours from My Shop." + END;
-			case MY_SHOP -> "You have no offers or items waiting.<br>" + GREY
-					+ "Click an inventory item to sell it, or use Buy offer." + END;
-			case HISTORY -> "No trades yet.";
-			case LOOKUP -> s.lookup != null ? display(s.lookup) + " has nothing listed." : "No sellers found.";
-			default -> s.search != null ? "Nothing matches \"" + s.search + "\"." : "The market is empty.";
+	private static void pressed(PacketSender ps, int button, boolean on) {
+		ps.setHidden(INTERFACE, button + PRESSED, !on);
+	}
+
+	private static int usedSlots(Player player) {
+		int used = 0;
+		for (var offer : player.tradePost().offers) {
+			if (offer != null && !offer.isEmpty()) {
+				used++;
+			}
+		}
+		return used;
+	}
+
+	/** The heading fits 110px of bold text: long search terms are shortened. */
+	private static String heading(State s) {
+		return switch (s.view) {
+			case LISTINGS -> "Recent Listings";
+			case ITEM_SEARCH -> "\"" + clip(s.search, 12) + "\"";
+			case SELLERS -> s.search == null ? "Sellers" : "\"" + clip(s.search, 12) + "\"";
+			case SHOP -> clip(display(s.shop), 14);
+			case HISTORY_VIEW -> "History";
+			default -> "My Offers";
 		};
 	}
 
-	/** A toggle button: recessed + gold trim when selected. */
-	private static void segment(PacketSender ps, int component, boolean selected, String label) {
-		for (int k = 1; k <= 2; k++) {
-			ps.setHidden(INTERFACE, component + k, !selected);
+	private static String clip(String text, int max) {
+		if (text == null) {
+			return "";
 		}
-		ps.sendString(INTERFACE, component + SEGMENT_LABEL, (selected ? GOLD : TAN) + label + END);
+		return text.length() <= max ? text : text.substring(0, max - 1) + "..";
+	}
+
+	private static String emptyText(State s) {
+		return switch (s.view) {
+			case LISTINGS -> "Nothing is listed right now.";
+			case ITEM_SEARCH -> "No listings match \"" + clip(s.search, 20) + "\".";
+			case SELLERS -> "No sellers match that name.";
+			case SHOP -> display(s.shop) + " has nothing listed.";
+			case HISTORY_VIEW -> "You haven't traded yet.";
+			default -> "You have no offers.";
+		};
 	}
 
 	private static void drawRow(Player player, PacketSender ps, int row, Row data) {
 		boolean featured = false;
-		boolean bar = false;
-		// My Shop: the bar shows how much of YOUR offer has traded (0 sold = an empty track); listings show stock left
-		boolean progress = false;
 		String button = null;
 		int itemId = rowItem(data);
 		int itemAmount = 1;
-		String name, info, price = "", total = "";
+		String name, info;
 
 		if (data.offer() != null && data.offer().owner.equalsIgnoreCase(player.uuid())) {
-			// My Shop: one of my offers
+			// My Offers: what has traded so far, the price, and Cancel
 			var o = data.offer();
 			featured = o.isSell() && TradePostFeatured.isFeatured(o);
 			itemAmount = o.getAmount();
-			name = ORANGE + itemName(itemId) + END + (o.isSell() ? GREEN + " (Selling)" + END : YELLOW + " (Buying)" + END)
-					+ (featured ? FEATURED_COL + "  Featured " + hours(TradePostFeatured.secondsLeft(o)) + END : "");
 			var done = o.getStartAmount() - o.getAmount();
-			info = (o.isSell() ? done + " sold" : done + " bought") + " · " + ago(o.getTimeStamp());
-			price = colouredCoins(o.priceEach());
-			total = DIM + "(" + coins(o.priceEach().multiply(o.amount)) + " left)" + END;
-			bar = true;
-			progress = true;
+			// featured rows get the gold trim (the name stays one line); the row's menu shows the time left
+			name = itemName(itemId);
+			info = (o.isSell() ? GREEN + "Selling" : YELLOW + "Buying") + END + " " + done + "/" + o.getStartAmount()
+					+ " · " + GREEN + coins(o.priceEach()) + END + " ea";
 			button = "Cancel";
 		} else if (data.offer() != null) {
-			// a listing (Browse / Featured / a seller's shop)
+			// a listing (Recent Listings / a search / a seller's shop)
 			var o = data.offer();
 			featured = TradePostFeatured.isFeatured(o);
 			itemAmount = o.getAmount();
-			name = ORANGE + itemName(itemId) + END + (featured ? FEATURED_COL + "  Featured" + END : "");
-			// short enough for the column: the amount is already on the item icon and in the Stock column
-			info = "from " + PLAYER + display(o.owner) + END + " · " + ago(o.getTimeStamp());
-			price = colouredCoins(o.priceEach());
-			total = DIM + "(" + coins(o.priceEach().multiply(o.amount)) + " total)" + END;
-			bar = true;
+			name = itemName(itemId);
+			info = GREEN + coins(o.priceEach()) + END + " ea · x" + o.getAmount() + " · " + PLAYER + display(o.owner) + END;
 			button = "Buy";
-		} else if (data.entry() != null) {
-			var e = data.entry();
-			itemAmount = e.itemAmount();
-			name = ORANGE + itemName(itemId) + END;
-			info = "Waiting in your collection box";
-			button = "Collect";
 		} else if (data.history() != null) {
 			var h = data.history();
 			itemAmount = h.getItem().getAmount();
-			name = ORANGE + itemName(itemId) + END + (itemAmount > 1 ? WHITE + " x " + itemAmount + END : "");
-			info = (h.getOfferType() == 1 ? "Sold to " : "Bought from ") + PLAYER + display(h.getSeller()) + END
-					+ " · " + ago(h.getAge());
-			price = colouredCoins(h.getPrice());
-			total = DIM + "(" + coins(h.getPrice().multiply(BigInteger.valueOf(itemAmount))) + " total)" + END;
+			name = itemName(itemId) + (itemAmount > 1 ? WHITE + " x " + itemAmount + END : "");
+			info = (h.getOfferType() == 1 ? RED + "Sold to " : GREEN + "Bought from ") + END + PLAYER + display(h.getSeller()) + END
+					+ " · " + coins(h.getPrice()) + " · " + ago(h.getAge());
 		} else {
-			// Lookup: a seller
-			name = ORANGE + display(data.seller()) + END;
-			info = data.count() + " listing" + (data.count() == 1 ? "" : "s");
+			// a seller
+			name = display(data.seller());
 			var worth = TradePostCache.offers().filter(o -> o.isSell() && !o.isEmpty() && o.owner.equalsIgnoreCase(data.seller()))
 					.map(o -> o.priceEach().multiply(o.amount)).reduce(BigInteger.ZERO, BigInteger::add);
-			total = DIM + "(" + coins(worth) + " listed)" + END;
+			info = data.count() + " listing" + (data.count() == 1 ? "" : "s") + " · " + GREEN + coins(worth) + END + " listed";
 			button = "View";
 		}
 
 		ps.setHidden(INTERFACE, row + R_GOLD, !featured);
-		ps.setHidden(INTERFACE, row + R_GOLD + 1, !featured);
 		ps.sendItem(INTERFACE, row + R_ITEM, itemId, Math.max(1, itemAmount));
 		ps.sendString(INTERFACE, row + R_NAME, name);
 		ps.sendString(INTERFACE, row + R_INFO, info);
-		for (int part = R_TRACK; part <= R_BAR_TEXT; part++) {
-			// the old highlight / shade lines stay hidden: the slim bar is a flat fill
-			ps.setHidden(INTERFACE, row + part, !bar || part == R_SHINE || part == R_DEPTH);
-		}
-		if (bar) {
-			var o = data.offer();
-			int start = Math.max(0, o.getStartAmount()), traded = Math.max(0, start - o.getAmount());
-			double ratio = start <= 0 ? 0 : (progress ? (double) traded : o.getAmount()) / start;
-			int filled = progress ? traded : o.getAmount();
-			int width = filled <= 0 ? 0 : Math.max(2, (int) Math.round(BAR_WIDTH * ratio));
-			boolean healthy = progress || ratio > 0.5;
-			ps.sendClientScript(SET_FILL_WIDTH, "Ii", INTERFACE << 16 | (row + R_FILL), width);
-			ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (row + R_FILL), healthy ? BAR_GREEN : BAR_LOW);
-			String what = progress ? traded + " / " + start + (o.isSell() ? " sold" : " bought") : o.getAmount() + " / " + start + " left";
-			ps.sendString(INTERFACE, row + R_BAR_TEXT, WHITE + "<shad=000000>" + what + "</shad>" + END);
-		}
-		ps.sendString(INTERFACE, row + R_PRICE, price);
-		ps.sendString(INTERFACE, row + R_TOTAL, total);
-		ps.setHidden(INTERFACE, row + R_BUTTON, button == null);
-		ps.setHidden(INTERFACE, row + R_BUTTON + 1, button == null);
+		ps.setHidden(INTERFACE, row + R_BUTTON_LAYER, button == null);
 		if (button != null) {
-			ps.sendString(INTERFACE, row + R_BUTTON + 1, ORANGE + "<shad=000000>" + button + "</shad>" + END);
+			ps.sendString(INTERFACE, row + R_BUTTON + LABEL, button);
 		}
 	}
 
@@ -492,71 +434,57 @@ public final class ZelusMarket {
 		ps.sendString(INTERFACE, MODAL_TITLE, itemName(itemId));
 		var wallet = BigInteger.valueOf(player.getInventory().getAmount(995))
 				.add(BigInteger.valueOf(player.getInventory().getAmount(13204)).multiply(BigInteger.valueOf(1000)));
-		ps.sendString(INTERFACE, MODAL_INFO, "Price: " + colouredCoins(offer.priceEach()) + " each<br>"
+		ps.sendString(INTERFACE, MODAL_INFO, "Price: " + GREEN + coins(offer.priceEach()) + END + " each<br>"
 				+ "Available: " + WHITE + offer.getAmount() + END + "<br>"
-				+ "Seller: " + RED + display(offer.owner) + END + "<br>"
-				+ "Your coins: " + colouredCoins(wallet));
-		ps.sendString(INTERFACE, MODAL_BUY_1 + 1, "Buy 1");
-		ps.sendString(INTERFACE, MODAL_BUY_5 + 1, "Buy 5");
-		ps.sendString(INTERFACE, MODAL_BUY_X + 1, "Buy X");
-		ps.sendString(INTERFACE, MODAL_BUY_ALL + 1, "Buy All");
-		ps.sendString(INTERFACE, MODAL_CANCEL + 1, "Cancel");
+				+ "Seller: " + PLAYER + display(offer.owner) + END + "<br>"
+				+ "Your coins: " + GREEN + coins(wallet) + END);
 	}
 
-	/* ---------------- rows per tab ---------------- */
+	/* ---------------- rows per view ---------------- */
 
 	private static void buildRows(Player player) {
 		var s = state(player);
 		var all = new ArrayList<Row>();
 		var me = player.uuid();
-		switch (s.tab) {
-			case MY_SHOP -> {
+		switch (s.view) {
+			case MY_OFFERS -> {
 				for (var offer : player.tradePost().offers) {
 					if (offer != null && !offer.isEmpty()) {
-						all.add(new Row(offer, null, null, null, 0));
+						all.add(new Row(offer, null, null, 0));
 					}
 				}
-				for (var entry : player.tradePost().coffer) {
-					all.add(new Row(null, entry, null, null, 0));
-				}
 			}
-			case HISTORY -> {
+			case HISTORY_VIEW -> {
 				var list = new ArrayList<>(player.tradePost().history);
-				list.removeIf(h -> s.search != null && !(s.searchPlayers
-						? h.getSeller().toLowerCase(Locale.ROOT).contains(s.search)
-						: itemName(h.getItem().getId()).toLowerCase(Locale.ROOT).contains(s.search)));
 				Comparator<TradePostHistory> order = switch (s.sort) {
 					case 1 -> Comparator.comparing(TradePostHistory::getPrice);
 					case 2 -> Comparator.comparing(TradePostHistory::getPrice).reversed();
 					default -> Comparator.comparingLong(TradePostHistory::getAge).reversed();
 				};
 				list.sort(order);
-				list.forEach(h -> all.add(new Row(null, null, h, null, 0)));
+				list.forEach(h -> all.add(new Row(null, h, null, 0)));
 			}
-			case LOOKUP -> {
-				if (s.lookup != null) {
-					listings(s, o -> o.owner.equalsIgnoreCase(s.lookup)).forEach(o -> all.add(new Row(o, null, null, null, 0)));
-				} else {
-					Map<String, Integer> sellers = new LinkedHashMap<>();
-					TradePostCache.offers()
-							.filter(o -> o.isSell() && !o.isEmpty())
-							.sorted(Comparator.comparingLong(TradePostOffer::getTimeStamp).reversed())
-							.forEach(o -> sellers.merge(o.owner.toLowerCase(Locale.ROOT), 1, Integer::sum));
-					sellers.forEach((seller, count) -> {
-						if (s.search == null || seller.contains(s.search)) {
-							all.add(new Row(null, null, null, seller, count));
-						}
-					});
-				}
+			case SHOP -> listings(s, o -> o.owner.equalsIgnoreCase(s.shop)).forEach(o -> all.add(new Row(o, null, null, 0)));
+			case SELLERS -> {
+				Map<String, Integer> sellers = new LinkedHashMap<>();
+				TradePostCache.offers()
+						.filter(o -> o.isSell() && !o.isEmpty())
+						.sorted(Comparator.comparingLong(TradePostOffer::getTimeStamp).reversed())
+						.forEach(o -> sellers.merge(o.owner.toLowerCase(Locale.ROOT), 1, Integer::sum));
+				sellers.forEach((seller, count) -> {
+					if (s.search == null || seller.contains(s.search)) {
+						all.add(new Row(null, null, seller, count));
+					}
+				});
 			}
-			case FEATURED -> listings(s, o -> !o.owner.equalsIgnoreCase(me) && TradePostFeatured.isFeatured(o))
-					.forEach(o -> all.add(new Row(o, null, null, null, 0)));
+			case ITEM_SEARCH -> listings(s, o -> !o.owner.equalsIgnoreCase(me)
+					&& itemName(o.getItemId()).toLowerCase(Locale.ROOT).contains(s.search == null ? "" : s.search))
+					.forEach(o -> all.add(new Row(o, null, null, 0)));
 			default -> {
 				// featured listings first, then the rest in the chosen order
 				var list = listings(s, o -> !o.owner.equalsIgnoreCase(me));
-				var featured = list.stream().filter(TradePostFeatured::isFeatured).toList();
-				featured.forEach(o -> all.add(new Row(o, null, null, null, 0)));
-				list.stream().filter(o -> !TradePostFeatured.isFeatured(o)).forEach(o -> all.add(new Row(o, null, null, null, 0)));
+				list.stream().filter(TradePostFeatured::isFeatured).forEach(o -> all.add(new Row(o, null, null, 0)));
+				list.stream().filter(o -> !TradePostFeatured.isFeatured(o)).forEach(o -> all.add(new Row(o, null, null, 0)));
 			}
 		}
 		s.total = all.size();
@@ -566,7 +494,7 @@ public final class ZelusMarket {
 		s.rows.addAll(all.subList(s.page * ROWS, Math.min(all.size(), (s.page + 1) * ROWS)));
 	}
 
-	/** Live sell listings matching the filter and the search box, in the chosen sort order. */
+	/** Live sell listings matching the filter, in the chosen sort order. */
 	private static List<TradePostOffer> listings(State s, java.util.function.Predicate<TradePostOffer> filter) {
 		Comparator<TradePostOffer> order = switch (s.sort) {
 			case 1 -> Comparator.comparing(TradePostOffer::priceEach);
@@ -576,9 +504,6 @@ public final class ZelusMarket {
 		return TradePostCache.offers()
 				.filter(o -> o.isSell() && !o.isEmpty())
 				.filter(filter)
-				.filter(o -> s.search == null || (s.searchPlayers && s.tab != LOOKUP
-						? o.owner.toLowerCase(Locale.ROOT).contains(s.search)
-						: itemName(o.getItemId()).toLowerCase(Locale.ROOT).contains(s.search)))
 				.sorted(order)
 				.collect(Collectors.toList());
 	}
@@ -594,9 +519,6 @@ public final class ZelusMarket {
 		}
 		if (row.offer() != null) {
 			return row.offer().getItemId();
-		}
-		if (row.entry() != null) {
-			return ObjType.unnotedId(row.entry().itemId());
 		}
 		if (row.history() != null) {
 			return row.history().getItem().getId();
@@ -624,21 +546,13 @@ public final class ZelusMarket {
 			}
 			s.modalOffer = offer;
 			draw(player, false);
-		} else if (row.entry() != null) {
-			var entry = row.entry();
-			Continuations.schedule(() -> {
-				TradePostCoffer.collect(entry, player).await();
-				TradePost.refreshViews(player);
-			});
 		} else if (row.seller() != null) {
-			s.lookup = row.seller();
-			s.search = null;
-			s.page = 0;
-			draw(player, true);
+			s.shop = row.seller();
+			show(player, SHOP, SELLERS);
 		}
 	}
 
-	/** My Shop: the button cancels (with a confirm); the row offers Feature / Cancel. */
+	/** My Offers: the button cancels (with a confirm); the row offers Feature / Cancel. */
 	private static void manageOffer(Player player, TradePostOffer offer, boolean button) {
 		var name = itemName(offer.getItemId());
 		Runnable cancel = () -> player.dialogue(new YesNoDialogue("Cancel this offer?",
@@ -694,27 +608,32 @@ public final class ZelusMarket {
 		}
 	}
 
-	private static void promptSearch(Player player) {
-		var s = state(player);
-		var lookupList = s.tab == LOOKUP && s.lookup == null;
-		player.stringInput(lookupList ? "Search sellers:" : s.searchPlayers ? "Search sellers:" : "Search items:", text -> {
+	/** Item: listings whose name contains the text. Player: the seller's shop on an exact match, else matching sellers. */
+	private static void promptSearch(Player player, boolean players) {
+		player.stringInput(players ? "Search for a player:" : "Search for an item:", text -> {
 			var query = text == null ? "" : text.trim().toLowerCase(Locale.ROOT);
-			s.search = query.isEmpty() ? null : query;
+			var s = state(player);
 			s.page = 0;
-			if (s.tab == MY_SHOP) {
-				s.tab = BROWSE;
+			s.modalOffer = null;
+			if (query.isEmpty()) {
+				reopen(player);
+				return;
+			}
+			s.search = query;
+			s.shop = null;
+			if (!players) {
+				s.view = ITEM_SEARCH;
+				s.backTo = MY_OFFERS;
+			} else if (TradePostCache.offers().anyMatch(o -> o.isSell() && !o.isEmpty() && o.owner.equalsIgnoreCase(query))) {
+				s.shop = query;
+				s.view = SHOP;
+				s.backTo = MY_OFFERS;
+			} else {
+				s.view = SELLERS;
+				s.backTo = MY_OFFERS;
 			}
 			reopen(player);
 		});
-	}
-
-	private static void setSearchPlayers(Player player, boolean players) {
-		var s = state(player);
-		if (s.searchPlayers != players) {
-			s.searchPlayers = players;
-			s.page = 0;
-			draw(player, true);
-		}
 	}
 
 	private static void turnPage(Player player, int delta) {
@@ -783,12 +702,6 @@ public final class ZelusMarket {
 	private static String decimal(BigInteger value, long unit) {
 		var scaled = new BigDecimal(value).divide(BigDecimal.valueOf(unit), 1, RoundingMode.DOWN).stripTrailingZeros();
 		return scaled.toPlainString();
-	}
-
-	/** Coins in a colour by size: green below 1M, white in millions, yellow in billions. */
-	private static String colouredCoins(BigInteger amount) {
-		// one bright price colour (2026-10-15 market polish); the total sits beside it in grey
-		return GREEN + coins(amount) + END;
 	}
 
 	private static String ago(long epochSeconds) {

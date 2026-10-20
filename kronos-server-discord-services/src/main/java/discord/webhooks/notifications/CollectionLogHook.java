@@ -1,5 +1,6 @@
 package discord.webhooks.notifications;
 
+import discord.webhooks.ItemIcons;
 import discord.comp.impl.*;
 import discord.webhooks.Webhook;
 import java.util.function.Supplier;
@@ -14,8 +15,7 @@ public class CollectionLogHook {
 		try {
 			var object = objectSupplier.get();
 
-			var thumbnail = new Thumbnail();
-			thumbnail.setUrl("https://static.runelite.net/cache/item/icon/" + object.get("item_id") + ".png");
+			var thumbnail = ItemIcons.thumbnail(Integer.parseInt(object.get("item_id").toString()));
 
 			var embedMessage = new Embed();
 			embedMessage.setTitle("New collection log item!");

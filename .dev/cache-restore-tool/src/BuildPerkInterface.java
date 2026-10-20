@@ -21,7 +21,10 @@ public class BuildPerkInterface {
     static final int GOLD = 0xffc35a, TEXT = 0xd8d0c0, GREY = 0x9a9a9a;
     static final int HEADING_FONT = 496, TEXT_FONT = 494;
     static final int TITLE_Y = 14, SUB_Y = 45;
-    static final int BOX = 0x433b31, BOX_HOVER = 0x524737, BORDER = 0x5a4d3a;
+    /** Raised stone (the Trading Post's stone button colours) and its subtle hover lift. */
+    static final int BOX = 0x4b443a, BOX_HOVER = 0x575045, BORDER = 0x2b2620;
+    /** The loadout delete button: red stone. */
+    static final int DANGER = 0x5c2a22, DANGER_HOVER = 0x74352b;
     /** Warm stone fill behind every panel (instead of the bare dark frame background). */
     static final int PANEL_FILL = 0x36302a;
     /** Search bar: recessed stone inset, its hover, and the magnifier sprite. */
@@ -142,12 +145,13 @@ public class BuildPerkInterface {
                 add(comps, want, sprite(buttonT, row, 2, 2, 32, 32));
                 add(comps, want, text(textT, row, 40, 2, 122, 15, TEXT_FONT, GOLD, ""));
                 add(comps, want, text(textT, row, 40, 18, 194, 16, TEXT_FONT, TEXT, ""));
-                InterfaceDefinition badge = solid(rect, row, 164, 2, 70, 15, 0x0e0b08);
+                // the status / cost tag: an inset stone pill (gold text from the server)
+                InterfaceDefinition badge = solid(rect, row, 166, 3, 66, 14, 0x221c16);
                 badge.clickMask = 2;
                 badge.actions = new String[]{"Buy"};
-                hover(badge, 0x0e0b08, BOX_HOVER);
+                hover(badge, 0x221c16, 0x2e271f);
                 add(comps, want, badge);
-                InterfaceDefinition badgeText = text(textT, row, 164, 2, 70, 15, TEXT_FONT, TEXT, "");
+                InterfaceDefinition badgeText = text(textT, row, 166, 3, 66, 14, TEXT_FONT, TEXT, "");
                 badgeText.xTextAlignment = 1;
                 add(comps, want, badgeText);
             }
@@ -370,7 +374,13 @@ public class BuildPerkInterface {
         return id;
     }
 
-    /** 4 components: clickable fill with hover wash, border, 2px gold outline (hidden until selected). */
+    /** Selected stone (2026-10-20, no yellow wireframe): a recessed darker fill and a 1px inner shadow. */
+    static final int SELECTED_FILL = 0x2b251d, SELECTED_SHADOW = 0x15120f;
+
+    /**
+     * 4 components: raised stone fill (click, hover brightens it), border, then the selected state the server shows
+     * (+2 recessed fill, +3 inner shadow; the label / icon are drawn after it, on top).
+     */
     static void selectable(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, int parent,
                            int x, int y, int w, int h, String action) {
         InterfaceDefinition b = solid(rect, parent, x, y, w, h, BOX);
@@ -379,8 +389,10 @@ public class BuildPerkInterface {
         hover(b, BOX, BOX_HOVER);
         add(comps, want, b);
         add(comps, want, outlineRect(rect, parent, x, y, w, h, BORDER, false));
-        add(comps, want, outlineRect(rect, parent, x, y, w, h, GOLD, true));
-        add(comps, want, outlineRect(rect, parent, x + 1, y + 1, w - 2, h - 2, GOLD, true));
+        InterfaceDefinition recess = solid(rect, parent, x + 1, y + 1, w - 2, h - 2, SELECTED_FILL);
+        recess.isHidden = true;
+        add(comps, want, recess);
+        add(comps, want, outlineRect(rect, parent, x + 1, y + 1, w - 2, h - 2, SELECTED_SHADOW, true));
     }
 
     /**
@@ -411,13 +423,14 @@ public class BuildPerkInterface {
         add(comps, want, clearLabel);
     }
 
-    /** 2 components: a clickable box with hover wash and a centred label. */
+    /** 2 components: a clickable stone box with a hover lift and a centred label ("x" = the red delete button). */
     static void button(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, InterfaceDefinition textT,
                        int parent, int x, int y, int w, int h, String action, String label) {
-        InterfaceDefinition b = solid(rect, parent, x, y, w, h, BOX);
+        boolean danger = "x".equals(label);
+        InterfaceDefinition b = solid(rect, parent, x, y, w, h, danger ? DANGER : BOX);
         b.clickMask = 2;
-        b.actions = new String[]{action};
-        hover(b, BOX, BOX_HOVER);
+        b.actions = new String[]{danger ? "Delete" : action};
+        hover(b, danger ? DANGER : BOX, danger ? DANGER_HOVER : BOX_HOVER);
         add(comps, want, b);
         InterfaceDefinition t = text(textT, parent, x, y, w, h, TEXT_FONT, TEXT, label);
         t.xTextAlignment = 1;

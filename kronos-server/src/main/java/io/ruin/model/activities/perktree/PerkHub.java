@@ -126,10 +126,14 @@ public final class PerkHub {
 					s.hubConfirm = null;
 					refresh(p);
 				};
-				h.actions[FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR] = (SimpleAction) p -> {
-					p.getPerkInterface().removePreset(p, preset);
-					refresh(p);
-				};
+				// the red delete button asks first (2026-10-20): a stray click wiped a saved loadout
+				h.actions[FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR] = (SimpleAction) p ->
+					p.dialogue(new io.ruin.model.inter.dialogue.OptionsDialogue("Delete loadout " + (preset + 1) + "?",
+						new io.ruin.model.inter.utils.Option("Yes, delete it", () -> {
+							p.getPerkInterface().removePreset(p, preset);
+							refresh(p);
+						}),
+						new io.ruin.model.inter.utils.Option("No, keep it")));
 			}
 			for (int r = 0; r < ROWS; r++) {
 				int index = r;
@@ -212,7 +216,7 @@ public final class PerkHub {
 		int maxSlots = handler.calculatePlayersTotalPerks(player);
 		List<Perks> active = handler.getActivePerks(player);
 		int xpToNext = handler.calculateExperienceForLevel(player.perkTreeLevel) - player.perkTreeExperience;
-		ps.sendString(INTERFACE, SUB_HEADER, YELLOW + "Perk Points:" + END + " " + GREEN + "[ " + NumberUtils.formatNumber(player.perkPoints) + " ]" + END
+		ps.sendString(INTERFACE, SUB_HEADER, YELLOW + "Perk Points:" + END + " " + GREEN + NumberUtils.formatNumber(player.perkPoints) + END
 			+ "  <col=7f7f7f>|</col>  " + WHITE + "Perk Tree:" + END + " " + ORANGE + "Lv " + player.perkTreeLevel + END
 			+ " <col=a0a0a0>(" + NumberUtils.formatNumber(Math.max(0, xpToNext)) + " XP to next)</col>");
 
@@ -241,8 +245,13 @@ public final class PerkHub {
 		String[] names = {player.presetNameOne, player.presetNameTwo, player.presetNameThree, player.presetNameFour, player.presetNameFive};
 		for (int r = 0; r < LOADOUTS; r++) {
 			boolean empty = names[r] == null || names[r].equalsIgnoreCase("Empty");
+			// the loadout being viewed is gold (the active highlight)
+			boolean viewing = s.hubSelected instanceof Loadout l && l.index() == r;
 			ps.sendString(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_LABEL,
-				(empty ? GREY + (r + 1) + ". Empty" : WHITE + (r + 1) + ". " + names[r]) + END);
+				(empty ? GREY + (r + 1) + ". Empty" : (viewing ? GOLD : WHITE) + (r + 1) + ". " + names[r]) + END);
+			// nothing to delete on an empty loadout: its red button stays hidden
+			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR, empty);
+			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR + 1, empty);
 		}
 
 		// list rows
@@ -334,14 +343,15 @@ public final class PerkHub {
 	}
 
 	private static String badge(Player player, Perks perk) {
+		// a tag on the badge's inset pill (2026-10-20: no more "[ 9 Pts ]" brackets)
 		if (isActive(player, perk))
-			return GOLD + "[ Equipped ]" + END;
+			return GOLD + "Equipped" + END;
 		if (owns(player, perk))
-			return GREEN + "[ Owned ]" + END;
+			return GREEN + "Owned" + END;
 		if (player.hasFreePerkUnlock)
-			return GREEN + "[ Free Lv 5 ]" + END;
+			return GREEN + "Free Lv 5" + END;
 		int price = price(perk);
-		return (player.perkPoints >= price ? WHITE : RED) + "[ " + price + " Pts ]" + END;
+		return (player.perkPoints >= price ? GOLD : RED) + price + " Pts" + END;
 	}
 
 	private static void sendDetail(Player player) {

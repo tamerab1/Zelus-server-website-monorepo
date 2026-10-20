@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Four tabs and a search over command and description.
  * <p>
  * Every command listed was checked against its handler (2026-10-18). Not listed because they do not exist on the server:
- * ::refer (it is ::ref / ::referrals), ::bestiary (an item), ::toggles / ::filter / ::fps / ::grounditems (client
+ * ::bestiary (an item), ::toggles / ::filter / ::fps / ::grounditems (client
  * plugin settings, not server commands), ::wiki (the website has no /wiki page: it lands on the home page).
  */
 public final class CommandCodex {
@@ -46,7 +46,7 @@ public final class CommandCodex {
 			e("claimvote", "Claim your vote rewards"),
 			e("store", "Open the online store"),
 			e("deals", "Limited-time donator deals"),
-			e("ref [name]", "Name the player who referred you"),
+			e("refer [name]", "Name the player who referred you (also ::ref)"),
 			e("referrals", "Your referral rewards"),
 			e("discord", "Join the Zelus Discord"),
 			e("rules", "The server rules (on our Discord)"),

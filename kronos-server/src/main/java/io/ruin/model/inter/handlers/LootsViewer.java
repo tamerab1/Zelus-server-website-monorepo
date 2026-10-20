@@ -158,6 +158,9 @@ public class LootsViewer {
 			dropItems.add(dropItem);
 		}
 
+		if (tables == LootsTables.PANDORA && tables.table.guaranteed != null)
+			for (LootItem item : tables.table.guaranteed)
+				dropItems.add(new LootTable.DropItem(item.id, 1, item.min, item.max));
 		for (LootTable.ItemsTable table : tables.table.tables) {
 			if (table.items.length == 0) {
 			} else {

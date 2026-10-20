@@ -460,11 +460,9 @@ public class JournalTab {
 		player.openInterface(ToplevelComponent.QUEST_TAB_AREA, interfaceId);
 	}
 
+	/** The Zelus Codex (2026-10-20) replaced the Reason achievements screen 849. */
 	public static void openAchievementInterface(Player player) {
-		if (player.currentAchievement == null)
-			player.currentAchievement = Achievements.ARE_YOU_SHORE_ABOUT_THIS;
-		AchievementInterface achievementInterface = new AchievementInterface();
-		achievementInterface.Init(player, player.currentAchievement.getSkillName());
+		io.ruin.model.content.codex.ZelusCodex.open(player);
 	}
 
 	private static void sendAchievementSection(Player player, Achievements.AchievementTypes tier) {

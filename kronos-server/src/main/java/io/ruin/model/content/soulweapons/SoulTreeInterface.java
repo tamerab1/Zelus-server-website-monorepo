@@ -156,6 +156,7 @@ public class SoulTreeInterface {
 		}
 		d.availableSoulPoints--;
 		d.allocatedTalents.put(talent.name(), rank + 1);
+		io.ruin.model.content.codex.ZelusTask.PATH_OF_MASTERY.increment(player, 1);
 		player.privateSound(SOUND_RANK_UP);
 		player.graphics(GFX_SOUL_BURST, 0, 0);
 		player.sendMessage(SoulWeapons.TAG + SoulWeapons.HIGHLIGHT + talent.name + " rank " + (rank + 1) + "</col>: "

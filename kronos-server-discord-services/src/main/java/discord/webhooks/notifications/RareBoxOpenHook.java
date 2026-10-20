@@ -1,9 +1,9 @@
 package discord.webhooks.notifications;
 
+import discord.webhooks.ItemIcons;
 import discord.comp.impl.Embed;
 import discord.comp.impl.Field;
 import discord.comp.impl.Message;
-import discord.comp.impl.Thumbnail;
 import discord.webhooks.Webhook;
 import org.json.JSONObject;
 import properties.ServerProperties;
@@ -17,8 +17,7 @@ import properties.ServerProperties;
 public interface RareBoxOpenHook {
 
 	static void sendBoxDiscordMessage(JSONObject object) {
-		var thumbnail = new Thumbnail();
-			thumbnail.setUrl("https://static.runelite.net/cache/item/icon/" + object.getInt("item_id") + ".png");
+		var thumbnail = ItemIcons.thumbnail(object.getInt("item_id"));
 
 		var embedMessage = new Embed();
 			embedMessage.setTitle("Rare pull received!");

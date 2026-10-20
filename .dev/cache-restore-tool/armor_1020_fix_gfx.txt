@@ -1,0 +1,9 @@
+# Assassin greatsword 31884 special "Umbral Execution" (2026-10-20, server AssassinGreatsword): black copies of the
+# Armadyl godsword's spec swirl (1211) on the player and Ancient godsword's blood burst (2001) on the target.
+# Near-black body, faint violet-grey smoke on the bright accent faces.
+# Build: BuildBossVariants gfx verify|apply <cache> armor_1020_fix_gfx.txt  (server STOPPED)
+#     name   pHue pSat pMul pAdd aHue aSat aMul aAdd accentSat accentLum
+theme umbral 0    0    0.12 2    48   1    0.30 6    4         80
+#   src  new  theme   texture model
+gfx 1211 4429 umbral  -       -
+gfx 2001 4430 umbral  -       -

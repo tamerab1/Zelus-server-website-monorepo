@@ -64,6 +64,7 @@ public class ObjectActionHandler implements MessageConsumer<Player, OpLoc> {
 	private static void handleExamine(Player player, int id) {
 		if (id == io.ruin.model.content.soulweapons.SoulAltar.OBJECT) {
 			player.sendMessage(io.ruin.model.content.soulweapons.SoulAltar.EXAMINE);
+			io.ruin.model.content.codex.ZelusTask.AWAKENING_IN_ZELUS.step(player, io.ruin.model.content.codex.ZelusTask.STEP_RELIQUARY);
 			return;
 		}
 		if (id == io.ruin.model.map.object.actions.impl.DracoChest.DRACO_CHEST_ID) {

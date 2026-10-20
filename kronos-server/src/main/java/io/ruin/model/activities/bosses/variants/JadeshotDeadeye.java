@@ -22,7 +22,7 @@ public class JadeshotDeadeye extends BossVariant {
 
 	@Override
 	protected int specialEvery() {
-		return 5;
+		return 8; // Sanctum guardian nerf 2026-10-20 (players: "so aggressive"): was 5, volley 3 x 22 through prayer
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class JadeshotDeadeye extends BossVariant {
 				if (wait > 0)
 					e.delay(wait);
 				if (target != null && !isDead())
-					shoot(target, 22, true);
+					shoot(target, 12, true);
 			});
 		}
 		target.graphics(GFX_VOLLEY_HIT, 0, 90);

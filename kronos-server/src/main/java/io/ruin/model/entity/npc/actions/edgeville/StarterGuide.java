@@ -688,6 +688,12 @@ public class StarterGuide {
 	 * are available) plus the rest of the requested gear/supplies in the inventory.
 	 */
 	private static void givePvpModeStarter(Player player) {
+		// 2026-10-20 bug report: the kit (Dharok's, whip, AGS, Karil's) was handed to a level-1 account that couldn't wear
+		// any of it -- PvP mode starts with 99 combat; players can lower stats from the stats tab (TabStats.handleStat)
+		for (StatType type : new StatType[]{StatType.Attack, StatType.Defence, StatType.Strength, StatType.Hitpoints,
+				StatType.Ranged, StatType.Prayer, StatType.Magic})
+			player.getStats().set(type, 99);
+		player.getCombat().updateLevel();
 		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_WEAPON, new Item(ItemID.ABYSSAL_WHIP));
 		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_SHIELD, new Item(ItemID.DRAGON_DEFENDER));
 		player.getEquipment().set(io.ruin.model.item.containers.Equipment.SLOT_HAT, new Item(ItemID.DHAROKS_HELM));

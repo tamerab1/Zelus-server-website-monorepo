@@ -1,5 +1,6 @@
 package discord.webhooks.notifications;
 
+import discord.webhooks.ItemIcons;
 import discord.comp.impl.*;
 import discord.webhooks.Webhook;
 import java.text.NumberFormat;
@@ -29,8 +30,7 @@ public class RareDropHook {
 				default -> "";
 			};
 
-			var thumbnail = new Thumbnail();
-			thumbnail.setUrl("https://static.runelite.net/cache/item/icon/" + object.get("item_id") + ".png");
+			var thumbnail = ItemIcons.thumbnail(Integer.parseInt(object.get("item_id").toString()));
 
 			var footer = new Footer();
 			if (object.has("total_attempts")) {

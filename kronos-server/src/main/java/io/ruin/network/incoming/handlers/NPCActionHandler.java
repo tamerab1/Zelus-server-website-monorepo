@@ -77,6 +77,8 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
 			return;
 		if (io.ruin.model.activities.tournament.TournamentMaster.examine(player, id))
 			return;
+		if (id == 17033) // Pandora, the Enigma Keeper
+			player.sendMessage(io.ruin.model.activities.bosses.eventboss.Vorath.EXAMINE);
 
 		player.openInterface(ToplevelComponent.MAINMODAL, 855);
 		DropViewer.loot.calculate(def.id, player);
@@ -92,6 +94,8 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
 		if (def.name.equalsIgnoreCase("summer boss")) {
 			player.getLootsViewer().updateInterface(player, LootsTables.SUMMER_BOSS);
 		}
+		if (def.id == 17033) // Pandora, the Enigma Keeper: its tiers live in Vorath.TABLE
+			player.getLootsViewer().updateInterface(player, LootsTables.PANDORA);
 		if(def.id == 17021) {
 			player.getLootsViewer().updateInterface(player, LootsTables.SUMMER_IMP);
 		}

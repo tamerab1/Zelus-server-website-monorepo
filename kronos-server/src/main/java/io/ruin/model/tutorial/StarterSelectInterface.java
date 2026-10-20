@@ -112,8 +112,12 @@ public final class StarterSelectInterface {
 		DifficultyType difficulty = gmi.currentDifficultyType;
 		boolean pvp = type == AccountType.PVP_MODE;
 		PacketSender ps = player.getPacketSender();
-		for (int i = 0; i < ACCOUNTS.length; i++)
-			showOutline(ps, FIRST_ACCOUNT + i * ACCOUNT_STRIDE, ACCOUNTS[i] == type);
+		for (int i = 0; i < ACCOUNTS.length; i++) {
+			int row = FIRST_ACCOUNT + i * ACCOUNT_STRIDE;
+			showOutline(ps, row, ACCOUNTS[i] == type);
+			// selected: a gold name in the recessed row (as the Zelus Market's active tabs)
+			ps.sendString(INTERFACE, row + ACCOUNT_NAME, (ACCOUNTS[i] == type ? GOLD : WHITE) + ACCOUNTS[i].name + END);
+		}
 		for (int i = 0; i < DIFFICULTIES.length; i++) {
 			DifficultyType d = DIFFICULTIES[i];
 			int button = FIRST_DIFFICULTY + i * DIFFICULTY_STRIDE;

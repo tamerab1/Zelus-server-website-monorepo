@@ -4,6 +4,7 @@ import io.ruin.api.utils.NumberUtils;
 import io.ruin.cache.Color;
 import io.ruin.cache.ObjType;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.player.PlayMode;
 import io.ruin.model.entity.player.PlayerAction;
 import io.ruin.model.inter.Interface;
 import io.ruin.model.inter.InterfaceHandler;
@@ -55,10 +56,12 @@ public class TabStats {
 	}
 
 	private static void handleStat(Player player, StatType statType) {
-		// if(!player.getGameMode().isIronMan() && (statType.ordinal() <= 6))
-		// setLevel(player, statType);
-		// else
-		openGuide(player, statType, 0);
+		// PvP mode (2026-10-20): the combat skills (Attack..Magic, ordinals 0-6) set the level instead, so players can build
+		// pures / zerkers from the 99s their starter gives; everything else still opens the skill guide
+		if (player.getPlayMode() == PlayMode.PVP_MODE && statType.ordinal() <= 6)
+			setLevel(player, statType);
+		else
+			openGuide(player, statType, 0);
 	}
 
 	private static void handleTotal(Player player, int option) {

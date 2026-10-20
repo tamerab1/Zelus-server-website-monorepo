@@ -150,6 +150,7 @@ public class TradePost {
 			}
 
 			hooks.handle(new Hook.OfferPlaced(player, offer));
+			io.ruin.model.content.codex.ZelusTask.THE_VAULTKEEPER.increment(player, 1);
 			TradePostProcess.queueAdd(offer);
 
 			pTradePost.offers[offer.slot] = offer;
@@ -377,6 +378,7 @@ public class TradePost {
 
 		exchanged(buyer.uuid(), offer.owner, offer.itemId, amount, BigInteger.ZERO, priceEach,
 				TradePostTaxing.apply(totalPrice));
+		io.ruin.model.content.codex.ZelusTask.THE_VAULTKEEPER.increment(buyer, 1);
 
 		Continuations.schedule(() -> {
 			if (soldOut) {
@@ -538,7 +540,7 @@ public class TradePost {
 		if (remaining > 0) {
 			TradePostCoffer.add(player.uuid(), unnotedId, BigInteger.valueOf(remaining));
 			player.sendMessage(ZelusMarket.TAG + remaining + " x " + def.name + " from " + what
-					+ " is waiting in your collection box (My Shop).");
+					+ " is waiting in your Trading Post collection box.");
 		}
 	}
 }

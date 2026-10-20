@@ -51,7 +51,7 @@ public class VoteBoss extends NPCCombat {
 			VoteBossHandler.boss = null;
 			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
 			try {
-				for (Player p : new java.util.ArrayList<>(npc.getPosition().getRegion().players)) {
+				for (Player p : io.ruin.model.activities.bosses.EventBossArea.players(npc)) {
 					if (!damagingPlayers.contains(p.getUserId()))
 						continue;
 					try {

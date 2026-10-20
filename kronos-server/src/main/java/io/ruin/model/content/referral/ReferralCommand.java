@@ -1,6 +1,5 @@
 package io.ruin.model.content.referral;
 
-import io.ruin.Server;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import io.ruin.network.HWIDManager;
@@ -9,7 +8,7 @@ import properties.ServerProperties;
 import java.util.Set;
 
 /**
- * ::referfriend <name> (aliases ::invite, ::ref) - links a brand new account to an existing
+ * ::referfriend <name> (aliases ::invite, ::refer, ::ref) - links an account (once, no playtime limit) to an existing
  * player's referral. The target may be online or offline: an offline target is looked up
  * straight off their save file via {@link OfflineReferralLookup}. ::ref used to be the unrelated
  * promo-code claim system in {@link io.ruin.model.content.RefSystem}; that command has been
@@ -44,10 +43,7 @@ public final class ReferralCommand {
 
 	/** Links the player to targetName's referral. Returns null on success, or the reason it was refused. */
 	public static String tryLink(Player player, String targetName) {
-		// player.playTime is in game ticks, not real seconds - see ReferralSystem#checkMilestone.
-		if (player.playTime >= Server.toTicks(ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS))
-			return "Referral links can only be used within your first "
-					+ (ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS / 3600) + " hours of playtime.";
+		// One referral per account, with no playtime cutoff (2026-10-20: it used to expire after 2 hours of play).
 		if (player.referredBy != null)
 			return "You have already been referred by " + player.referredBy + ".";
 

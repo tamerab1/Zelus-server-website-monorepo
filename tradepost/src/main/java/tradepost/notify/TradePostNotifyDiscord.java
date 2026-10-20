@@ -1,5 +1,6 @@
 package tradepost.notify;
 
+import discord.webhooks.ItemIcons;
 import java.awt.Color;
 import java.math.BigInteger;
 
@@ -64,10 +65,9 @@ public class TradePostNotifyDiscord {
 		}
 	}
 
-	private static Thumbnail itemThumbnail(int unnotedItemId) {
-		var thumbnail = new Thumbnail();
-		thumbnail.setUrl("https://static.runelite.net/cache/item/icon/" + unnotedItemId + ".png");
-		return thumbnail;
+	/** Our own cache's icon for custom items (the RuneLite icon server showed them as null / another item). */
+	private static Thumbnail itemThumbnail(int itemId) {
+		return ItemIcons.thumbnail(ObjType.unnotedId(itemId));
 	}
 
 	private static void notifyExchange(String buyer, String seller, int item, BigInteger amount,

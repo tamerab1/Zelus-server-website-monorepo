@@ -18,7 +18,7 @@ import tradepost.inter.ZelusMarket;
 /**
  * The collection box: coins earned from sales and items bought while offline (or that did not fit). Both are stored
  * in the database, so a seller who is offline when their listing sells is paid safely and collects on their next
- * visit (My Shop -> Collect coins / Collect items). Every payout claims its row in the database first and only pays
+ * visit (Trading Post -> Collect Earnings / Collect Items). Every payout claims its row in the database first and only pays
  * if that claim succeeded.
  */
 @Slf4j

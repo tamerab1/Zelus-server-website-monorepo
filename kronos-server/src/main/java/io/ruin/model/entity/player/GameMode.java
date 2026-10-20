@@ -86,7 +86,7 @@ public enum GameMode {
 			return;
 		}
 
-		if (player.getPosition().regionId() == 11576) {
+		if (player.getPosition().regionId() == 11576 || io.ruin.model.activities.bosses.EventBossArea.isIn(player)) {
 			return;
 		}
 		VarPlayerRepository.IRONMAN_MODE.set(player, 1);

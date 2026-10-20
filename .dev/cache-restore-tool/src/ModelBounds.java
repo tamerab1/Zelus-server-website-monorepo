@@ -1,29 +1,22 @@
-import net.runelite.cache.IndexType;
 import net.runelite.cache.definitions.ModelDefinition;
 import net.runelite.cache.definitions.loaders.ModelLoader;
-import net.runelite.cache.fs.Archive;
-import net.runelite.cache.fs.Store;
 import java.io.File;
+import java.nio.file.Files;
 
-// Read-only: prints vertex bounds of cache models, plus the widest |x| among vertices in the
-// lower-arm height band, to tell whether a worn body model includes its own arms.
-// Usage: <cachePath> <modelId>[,<modelId>...]
+// Read-only (2026-10-20): x / y (height) / z extent, faces and texturing of raw model files.
 public class ModelBounds {
-    public static void main(String[] args) throws Exception {
-        try (Store store = new Store(new File(args[0]))) {
-            store.load();
-            for (String s : args[1].split(",")) {
-                int id = Integer.parseInt(s.trim());
-                Archive a = store.getIndex(IndexType.MODELS).getArchive(id);
-                ModelDefinition m = new ModelLoader().load(id, a.decompress(store.getStorage().loadArchive(a)));
-                int minX = 1 << 30, maxX = -(1 << 30), minY = 1 << 30, maxY = -(1 << 30), minZ = 1 << 30, maxZ = -(1 << 30);
-                for (int i = 0; i < m.vertexCount; i++) {
-                    minX = Math.min(minX, m.vertexX[i]); maxX = Math.max(maxX, m.vertexX[i]);
-                    minY = Math.min(minY, m.vertexY[i]); maxY = Math.max(maxY, m.vertexY[i]);
-                    minZ = Math.min(minZ, m.vertexZ[i]); maxZ = Math.max(maxZ, m.vertexZ[i]);
-                }
-                System.out.println(id + ": verts=" + m.vertexCount + " x[" + minX + "," + maxX + "] y[" + minY + "," + maxY + "] z[" + minZ + "," + maxZ + "]");
+    public static void main(String[] a) throws Exception {
+        for (String p : a) {
+            ModelDefinition m = new ModelLoader().load(0, Files.readAllBytes(new File(p).toPath()));
+            int[] b = {Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE};
+            for (int i = 0; i < m.vertexCount; i++) {
+                b[0] = Math.min(b[0], m.vertexX[i]); b[1] = Math.max(b[1], m.vertexX[i]);
+                b[2] = Math.min(b[2], m.vertexY[i]); b[3] = Math.max(b[3], m.vertexY[i]);
+                b[4] = Math.min(b[4], m.vertexZ[i]); b[5] = Math.max(b[5], m.vertexZ[i]);
             }
+            int tex = 0;
+            if (m.faceTextures != null) for (short t : m.faceTextures) if (t != -1) tex++;
+            System.out.printf("%s w %d h %d d %d faces %d verts %d textured %d%n", new File(p).getName(), b[1] - b[0], b[3] - b[2], b[5] - b[4], m.faceCount, m.vertexCount, tex);
         }
     }
 }

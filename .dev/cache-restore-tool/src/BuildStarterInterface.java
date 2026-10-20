@@ -12,15 +12,21 @@ import java.util.*;
 // Builds interface group 1150, the new-player "Select your path" screen (StarterSelectInterface.java, server), in the
 // Pit hub's style: Wilderness Forge frame (1002:0-3), a sub-header, an account-type list (7 selectable rows with a helm
 // icon), a row of 4 framed difficulty buttons, a summary panel (heading, rates strip, bullet lines, a scrolling grid of
-// inventory-style starter-kit slots) and a Confirm button. Selection outlines are hidden here and toggled by the server.
+// inventory-style starter-kit slots) and a Confirm button. Selected states are hidden here and toggled by the server.
 // Encoder/verification shared with BuildBondsInterface. Usage: verify|apply|rebuild <cachePath>
 public class BuildStarterInterface {
     static final int GROUP = 1150, SRC = 1002;
     static final int GOLD = 0xffc35a, TEXT = 0xd8d0c0;
     static final int HEADING_FONT = 496, TEXT_FONT = 494;
     static final int TITLE_Y = 14, SUB_Y = 45;
-    /** Row / button fill, its hover wash, and the always-on border. */
-    static final int BOX = 0x433b31, BOX_HOVER = 0x524737, BORDER = 0x5a4d3a;
+    /** Row / button fill, its hover wash (a subtle brightness shift), and the always-on border. */
+    static final int BOX = 0x433b31, BOX_HOVER = 0x4a4137, BORDER = 0x5a4d3a;
+    /**
+     * Selected state (2026-10-20: no more 2px gold wireframe, see the Zelus Market tabs): account rows sink into a
+     * darker recessed stone with an inner shadow edge; difficulty buttons are OSRS bezel buttons (1002:169) that press
+     * into a dark recess with a soft trim -- the Market's bezelTab look.
+     */
+    static final int ROW_RECESS = 0x2b251d, ROW_SHADOW = 0x15120f, BEZEL_RECESS = 0x0d0b09, BEZEL_TRIM = 0x2b231a;
     /** Kit slots: a lighter recessed square with an inner shadow so dark items (iron armour) stay visible. */
     static final int SLOT_FILL = 0x2a2520, SLOT_SHADOW = 0x1a1612, SLOT_BORDER = 0x5a4d3a;
     static final int SLOT_W = 36, SLOT_H = 32, SLOT_GAP = 4;
@@ -69,7 +75,7 @@ public class BuildStarterInterface {
             sub.xTextAlignment = 1;
             add(comps, want, sub);
 
-            // 5-8: account-type panel; 9: heading; 10: note; 11-52: 7 rows x (box, border, gold outline x2, icon, name)
+            // 5-8: account-type panel; 9: heading; 10: note; 11-52: 7 rows x (box, border, recess, inner shadow, icon, name)
             add(comps, want, layer(layerT, 0, 24, 62, 196, 218));
             frame(comps, want, rectT, 5, 196, 218);
             add(comps, want, text(textT, 5, 8, 4, 180, 14, TEXT_FONT, GOLD, "Account type"));
@@ -83,12 +89,12 @@ public class BuildStarterInterface {
                 add(comps, want, text(textT, 5, 44, y, 144, 26, TEXT_FONT, TEXT, ""));
             }
 
-            // 53-56: difficulty panel; 57-76: 4 buttons x (box, border, gold outline x2, name + rate)
+            // 53-56: difficulty panel; 57-76: 4 buttons x (bezel button, placeholder, recess, trim, name + rate)
             add(comps, want, layer(layerT, 0, 226, 62, 262, 38));
             frame(comps, want, rectT, 53, 262, 38);
             for (int d = 0; d < DIFFICULTIES; d++) {
                 int x = 5 + d * 63;
-                selectable(comps, want, rect, 53, x, 4, 60, 30);
+                bezelSelectable(comps, want, rect, buttonT, 53, x, 4, 60, 30);
                 InterfaceDefinition t = text(textT, 53, x, 4, 60, 30, TEXT_FONT, TEXT, "");
                 t.xTextAlignment = 1;
                 add(comps, want, t);
@@ -209,8 +215,9 @@ public class BuildStarterInterface {
     }
 
     /**
-     * A selectable box (4 components): a solid fill that washes lighter on hover (clickable, op "Select"), an always-on
-     * border, and a 2px gold outline (two rects) the server shows when the option is selected.
+     * A selectable account row (4 components): a solid fill that washes slightly lighter on hover (clickable, op
+     * "Select"), an always-on border, and the selected state the server shows: a recessed darker stone fill and a 1px
+     * inner-shadow edge (the row's icon and name are drawn after, over it).
      */
     static void selectable(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect, int parent,
                            int x, int y, int w, int h) {
@@ -224,14 +231,46 @@ public class BuildStarterInterface {
         border.filled = false;
         border.textColor = BORDER;
         add(comps, want, border);
-        for (int k = 0; k < 2; k++) {
-            InterfaceDefinition o = copy(rect);
-            place(o, parent, x + k, y + k, w - 2 * k, h - 2 * k);
-            o.filled = false;
-            o.textColor = GOLD;
-            o.isHidden = true;
-            add(comps, want, o);
-        }
+        InterfaceDefinition recess = solid(rect, parent, x + 1, y + 1, w - 2, h - 2, ROW_RECESS);
+        recess.isHidden = true;
+        add(comps, want, recess);
+        InterfaceDefinition shadow = copy(rect);
+        place(shadow, parent, x + 1, y + 1, w - 2, h - 2);
+        shadow.filled = false;
+        shadow.textColor = ROW_SHADOW;
+        shadow.isHidden = true;
+        add(comps, want, shadow);
+    }
+
+    /**
+     * A selectable difficulty button (4 components, same ids as {@link #selectable}): an OSRS bezel button (1002:169,
+     * hover script 44 brightens the sprite), a zero-size placeholder where the flat border was, and the pressed state the
+     * server shows: a dark translucent recess over the whole button plus a soft dark trim.
+     */
+    static void bezelSelectable(List<byte[]> comps, List<InterfaceDefinition> want, InterfaceDefinition rect,
+                                InterfaceDefinition buttonT, int parent, int x, int y, int w, int h) {
+        InterfaceDefinition b = copy(buttonT);
+        place(b, parent, x, y, w, h);
+        b.clickMask = 2;
+        b.actions = new String[]{"Select"};
+        b.onMouseOverListener = new Object[]{44, -2147483645, 24470};
+        b.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
+        b.hasListener = true;
+        add(comps, want, b);
+        InterfaceDefinition none = copy(rect);
+        place(none, parent, x, y, 0, 0);
+        none.filled = false;
+        add(comps, want, none);
+        InterfaceDefinition recess = solid(rect, parent, x, y, w, h, BEZEL_RECESS);
+        recess.opacity = 60;
+        recess.isHidden = true;
+        add(comps, want, recess);
+        InterfaceDefinition trim = copy(rect);
+        place(trim, parent, x, y, w, h);
+        trim.filled = false;
+        trim.textColor = BEZEL_TRIM;
+        trim.isHidden = true;
+        add(comps, want, trim);
     }
 
     /** An opaque filled rect. */

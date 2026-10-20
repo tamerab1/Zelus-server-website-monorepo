@@ -99,6 +99,8 @@ public class MultiZone {
 			9023, // vorkath island
 			12889, // olm chamber
 			12126, //Zalcano
+			7758, // Pandora, the Enigma Keeper's lair (Chronos helps it: several attackers at once)
+			10061, 10317, // the event boss cavern (global / vote / donation bosses, EventBossArea)
 
 			/** Wildy: (uses 8x8 chunks for some sections as well as chunks) **/
 			12599, 12600, //Wilderness Ditch

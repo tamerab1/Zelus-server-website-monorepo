@@ -20,6 +20,7 @@ import io.ruin.api.utils.NumberUtils;
  * <li>Celestial ornament kit: use it on a Twisted bow, Armadyl godsword, Voidwaker or Harmonised nightmare staff.</li>
  * <li>Titles: "the Rival" / "Undefeated", unlocked straight into the Titles screen (no item).</li>
  * <li>Rivals mystery box, a combat XP lamp (the skill lamp), a looting bag, blighted supplies.</li>
+ * <li>The Assassin set (row 2): hood 650, garb 800, legs 800, greatsword 1,000.</li>
  * </ul>
  */
 public final class RivalsShop {
@@ -35,6 +36,7 @@ public final class RivalsShop {
 	public static final int CHALLENGER_CAPE = 31780, CHAMPION_CAPE = 31782, ORNAMENT_KIT = 31790, MYSTERY_BOX = 31792;
 	public static final int TITLE_RIVAL = 30221, TITLE_UNDEFEATED = 30222;
 	private static final int SCROLL_ITEM = 2396, LAMP = 30470, LOOTING_BAG = 11941, BLIGHTED_RESTORE = 24598;
+	private static final int ASSASSIN_HOOD = 31878, ASSASSIN_GARB = 31880, ASSASSIN_LEGS = 31882, ASSASSIN_GREATSWORD = 31884;
 
 	private enum Kind { ITEM, TITLE, BLIGHTED }
 
@@ -50,6 +52,11 @@ public final class RivalsShop {
 		new Stock("Challenger cape", CHALLENGER_CAPE, 1, 1000, Kind.ITEM, 0, 5),
 		new Stock("Ornament kit", ORNAMENT_KIT, 1, 2000, Kind.ITEM, 0, 10),
 		new Stock("Mystery box", MYSTERY_BOX, 1, 250, Kind.ITEM, 0, 10),
+		// row 2: the Assassin set (armor batch 2026-10-20; destroy-only)
+		Stock.item(ASSASSIN_HOOD, 1, 650),
+		Stock.item(ASSASSIN_GARB, 1, 800),
+		Stock.item(ASSASSIN_LEGS, 1, 800),
+		Stock.item(ASSASSIN_GREATSWORD, 1, 1000),
 		new Stock("Title: the Rival", SCROLL_ITEM, 1, 750, Kind.TITLE, TITLE_RIVAL, 10),
 		new Stock("Title: Undefeated", SCROLL_ITEM, 1, 750, Kind.TITLE, TITLE_UNDEFEATED, 10),
 		new Stock("Combat XP lamp", LAMP, 1, 100, Kind.ITEM, 0, 10),

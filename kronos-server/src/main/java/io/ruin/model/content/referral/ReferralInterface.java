@@ -197,9 +197,6 @@ public final class ReferralInterface {
 		}
 		if (v.error != null)
 			return RED + v.error + END;
-		if (player.playTime >= Server.toTicks(ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS))
-			return GREY + "Only accounts in their first " + (ReferralSystem.REFERRAL_ELIGIBLE_PLAYTIME_SECONDS / 3600)
-				+ " hours of play can be referred. Invite your friends!" + END;
 		return "Click the box, type your inviter's name, then press Submit.";
 	}
 

@@ -729,6 +729,13 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "spawnpandora": {
+				player.sendMessage(io.ruin.model.activities.VorathHandler.forceSpawn()
+						? "Pandora, the Enigma Keeper has been spawned."
+						: "Pandora is already up.");
+				return true;
+			}
+
 			case "testallbosses": {
 				// Custom bosses 16200-16214 (2026-10-19): spawned in a line east of the player, each one tile clear
 				// of the last, standing still and not respawning, for checking models and animations. Running it
@@ -741,8 +748,11 @@ public class CommandHandlerAdmin {
 					player.sendMessage("Test bosses removed.");
 					return true;
 				}
+				// "::testallbosses new" = round 2 (2026-10-20): 16217-16225
+				boolean round2 = args.length > 0 && args[0].equalsIgnoreCase("new");
+				int first = round2 ? 16217 : 16200, last = round2 ? 16225 : 16214;
 				int x = player.getPosition().getX() + 2, y = player.getPosition().getY(), z = player.getPosition().getZ();
-				for (int id = 16200; id <= 16214; id++) {
+				for (int id = first; id <= last; id++) {
 					NPCType def = NPCType.get(id);
 					if (def == null) {
 						player.sendMessage("Missing npc " + id + " (cache not updated?)");
@@ -755,7 +765,7 @@ public class CommandHandlerAdmin {
 					testBosses.add(n);
 					x += def.size + 1;
 				}
-				player.sendMessage("Spawned " + testBosses.size() + " bosses (16200-16214) to the east. ::testallbosses clear removes them.");
+				player.sendMessage("Spawned " + testBosses.size() + " bosses (" + first + "-" + last + ") to the east. ::testallbosses clear removes them.");
 				return true;
 			}
 

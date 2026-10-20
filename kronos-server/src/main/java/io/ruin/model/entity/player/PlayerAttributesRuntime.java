@@ -538,6 +538,8 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient NpcInfo rsprotNPCInfo;
 	public transient ToAPartyInterface toaPartyInterface;
 	public transient CombatAchievementInterface combatAchievementInterface;
+	/** Zelus Codex view state (tier, selected task), see io.ruin.model.content.codex.ZelusCodex. */
+	public transient Object zelusCodexState;
 	public transient ToaPartyViewInterface toaPartyViewInterface;
 	public transient ToaInvocationsInterface toaInvocationsInterface;
 	public transient ToaMembersInterface membersInterface;

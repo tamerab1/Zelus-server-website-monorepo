@@ -196,6 +196,7 @@ public final class StaticInit {
 		io.ruin.model.content.casino.BlackjackTable.register(); // Zelus Blackjack Table object 62442 -> BlackjackInterface, 2026-10-18
 		io.ruin.model.content.DiscordStatue.register(); // Discord Statue object 62443 -> the Discord invite, 2026-10-18
 		io.ruin.model.content.ZaryteStormpiercer.register(); // customs19 bow 31856 can't be dropped, 2026-10-19
+		io.ruin.model.content.codex.ZelusCodex.register(); // the Zelus Codex 1178 (replaces achievements 849), 2026-10-20
 		io.ruin.model.activities.lottery.Lottery.register();
 		io.ruin.model.content.donatordeals.DonatorDeals.register();
 		io.ruin.model.content.capeforge.CapeForge.register();

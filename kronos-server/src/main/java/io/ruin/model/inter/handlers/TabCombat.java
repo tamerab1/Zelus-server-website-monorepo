@@ -153,7 +153,7 @@ public class TabCombat {
 			}
 			return null;
 		}
-		if ((staffId == 21006 || staffId == 30181) && SpellBook.ANCIENT.isActive(player)) //kodai wand
+		if ((staffId == 21006 || staffId == 30181 || staffId == 31876) && SpellBook.ANCIENT.isActive(player)) //kodai wand, Celestial staff
 			return 4675;
 		if ((staffId == 24422 || staffId == 24425 || staffId == 24424 || staffId == 25517) && SpellBook.ANCIENT.isActive(player)) //Nightmare staff
 			return 4675;

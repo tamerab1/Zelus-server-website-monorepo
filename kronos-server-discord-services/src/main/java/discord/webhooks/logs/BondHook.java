@@ -1,9 +1,9 @@
 package discord.webhooks.logs;
 
+import discord.webhooks.ItemIcons;
 import discord.comp.impl.Embed;
 import discord.comp.impl.Field;
 import discord.comp.impl.Message;
-import discord.comp.impl.Thumbnail;
 import discord.webhooks.Webhook;
 import org.json.JSONObject;
 import properties.ServerProperties;
@@ -19,8 +19,7 @@ import java.awt.*;
 public interface BondHook {
 
 	static void sendBondGiftToDiscord(JSONObject object) {
-		var thumbnail = new Thumbnail();
-			thumbnail.setUrl("https://static.runelite.net/cache/item/icon/" + object.getInt("item_id") + ".png");
+		var thumbnail = ItemIcons.thumbnail(object.getInt("item_id"));
 
 		var embedMessage = new Embed();
 			embedMessage.setTitle("Bond Gift Event");

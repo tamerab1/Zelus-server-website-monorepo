@@ -44,7 +44,7 @@ public class TradePostNotifyGame {
 		}
 		var itemDef = new Item(item).getDef();
 		owner.sendMessage(ZelusMarket.TAG + "Sold " + (MathUtils.gt(amount, BigInteger.ONE) ? amount + " x " : "")
-				+ itemDef.name + " for " + ZelusMarket.coins(price) + " each. Collect your coins in My Shop.");
+				+ itemDef.name + " for " + ZelusMarket.coins(price) + " each. Collect your earnings at the Trading Post.");
 	}
 
 	private static void notifyBought(String ownerUid, int item, BigInteger amount,

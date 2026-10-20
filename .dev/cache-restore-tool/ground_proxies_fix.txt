@@ -1,0 +1,65 @@
+# Ground stand-ins (GroundItem proxies for ids > 32767) that were bond clones: cost 2,000,000 (floor shows 1.2m
+# alch), tradeable, Redeem/Deposit ops. Each gets its real item's record (CloneItemDefBytes, 2026-10-20).
+#   real proxy name
+60256 31132 Aetherial Scythe
+60257 31133 Angelic Greatsword
+60258 31134 Nether Defender
+60259 31135 Ward of the Depths
+60262 31138 Souly Wings
+60263 31139 Zealot's Horned Visage
+60264 31140 Zealot's Warplate
+60265 31141 Zealot's Greaves
+60266 31142 Zealot's Gloves
+60267 31143 Zealot's Striders
+60268 31144 Ancient Cleaver
+60269 31145 Ancient Signet
+60270 31146 Warlord's Dreadcloak
+60271 31147 Zarosian Dreadhelm
+60272 31148 Zarosian Platelegs
+60273 31149 Zarosian Sabatons
+60274 31150 Zarosian Warplate
+59531 31159 AsVal Gun
+59548 31160 Icenier Sword
+59604 31161 Imperial staff
+59605 31162 Imperial bow
+59606 31163 Imperial top
+59609 31164 Crimson hat
+59626 31165 Nightfall bow
+34027 31166 Hallowfell
+34030 31167 Jar of light
+34033 31169 Ardeaglais teleport
+59603 31170 Nox
+60236 31171 Teumo
+60237 31172 Orrvor quo Maten
+60238 31173 Lord Trobin
+60239 31174 Wandering impling
+60240 31175 Wagchin
+60241 31176 The Monkey's Aunt
+60242 31177 Tempoross
+60243 31178 Strisath
+60244 31179 Starlight
+60245 31180 Star Sprite
+60246 31181 Spooky dog
+60247 31182 Spit goblin
+60248 31183 Shadow Keeper
+60249 31184 Slimetoes
+60250 31185 SteelWill
+60251 31186 Mossfists
+60252 31187 Damo
+60253 31188 Sliske
+60254 31189 Light Leech
+60255 31190 ToxiSkele
+34042 31191 Aggy
+60330 31192 Sylvaroth's Sprout (pet)
+60331 31193 Draconic Cape
+60332 31194 Draconic Godsword
+60333 31195 Draconic Helmet
+60334 31196 Draconic Longsword
+60335 31197 Draconic Platebody
+60336 31198 Draconic Platelegs
+60337 31199 Draconic Wings
+60338 31200 Draconies Hood
+60339 31201 Draconies Platebody
+60340 31202 Draconies Platelegs
+60341 31203 Draconies Warhammer
+60342 31204 Draconies Wings

@@ -498,11 +498,9 @@ public class DwarfCannon extends OwnedObject {
 			getOwner().sendMessage("You can't place a cannon in Player owned house.");
 			return false;
 		}
-		if (DonationBossHandler.map != null) {
-			if (getOwner().getPosition().getRegion().id == DonationBossHandler.map.swRegion.id) {
-				getOwner().sendMessage("You can't place a cannon here.");
-				return false;
-			}
+		if (io.ruin.model.activities.bosses.EventBossArea.isIn(getOwner())) {
+			getOwner().sendMessage("You can't place a cannon here.");
+			return false;
 		}
 		if (DonationBossHandler.malakarMap != null) {
 			if (getOwner().getPosition().getRegion().id == DonationBossHandler.malakarMap.swRegion.id) {

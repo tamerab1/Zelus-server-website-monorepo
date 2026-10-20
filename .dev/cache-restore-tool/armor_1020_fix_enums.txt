@@ -1,0 +1,3 @@
+# Assassin greatsword 31884 special attack bar (2026-10-20): cache enums 906 (cost, 500 = 50%) + 1739 (description).
+int 906 31884 500
+str 1739 31884 Umbral Execution: A strike from the shadows with doubled accuracy and 30% more damage, or 60% against targets below half health.

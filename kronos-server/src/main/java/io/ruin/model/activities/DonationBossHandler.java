@@ -52,13 +52,13 @@ public class DonationBossHandler {
 		// fired again, permanently stalled the event after the very first kill -- no new set of 8
 		// target bosses was ever chosen again until someone manually restarted it.
 		NPCType.registerCombat(SummerBoss.class, 17020);
-		map = new DynamicMap().build(11576, 1).persistent(true);
+		// the donation boss now spawns in the event boss cavern (EventBossArea, 2026-10-20); map stays null
 		SummerEvent.map = new DynamicMap().build(11576, 1).persistent(true);
 		malakarMap = new DynamicMap().build(11576, 1).persistent(true);
-		teleportPosition = new Position(map.convertX(2900), map.convertY(3616), 0);
+		teleportPosition = io.ruin.model.activities.bosses.EventBossArea.TELEPORT;
 		malakarTeleportPosition = new Position(malakarMap.convertX(2900), malakarMap.convertY(3616), 0);
 		new NPC(12336).spawn(new Position(malakarMap.convertX(2912), malakarMap.convertY(3616)));
-		spawnPosition = new Position(map.convertX(2912), map.convertY(3616), 0);
+		spawnPosition = io.ruin.model.activities.bosses.EventBossArea.spawnFor(1787);
 	}
 
 	public static synchronized void addDonationAmount(int amount) {
@@ -149,7 +149,7 @@ public class DonationBossHandler {
 				GlobalBroadcastHook.sendEventSpawnWarning("The Donation boss", null);
 				// Final minute wait
 				e.delay(DELAY_100);
-				boss = new NPC(1787).spawn(new Position(map.convertX(2912), map.convertY(3616)));
+				boss = new NPC(1787).spawn(io.ruin.model.activities.bosses.EventBossArea.spawnFor(1787));
 				if (boss == null || boss.isRemoved()) {
 					// Spawn failed, return donations
 					overflowDonations += DONATION_FOR_BOSS;

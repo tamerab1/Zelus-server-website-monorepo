@@ -1,0 +1,21 @@
+# Custom bosses round 2 (2026-10-20; source Desktop/Rsps/Modle set/Models/NPCs). Build: build_custom_bosses_1020.sh.
+# Server: npcs/combat/Custom_bosses_1020.json (stats, attack / defend / death) + CustomBossCombat; ::testallbosses.
+# Animations picked with FindBossRig (top-N, then seqs= sets measured + rendered, newbosses_1020/rig/*_seqs.png):
+#   every humanoid AND Krag'thor / Xanthos / Balarok are skinned on the player skeleton 0 (score 0.81-0.91) -- the
+#   requested Torag / Abyssal / Graardor npc rigs don't fit these meshes, the matching player weapon sets do:
+#     Ignis    godsword 7053 / 7052, slash 7045 (str 0.13)     Kaelen   staff 813 / 1205, trident cast 1167 (0.04)
+#     Morvath  808 / 819, crush 401 (0.08)                     Zephyros staff 813 / 1205, spell cast 711 (0.06)
+#     Krag'thor Dharok hunch 2065 / 2064, Torag slam 2068      Xanthos  808 / 819, claw slash 393 (0.07)
+#     Malakor  staff 813 / 1205, chinchompa toss 7617 (0.05)   Balarok  808 / 819, dual claw cleave 7514 (0.09)
+#   death 836 (0.05-0.11). Vespira 36100 = Vespula's skeleton 1670 (score 1.000): hover 7453, sting 7455, fall 7457.
+# No textures, all under the GPU 6144-face cap. Raw heights 390-600 (2x a player at 128): humanoids scaled down to fit 1x1.
+#    npc   raw    model size scale lvl stand walk name
+boss 16217 37796 61281 1    104   640 7053 7052 Ignis the Sunreaver
+boss 16218 37795 61282 1    104   600 813  1205 Kaelen the Abyssal Tide
+boss 16219 37793 61283 1    100   580 808  819  Morvath the Shadowblade
+boss 16220 37792 61284 1    104   620 813  1205 Zephyros the Chronomancer
+boss 16221 37791 61285 1    104   660 2065 2064 Krag'thor the Bloodbound
+boss 16222 37327 61286 1    96    560 808  819  Xanthos the Void Fiend
+boss 16223 37198 61287 1    84    520 813  1205 Professor Malakor
+boss 16224 36120 61288 3    90    720 808  819  Balarok the Horned Behemoth
+boss 16225 36100 61289 2    80    600 7453 7453 Vespira the Hive Queen
