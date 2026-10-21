@@ -10,7 +10,8 @@ import java.io.File;
 // prod log showed "Invalid Sector! index=255 archiveId=16" and "index=8 archiveId=24464 / 24465". The server drops a
 // request it has no data for and the client waits on it forever (and re-asks after every js5 reconnect).
 //   - sprites 24464 / 24465: listed in the sprite index (crc, revision 1) but no data was ever stored -> a valid 1x1
-//     transparent sprite (nothing references them: no texture or interface uses either id);
+//     transparent sprite. WRONG, reverted by FixWrappedSpriteIds: they are the 16-bit wrap targets of sprites
+//     90000 / 90001, and the 1x1 data crashed every client opening a gear-preset screen with error_game_js5crc;
 //   - sprites 17014 / 17015 (1,026,075 bytes): over the CLIENT's 1,000,000-byte store limit -> scaled down (see below).
 // Index 16's missing reference table is deliberately left alone (see below). Only archives that are missing / empty are touched. Usage: verify|apply <cachePath>
 public class FixUnservableArchives {
