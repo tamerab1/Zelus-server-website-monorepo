@@ -103,6 +103,8 @@ public class VoteHandler {
 			} else if (site.equalsIgnoreCase("RSPS_LIST")) {
 				points += 1;
 				votedRspsList = true;
+			} else if (site.equalsIgnoreCase("RUNERANK")) { // 2026-10-21: signed webhook, website /api/vote/runerank
+				points += 1;
 			}
 		}
 		if (newlyClaimed == 0) {

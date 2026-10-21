@@ -204,7 +204,16 @@ public final class RivalsQueueManager {
 			return "You can't queue for Rivals during a Pit Championship.";
 		if (p.currentDynamicMap != null || p.inDynamicMap)
 			return "You can't queue from inside an instance.";
+		if (petBlocked(p))
+			return PET_BLOCKED;
 		return null;
+	}
+
+	static final String PET_BLOCKED = "You cannot bring followers into the Rivals arena. Please bank or pick up your pet first.";
+
+	/** A pet is out and there's no inventory slot to store it in when the match starts (RivalsArenaInstance.start). */
+	static boolean petBlocked(Player p) {
+		return p.pet != null && p.getInventory().isFull();
 	}
 
 	/* ---------------- matching ---------------- */
@@ -249,6 +258,8 @@ public final class RivalsQueueManager {
 			return "you started a duel.";
 		if (p.pvpPresetActive)
 			return "you turned on a PvP preset.";
+		if (petBlocked(p))
+			return "you have a pet out and a full inventory. " + PET_BLOCKED;
 		return null;
 	}
 

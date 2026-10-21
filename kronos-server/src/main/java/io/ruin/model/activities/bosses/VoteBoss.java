@@ -185,7 +185,7 @@ public class VoteBoss extends NPCCombat {
 					npc.localPlayers().forEach(p -> {
 						int distance = p.getPosition().distance(position);
 						if (distance <= 1) {
-							p.hit(new Hit(npc).randDamage(distance == 0 ? 20 : 10));
+							p.hit(new Hit(npc).randDamage(distance == 0 ? 12 : 6));
 
 						}
 					});
@@ -212,7 +212,7 @@ public class VoteBoss extends NPCCombat {
 					for (Map.Entry<NPC, Player> entry : tornados.entrySet()) {
 						NPC nado = entry.getKey();
 						if (nado.getPosition().distance(p.getPosition()) < 1)
-							p.hit(new Hit(HitType.DAMAGE).randDamage(30, 50));
+							p.hit(new Hit(HitType.DAMAGE).randDamage(15, 25));
 					}
 				});
 				e.delay(1);
@@ -282,7 +282,7 @@ public class VoteBoss extends NPCCombat {
 				World.sendGraphics(2072, 0, 0, pos);
 				npc.localPlayers().forEach(p -> {
 					if (p.getPosition().distance(pos) < 1) {
-						p.hit(new Hit(HitType.DAMAGE).randDamage(40, 60));
+						p.hit(new Hit(HitType.DAMAGE).randDamage(20, 30));
 						p.getPrayer().deactivateAll();
 						p.sendMessage("Your prayers have been deactivated!");
 					}

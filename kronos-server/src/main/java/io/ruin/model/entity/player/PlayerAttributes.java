@@ -872,6 +872,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int wildernessPoints;
 	public int wintertodtstorePoints;
 	public int tournamentPoints;
+	/** Score Points (SbP): paid to the Scoreboard's daily / weekly top 3, spent at the Scoreboard Exchange. */
+	public int scorePoints;
 	/** Teleport Nexus favourites (ServerTeleports names, max 5), saved; loaded into teleportFavourites on login. */
 	public List<String> teleportFavouriteNames;
 	/** A Zelus Spinner reward rolled but not yet paid (paid when the spin ends, or on the next login). */

@@ -209,6 +209,7 @@ public class Bank extends ItemContainerG<BankItem> {
 			// attributed item silently skipped its placeholder and landed in a new slot instead,
 			// leaving the placeholder stuck behind forever.
 			if (item.getId() == def.placeholderMainId) {
+				item.clearAttributes(); // a placeholder must not hand an old item's perks to the new one
 				item.setId(id);
 				item.setAmount(amount);
 				item.putAttributes(attributes);
@@ -268,6 +269,7 @@ public class Bank extends ItemContainerG<BankItem> {
 			} else if (existing.getId() == item.getId()) {
 				existing.setAmount((int) Math.min(Integer.MAX_VALUE, (long) existing.getAmount() + item.getAmount()));
 			} else { // its placeholder
+				existing.clearAttributes();
 				existing.setId(item.getId());
 				existing.setAmount(item.getAmount());
 			}
@@ -392,6 +394,7 @@ public class Bank extends ItemContainerG<BankItem> {
 	public boolean toPlaceholder(BankItem item) {
 		ObjType def = item.getDef();
 		if (allowPlaceHolder(def)) {
+			item.clearAttributes();
 			item.setId(def.placeholderMainId);
 			item.setAmount(1);
 			return true;
@@ -504,6 +507,9 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 
 		if (keepPlaceholder && allowPlaceHolder(def)) {
+			// the withdrawn item took its perks / charges with it: the placeholder keeps none (2026-10-21 -- it kept
+			// them, and putAttributes MERGES, so the next item deposited into it came back with mixed-up perks)
+			item.clearAttributes();
 			item.setId(def.placeholderMainId);
 			item.setAmount(1);
 			set(item.getSlot(), item);

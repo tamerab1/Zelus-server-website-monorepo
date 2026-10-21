@@ -127,6 +127,33 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			// ::givesbp <player name> <amount> -- Score Points (negative removes). The name may contain spaces: the amount is
+			// the last word
+			case "givesbp": {
+				int amount;
+				try {
+					amount = Integer.parseInt(args[args.length - 1]);
+				} catch (Exception e) {
+					player.sendMessage("Usage: ::givesbp <player name> <amount>");
+					return true;
+				}
+				if (args.length < 2) {
+					player.sendMessage("Usage: ::givesbp <player name> <amount>");
+					return true;
+				}
+				String name = String.join(" ", java.util.Arrays.copyOfRange(args, 0, args.length - 1));
+				Player target = World.getPlayer(name);
+				if (target == null) {
+					player.sendMessage("<col=ff0000>No online player named '" + name + "'. No points were given.");
+					return true;
+				}
+				target.scorePoints = (int) Math.max(0, Math.min(Integer.MAX_VALUE, (long) target.scorePoints + amount));
+				player.sendMessage("Gave " + amount + " Score Points to " + target.getName() + " (now " + target.scorePoints + ").");
+				if (target != player)
+					target.sendMessage("You received " + amount + " Score Points.");
+				return true;
+			}
+
 			// ::givetp <amount> [player name] -- Pit Championship tournament points (negative removes); no name = yourself
 			case "givetp": {
 				int amount;

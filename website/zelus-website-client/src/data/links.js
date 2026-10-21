@@ -5,7 +5,7 @@ export const YOUTUBE_URL = null;
 export const TWITTER_URL = null;
 export const FORUMS_URL = null;
 /** Featured video on the home page: a YouTube video id, or null for the "coming soon" card. */
-export const FEATURED_VIDEO_ID = null;
+export const FEATURED_VIDEO_ID = '64q05Yh3JOI'; // the Zelus trailer, https://youtu.be/64q05Yh3JOI
 
 /** Direct downloads (same GitHub release the Download page uses). */
 const RELEASES_BASE = 'https://github.com/tamerab1/zelus-clientv1.0.1/releases/download/development-latest';

@@ -1,0 +1,5 @@
+# Scoreboard Exchange whips (2026-10-21): spec bar (906, 50%) + description (1739). Server: StormcoilWhip / MagmatideWhip.
+int 906 31958 500
+str 1739 31958 Chain Surge: A 25% more accurate lash. On a hit, lightning arcs back through the target for 50% more damage.
+int 906 31960 500
+str 1739 31960 Magma Brand: A 25% more accurate lash that sets the target ablaze, burning for up to 6 damage 3 more times.

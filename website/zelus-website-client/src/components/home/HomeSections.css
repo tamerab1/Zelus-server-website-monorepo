@@ -234,6 +234,29 @@
     #0d1117;
 }
 .zh-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.zh-video-facade {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background-color: #0d1117;
+  background-size: cover;
+  background-position: center;
+  color: #f0f6fc;
+  font: inherit;
+}
+.zh-video-facade::before { content: ''; position: absolute; inset: 0; background: rgba(11, 12, 16, 0.35); transition: background 0.2s; }
+.zh-video-facade:hover::before, .zh-video-facade:focus-visible::before { background: rgba(11, 12, 16, 0.15); }
+.zh-video-facade > * { position: relative; }
+.zh-video-facade .zh-play { margin: 0; transition: transform 0.2s; }
+.zh-video-facade:hover .zh-play { transform: scale(1.08); }
+.zh-video-facade-label { font-size: 13px; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); }
 .zh-video-soon {
   position: absolute;
   inset: 0;

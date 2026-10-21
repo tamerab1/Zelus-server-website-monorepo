@@ -476,7 +476,7 @@ public class BuildChampionshipBoard {
         return img;
     }
 
-    /** The Zelus Scoreboard face: title plate, the four categories, and the daily / weekly PKP rewards. */
+    /** The Zelus Scoreboard face: title plate, the four categories, and the daily / weekly Score Point (SbP) rewards. */
     static BufferedImage paintScoreboardFace() {
         BufferedImage img = new BufferedImage(PW, PH, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = img.createGraphics();
@@ -560,7 +560,7 @@ public class BuildChampionshipBoard {
             for (int m = 0; m < 3; m++) {
                 int mx = 300 + m * 250;
                 medal(g, mx, y + 28, 22, medals[m], String.valueOf(m + 1), new Font("Georgia", Font.BOLD, 30));
-                shadowText(g, pkp[m] + " PKP", line, new Color(0x1d5a1d), mx + 34, y + 40);
+                shadowText(g, pkp[m] + " SbP", line, new Color(0x1d5a1d), mx + 34, y + 40);
             }
         }
         g.dispose();

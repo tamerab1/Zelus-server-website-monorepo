@@ -618,6 +618,7 @@ public class TournamentHandler {
 
 		Broadcast.GLOBAL.sendPlain(String.format(Icon.PIT_TROPHY.tag() + " <col=ff981f><shad=0>[The Pit]</col></shad> <col=ffffff><shad=0>%s</shad></col> "
 			+ "<col=ff981f>has conquered the %s Championship!</col>", champion.getName(), current.format));
+		io.ruin.services.LiveFeed.push("tournament_win", champion.getName(), champion.getName() + " has conquered the " + current.format + " Championship!");
 		resetBracket();
 		scheduleNext();
 	}

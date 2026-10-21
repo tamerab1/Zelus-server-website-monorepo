@@ -107,7 +107,7 @@ public enum SlayerUnlock {
 			config.set(player, 1);
 			VarPlayerRepository.SLAYER_POINTS.set(player,
 					VarPlayerRepository.SLAYER_POINTS.get(player) - price);
-			player.sendMessage(extension ? "Extension" : "Unlock" + " purchased.");
+			player.sendMessage((extension ? "Extension" : "Unlock") + " purchased.");
 			if (extension) {
 				player.slayerTasksBlockedOrExtended++;
 
@@ -121,6 +121,7 @@ public enum SlayerUnlock {
 		for (SlayerUnlock slayerUnlock : values()) {
 			UNLOCKS.put(slayerUnlock.slot, slayerUnlock);
 		}
+		SlayerCodex.register();
 		InterfaceHandler.register(426, handler -> {
 			handler.actions[8] = (SlotAction) SlayerUnlock::handleUnlock;
 			handler.actions[23] = (DefaultAction) SlayerUnlock::buyItem;
@@ -183,7 +184,7 @@ public enum SlayerUnlock {
 		player.sendMessage("Purchase complete, all tasks extended.");
 	}
 
-	private static void unblockTask(Player player, int slot) {
+	static void unblockTask(Player player, int slot) {
 		VarPlayerRepository.BLOCKED_TASKS[slot].set(player, 0);
 	}
 
@@ -221,7 +222,7 @@ public enum SlayerUnlock {
 		player.sendMessage("You have successfully cancelled your task.");
 	}
 
-	private static void blockTask(Player player) {
+	static void blockTask(Player player) {
 		SlayerCreature task = SlayerCreature.lookup(VarPlayerRepository.SLAYER_TASK.get(player));
 
 		if (task == null) {
@@ -263,7 +264,12 @@ public enum SlayerUnlock {
 		}
 	}
 
+	/** Every master's Rewards path: the Slayer Master Codex since 2026-10-21 (the legacy 426 below is kept, unused). */
 	public static void openRewards(Player player) {
+		SlayerCodex.open(player, SlayerCodex.Tab.UNLOCKS);
+	}
+
+	static void openLegacyRewards(Player player) {
 		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
 		player.openInterface(ToplevelComponent.MAINMODAL, 426);
 		player.getPacketSender().sendIfEvents(426, 8, 0, 69, 2);

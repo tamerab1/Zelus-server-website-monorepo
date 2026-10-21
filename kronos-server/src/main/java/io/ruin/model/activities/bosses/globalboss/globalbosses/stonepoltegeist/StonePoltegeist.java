@@ -1,5 +1,6 @@
 package io.ruin.model.activities.bosses.globalboss.globalbosses.stonepoltegeist;
 
+import io.ruin.model.activities.bosses.globalboss.GlobalBossRewards;
 import io.ruin.Server;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
@@ -79,36 +80,17 @@ public class StonePoltegeist extends NPCCombat {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
 			try {
-				for (Player p : new java.util.ArrayList<>(npc.localPlayers())) {
-					if (!damagingPlayers.contains(p.getUserId()))
-						continue;
-					try {
-						rewardPlayer(p);
-					} catch (Exception e) {
-						System.err.println("[Stone Poltegeist] reward failed for " + p.getName() + ": " + e);
-						e.printStackTrace();
-					}
-				}
+				GlobalBossRewards.payDamagers("the Stone Poltegeist", damagingPlayers, table, 3, 6, p -> {
+					p.globalBossKills.increment(p);
+					int perkPoints = VoteHandler.playerVotedRecently(p) ? 2 : 1;
+					p.perkPoints += perkPoints;
+					p.sendMessage(Color.RED.wrap("You've received " + perkPoints + " perk points from the Stone Poltegeist!"));
+				});
 			} finally {
 				npc.remove();
 			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend);
-	}
-
-	private void rewardPlayer(Player player) {
-		player.globalBossKills.increment(player);
-		player.sendMessage(Color.RED.wrap("Your reward has been dropped to your feet!"));
-		int rolls = Random.get(3, 6);
-		int perkPointReward = VoteHandler.playerVotedRecently(player) ? 2 : 1;
-		player.perkPoints += perkPointReward;
-		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the Stone Poltegeist!"));
-		for (int i = 0; i < rolls; i++) {
-			Item reward = table.rollItem();
-			new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
-			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from the Stone Poltegeist!");
-		}
 	}
 
 	private void preHitDefend(Hit hit) {
@@ -175,7 +157,7 @@ public class StonePoltegeist extends NPCCombat {
 				npc.localPlayers().forEach(p -> {
 					tornados.forEach(pos -> {
 						if (pos.getPosition().distance(p.getPosition()) < 1)
-							p.hit(new Hit(HitType.DAMAGE).randDamage(30, 50));
+							p.hit(new Hit(HitType.DAMAGE).randDamage(15, 25));
 					});
 				});
 				e.delay(1);
@@ -218,7 +200,7 @@ public class StonePoltegeist extends NPCCombat {
 				meteorPositions.forEach(pos -> {
 					World.sendGraphics(305, 0, 0, pos);
 					if (p.getPosition().distance(pos) < 2)
-						p.hit(new Hit(HitType.DAMAGE).randDamage(22));
+						p.hit(new Hit(HitType.DAMAGE).randDamage(12));
 				});
 			});
 		});

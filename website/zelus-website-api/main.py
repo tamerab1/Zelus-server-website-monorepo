@@ -494,54 +494,6 @@ def _promote_stale_unverified_votes(db: Session, username: str) -> None:
 # other sources.  Format: list of event objects, or {"events": [...]}
 _LIVEFEED_FILE = Path(__file__).parent / "livefeed.json"
 
-def _generate_synthetic_feed(rows: list[dict], limit: int) -> list[dict]:
-    """
-    Builds a live-feed from character-file stats when the game DB log tables are
-    unavailable. Only emits events backed by a real field (total_level,
-    killstreak) -- this used to also fabricate specific "X received <item> from
-    <boss>" rare-drop events for real player names from a hardcoded item list
-    keyed by a hash of their username, which is not something that actually
-    happened and was reported live as a lie (a player who's never done CoX
-    "receiving" Dragon claws from it). Don't reintroduce invented per-item drop
-    events here -- real drop events belong in tier 2/3 (game_events / drop_log),
-    not fabricated client-side.
-    """
-    events = []
-    now    = datetime.now(UTC)
-
-    # ── Killstreaks ───────────────────────────────────────────────────────────
-    streakers = sorted(rows, key=lambda r: r.get('killstreak', 0), reverse=True)
-    for i, p in enumerate(streakers[:3]):
-        ks = p.get('killstreak', 0)
-        if ks < 1:
-            break
-        seed = int(hashlib.md5(f"ks_{p['username']}".encode()).hexdigest(), 16) % 1800
-        ts   = (now - timedelta(seconds=seed)).isoformat()
-        events.append({
-            "id":        f"streak_{p['username']}",
-            "type":      "killstreak",
-            "timestamp": ts,
-            "message":   f"{p['username']} is on a {ks}-kill streak in the Wilderness!",
-        })
-
-    # ── Level milestones ──────────────────────────────────────────────────────
-    levelers = sorted(rows, key=lambda r: r.get('total_level', 0), reverse=True)
-    for i, p in enumerate(levelers[:3]):
-        lvl = p.get('total_level', 0)
-        if lvl < 24:
-            break
-        seed = int(hashlib.md5(f"lvl_{p['username']}".encode()).hexdigest(), 16) % 7200
-        ts   = (now - timedelta(seconds=seed)).isoformat()
-        events.append({
-            "id":        f"lvl_{p['username']}",
-            "type":      "level_up",
-            "timestamp": ts,
-            "message":   f"{p['username']} reached total level {lvl}.",
-        })
-
-    events.sort(key=lambda e: e['timestamp'], reverse=True)
-    return events[:limit]
-
 # ── API endpoints ─────────────────────────────────────────────────────────────
 
 @app.get("/")
@@ -559,8 +511,7 @@ def livefeed(limit: int = 12, db: Session = Depends(get_db)):
                          via POST /events/push.  Requires game server integration.
     3. game DB tables  — queries NR 288 pklog + drop_log tables directly from the
                          read-only game MariaDB.  Degrades gracefully if absent.
-    4. synthetic       — deterministic events generated from character file stats.
-                         Always available; used when all live sources are absent.
+    4. empty           — no real event in the last 24 hours: nothing is made up.
     """
     from sqlalchemy import text as sa_text
 
@@ -645,11 +596,11 @@ def livefeed(limit: int = 12, db: Session = Depends(get_db)):
     except Exception:
         pass
 
-    # ── 4. Synthetic fallback from character files ────────────────────────────
-    rows = _read_character_files(200) or []
-    if not rows:
-        return {"events": [], "source": "empty"}
-    return {"events": _generate_synthetic_feed(rows, limit), "source": "synthetic"}
+    # ── 4. Nothing real happened recently: an empty feed (2026-10-21) ────────
+    # This used to synthesise events from character files ("X is on a 1-kill streak", "X reached total level 2277"
+    # with invented timestamps) -- reported live as fake activity. The game server now pushes real events to
+    # /events/push (io.ruin.services.LiveFeed), so an empty feed means exactly that.
+    return {"events": [], "source": "empty"}
 
 
 @app.get("/debug/hiscores")
@@ -917,8 +868,8 @@ def check_game_username(request: Request, username: str):
 # (see below) promotes that row to status="pending" (claimable in-game via
 # ::claimvote). This closes the exploit where a player could claim vote
 # credit without actually voting.
-VALID_SITES          = {"RUNELOCUS", "RSPS_LIST"}
-VOTE_POINTS_BY_SITE  = {"RUNELOCUS": 2, "RSPS_LIST": 2}
+VALID_SITES          = {"RUNELOCUS", "RSPS_LIST", "RUNERANK"}
+VOTE_POINTS_BY_SITE  = {"RUNELOCUS": 2, "RSPS_LIST": 2, "RUNERANK": 1}
 
 @app.post("/vote/submit", status_code=status.HTTP_201_CREATED)
 @limiter.limit("10/minute")
@@ -1053,9 +1004,69 @@ _CALLBACK_SITE_SLUGS = {
 }
 _CALLBACK_USERNAME_PARAMS = ("callback", "userid", "postback", "id", "username", "user", "u", "pingUsername", "name")
 
-def _handle_vote_callback(site: str, provided_secret: str | None, request: Request, db: Session):
+def _confirm_vote(site_name: str, game_username: str, reported_ip: str | None, db: Session) -> dict:
+    """A topsite proved a vote happened: promote the player's unverified row for that site, or create a confirmed one.
+    Shared by the query-param callbacks and the signed RuneRank webhook (2026-10-21)."""
     from sqlalchemy import func as sa_func
 
+    now    = datetime.utcnow()
+    cutoff = now - timedelta(hours=VOTE_COOLDOWN_HOURS)
+
+    # Single lookup, not two sequential ones. The old version ran a "find unverified"
+    # query, and only if THAT came back empty, a separate "find pending/claimed" query
+    # to avoid duplicating an already-confirmed vote. Those two queries could race
+    # /vote/submit's own insert: if the submit's row landed in the gap between them (or
+    # before either but within the same wall-clock second), both this callback and the
+    # submit request would independently insert their own row for the same vote --
+    # confirmed live 2026-09-02 (RSPS_LIST vote for 'gandalf': #211 inserted unverified
+    # by /vote/submit, #213 inserted pending "no prior submit" by this callback, both
+    # created_at same second). That leaves a permanently-stuck unverified row AND, once
+    # _promote_stale_unverified_votes's 30-minute fallback promotes it too, a genuine
+    # duplicate "pending" row -- claim_votes_for_game() claims every pending row with no
+    # per-site dedup, so the game side would count that site's vote twice in one claim.
+    # One query + branch on whatever it finds closes that race window entirely: there is
+    # now only one decision point, so there is nothing left for /vote/submit's insert to
+    # race against on the read side.
+    recent = (
+        db.query(models.Vote)
+        .filter(
+            sa_func.lower(models.Vote.game_username) == game_username.lower(),
+            models.Vote.site_name  == site_name,
+            models.Vote.created_at >= cutoff,
+        )
+        .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
+        .first()
+    )
+
+    if recent and recent.status == "unverified":
+        recent.status = "pending"
+        db.commit()
+        log.info("vote_callback: %s confirmed vote #%d for '%s'.",
+                  site_name, recent.id, game_username)
+        return {"status": "confirmed", "vote_id": recent.id}
+
+    if recent and recent.status in ("pending", "claimed"):
+        return {"status": "duplicate", "vote_id": recent.id}
+
+    # No row at all in the window (callback arrived before/without a /vote/submit call,
+    # or the topsite re-pinged well after everything expired) -- the callback itself is
+    # authoritative proof a vote happened, so create it directly.
+    new_vote = models.Vote(
+        site_name     = site_name,
+        vote_points   = VOTE_POINTS_BY_SITE.get(site_name, 2),
+        status        = "pending",
+        ip_address    = reported_ip,
+        game_username = game_username,
+    )
+    db.add(new_vote)
+    db.commit()
+    db.refresh(new_vote)
+    log.info("vote_callback: %s created fresh confirmed vote #%d for '%s' (no prior submit).",
+              site_name, new_vote.id, game_username)
+    return {"status": "confirmed", "vote_id": new_vote.id}
+
+
+def _handle_vote_callback(site: str, provided_secret: str | None, request: Request, db: Session):
     # Log every ping unconditionally, before any validation can reject it --
     # RuneLocus's exact postback format/registration is unconfirmed, so this
     # is the only way to see what they actually send (site slug, params) the
@@ -1107,62 +1118,7 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
     reported_ip = request.query_params.get("userip") or _get_real_client_ip(request)
 
     try:
-        now    = datetime.utcnow()
-        cutoff = now - timedelta(hours=VOTE_COOLDOWN_HOURS)
-
-        # Single lookup, not two sequential ones. The old version ran a "find unverified"
-        # query, and only if THAT came back empty, a separate "find pending/claimed" query
-        # to avoid duplicating an already-confirmed vote. Those two queries could race
-        # /vote/submit's own insert: if the submit's row landed in the gap between them (or
-        # before either but within the same wall-clock second), both this callback and the
-        # submit request would independently insert their own row for the same vote --
-        # confirmed live 2026-09-02 (RSPS_LIST vote for 'gandalf': #211 inserted unverified
-        # by /vote/submit, #213 inserted pending "no prior submit" by this callback, both
-        # created_at same second). That leaves a permanently-stuck unverified row AND, once
-        # _promote_stale_unverified_votes's 30-minute fallback promotes it too, a genuine
-        # duplicate "pending" row -- claim_votes_for_game() claims every pending row with no
-        # per-site dedup, so the game side would count that site's vote twice in one claim.
-        # One query + branch on whatever it finds closes that race window entirely: there is
-        # now only one decision point, so there is nothing left for /vote/submit's insert to
-        # race against on the read side.
-        recent = (
-            db.query(models.Vote)
-            .filter(
-                sa_func.lower(models.Vote.game_username) == game_username.lower(),
-                models.Vote.site_name  == site_name,
-                models.Vote.created_at >= cutoff,
-            )
-            .order_by(models.Vote.created_at.desc(), models.Vote.id.desc())
-            .first()
-        )
-
-        if recent and recent.status == "unverified":
-            recent.status = "pending"
-            db.commit()
-            log.info("vote_callback: %s confirmed vote #%d for '%s'.",
-                      site_name, recent.id, game_username)
-            return {"status": "confirmed", "vote_id": recent.id}
-
-        if recent and recent.status in ("pending", "claimed"):
-            return {"status": "duplicate", "vote_id": recent.id}
-
-        # No row at all in the window (callback arrived before/without a /vote/submit call,
-        # or the topsite re-pinged well after everything expired) -- the callback itself is
-        # authoritative proof a vote happened, so create it directly.
-        new_vote = models.Vote(
-            site_name     = site_name,
-            vote_points   = VOTE_POINTS_BY_SITE.get(site_name, 2),
-            status        = "pending",
-            ip_address    = reported_ip,
-            game_username = game_username,
-        )
-        db.add(new_vote)
-        db.commit()
-        db.refresh(new_vote)
-        log.info("vote_callback: %s created fresh confirmed vote #%d for '%s' (no prior submit).",
-                  site_name, new_vote.id, game_username)
-        return {"status": "confirmed", "vote_id": new_vote.id}
-
+        return _confirm_vote(site_name, game_username, reported_ip, db)
     except OperationalError:
         raise HTTPException(status_code=503, detail="Database connection failed.")
 
@@ -1179,6 +1135,94 @@ def vote_callback_query_secret(site: str, request: Request, db: Session = Depend
 @limiter.limit("120/minute")
 def vote_callback_path_secret(site: str, secret: str, request: Request, db: Session = Depends(get_db)):
     return _handle_vote_callback(site, secret, request, db)
+
+
+# ─── POST /api/vote/runerank ───────────────────────────────────────────────────
+# RuneRank's signed vote webhook (2026-10-21). JSON body:
+#   {"vote_id": "...", "server_id": "...", "username": "...", "timestamp": 1234567890, "signature": "..."}
+# signature = hex HMAC-SHA256(RUNERANK_API_SECRET, f"{vote_id}:{server_id}:{username}:{timestamp}"),
+# compared in constant time. A test callback ({"test": true}) just gets 200, no reward. Each vote_id pays once (topsite_vote_receipts), and an old timestamp is refused,
+# so a captured callback can't be replayed. A valid vote is confirmed exactly like the other sites (status
+# "pending" -> claimed in-game by ::claimvote, +1 VP in VoteHandler). Always answers fast; errors that a retry
+# can't fix (unknown character, duplicate) still answer 200 so RuneRank doesn't retry forever.
+RUNERANK_SERVER_ID   = os.getenv("RUNERANK_SERVER_ID", "7eb44e74-f783-4ad9-b5f1-275ecc98d04e")
+RUNERANK_API_SECRET  = os.getenv("RUNERANK_API_SECRET", "")
+RUNERANK_MAX_AGE_SECONDS = int(os.getenv("RUNERANK_MAX_AGE_SECONDS", "900"))
+
+
+def _runerank_field(body: dict, key: str) -> str:
+    value = body.get(key)
+    return "" if value is None else str(value).strip()
+
+
+@app.post("/api/vote/runerank")
+@limiter.limit("120/minute")
+async def vote_callback_runerank(request: Request, db: Session = Depends(get_db)):
+    """The body is read by hand, not as a strict model: RuneRank's "Send test vote" posts {"test": true, ...}
+    possibly without every field, and must still get a 200 (a 422 would fail their test). Accepts JSON or form."""
+    import hmac
+
+    try:
+        body = await request.json()
+    except Exception:
+        body = dict(await request.form())
+    if not isinstance(body, dict):
+        body = {}
+    if str(body.get("test", "")).lower() in ("true", "1"):
+        log.info("vote_callback: RUNERANK test callback from %s -- OK, no reward", _get_real_client_ip(request))
+        return {"status": "ok", "test": True}
+
+    vote_id, server_id = _runerank_field(body, "vote_id"), _runerank_field(body, "server_id")
+    username, signature = _runerank_field(body, "username"), _runerank_field(body, "signature").lower()
+    try:
+        timestamp = int(float(_runerank_field(body, "timestamp")))
+    except ValueError:
+        timestamp = 0
+    log.info("vote_callback: received RUNERANK vote_id=%r user=%r ts=%s from %s",
+             vote_id, username, timestamp, _get_real_client_ip(request))
+    if not vote_id or not username or not signature or not timestamp or len(vote_id) > 100:
+        raise HTTPException(status_code=400, detail="Missing vote_id, username, timestamp or signature.")
+    if not RUNERANK_API_SECRET:
+        log.error("vote_callback: RUNERANK_API_SECRET is not set -- refusing every RuneRank vote.")
+        raise HTTPException(status_code=503, detail="RuneRank voting is not configured.")
+    if not hmac.compare_digest(server_id, RUNERANK_SERVER_ID):
+        raise HTTPException(status_code=403, detail="Unknown server id.")
+    payload  = f"{vote_id}:{server_id}:{username}:{timestamp}"
+    expected = hmac.new(RUNERANK_API_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(expected, signature):
+        log.warning("vote_callback: rejected RUNERANK vote %r -- bad signature", vote_id)
+        raise HTTPException(status_code=403, detail="Invalid signature.")
+    ts = timestamp / 1000 if timestamp > 10**12 else timestamp  # seconds or milliseconds
+    if abs(datetime.now(UTC).timestamp() - ts) > RUNERANK_MAX_AGE_SECONDS:
+        log.warning("vote_callback: rejected RUNERANK vote %r -- stale timestamp %s", vote_id, timestamp)
+        raise HTTPException(status_code=403, detail="Stale vote.")
+
+    game_username = username
+    if len(game_username) > 12 or not _game_username_exists(game_username):
+        log.warning("vote_callback: RUNERANK vote for unknown character %r -- ignoring.", game_username)
+        return {"status": "ignored", "reason": "unknown in-game character"}
+
+    try:
+        receipt = models.TopsiteVoteReceipt(site_name="RUNERANK", external_vote_id=vote_id, game_username=game_username)
+        db.add(receipt)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        return {"status": "duplicate", "reason": "vote id already processed"}
+    except OperationalError:
+        raise HTTPException(status_code=503, detail="Database connection failed.")
+
+    try:
+        result = _confirm_vote("RUNERANK", game_username, _get_real_client_ip(request), db)
+    except OperationalError:
+        # the vote never got confirmed: drop the receipt so RuneRank's retry can pay it
+        db.rollback()
+        db.query(models.TopsiteVoteReceipt).filter(models.TopsiteVoteReceipt.id == receipt.id).delete()
+        db.commit()
+        raise HTTPException(status_code=503, detail="Database connection failed.")
+    receipt.vote_row_id = result.get("vote_id")
+    db.commit()
+    return result
 
 
 # ─── GET /voting/claim/{username} ──────────────────────────────────────────────

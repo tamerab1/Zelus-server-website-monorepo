@@ -74,7 +74,7 @@ public class Mazchna {
 								new OptionsDialogue(new Option("Look at rewards", () -> {
 									SlayerUnlock.openRewards(player);
 								}), new Option("Look at shop", () -> {
-									ShopManager.openIfExists(player, "06bf1d5a-e4d8-49f5-9aac-6229a965b98a");
+									io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES);
 								}), new Option("Cancel", player::closeDialogue))
 							);
 						}), new Option("Let's talk about the difficulty of my assignments.", () -> {
@@ -186,7 +186,7 @@ public class Mazchna {
 
 	public static void register() {
 		NPCAction.register(MAZCHNA, 1, (player, npc) -> handleInteraction(player, 1));
-		NPCAction.register(MAZCHNA, "Trade", (player, npc) -> ShopManager.openIfExists(player, "06bf1d5a-e4d8-49f5-9aac-6229a965b98a"));
+		NPCAction.register(MAZCHNA, "Trade", (player, npc) -> io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES));
 		NPCAction.register(MAZCHNA, 3, (player, npc) -> handleInteraction(player, 3));
 		NPCAction.register(MAZCHNA, 5, (player, npc) -> handleInteraction(player, 5));
 	}

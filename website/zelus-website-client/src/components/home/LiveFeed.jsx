@@ -153,7 +153,10 @@ export default function LiveFeed() {
           <div className="flex flex-col items-center justify-center py-10 gap-2">
             <span style={{ fontSize: '22px', opacity: 0.3 }}>⚔</span>
             <span className="font-fantasy text-xs tracking-widest" style={{ color: '#2a2a38', fontSize: '10px' }}>
-              WAITING FOR EVENTS...
+              NO RECENT ACTIVITY
+            </span>
+            <span className="text-xs" style={{ color: '#3a3846', fontSize: '10px' }}>
+              Rare drops, 99s, killstreaks and champions appear here live.
             </span>
           </div>
         ) : (

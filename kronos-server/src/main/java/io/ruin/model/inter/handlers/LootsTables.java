@@ -33,6 +33,7 @@ public enum LootsTables {
 	SLAYER_MYSTERY_BOX("Slayer Mystery Box", MysteryBox.SLAYER_MYSTERY_BOX_TABLE),
 	MALAKAR("Malakar Group Boss", Malakar.table),
 	PANDORA("Pandora, the Enigma Keeper", io.ruin.model.activities.bosses.eventboss.Vorath.TABLE),
+	NIDHOGG("Nidhogg", io.ruin.model.activities.bosses.globalboss.globalbosses.nidhogg.GlobalNidhogg.table),
 	SOL_HEREDIT("Sol Heredit", SolHeredit.table),
 	SUMMER_FROG("Summer Frog", SummerEventHandler.summerFrogLootTable),
 	SUMMER_IMP("Summer Imp", SummerEventHandler.summerImpLootTable),

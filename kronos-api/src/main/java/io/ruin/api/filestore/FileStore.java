@@ -26,7 +26,9 @@ public class FileStore {
 				continue;
 			}
 			RandomAccessFile indexDataFile = new RandomAccessFile(path + "main_file_cache.idx" + index, "rw");
-			IndexFile indexFile = new IndexFile(index, mainDataFile, indexDataFile, 1000000);
+			// 10 MB per archive: the old 1,000,000 cap refused real archives (sprites 17014 / 17015 are 1,026,075 bytes),
+			// so JS5 dropped those requests and a client doing a full cache download waited on them forever
+			IndexFile indexFile = new IndexFile(index, mainDataFile, indexDataFile, 10_000_000);
 			indexFile.setReferenceTable(new ReferenceTable(archiveData));
 			files[index] = indexFile;
 		}

@@ -1,5 +1,6 @@
 package io.ruin.model.activities.bosses.globalboss.globalbosses.nidhogg;
 
+import io.ruin.model.activities.bosses.globalboss.GlobalBossRewards;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
 import io.ruin.cache.Icon;
@@ -43,7 +44,8 @@ import java.util.Set;
  */
 public class GlobalNidhogg extends NPCCombat {
 
-	private static final LootTable table = new LootTable().addTable(1,
+	/** Public for the drop viewer (LootsTables.NIDHOGG, shown on examine). */
+	public static final LootTable table = new LootTable().addTable(1,
 		new LootItem(ItemID.RANARR_SEED, 20, 150),
 		new LootItem(ItemID.SNAPDRAGON_SEED, 15, 150),
 		new LootItem(ItemID.TORSTOL_SEED, 12, 150),
@@ -82,16 +84,13 @@ public class GlobalNidhogg extends NPCCombat {
 	public void init() {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			try {
-				for (Player p : new ArrayList<>(npc.localPlayers())) {
-					if (!damagingPlayers.contains(p.getUserId()))
-						continue;
-					try {
-						rewardPlayer(p);
-					} catch (Exception e) {
-						System.err.println("[Nidhogg] reward failed for " + p.getName() + ": " + e);
-						e.printStackTrace();
-					}
-				}
+				GlobalBossRewards.payDamagers("Nidhogg the Abyssal Serpent", damagingPlayers, table, 4, 7, p -> {
+					p.globalBossKills.increment(p);
+					io.ruin.model.content.codex.ZelusTask.ABYSSAL_CONQUEROR.increment(p, 1);
+					int perkPoints = VoteHandler.playerVotedRecently(p) ? 3 : 2;
+					p.perkPoints += perkPoints;
+					p.sendMessage(Color.RED.wrap("+" + perkPoints + " perk points from Nidhogg"));
+				});
 			} finally {
 				brood.forEach(n -> { if (!n.isRemoved()) n.remove(); });
 				npc.remove();
@@ -104,22 +103,6 @@ public class GlobalNidhogg extends NPCCombat {
 			if (hit.damage > 0 && hit.attacker != null && hit.attacker.player != null)
 				damagingPlayers.add(hit.attacker.player.getUserId());
 		});
-	}
-
-	private void rewardPlayer(Player player) {
-		player.globalBossKills.increment(player);
-		io.ruin.model.content.codex.ZelusTask.ABYSSAL_CONQUEROR.increment(player, 1);
-		int rolls = Random.get(4, 7);
-		int perkPoints = VoteHandler.playerVotedRecently(player) ? 3 : 2;
-		player.perkPoints += perkPoints;
-		player.sendMessage(Color.RED.wrap("Your reward has been dropped to your feet! (+" + perkPoints + " perk points from Nidhogg)"));
-		for (int i = 0; i < rolls; i++) {
-			Item reward = table.rollItem();
-			new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
-			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(),
-					" just received " + reward.getDef().descriptiveName + " from Nidhogg the Abyssal Serpent!");
-		}
 	}
 
 	@Override
@@ -194,7 +177,7 @@ public class GlobalNidhogg extends NPCCombat {
 			for (Player p : inRange())
 				for (Position at : marked)
 					if (p.getPosition().equals(at)) {
-						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(20, 35).ignorePrayer().ignoreDefence());
+						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(12, 20).ignorePrayer().ignoreDefence());
 						p.envenom(6);
 					}
 		});
@@ -207,7 +190,7 @@ public class GlobalNidhogg extends NPCCombat {
 			e.delay(2);
 			for (Player p : inRange())
 				if (p.getPosition().distance(npc.getCentrePosition()) <= 3)
-					p.hit(new Hit(npc, AttackStyle.CRUSH).randDamage(25, 40).ignorePrayer());
+					p.hit(new Hit(npc, AttackStyle.CRUSH).randDamage(15, 22).ignorePrayer());
 		});
 	}
 

@@ -129,6 +129,12 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "sbp":
+			case "scorepoints": {
+				io.ruin.model.activities.scoreboard.ScoreboardExchange.sendBalance(player);
+				return true;
+			}
+
 			case "points": {
 				// Every point type that is actually awarded in game (checked 2026-10-18), grouped. Legacy / seasonal
 				// balances (loyalty, bounty, boss, appreciation, wilderness, wilderness slayer, snowballs) are never
@@ -152,6 +158,7 @@ public class CommandHandlerRegular {
 				row.accept("Slayer points", (long) io.ruin.model.var.VarPlayerRepository.SLAYER_POINTS.get(player));
 				row.accept("Rivals points", player.rivalsPoints);
 				row.accept("Tournament points", (long) io.ruin.model.shop.Currency.TOURNAMENT_POINTS.currencyHandler.getCurrencyCount(player));
+				row.accept("Score points", (long) player.scorePoints);
 				heading.accept("Activities");
 				row.accept("Daily task points", (long) io.ruin.model.shop.Currency.TASK_POINTS.currencyHandler.getCurrencyCount(player));
 				row.accept("Pest Control points", (long) io.ruin.model.shop.Currency.PEST_CONTROL_POINTS.currencyHandler.getCurrencyCount(player));

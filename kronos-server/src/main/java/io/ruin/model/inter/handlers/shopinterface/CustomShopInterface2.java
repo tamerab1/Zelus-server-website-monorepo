@@ -517,18 +517,34 @@ public class CustomShopInterface2 {
 
 	/** Shop identifier of each category tab (tab layers 16, 18 .. 30), in tab order. */
 	private static final int[] TAB_SHOP_IDS = {13, 6, 14, 15, 9, 10, 16, 17};
-	/** Appended gold "selected" frames (AddShopTabFrames): tab t -> 114 + 2t (outer) and 115 + 2t (inner). */
+	/** The old 1px gold "selected" frames (AddShopTabFrames): tab t -> 114 + 2t / 115 + 2t, now always hidden. */
 	private static final int FIRST_TAB_FRAME = 114;
+	/**
+	 * Sunken "selected" overlays (AddShopTabRecess, 2026-10-21): tab t -> 132 + 11t .. +10 (recess, backdrop, pressed
+	 * stone frame, the icon again on top).
+	 */
+	private static final int FIRST_TAB_RECESS = 132, TAB_RECESS_PARTS = 11;
+	/**
+	 * Raised riveted stone tabs (AddShopTabStone): tab t -> 220 + 11t; +0..+9 the raised frame and its icon (shown while
+	 * the tab is not selected), +10 the amber bevel line over the selected tab's sunken slot.
+	 */
+	private static final int FIRST_TAB_STONE = 220, TAB_STONE_PARTS = 11, TAB_STONE_RAISED = 10;
 
 	/** "Deals" bezel button + label in the title row (AddShopDealsButton), shown on the Donation Shop tab only. */
 	static final int DEALS_BUTTON = 130;
 
-	/** Keeps the open category's tab framed in gold; the hover highlight stays as it was for the other tabs. */
+	/** Shows the open category's tab pressed into the panel; the other tabs stay raised with their hover highlight. */
 	private static void sendActiveTab(Player player) {
 		for (int t = 0; t < TAB_SHOP_IDS.length; t++) {
 			boolean active = player.getShopIdentifier() == TAB_SHOP_IDS[t];
-			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t, !active);
-			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t + 1, !active);
+			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t, true);
+			player.getPacketSender().setHidden(891, FIRST_TAB_FRAME + 2 * t + 1, true);
+			for (int k = 0; k < TAB_RECESS_PARTS; k++)
+				player.getPacketSender().setHidden(891, FIRST_TAB_RECESS + TAB_RECESS_PARTS * t + k, !active);
+			int stone = FIRST_TAB_STONE + TAB_STONE_PARTS * t;
+			for (int k = 0; k < TAB_STONE_RAISED; k++)
+				player.getPacketSender().setHidden(891, stone + k, active);
+			player.getPacketSender().setHidden(891, stone + TAB_STONE_RAISED, !active);
 		}
 		boolean donator = player.getShopIdentifier() == 9; // CustomShop2.DONATOR_STORE
 		player.getPacketSender().setHidden(891, DEALS_BUTTON, !donator);

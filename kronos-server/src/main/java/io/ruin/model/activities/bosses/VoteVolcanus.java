@@ -156,7 +156,7 @@ public class VoteVolcanus extends NPCCombat {
 				World.sendGraphics(QUAKE, 0, 0, c.relative(d[0], d[1]));
 			for (Player p : inRange())
 				if (p.getPosition().distance(c) <= 3)
-					p.hit(new Hit(npc, AttackStyle.CRUSH).randDamage(30, 50).ignorePrayer());
+					p.hit(new Hit(npc, AttackStyle.CRUSH).randDamage(15, 25).ignorePrayer());
 		});
 	}
 
@@ -176,7 +176,7 @@ public class VoteVolcanus extends NPCCombat {
 			for (Player p : inRange())
 				for (Position at : marked)
 					if (p.getPosition().equals(at))
-						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(20, 35).ignorePrayer().ignoreDefence());
+						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(12, 20).ignorePrayer().ignoreDefence());
 		});
 	}
 
@@ -200,7 +200,7 @@ public class VoteVolcanus extends NPCCombat {
 					for (Player p : inRange()) {
 						int d = p.getPosition().distance(pos);
 						if (d <= 1)
-							p.hit(new Hit(npc).randDamage(d == 0 ? 22 : 11));
+							p.hit(new Hit(npc).randDamage(d == 0 ? 12 : 6));
 					}
 				}
 				e.delay(3);

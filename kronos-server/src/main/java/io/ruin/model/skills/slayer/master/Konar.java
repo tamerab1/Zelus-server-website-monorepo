@@ -81,7 +81,7 @@ public class Konar {
 										new OptionsDialogue(new Option("Look at rewards", () -> {
 											SlayerUnlock.openRewards(player);
 										}), new Option("Look at shop", () -> {
-											NewShopHandler.openShop(player, NewShopHandler.slayerStore);
+											io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES);
 										}), new Option("Cancel", player::closeDialogue)));
 							}), new Option("Let's talk about the difficulty of my assignments.", () -> {
 								player.dialogue(new PlayerDialogue("Let's talk about the difficulty of my assignments."));
@@ -253,7 +253,7 @@ public class Konar {
 
 	public static void register() {
 		NPCAction.register(KONAR, 1, (player, npc) -> handleInteraction(player, 1));
-		NPCAction.register(KONAR, "Trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.slayerStore));
+		NPCAction.register(KONAR, "Trade", (player, npc) -> io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES));
 		NPCAction.register(KONAR, 3, (player, npc) -> handleInteraction(player, 3));
 		NPCAction.register(KONAR, 5, (player, npc) -> handleInteraction(player, 5));
 	}

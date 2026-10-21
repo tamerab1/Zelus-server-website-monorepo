@@ -1,6 +1,7 @@
 package io.ruin.model.activities.scoreboard;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import io.ruin.api.utils.JsonUtils;
 import io.ruin.api.utils.ServerWrapper;
 import io.ruin.cache.Icon;
@@ -39,8 +40,8 @@ import java.util.function.Function;
  * Daily and weekly player boards for every {@link Stat} (no clan boards: Zelus has no clans), fed by hooks in the game code (PvP kills
  * that passed Killer's anti-farm checks, boss kill counts, NPC drops, skilling XP, votes, wilderness chests, tournament
  * wins and donations). When a day / week ends (server time; the day ends at midnight, the week on Sunday night) the top 3
- * players of every paid stat get PK points ({@link #DAILY_REWARD} / {@link #WEEKLY_REWARD}); offline winners are paid on
- * their next login. Saved to runtime/saves/scoreboard.json. Game thread only.
+ * players of every paid stat get Score Points (SbP, {@link #DAILY_REWARD} / {@link #WEEKLY_REWARD}; spent at the
+ * {@link ScoreboardExchange}); offline winners are paid on their next login. Saved to runtime/saves/scoreboard.json. Game thread only.
  */
 public final class Scoreboard {
 
@@ -81,7 +82,7 @@ public final class Scoreboard {
 
 		final Category category;
 		final String label;
-		/** Pays PK points to its top 3 (donations never do). */
+		/** Pays Score Points to its top 3 (donations never do). */
 		final boolean paid;
 		/** The sidebar icon (an item sprite) and the score column's header. */
 		final int iconItem;
@@ -111,7 +112,7 @@ public final class Scoreboard {
 	private static final int PERSONAL = 132, COUNTDOWN = 133, PAYOUT = 134;
 	private static final java.time.format.DateTimeFormatter DATE = java.time.format.DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.ENGLISH);
 
-	/** PK points for #1 / #2 / #3 of each paid stat. */
+	/** Score Points for #1 / #2 / #3 of each paid stat. */
 	public static final int[] DAILY_REWARD = {50, 30, 15};
 	public static final int[] WEEKLY_REWARD = {250, 150, 75};
 	private static final ZoneId ZONE = ZoneId.systemDefault();
@@ -137,7 +138,8 @@ public final class Scoreboard {
 		@Expose Board daily = new Board();
 		@Expose Board weekly = new Board();
 		@Expose Map<String, String> names = new HashMap<>();
-		@Expose Map<String, Integer> pendingPkp = new HashMap<>();
+		/** Score Points owed to offline winners ("pendingPkp" in saves from before 2026-10-21, when the boards paid PKP). */
+		@Expose @SerializedName(value = "pendingSbp", alternate = "pendingPkp") Map<String, Integer> pendingSbp = new HashMap<>();
 	}
 
 	private static SaveState state = new SaveState();
@@ -203,6 +205,7 @@ public final class Scoreboard {
 		});
 		LoginListener.register(Scoreboard::payPending);
 		io.ruin.model.map.object.actions.ObjectAction.register(BOARD_OBJECT_ID, "View", (player, obj) -> open(player));
+		ScoreboardExchange.register();
 	}
 
 	/* ---------------- recording (hooks) ---------------- */
@@ -322,7 +325,7 @@ public final class Scoreboard {
 	}
 
 	private static java.util.Set<String> namesInUse() {
-		java.util.Set<String> used = new java.util.HashSet<>(state.pendingPkp.keySet());
+		java.util.Set<String> used = new java.util.HashSet<>(state.pendingSbp.keySet());
 		for (Board b : new Board[]{state.daily, state.weekly})
 			for (Map<String, Long> m : b.users.values())
 				used.addAll(m.keySet());
@@ -337,12 +340,12 @@ public final class Scoreboard {
 			List<Map.Entry<String, Long>> top = top(board.users, stat);
 			for (int r = 0; r < Math.min(rewards.length, top.size()); r++) {
 				String uid = top.get(r).getKey();
-				int pkp = rewards[r];
+				int sbp = rewards[r];
 				Player p = World.getPlayer(uid);
 				if (p != null && p.isOnline())
-					pay(p, pkp, "#" + (r + 1) + " " + period + " " + stat.label);
+					pay(p, sbp, "#" + (r + 1) + " " + period + " " + stat.label);
 				else
-					state.pendingPkp.merge(uid, pkp, Integer::sum);
+					state.pendingSbp.merge(uid, sbp, Integer::sum);
 				if (r == 0 && stat == Stat.PVP_KILLS || r == 0 && stat == Stat.PVM_LOOT || r == 0 && stat == Stat.SKILL_XP)
 					headlines.add(stat.label + ": " + state.names.getOrDefault(uid, uid));
 			}
@@ -352,13 +355,14 @@ public final class Scoreboard {
 				+ String.join(" · ", headlines));
 	}
 
-	private static void pay(Player player, int pkp, String why) {
-		player.updatePKPoints(pkp);
-		player.sendMessage(TAG + "You earn " + GREEN + pkp + " PKP" + END + " for " + why + ".");
+	private static void pay(Player player, int sbp, String why) {
+		player.scorePoints = (int) Math.min(Integer.MAX_VALUE, (long) player.scorePoints + sbp);
+		player.sendMessage(TAG + "You earn " + GREEN + sbp + " Score Points" + END + " for " + why
+			+ ". Spend them with the Scoreboard Quartermaster at Edgeville.");
 	}
 
 	private static void payPending(Player player) {
-		Integer owed = state.pendingPkp.remove(player.uuid());
+		Integer owed = state.pendingSbp.remove(player.uuid());
 		if (owed != null && owed > 0) {
 			dirty = true;
 			pay(player, owed, "your scoreboard placings while you were away");
@@ -381,8 +385,8 @@ public final class Scoreboard {
 		PacketSender ps = player.getPacketSender();
 		ps.sendString(INTERFACE, TITLE, ORANGE + "Zelus Scoreboard" + END);
 		ps.sendString(INTERFACE, PAYOUT, "Top 3 of each board earn " + DAILY_REWARD[0] + " / " + DAILY_REWARD[1] + " / "
-			+ DAILY_REWARD[2] + " PKP daily and " + WEEKLY_REWARD[0] + " / " + WEEKLY_REWARD[1] + " / " + WEEKLY_REWARD[2]
-			+ " PKP weekly.");
+			+ DAILY_REWARD[2] + " SbP daily and " + WEEKLY_REWARD[0] + " / " + WEEKLY_REWARD[1] + " / " + WEEKLY_REWARD[2]
+			+ " SbP weekly.");
 		draw(player);
 	}
 
@@ -438,7 +442,7 @@ public final class Scoreboard {
 			ps.sendString(INTERFACE, row + 2, e == null ? VACANT + "-- Vacant --" + END : colour + name + END);
 			ps.sendString(INTERFACE, row + 3, e == null ? "" : format(v.stat, e.getValue()));
 			ps.sendString(INTERFACE, row + 4, v.stat.paid && r < rewards.length
-				? (e == null ? VACANT : GREEN) + rewards[r] + " PKP" + END : "");
+				? (e == null ? VACANT : GREEN) + rewards[r] + " SbP" + END : "");
 		}
 
 		// personal pane: the viewer on this board
@@ -453,7 +457,7 @@ public final class Scoreboard {
 					break;
 				}
 			}
-			String reward = v.stat.paid && rank >= 1 && rank <= rewards.length ? GREEN + rewards[rank - 1] + " PKP" + END
+			String reward = v.stat.paid && rank >= 1 && rank <= rewards.length ? GREEN + rewards[rank - 1] + " SbP" + END
 				: GREY + (!v.stat.paid ? "n/a" : "Top 3 only") + END;
 			ps.sendString(INTERFACE, PERSONAL, TAN + "Your " + (v.weekly ? "Weekly" : "Daily") + " Rank: " + END
 				+ (rank > 0 ? WHITE + "#" + rank + END : GREY + "Unranked" + END)
@@ -517,7 +521,7 @@ public final class Scoreboard {
 					if (b.users == null) b.users = new HashMap<>();
 				}
 				if (loaded.names == null) loaded.names = new HashMap<>();
-				if (loaded.pendingPkp == null) loaded.pendingPkp = new HashMap<>();
+				if (loaded.pendingSbp == null) loaded.pendingSbp = new HashMap<>();
 				state = loaded;
 			}
 		} catch (Exception e) {

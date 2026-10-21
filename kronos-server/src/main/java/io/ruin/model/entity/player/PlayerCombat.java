@@ -5261,6 +5261,10 @@ public class PlayerCombat extends Combat {
 				hit.boostAttack(0.35).boostDamage(0.30);
 			if (hit.attackStyle.isRanged() && player.getEquipment().hasId(25918))
 				hit.boostAttack(0.35).boostDamage(0.30);
+			// Zaryte Stormpiercer 31856: made from a Dragon hunter crossbow, so it keeps its dragonbane
+			if (hit.attackStyle.isRanged() && player.getEquipment().get(Equipment.SLOT_WEAPON) != null
+					&& player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 31856)
+				hit.boostAttack(0.35).boostDamage(0.30);
 			// dragon hunter lance
 			if (hit.attackStyle.isMelee() && player.getEquipment().hasId(22978))
 				hit.boostAttack(0.25).boostDamage(0.25);

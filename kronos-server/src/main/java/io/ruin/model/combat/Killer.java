@@ -118,6 +118,8 @@ public class Killer {
 		int killerSpree = ++player.currentKillSpree;
 		if (killerSpree > player.highestKillSpree)
 			player.highestKillSpree = killerSpree;
+		if (killerSpree >= 5 && killerSpree % 5 == 0) // website Live Game Feed: milestones only (5, 10, 15, ...)
+			io.ruin.services.LiveFeed.push("killstreak", player.getName(), player.getName() + " is on a " + killerSpree + "-kill streak in the Wilderness!");
 		if (killerSpree > 1) {
 			player.sendMessage("You are currently on a killing spree of " + killerSpree + "!");
 			if (killerSpree % 5 == 0 || killerSpree > 15) {

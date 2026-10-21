@@ -233,6 +233,9 @@ public class Vorath extends NPCCombat {
             npc.setHeadIcon(NPC.DefaultHeadIconIndex.ProtectFromMelee);
             iconApplied = true;
         }
+        // Chronos summons are checked every tick, not only on Pandora's own swings (2026-10-21)
+        if (!npc.getCombat().isDead())
+            checkKeepers();
         // nobody to fight: drift back to its spot
         Position home = npc.spawnPosition;
         if (target == null && home != null && !npc.getCombat().isDead()
@@ -282,7 +285,8 @@ public class Vorath extends NPCCombat {
     private void shadowSlam() {
         npc.animate(SLAM);
         npc.forceText("WHAT'S IN THE BOX?!");
-        int slamMax = enraged ? 30 : 20;
+        // 2026-10-21: 8-20 hardly mattered for a telegraphed, 2-tick-dodgeable blast -- standing in it now hurts
+        int slamMin = enraged ? 30 : 25, slamMax = enraged ? 60 : 45;
         World.sendGraphics(SLAM_GFX, 92, 0, npc.getPosition());
         for (Player p : npc.localPlayers()) {
             if (!p.getPosition().isWithinDistance(npc.getPosition(), 7)) continue;
@@ -292,7 +296,7 @@ public class Vorath extends NPCCombat {
                 e.delay(2);
                 World.sendGraphics(SLAM_GFX, 0, 0, marked);
                 if (!p.getCombat().isDead() && p.getPosition().equals(marked))
-                    p.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(Random.get(8, slamMax)).ignoreDefence().ignorePrayer());
+                    p.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(Random.get(slamMin, slamMax)).ignoreDefence().ignorePrayer());
             });
         }
     }
@@ -301,7 +305,7 @@ public class Vorath extends NPCCombat {
     private void prizeRain() {
         npc.animate(SLAM);
         npc.forceText("A PRIZE FOR EVERYONE!");
-        int max = enraged ? 28 : 18;
+        int min = enraged ? 25 : 20, max = enraged ? 50 : 38; // 2026-10-21: was 6-18 / 6-28
         List<Position> spots = new ArrayList<>();
         for (Player p : npc.localPlayers()) {
             if (!p.getPosition().isWithinDistance(npc.getPosition(), 12)) continue;
@@ -319,7 +323,7 @@ public class Vorath extends NPCCombat {
                 World.sendGraphics(CRYSTAL_BURST, 0, 0, spot);
             for (Player p : npc.localPlayers())
                 if (!p.getCombat().isDead() && spots.stream().anyMatch(s -> s.equals(p.getPosition())))
-                    p.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(Random.get(6, max)).ignoreDefence().ignorePrayer());
+                    p.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(Random.get(min, max)).ignoreDefence().ignorePrayer());
         });
     }
 
@@ -329,14 +333,12 @@ public class Vorath extends NPCCombat {
         keepers.removeIf(NPC::isRemoved);
         double hp = npc.getHp() / (double) npc.getMaxHp();
         int phase = hp <= 0.25 ? 3 : hp <= 0.5 ? 2 : hp <= 0.75 ? 1 : 0;
-        if (phase <= keeperPhase)
-            return;
-        keeperPhase = phase;
-        if (keepers.size() >= MAX_KEEPERS)
+        if (phase <= keeperPhase || keepers.size() >= MAX_KEEPERS)
             return;
         List<Player> targets = activeAttackers();
         if (targets.isEmpty())
-            return;
+            return; // 2026-10-21: the phase is only used up once a keeper really comes (it used to be lost right here)
+        keeperPhase = phase;
         summonKeeper(Random.get(targets));
     }
 
@@ -379,8 +381,13 @@ public class Vorath extends NPCCombat {
                         continue;
                     prey = Random.get(pool);
                     keeper.targetPlayer(prey, false);
-                    keeper.getCombat().setTarget(prey);
                 }
+                // 2026-10-21 ("they should follow and attack players"): the generic NPC loop drops a target on any
+                // failed check, so the keeper re-takes its prey every tick and closes in itself when out of reach
+                if (keeper.getCombat().getTarget() != prey)
+                    keeper.getCombat().setTarget(prey);
+                if (!keeper.isLocked() && !io.ruin.model.map.route.routes.DumbRoute.withinDistance(keeper, prey, 1))
+                    io.ruin.model.map.route.routes.DumbRoute.step(keeper, prey, 1);
                 // Stop Time: every 10 ticks the keeper freezes its prey for 3 seconds
                 if (ticks % 10 == 0 && prey.getPosition().isWithinDistance(keeper.getPosition(), 8)) {
                     keeper.forceText("Time... stands... still.");
@@ -397,7 +404,8 @@ public class Vorath extends NPCCombat {
     // ── Rewards ──────────────────────────────────────────────────────────────
 
     private void rewardPlayers() {
-        npc.getPosition().getRegion().players.forEach(p -> {
+        // every online player who hit Pandora, wherever they stand now (2026-10-21: was only her map region)
+        World.players().forEach(p -> {
             if (!attackers.containsKey(p.getUserId())) return;
             p.getInventory().addOrDrop(MYSTERY_BOX, 1);
             int coins = Random.get(15_000, 30_000);

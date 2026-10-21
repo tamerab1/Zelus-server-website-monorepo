@@ -151,6 +151,20 @@ class Vote(Base):
     game_username = Column(String(12), nullable=True, index=True)  # validated in-game character name
 
 
+class TopsiteVoteReceipt(Base):
+    """One row per vote id a signed topsite webhook already delivered (RuneRank, 2026-10-21): the unique
+    (site, external_vote_id) key makes a replayed or retried callback a no-op instead of a second payout."""
+    __tablename__ = "topsite_vote_receipts"
+    __table_args__ = (UniqueConstraint("site_name", "external_vote_id", name="uq_topsite_vote_receipt"),)
+
+    id               = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    site_name        = Column(String(50), nullable=False)
+    external_vote_id = Column(String(100), nullable=False)
+    game_username    = Column(String(12), nullable=True)
+    vote_row_id      = Column(Integer, nullable=True)       # the votes.id it confirmed
+    received_at      = Column(DateTime, default=func.now())
+
+
 # ---------------------------------------------------------------------------
 # Donation — legacy table kept for backward compatibility.
 # New purchases go through Transaction + PendingClaim.

@@ -116,6 +116,8 @@ public class World extends EventWorker {
 	public static String apiPassword;
 
 	public static String apiBaseUrl;
+	/** Shared secret for the website live feed push (server.properties game_events_secret = the API's GAME_EVENTS_SECRET). */
+	public static String gameEventsSecret = "";
 
 	public static TemporaryEvent revenantMaledictusEvent = null;
 	public static TemporaryEvent hweenEvent = null;
@@ -641,6 +643,7 @@ public class World extends EventWorker {
 		World.apiPassword = properties.getProperty("api_password");
 		World.apiEnabled = Boolean.parseBoolean(properties.getProperty("api_enabled"));
 		World.apiBaseUrl = properties.getProperty("api_base_url");
+		World.gameEventsSecret = properties.getProperty("game_events_secret", ""); // website /events/push (LiveFeed)
 
 		for (String s : worldSettings.split(",")) {
 			if (s == null || (s = s.trim()).isEmpty())

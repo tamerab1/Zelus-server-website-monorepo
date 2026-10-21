@@ -96,6 +96,8 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
 		}
 		if (def.id == 17033) // Pandora, the Enigma Keeper: its tiers live in Vorath.TABLE
 			player.getLootsViewer().updateInterface(player, LootsTables.PANDORA);
+		if (def.id == 16215) // Nidhogg (::gb): its rolls live in GlobalNidhogg.table, not in the npc drop files
+			player.getLootsViewer().updateInterface(player, LootsTables.NIDHOGG);
 		if(def.id == 17021) {
 			player.getLootsViewer().updateInterface(player, LootsTables.SUMMER_IMP);
 		}

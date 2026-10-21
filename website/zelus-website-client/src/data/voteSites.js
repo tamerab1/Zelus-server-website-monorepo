@@ -63,6 +63,24 @@ const VOTE_SITES = [
       'Donator rank bonus points',
     ],
   },
+  {
+    id:       'RUNERANK',
+    name:     'RuneRank',
+    tagline:  'RSPS Toplist',
+    icon:     '🏆',
+    /**
+     * Zelus's RuneRank listing (2026-10-21). RuneRank confirms the vote server-to-server with a signed webhook
+     * (POST /api/vote/runerank) that carries the username back, so it is passed on the vote link as `username=`.
+     */
+    buildUrl: (username) =>
+      `https://runerank.com/vote/zelus-34az?username=${encodeURIComponent(username)}`,
+    // Matches VoteHandler.grantClaimedVotes (RUNERANK = +1).
+    votePoints: 1,
+    rewards: [
+      '1 Vote Point',
+      'Donator rank bonus points',
+    ],
+  },
 ];
 
 export default VOTE_SITES;

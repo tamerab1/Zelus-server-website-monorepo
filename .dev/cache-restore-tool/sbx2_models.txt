@@ -1,0 +1,15 @@
+# Scoreboard Exchange round 2 (2026-10-21): textured model copies (TextureModelFaces).
+# Red partyhat 1038: inventory 2635, male 187, female 363, all colour 926
+model 2635 61336 266 926
+model 187 61337 266 926
+model 363 61338 266 926
+model 2635 61339 267 926
+model 187 61340 267 926
+model 363 61341 267 926
+# Abyssal whip 4151: inventory 5412 (body colour 0), worn 5409 (body colour 16); the coil edges 528 are recoloured per item
+model 5412 61342 268 0
+model 5409 61343 268 16
+model 5412 61344 269 0
+model 5409 61345 269 16
+# Souly Wings 60262 inventory model, in place (its worn model 60313 is shifted + textured by ShiftTextureModel)
+model 60312 60312 265 10202

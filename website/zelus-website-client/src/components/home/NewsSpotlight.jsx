@@ -97,19 +97,34 @@ function NewsModal({ post, onClose }) {
   );
 }
 
+/**
+ * The trailer as a click-to-play facade: the thumbnail and a play button until it's clicked, then the
+ * youtube-nocookie player (autoplaying). Nothing from YouTube's player loads for visitors who never press play.
+ */
 function MediaCard() {
+  const [playing, setPlaying] = useState(false);
   return (
     <section className="zh-glass zh-card" aria-labelledby="zh-media">
       <h3 className="zh-card-title font-fantasy" id="zh-media">FEATURED MEDIA</h3>
       <div className="zh-video">
-        {FEATURED_VIDEO_ID ? (
+        {FEATURED_VIDEO_ID && playing ? (
           <iframe
-            src={`https://www.youtube-nocookie.com/embed/${FEATURED_VIDEO_ID}`}
-            title="Zelus featured video"
-            loading="lazy"
-            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+            src={`https://www.youtube-nocookie.com/embed/${FEATURED_VIDEO_ID}?autoplay=1&rel=0`}
+            title="Zelus trailer"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
+        ) : FEATURED_VIDEO_ID ? (
+          <button
+            type="button"
+            className="zh-video-facade"
+            onClick={() => setPlaying(true)}
+            aria-label="Play the Zelus trailer"
+            style={{ backgroundImage: `url(https://i.ytimg.com/vi/${FEATURED_VIDEO_ID}/hqdefault.jpg)` }}
+          >
+            <span className="zh-play" aria-hidden="true" />
+            <span className="zh-video-facade-label">Watch the Zelus trailer</span>
+          </button>
         ) : (
           <div className="zh-video-soon">
             <div>

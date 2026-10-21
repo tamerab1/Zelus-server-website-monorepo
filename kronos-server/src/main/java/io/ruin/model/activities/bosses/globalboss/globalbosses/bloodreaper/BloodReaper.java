@@ -1,5 +1,6 @@
 package io.ruin.model.activities.bosses.globalboss.globalbosses.bloodreaper;
 
+import io.ruin.model.activities.bosses.globalboss.GlobalBossRewards;
 import io.ruin.Server;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.Color;
@@ -81,36 +82,17 @@ public class BloodReaper extends NPCCombat {
 		npc.deathEndListener = (entity, killer, killHit) -> {
 			// 2026-10-19: each reward isolated (one failure used to stop the rest and skip npc.remove()), damagers by account id
 			try {
-				for (Player p : World.players()) { // online only: an offline damager can't receive (it used to drop to logged-out players)
-					if (!damagingPlayers.contains(p.getUserId()))
-						continue;
-					try {
-						rewardPlayer(p);
-					} catch (Exception e) {
-						System.err.println("[Blood Reaper] reward failed for " + p.getName() + ": " + e);
-						e.printStackTrace();
-					}
-				}
+				GlobalBossRewards.payDamagers("a Blood Reaper", damagingPlayers, table, 3, 6, p -> {
+					p.globalBossKills.increment(p);
+					int perkPoints = VoteHandler.playerVotedRecently(p) ? 2 : 1;
+					p.perkPoints += perkPoints;
+					p.sendMessage(Color.RED.wrap("You've received " + perkPoints + " perk points from the Blood Reaper!"));
+				});
 			} finally {
 				npc.remove();
 			}
 		};
 		npc.hitListener = new HitListener().postDamage(this::postDamage).preDefend(this::preHitDefend);
-	}
-
-	private void rewardPlayer(Player player) {
-		player.globalBossKills.increment(player);
-		player.sendMessage(Color.RED.wrap("Your reward has been dropped to your feet!"));
-		int rolls = Random.get(3, 6);
-		int perkPointReward = VoteHandler.playerVotedRecently(player) ? 2 : 1;
-		player.perkPoints += perkPointReward;
-		player.sendMessage(Color.RED.wrap("You've received " + perkPointReward + " perk points from the Blood Reaper!"));
-		for (int i = 0; i < rolls; i++) {
-			Item reward = table.rollItem();
-			new GroundItem(reward).owner(player).position(player.getPosition()).loot().spawn();
-			if (reward.lootBroadcast != null)
-				Broadcast.WORLD.sendNewsDropMessage(player, Icon.RARE_DROP, "<col=000000>" + player.getName(), " just received " + reward.getDef().descriptiveName + " from a Blood Reaper!");
-		}
 	}
 
 	private void preHitDefend(Hit hit) {
@@ -166,7 +148,7 @@ public class BloodReaper extends NPCCombat {
 				npc.localPlayers().forEach(p -> {
 					if (p.getPosition().distance(bomb.getPosition()) < 2) {
 						bomb.graphics(157, 0, 0);
-						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(20).ignorePrayer());
+						p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(12).ignorePrayer());
 						bomb.remove();
 						bombs.remove(finalI);
 					}
@@ -178,7 +160,7 @@ public class BloodReaper extends NPCCombat {
 					npc.localPlayers().forEach(p -> {
 						bombs.get(finalI).graphics(157, 0, 0);
 						if (p.getPosition().distance(bombs.get(finalI).getPosition()) < 2)
-							p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(20).ignorePrayer());
+							p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(12).ignorePrayer());
 
 						bombs.get(finalI).remove();
 						bombs.remove(finalI);
@@ -248,7 +230,7 @@ public class BloodReaper extends NPCCombat {
 						World.sendGraphics(78, 0, 0, pos);
 						npc.localPlayers().forEach(p -> {
 							if (p.getPosition().equals(pos)) {
-								p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(8).ignorePrayer());
+								p.hit(new Hit(npc, AttackStyle.MAGIC).randDamage(5).ignorePrayer());
 							}
 						});
 					});

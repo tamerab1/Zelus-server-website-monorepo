@@ -973,9 +973,35 @@ public enum Pet {
 		int region = player.getPosition().getRegionId();
 		if (io.ruin.model.activities.bosses.EventBossArea.isIn(player))
 			return "You cannot drop pets here.";
+		if (io.ruin.model.content.rivals.RivalsQueueManager.inMatch(player)
+			|| io.ruin.model.content.rivals.RivalsSnapshot.active(player))
+			return "You cannot summon pets inside the Rivals arena.";
 		if (SummerEvent.map != null && SummerEvent.map.isIn(player))
 			return "You can't place a pet here.";
 		return null;
+	}
+
+	/**
+	 * Puts the player's out pet away at once, with no pick-up animation or lock (Rivals arena entry). Into the
+	 * inventory, or straight into the bank when toBank (mid-match the inventory holds the kit, wiped on restore).
+	 * False, with the pet left out, when there was no room. True when no pet was out.
+	 */
+	public static boolean storeAway(Player player, boolean toBank) {
+		Pet pet = player.pet;
+		if (pet == null)
+			return true;
+		if (toBank ? player.getBank().add(pet.itemId, 1) <= 0 : player.getInventory().add(pet.itemId, 1) <= 0)
+			return false;
+		int index = VarPlayerRepository.PET_NPC_INDEX.get(player);
+		NPC npc = index > -1 ? io.ruin.model.World.getNpc(index) : null;
+		if (npc != null && npc.ownerId == player.getUserId()) {
+			if (npc instanceof PetNPC p && p.combatPet != null && p.combatPet.isBursting()) // ends the client's pet timer
+				player.sendMessage(io.ruin.model.entity.npc.combatpet.BestiaryCharges.TAG + "Your combat pet returns to the Bestiary.");
+			npc.remove();
+		}
+		player.pet = null;
+		VarPlayerRepository.PET_NPC_INDEX.set(player, -1);
+		return true;
 	}
 
 	public static boolean pickup(Player player, NPC npc, Pet pet, boolean force) {

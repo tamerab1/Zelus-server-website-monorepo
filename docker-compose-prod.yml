@@ -175,6 +175,10 @@ services:
             # shared VOTE_CALLBACK_SECRET can't validate both at once.
             RUNELOCUS_VOTE_CALLBACK_SECRET: ${RUNELOCUS_VOTE_CALLBACK_SECRET}
             RSPSLIST_VOTE_CALLBACK_SECRET: ${RSPSLIST_VOTE_CALLBACK_SECRET}
+            # RuneRank's signed vote webhook (POST /api/vote/runerank, 2026-10-21): the HMAC signing secret from
+            # their dashboard; unset = every RuneRank vote is refused (503). The server id has a default in main.py.
+            RUNERANK_API_SECRET: ${RUNERANK_API_SECRET}
+            RUNERANK_SERVER_ID: ${RUNERANK_SERVER_ID:-7eb44e74-f783-4ad9-b5f1-275ecc98d04e}
             # Shared boot-time password for HttpClient.authenticate() (must match
             # server.properties' api_password on the game_server side). Empty
             # here means /authenticate/login always 503s and every ::claim*

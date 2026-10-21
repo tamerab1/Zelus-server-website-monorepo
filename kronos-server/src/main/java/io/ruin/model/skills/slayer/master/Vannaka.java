@@ -89,7 +89,7 @@ public class Vannaka {
 								new OptionsDialogue(new Option("Look at rewards", () -> {
 									SlayerUnlock.openRewards(player);
 								}), new Option("Look at shop", () -> {
-									NewShopHandler.openShop(player, NewShopHandler.slayerStore);
+									io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES);
 								}), new Option("Cancel", player::closeDialogue))
 							);
 						}), new Option("Let's talk about the difficulty of my assignments.", () -> {
@@ -217,7 +217,7 @@ public class Vannaka {
 
 	public static void register() {
 		NPCAction.register(VANNAKA, 1, (player, npc) -> handleInteraction(player, 1));
-		NPCAction.register(VANNAKA, "Trade", (player, npc) -> NewShopHandler.openShop(player, NewShopHandler.slayerStore));
+		NPCAction.register(VANNAKA, "Trade", (player, npc) -> io.ruin.model.skills.slayer.SlayerCodex.open(player, io.ruin.model.skills.slayer.SlayerCodex.Tab.SUPPLIES));
 		NPCAction.register(VANNAKA, 3, (player, npc) -> handleInteraction(player, 3));
 		NPCAction.register(VANNAKA, 5, (player, npc) -> handleInteraction(player, 5));
 	}

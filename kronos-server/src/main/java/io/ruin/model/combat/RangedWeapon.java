@@ -74,7 +74,10 @@ public enum RangedWeapon {
 	BOW_OF_FAERDHINEN_CYAN(new RangedData(1935, Projectile.arrow(1934))),
 
 	BOW_OF_FAERDHINEN_PURPLE(new RangedData(1929, Projectile.arrow(1928))),
-	/** Zaryte Stormpiercer 31856 (customs19, 2026-10-19): the upgraded Zaryte crossbow, fires its own bolts (no ammo). */
+	/**
+	 * Zaryte Stormpiercer 31856 (customs19, 2026-10-19): fired its own bolts (no ammo). Unused since 2026-10-21: players
+	 * called that a downgrade (a crossbow's power is its bolts' strength and procs), so 31856 is ranged_weapon CROSSBOW.
+	 */
 	ZARYTE_STORMPIERCER(new RangedData(Projectile.BOLT)),
 	/**
 	 * Fired (ammo)

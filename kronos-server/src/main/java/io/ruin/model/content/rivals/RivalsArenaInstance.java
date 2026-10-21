@@ -5,6 +5,7 @@ import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerAction;
 import io.ruin.model.entity.shared.listeners.LogoutListener;
+import io.ruin.model.item.actions.impl.pet.Pet;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.Tile;
 import io.ruin.model.map.dynamic.DynamicMap;
@@ -78,6 +79,14 @@ final class RivalsArenaInstance {
 		for (Player p : new Player[]{p1, p2}) {
 			p.closeInterfaces();
 			p.resetActions(true, true, true);
+			// no followers in the arena: the pet goes into the inventory BEFORE the snapshot, so it is saved with it and
+			// comes back after the match (the queue refuses a pet with a full inventory; the bank is the fallback)
+			if (p.pet != null) {
+				if (Pet.storeAway(p, false))
+					p.sendMessage("Your pet has been safely stored in your inventory upon entering the arena.");
+				else if (Pet.storeAway(p, true))
+					p.sendMessage("Your inventory was full, so your pet has been sent to your bank.");
+			}
 			RivalsSnapshot.takeAndEquip(p, mode);
 			// after the snapshot (so the real levels are saved as they were): no poison / venom / freeze carried in
 			p.getCombat().restore();
@@ -196,6 +205,9 @@ final class RivalsArenaInstance {
 			Player p = i == 0 ? p1 : p2;
 			if (attackListeners[i] == null || !p.isOnline())
 				continue;
+			// a pet that got out some other way: straight to the bank (the inventory holds the kit, wiped on restore)
+			if (p.pet != null && Pet.storeAway(p, true))
+				p.sendMessage("You cannot bring followers into the Rivals arena: your pet has been sent to your bank.");
 			if (p.attackPlayerListener != attackListeners[i] || p.deathEndListener != deathListeners[i]
 				|| p.teleportListener != teleportListeners[i] || p.logoutListener != logoutListeners[i]
 				|| p.activatePrayerListener != prayerRules[i]) {

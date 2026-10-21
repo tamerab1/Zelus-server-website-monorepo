@@ -1,0 +1,59 @@
+# Scoreboard Exchange round 2 (2026-10-21), CreateItemVariants. Ankou 20095/20098/20104/20101/20107: cloth 960 + bone
+# 13541/12500/14554/12492/13532 (packed HSL h<<10|s<<7|l). Each set shares one palette; the standalone hats / whips
+# each have their own texture and name.
+# Crimson Ankou: wine-crimson cloth (62,7,30), gilded gold bones (7,6,l-21) -- kept clear of the original bright red
+variant 20095 31914 31915 0 -|Wear|-|-|Drop Crimson Ankou mask
+recolor 31914 960:64414,13541:8016,12500:8002,14554:8007,12492:7996,13532:8008
+variant 20098 31916 31917 0 -|Wear|-|-|Drop Crimson Ankou top
+recolor 31916 960:64414,13541:8016,12500:8002,14554:8007,12492:7996,13532:8008
+variant 20104 31918 31919 0 -|Wear|-|-|Drop Crimson Ankou leggings
+recolor 31918 960:64414,13541:8016,12500:8002,14554:8007,12492:7996,13532:8008
+variant 20101 31920 31921 0 -|Wear|-|-|Drop Crimson Ankou gloves
+recolor 31920 960:64414,13541:8016,12500:8002,14554:8007,12492:7996,13532:8008
+variant 20107 31922 31923 0 -|Wear|-|-|Drop Crimson Ankou socks
+recolor 31922 960:64414,13541:8016,12500:8002,14554:8007,12492:7996,13532:8008
+# Verdant Ankou: toxic green cloth (21,7,46), lime-ivory bones (14,2,l-6)
+variant 20095 31924 31925 0 -|Wear|-|-|Drop Verdant Ankou mask
+recolor 31924 960:22446,13541:14687,12500:14670,14554:14676,12492:14662,13532:14678
+variant 20098 31926 31927 0 -|Wear|-|-|Drop Verdant Ankou top
+recolor 31926 960:22446,13541:14687,12500:14670,14554:14676,12492:14662,13532:14678
+variant 20104 31928 31929 0 -|Wear|-|-|Drop Verdant Ankou leggings
+recolor 31928 960:22446,13541:14687,12500:14670,14554:14676,12492:14662,13532:14678
+variant 20101 31930 31931 0 -|Wear|-|-|Drop Verdant Ankou gloves
+recolor 31930 960:22446,13541:14687,12500:14670,14554:14676,12492:14662,13532:14678
+variant 20107 31932 31933 0 -|Wear|-|-|Drop Verdant Ankou socks
+recolor 31932 960:22446,13541:14687,12500:14670,14554:14676,12492:14662,13532:14678
+# Abyssal Ankou: abyssal purple cloth (50,6,36), dusk-violet bones (48,2,l-34)
+variant 20095 31934 31935 0 -|Wear|-|-|Drop Abyssal Ankou mask
+recolor 31934 960:52004,13541:49475,12500:49458,14554:49464,12492:49450,13532:49466
+variant 20098 31936 31937 0 -|Wear|-|-|Drop Abyssal Ankou top
+recolor 31936 960:52004,13541:49475,12500:49458,14554:49464,12492:49450,13532:49466
+variant 20104 31938 31939 0 -|Wear|-|-|Drop Abyssal Ankou leggings
+recolor 31938 960:52004,13541:49475,12500:49458,14554:49464,12492:49450,13532:49466
+variant 20101 31940 31941 0 -|Wear|-|-|Drop Abyssal Ankou gloves
+recolor 31940 960:52004,13541:49475,12500:49458,14554:49464,12492:49450,13532:49466
+variant 20107 31942 31943 0 -|Wear|-|-|Drop Abyssal Ankou socks
+recolor 31942 960:52004,13541:49475,12500:49458,14554:49464,12492:49450,13532:49466
+# Celestial Ankou: cyan cloth (32,6,66), moon-white bones (36,1,l+10)
+variant 20095 31944 31945 0 -|Wear|-|-|Drop Celestial Ankou mask
+recolor 31944 960:33602,13541:37103,12500:37086,14554:37092,12492:37078,13532:37094
+variant 20098 31946 31947 0 -|Wear|-|-|Drop Celestial Ankou top
+recolor 31946 960:33602,13541:37103,12500:37086,14554:37092,12492:37078,13532:37094
+variant 20104 31948 31949 0 -|Wear|-|-|Drop Celestial Ankou leggings
+recolor 31948 960:33602,13541:37103,12500:37086,14554:37092,12492:37078,13532:37094
+variant 20101 31950 31951 0 -|Wear|-|-|Drop Celestial Ankou gloves
+recolor 31950 960:33602,13541:37103,12500:37086,14554:37092,12492:37078,13532:37094
+variant 20107 31952 31953 0 -|Wear|-|-|Drop Celestial Ankou socks
+recolor 31952 960:33602,13541:37103,12500:37086,14554:37092,12492:37078,13532:37094
+# Partyhats on Red partyhat 1038 (textured copies of 2635 / 187 / 363)
+variant 1038 31954 31955 0 -|Wear|-|-|Drop Starwoven partyhat
+models 31954 2635:61336,187:61337,363:61338
+variant 1038 31956 31957 0 -|Wear|-|-|Drop Gildshadow partyhat
+models 31956 2635:61339,187:61340,363:61341
+# Whips on Abyssal whip 4151 (textured copies of 5412 / 5409); coil edges 528 -> storm blue (42,6,20) / ember (2,7,14)
+variant 4151 31958 31959 0 -|Wield|-|-|Drop Stormcoil whip
+models 31958 5412:61342,5409:61343
+recolor 31958 528:43796
+variant 4151 31960 31961 0 -|Wield|-|-|Drop Magmatide whip
+models 31960 5412:61344,5409:61345
+recolor 31960 528:2958

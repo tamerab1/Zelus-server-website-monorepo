@@ -16,6 +16,8 @@ world_port=43594
 api_enabled=false
 api_password=CHANGE_ME
 api_base_url=https://127.0.0.1/api/
+# shared secret for the website Live Game Feed push (= the website API GAME_EVENTS_SECRET; blank if that is blank)
+game_events_secret=
 
 login_con_limit=3000
 login_pow_enabled=false

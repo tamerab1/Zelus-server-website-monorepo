@@ -1,0 +1,11 @@
+# Scoreboard Exchange round 2 (2026-10-21): animated textures. texture <srcTex> <newTex> <newSprite> <dir|-> <speed|-> <stops>
+# 265 Souly Wings: soft gold energy flowing through the pale-gold faces (slow)
+texture 59 265 24627 1 1 0:3a2a00,0.4:a07a10,0.7:f0c840,0.9:fff0a0,1:ffffff
+# 266 Starwoven partyhat: deep-space teal nebula with gold starlight (Galaxy 175 is navy / pink: kept apart)
+texture 59 266 24628 1 2 0:010a0c,0.4:063a40,0.7:10a890,0.88:7af0c0,1:fff6c0
+# 267 Gildshadow partyhat: black foil with a shimmering gold sheen
+texture 59 267 24629 1 2 0:000000,0.5:1a1206,0.75:7a5a10,0.9:e0b030,1:fff2b0
+# 268 Stormcoil whip: violet-cyan electricity
+texture 56 268 24630 1 3 0:04001a,0.4:1a1a8a,0.7:20c8ff,0.9:b0f8ff,1:ffffff
+# 269 Magmatide whip: molten lava flow
+texture 59 269 24631 1 2 0:0a0000,0.4:5a0a00,0.7:ff4a00,0.9:ffb020,1:fff0a0

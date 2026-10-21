@@ -136,7 +136,9 @@ public enum Broadcast {
 		}
 
 		consumer.accept(player, "" + overrideIcon.tag() + ironmanSymbol + " [<shad=D80808>News</shad>] " +
-			(title == null ? "" : "<shad=D80808>" + title + "</shad>") + message);
+			(title == null ? "" : "<shad=D80808>" + title + "</shad>") + message);		// world-wide news also goes to the website's Live Game Feed (real events only, see LiveFeed)
+		if (this == WORLD || this == GLOBAL)
+			io.ruin.services.LiveFeed.fromBroadcast(player, title, message);
 	}
 
 }
