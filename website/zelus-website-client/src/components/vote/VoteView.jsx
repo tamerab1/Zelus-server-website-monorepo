@@ -154,7 +154,7 @@ export default function VoteView() {
           </h2>
           <div className="gold-divider max-w-xs mx-auto" />
           <p className="max-w-md mx-auto mt-6 text-sm leading-relaxed" style={{ color: '#c8bfb0', textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>
-            Vote on RuneLocus and RSPS-List every 12 hours to earn Vote Points.
+            Vote on RuneLocus, RSPS-List and RuneRank every 12 hours to earn Vote Points.
             Vote on both in the same window for a bonus raffle ticket. After voting, type{' '}
             <span className="font-mono text-xs px-1.5 py-0.5"
               style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: 2, color: '#d4af37' }}>
@@ -271,7 +271,7 @@ export default function VoteView() {
                     {
                       icon: '⭐',
                       title: 'Vote Points',
-                      body: '2 for a RuneLocus vote, 1 for an RSPS-List vote — plus a bonus based on your donator rank, added once per claim. Credited to your balance instantly.',
+                      body: '2 for a RuneLocus vote, 1 for an RSPS-List vote, 1 for a RuneRank vote — plus a bonus based on your donator rank, added once per claim. Credited to your balance instantly.',
                     },
                     {
                       icon: '🎟️',
