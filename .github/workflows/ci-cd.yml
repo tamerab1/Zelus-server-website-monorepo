@@ -490,6 +490,9 @@ jobs:
           export TEBEX_SECRET="${{ secrets.TEBEX_SECRET }}"
           # 2026-10-21: RuneRank's vote webhook signing secret (POST /api/vote/runerank) -- new, never in the blob.
           export RUNERANK_API_SECRET="${{ secrets.RUNERANK_API_SECRET }}"
+          # 2026-10-21: the live feed push (/events/push) ran with an EMPTY GAME_EVENTS_SECRET from the blob, i.e. open to
+          # anyone. Must equal game_events_secret in /opt/zelus/server.properties on the VPS (the game's LiveFeed pushes).
+          export GAME_EVENTS_SECRET="${{ secrets.GAME_EVENTS_SECRET_OVERRIDE }}"
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
