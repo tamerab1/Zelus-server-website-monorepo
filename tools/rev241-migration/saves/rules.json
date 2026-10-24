@@ -1,0 +1,14 @@
+{
+  "_comment": "Classification of save JSON paths that hold numbers in a colliding id range. Pattern = '<file group>|<path regex>' ('*' = any group). Kinds: item, npc, obj, varp, varbit, varp-index-array, packed-var-key, ignore. {id, amount} objects are items without a rule. Each rule was checked against the server code that writes the field.",
+  "paths": {
+    "players|\\$\\.petItemIdsObtained\\[\\]": "item",
+    "players|\\$\\.varps\\[\\]": "varp-index-array",
+    "players|\\$\\.akkhaBestTime": "ignore",
+    "players|\\$\\.savedConfigs\\.\\{key\\}": "ignore",
+    "*|.*\\.amount": "ignore"
+  },
+  "keyPaths": {
+    "players|\\$\\.uniqueDrops\\.\\{key\\}": "item",
+    "players|\\$\\.savedConfigs\\.\\{key\\}": "packed-var-key"
+  }
+}
