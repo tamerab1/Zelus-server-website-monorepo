@@ -1,0 +1,22 @@
+4672 (18_64) edited locs=6354 customLocs=0 colliding=0
+4904 (19_40) edited locs=4849 customLocs=0 colliding=0
+5269 (20_149) edited locs=4350 customLocs=1 colliding=1
+5522 (21_146) NEW-REGION NOT-IN-241 locs=700 customLocs=0 colliding=0
+5934 (23_46) edited locs=2603 customLocs=0 colliding=0
+6195 (24_51) edited locs=1593 customLocs=0 colliding=0
+6477 (25_77) edited locs=3471 customLocs=0 colliding=0
+7758 (30_78) edited locs=910 customLocs=0 colliding=0
+7850 (30_170) NEW-REGION NOT-IN-241 locs=4470 customLocs=1287 colliding=1287
+7851 (30_171) NEW-REGION NOT-IN-241 locs=4345 customLocs=1150 colliding=1150
+7852 (30_172) NEW-REGION NOT-IN-241 locs=1511 customLocs=896 colliding=896
+8106 (31_170) NEW-REGION NOT-IN-241 locs=10776 customLocs=1686 colliding=1686
+8107 (31_171) NEW-REGION NOT-IN-241 locs=3796 customLocs=1043 colliding=1043
+8534 (33_86) edited locs=5008 customLocs=0 colliding=0
+10061 (39_77) edited locs=1340 customLocs=0 colliding=0
+10127 (39_143) edited locs=6538 customLocs=0 colliding=0
+10317 (40_77) edited locs=1332 customLocs=0 colliding=0
+10835 (42_83) edited locs=7825 customLocs=0 colliding=0
+12342 (48_54) edited locs=2132 customLocs=0 colliding=0
+13364 (52_52) edited locs=2332 customLocs=0 colliding=0
+14728 (57_136) edited locs=11590 customLocs=0 colliding=0
+16457 (64_73) edited locs=6251 customLocs=0 colliding=0
