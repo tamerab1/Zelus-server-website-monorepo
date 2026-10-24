@@ -65,7 +65,8 @@ public class MapDirectionUpdate extends UpdateMask {
 	public void send(NPC npc) {
 		var faceX = Math.min(16383, this.faceX);
 		var faceY = Math.min(16383, this.faceY);
-		npc.avatarExtended().setFaceCoord(faceX, faceY, this.instant);
+		// walk mode 0 = cancel on walk, matching the pre-241 face-coord behaviour.
+		npc.avatarExtended().setFaceCoordGrid(faceX, faceY, this.instant, 0);
 	}
 
 	@Override

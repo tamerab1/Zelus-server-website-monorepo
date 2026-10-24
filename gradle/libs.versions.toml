@@ -4,7 +4,7 @@ slf4j = "2.0.17"
 logback = "1.5.18"
 jackson = "2.18.3"
 netty = "4.1.119.Final"
-rsprot = "1.0.0-ALPHA-20250907"
+rsprot = "1.0.0-ALPHA-20261014"
 sentry = "8.5.0"
 ktor = "3.1.2"
 
@@ -33,7 +33,7 @@ jackson-dataformat-toml = { module = "com.fasterxml.jackson.dataformat:jackson-d
 netty-buffer = { module = "io.netty:netty-buffer", version.ref = "netty" }
 netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 
-rsprot-osrs-v231-api = { module = "net.rsprot:osrs-231-api", version.ref = "rsprot" }
+rsprot-osrs-v241-api = { module = "net.rsprot:osrs-241-api", version.ref = "rsprot" }
 
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 sentry-logback = { module = "io.sentry:sentry-logback", version.ref = "sentry" }

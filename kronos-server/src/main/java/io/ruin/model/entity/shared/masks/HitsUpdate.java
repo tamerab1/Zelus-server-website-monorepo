@@ -99,7 +99,7 @@ public class HitsUpdate extends UpdateMask {
 			var selfType = hit.hitmarkId;
 			var otherType = otherId(hit.hitmarkId);
 
-			npc.avatarExtended().addHitMark(sourceIndex, selfType, otherType, dmg, hit.delay);
+			npc.avatarExtended().addHitMark(sourceIndex, selfType, otherType, dmg, hit.delay, HITMARK_LIMIT);
 		}
 	}
 
@@ -132,14 +132,20 @@ public class HitsUpdate extends UpdateMask {
 			var selfType = hit.hitmarkId;
 			var otherType = otherId(hit.hitmarkId);
 
+			// rsprot 241 splits the source's variant out of selfType; reuse selfType to keep the old look.
 			player.avatarExtended().addHitMark(
 					sourceIndex,
 					selfType,
+					selfType,
 					otherType,
 					dmg,
-					hit.delay);
+					hit.delay,
+					HITMARK_LIMIT);
 		}
 	}
+
+	// rsprot's own default for how many hitmarks may render at once.
+	private static final int HITMARK_LIMIT = 4;
 
 	private static int otherId(int selfId) {
 		return switch (selfId) {

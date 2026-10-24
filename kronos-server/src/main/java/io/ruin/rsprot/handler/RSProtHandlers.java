@@ -8,7 +8,7 @@ import net.rsprot.protocol.game.incoming.buttons.IfButtonD;
 import net.rsprot.protocol.game.incoming.buttons.IfButtonT;
 import net.rsprot.protocol.game.incoming.buttons.IfSubOp;
 import net.rsprot.protocol.game.incoming.friendchat.FriendChatSetRank;
-import net.rsprot.protocol.game.incoming.locs.OpLoc;
+import net.rsprot.protocol.game.incoming.locs.OpLocV2;
 import net.rsprot.protocol.game.incoming.locs.OpLoc6;
 import net.rsprot.protocol.game.incoming.locs.OpLocT;
 import net.rsprot.protocol.game.incoming.messaging.MessagePrivate;
@@ -16,10 +16,10 @@ import net.rsprot.protocol.game.incoming.messaging.MessagePublic;
 import net.rsprot.protocol.game.incoming.misc.client.MapBuildComplete;
 import net.rsprot.protocol.game.incoming.misc.client.WindowStatus;
 import net.rsprot.protocol.game.incoming.misc.user.*;
-import net.rsprot.protocol.game.incoming.npcs.OpNpc;
+import net.rsprot.protocol.game.incoming.npcs.OpNpcV2;
 import net.rsprot.protocol.game.incoming.npcs.OpNpc6;
 import net.rsprot.protocol.game.incoming.npcs.OpNpcT;
-import net.rsprot.protocol.game.incoming.objs.OpObj;
+import net.rsprot.protocol.game.incoming.objs.OpObjV2;
 import net.rsprot.protocol.game.incoming.objs.OpObj6;
 import net.rsprot.protocol.game.incoming.objs.OpObjT;
 import net.rsprot.protocol.game.incoming.players.OpPlayer;
@@ -56,7 +56,7 @@ public class RSProtHandlers {
 		// builder.addListener(IgnoreListDel.class, new FriendsHandler.IgnoreRemove());
 		// builder.addListener(FriendChatSetRank.class, new FriendsHandler.Rank());
 
-		builder.addListener(OpObj.class, new GroundItemActionHandler());
+		builder.addListener(OpObjV2.class, new GroundItemActionHandler());
 		builder.addListener(OpObj6.class, new GroundItemActionHandler.Examine());
 
 		builder.addListener(ResumePNameDialog.class, new InputHandler.Name());
@@ -68,10 +68,10 @@ public class RSProtHandlers {
 		builder.addListener(OpNpcT.class, new InterfaceOnEntityHandler.OnNPC());
 		builder.addListener(OpObjT.class, new InterfaceOnObjectHandler.FromInterface());
 
-		builder.addListener(OpNpc.class, new NPCActionHandler());
+		builder.addListener(OpNpcV2.class, new NPCActionHandler());
 		builder.addListener(OpNpc6.class, new NPCActionHandler.Examine());
 
-		builder.addListener(OpLoc.class, new ObjectActionHandler());
+		builder.addListener(OpLocV2.class, new ObjectActionHandler());
 		builder.addListener(OpLoc6.class, new ObjectActionHandler.Examine());
 		builder.addListener(OpLocT.class, new InterfaceOnObjectHandler.FromInterfaceLoc());
 

@@ -727,6 +727,6 @@ public class NPC extends NPCAttributes {
 			}
 		}
 
-		this.avatar.getExtendedInfo().setBodyCustomisation(models, recolours, retextures);
+		this.avatar.getExtendedInfo().setBodyCustomisation(models, recolours, retextures, null);
 	}
 }

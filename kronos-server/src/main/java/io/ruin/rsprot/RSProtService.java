@@ -14,11 +14,8 @@ import net.rsprot.protocol.api.NetworkService;
 import net.rsprot.protocol.api.util.ZonePartialEnclosedCacheBuffer;
 import net.rsprot.protocol.common.client.OldSchoolClientType;
 import net.rsprot.protocol.game.outgoing.info.npcinfo.NpcAvatar;
-import net.rsprot.protocol.game.outgoing.info.npcinfo.NpcInfo;
-import net.rsprot.protocol.game.outgoing.info.npcinfo.SetNpcUpdateOrigin;
-import net.rsprot.protocol.game.outgoing.info.playerinfo.PlayerInfo;
+import net.rsprot.protocol.game.outgoing.info.util.PacketResultKt;
 import net.rsprot.protocol.game.outgoing.misc.client.ServerTickEnd;
-import net.rsprot.protocol.game.outgoing.worldentity.SetActiveWorldV2;
 import net.rsprot.protocol.game.outgoing.zone.header.UpdateZonePartialEnclosed;
 import net.rsprot.protocol.message.ZoneProt;
 import net.rsprot.protocol.message.codec.incoming.GameMessageConsumerRepositoryBuilder;
@@ -66,8 +63,7 @@ public final class RSProtService {
 	}
 
 	public static void removePlayer(final Player player) {
-		service.getPlayerInfoProtocol().dealloc(player.rsprotPlayerInfo);
-		service.getNpcInfoProtocol().dealloc(player.rsprotNPCInfo);
+		service.getInfoProtocols().dealloc(player.rsprotInfos);
 	}
 
 	public interface ZoneProtPacketProvider {
@@ -156,8 +152,7 @@ public final class RSProtService {
 		playersUpdateCoords(players);
 		npcsUpdate(npcs);
 
-		service.getPlayerInfoProtocol().update();
-		service.getNpcInfoProtocol().update();
+		service.getInfoProtocols().update();
 	}
 
 	private static void playersUpdateCoords(Iterable<Player> players) {
@@ -172,10 +167,7 @@ public final class RSProtService {
 			var x = position.getX();
 			var y = position.getY();
 
-			player.rsprotPlayerInfo.updateCoord(z, x, y);
-			player.rsprotNPCInfo.updateCoord(NpcInfo.ROOT_WORLD, z, x, y);
-
-			player.rsprotPlayerInfo.updateRenderCoord(PlayerInfo.ROOT_WORLD, z, x, y);
+			player.rsprotInfos.updateRootCoord(z, x, y);
 
 			final var avatar = player.avatar();
 			if (avatar != null) {
@@ -312,26 +304,32 @@ public final class RSProtService {
 
 			// Bot players have no real session — skip sending to them
 			if (player.rsprotSession == null) {
+				// ...but the built packets still have to be released or their buffers leak.
 				try {
-					player.rsprotPlayerInfo.toPacket();
-					player.rsprotNPCInfo.toPacket(-1);
+					var root = player.rsprotInfos.getPackets().getRootWorldInfoPackets();
+					var playerInfo = root.getPlayerInfo().getOrNull();
+					if (playerInfo != null) playerInfo.safeRelease();
+					var worldEntityInfo = root.getWorldEntityInfo().getOrNull();
+					if (worldEntityInfo != null) worldEntityInfo.safeRelease();
+					PacketResultKt.safeReleaseOrThrow(root.getNpcInfo());
 				} catch (Exception ignored) {}
 				continue;
 			}
 
 			try {
-				var activeWorld =
-						new SetActiveWorldV2(new SetActiveWorldV2.RootWorldType(player.getPosition().getZ()));
-				player.rsprotSession.queue(activeWorld);
-
-				var playerPacket = player.rsprotPlayerInfo.toPacket();
-				player.rsprotSession.queue(playerPacket);
-
-				var npcOrigin = new SetNpcUpdateOrigin(player.getBaseLocalX(), player.getBaseLocalY());
-				player.rsprotSession.queue(npcOrigin);
-
-				var npcPacket = player.rsprotNPCInfo.toPacket(-1);
-				player.rsprotSession.queue(npcPacket);
+				// Order per the rsprot 241 guide: active world, npc origin, world entity info,
+				// player info, npc info (omitted when empty, like OSRS does). There are no world
+				// entities on this server, so getActiveWorlds() is always empty.
+				var root = player.rsprotInfos.getPackets().getRootWorldInfoPackets();
+				player.rsprotSession.queue(root.getActiveWorld());
+				player.rsprotSession.queue(root.getNpcUpdateOrigin());
+				player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getWorldEntityInfo()));
+				player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getPlayerInfo()));
+				if (PacketResultKt.isEmpty(root.getNpcInfo())) {
+					PacketResultKt.safeReleaseOrThrow(root.getNpcInfo());
+				} else {
+					player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getNpcInfo()));
+				}
 
 				var msg = ServerTickEnd.INSTANCE;
 				player.rsprotSession.queue(msg);

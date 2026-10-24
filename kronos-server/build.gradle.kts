@@ -17,7 +17,7 @@ dependencies {
 	api(projects.properties)
 	api(projects.kronosServerDiscordServices)
 
-	api(libs.rsprot.osrs.v231.api)
+	api(libs.rsprot.osrs.v241.api)
 
 	api(libs.json)
 	api(libs.google.guava)

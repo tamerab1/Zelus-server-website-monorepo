@@ -3651,8 +3651,9 @@ public class Player extends PlayerAttributes {
 		this.setDisconnectionHook(session);
 
 		final int index = this.getIndex();
-		this.rsprotPlayerInfo = service.getPlayerInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
-		this.rsprotNPCInfo = service.getNpcInfoProtocol().alloc(index, OldSchoolClientType.DESKTOP);
+		this.rsprotInfos = service.getInfoProtocols().alloc(index, OldSchoolClientType.DESKTOP);
+		this.rsprotPlayerInfo = this.rsprotInfos.getPlayerInfo();
+		this.rsprotNPCInfo = this.rsprotInfos.getNpcInfo();
 		this.online = true;
 		// Mirrors Loggers.removeOnlinePlayer() in finishDatabase() -- that side was already
 		// wired up, this insert half never was, so online_characters (and therefore the
@@ -3693,6 +3694,7 @@ public class Player extends PlayerAttributes {
 		try {
 			RSProtService.removePlayer(this);
 			this.rsprotSession = null;
+			this.rsprotInfos = null;
 			this.rsprotPlayerInfo = null;
 			this.rsprotNPCInfo = null;
 		} catch (Throwable e) {

@@ -196,7 +196,7 @@ public class RSProtServiceFactory extends AbstractNetworkServiceFactory<Player> 
 					var nInfo = player.rsprotNPCInfo;
 					pInfo.onReconnect();
 					nInfo.onReconnect();
-					var session = handler.writeSuccessfulResponse(new LoginResponse.ReconnectOk(pInfo), loginBlock);
+					var session = handler.writeSuccessfulResponse(new LoginResponse.ReconnectOk(pInfo), loginBlock, player.rsprotSession);
 					player.onReconnectAccepted(session, xteaKeysNew);
 					session.flush();
 				});

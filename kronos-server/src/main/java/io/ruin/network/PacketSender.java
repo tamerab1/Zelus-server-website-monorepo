@@ -27,11 +27,10 @@ import io.ruin.network.incoming.handlers.DisplayHandler;
 import io.ruin.rsprot.RSProtService;
 import io.ruin.utility.Random;
 import lombok.extern.slf4j.Slf4j;
-import net.rsprot.crypto.xtea.XteaKey;
 import net.rsprot.protocol.api.Session;
 import net.rsprot.protocol.common.game.outgoing.inv.InventoryObject;
-import net.rsprot.protocol.game.outgoing.camera.CamLookAt;
-import net.rsprot.protocol.game.outgoing.camera.CamMoveTo;
+import net.rsprot.protocol.game.outgoing.camera.CamLookAtV3;
+import net.rsprot.protocol.game.outgoing.camera.CamMoveToV3;
 import net.rsprot.protocol.game.outgoing.camera.CamReset;
 import net.rsprot.protocol.game.outgoing.camera.CamShake;
 import net.rsprot.protocol.game.outgoing.interfaces.IfCloseSub;
@@ -40,10 +39,10 @@ import net.rsprot.protocol.game.outgoing.interfaces.IfOpenSub;
 import net.rsprot.protocol.game.outgoing.interfaces.IfOpenTop;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetAngle;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetAnim;
-import net.rsprot.protocol.game.outgoing.interfaces.IfSetEventsV1;
+import net.rsprot.protocol.game.outgoing.interfaces.IfSetEventsV2;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetEventsV2;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetHide;
-import net.rsprot.protocol.game.outgoing.interfaces.IfSetModel;
+import net.rsprot.protocol.game.outgoing.interfaces.IfSetModelV2;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetNpcHead;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetObject;
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetPlayerHead;
@@ -54,20 +53,19 @@ import net.rsprot.protocol.game.outgoing.inv.UpdateInvFull;
 import net.rsprot.protocol.game.outgoing.inv.UpdateInvPartial;
 import net.rsprot.protocol.game.outgoing.inv.UpdateInvStopTransmit;
 import net.rsprot.protocol.game.outgoing.logout.Logout;
-import net.rsprot.protocol.game.outgoing.map.RebuildLogin;
-import net.rsprot.protocol.game.outgoing.map.RebuildNormal;
-import net.rsprot.protocol.game.outgoing.map.RebuildRegion;
+import net.rsprot.protocol.game.outgoing.map.RebuildLoginV2;
+import net.rsprot.protocol.game.outgoing.map.RebuildNormalV2;
+import net.rsprot.protocol.game.outgoing.map.RebuildRegionV2;
 import net.rsprot.protocol.game.outgoing.map.util.RebuildRegionZone;
-import net.rsprot.protocol.game.outgoing.map.util.XteaProvider;
 import net.rsprot.protocol.game.outgoing.misc.client.HintArrow;
 import net.rsprot.protocol.game.outgoing.misc.client.HintArrow.HintArrowType;
 import net.rsprot.protocol.game.outgoing.misc.client.MinimapToggle;
 import net.rsprot.protocol.game.outgoing.misc.client.SendPing;
-import net.rsprot.protocol.game.outgoing.misc.client.UpdateRebootTimer;
+import net.rsprot.protocol.game.outgoing.misc.client.UpdateRebootTimerV1;
 import net.rsprot.protocol.game.outgoing.misc.client.UrlOpen;
 import net.rsprot.protocol.game.outgoing.misc.player.MessageGame;
 import net.rsprot.protocol.game.outgoing.misc.player.RunClientScript;
-import net.rsprot.protocol.game.outgoing.misc.player.SetMapFlag;
+import net.rsprot.protocol.game.outgoing.misc.player.SetMapFlagV1;
 import net.rsprot.protocol.game.outgoing.misc.player.SetPlayerOp;
 import net.rsprot.protocol.game.outgoing.misc.player.UpdateRunEnergy;
 import net.rsprot.protocol.game.outgoing.misc.player.UpdateRunWeight;
@@ -83,7 +81,7 @@ import net.rsprot.protocol.game.outgoing.zone.payload.LocAddChangeV2;
 import net.rsprot.protocol.game.outgoing.zone.payload.LocAnim;
 import net.rsprot.protocol.game.outgoing.zone.payload.LocDel;
 import net.rsprot.protocol.game.outgoing.zone.payload.MapAnim;
-import net.rsprot.protocol.game.outgoing.zone.payload.MapProjAnimV1;
+import net.rsprot.protocol.game.outgoing.zone.payload.MapProjAnimV2;
 import net.rsprot.protocol.game.outgoing.zone.payload.ObjAdd;
 import net.rsprot.protocol.game.outgoing.zone.payload.ObjCount;
 import net.rsprot.protocol.game.outgoing.zone.payload.ObjDel;
@@ -99,13 +97,6 @@ import static io.ruin.api.protocol.ServerProt204.*;
 
 @Slf4j
 public final class PacketSender {
-
-	private static final XteaProvider DEFAULT_XTEA_PROVIDER = new XteaProvider() {
-		@Override
-		public @NotNull XteaKey provide(final int mapsquareId) {
-			return XteaKey.Companion.getZERO();
-		}
-	};
 
 	private static final int DEFAULT_WORLD_AREA_ID = -1;
 
@@ -182,22 +173,21 @@ public final class PacketSender {
 		int depth = Region.CLIENT_SIZE >> 4;
 		boolean dynamic = region.dynamicData != null;
 		if (login || !dynamic) {
+			// rsprot 241: the info protocols track the build area themselves and must be told
+			// about every root-world rebuild (login, normal and region).
+			player.rsprotInfos.updateRootCoord(position.getZ(), position.getX(), position.getY());
+			player.rsprotInfos.updateRootBuildAreaCenteredOnPlayer(position.getX(), position.getY());
 			if (login) {
-				player.rsprotPlayerInfo.updateCoord(
-						position.getZ(),
-						position.getX(),
-						position.getY());
-
 				player.rsprotSession.queue(
-						new RebuildLogin(
+						new RebuildLoginV2(
 								chunkX, chunkY,
-								DEFAULT_WORLD_AREA_ID, DEFAULT_XTEA_PROVIDER,
+								DEFAULT_WORLD_AREA_ID,
 								player.rsprotPlayerInfo));
 			} else {
 				player.rsprotSession.queue(
-						new RebuildNormal(
+						new RebuildNormalV2(
 								chunkX, chunkY,
-								DEFAULT_WORLD_AREA_ID, DEFAULT_XTEA_PROVIDER));
+								DEFAULT_WORLD_AREA_ID));
 			}
 			if (dynamic) {
 				// Dynamic region must be sent after regular region on login.
@@ -216,7 +206,7 @@ public final class PacketSender {
 		} else {
 
 			ArrayList<Integer> chunkRegionIds = new ArrayList<>();
-			var zoneProvider = new RebuildRegion.RebuildRegionZoneProvider() {
+			var zoneProvider = new RebuildRegionV2.RebuildRegionZoneProvider() {
 				@Override
 				public RebuildRegionZone provide(int x, int y, int z) {
 					var regionIndex = (x / 8) << 8 | (y / 8);
@@ -229,17 +219,12 @@ public final class PacketSender {
 					var zoneY = data[0] >>> 3 & 0x7FF;
 					var zoneX = data[0] >>> 14 & 0x3FF;
 					var zoneZ = data[0] >>> 24 & 0x3;
-					var key = XteaKey.Companion.getZERO();
-					return new RebuildRegionZone(zoneX, zoneY, zoneZ, rotation, key);
-				}
-
-				@Override
-				public int getMapsquareId(int x, int y) {
-					return ((x & 0x7FF >>> 3) << 8) | (y & 0x7FF >>> 3);
+					return new RebuildRegionZone(zoneX, zoneY, zoneZ, rotation);
 				}
 			};
 
-			var msg = new RebuildRegion(chunkX, chunkY, true, zoneProvider);
+			player.rsprotInfos.updateRootBuildAreaCenteredOnPlayer(position.getX(), position.getY());
+			var msg = new RebuildRegionV2(chunkX, chunkY, true, zoneProvider);
 			write(msg);
 
 			for (int pointZ = 0; pointZ < 4; pointZ++) {
@@ -518,7 +503,7 @@ public final class PacketSender {
 		if (InterfaceDef.COUNTS[parentId] < childId) {
 			return;
 		}
-		var msg = new IfSetModel(parentId, childId, modelId);
+		var msg = new IfSetModelV2(parentId, childId, modelId);
 		write(msg);
 	}
 
@@ -649,7 +634,7 @@ public final class PacketSender {
 			return;
 		}
 		int mask = AccessMasks.combine(masks);
-		var msg = new IfSetEventsV1(interfaceId, childParentId, minChildId, maxChildId, mask);
+		var msg = new IfSetEventsV2(interfaceId, childParentId, minChildId, maxChildId, mask);
 		write(msg);
 	}
 
@@ -673,7 +658,7 @@ public final class PacketSender {
 	}
 
 	public void sendSystemUpdate(int time) {
-		var msg = new UpdateRebootTimer(time * 50 / 30);
+		var msg = new UpdateRebootTimerV1(time * 50 / 30);
 		write(msg);
 	}
 
@@ -862,7 +847,7 @@ public final class PacketSender {
 	}
 
 	public void resetMapFlag() {
-		var msg = new SetMapFlag(-1, -1);
+		var msg = new SetMapFlagV1(-1, -1);
 		write(msg);
 	}
 
@@ -936,15 +921,15 @@ public final class PacketSender {
 						targetIndex = target.getIndex() + 1;
 					}
 
-					var dx = (destX - startX);
-					var dy = (destY - startY);
-					return new MapProjAnimV1(
+					// V2 takes the absolute end tile instead of a delta from the start.
+					return new MapProjAnimV2(
 							projectileId,
 							startHeight, endHeight,
 							delay, duration,
 							curve, something,
 							sourceIndex, targetIndex,
-							xx, yy, dx, dy);
+							xx, yy,
+							destX, destY, player.getPosition().getZ());
 				}));
 	}
 
@@ -1052,18 +1037,13 @@ public final class PacketSender {
 	}
 
 	public void turnCameraToLocation(int x, int y, int cameraHeight, int constantSpeed, int variableSpeed) {
-		Position pos = new Position(x, y, 0);
-		int posX = pos.getSceneX();
-		int posY = pos.getSceneY();
-		var msg = new CamLookAt(posX, posY, cameraHeight, constantSpeed, variableSpeed);
+		// V3 takes absolute coordinates (V1 took build-area-relative ones).
+		var msg = new CamLookAtV3(x, y, cameraHeight, constantSpeed, variableSpeed, false);
 		write(msg);
 	}
 
 	public void moveCameraToLocation(int x, int y, int cameraHeight, int constantSpeed, int variableSpeed) {
-		Position pos = new Position(x, y, 0);
-		int posX = pos.getSceneX();
-		int posY = pos.getSceneY();
-		var msg = new CamMoveTo(posX, posY, cameraHeight, constantSpeed, variableSpeed);
+		var msg = new CamMoveToV3(x, y, cameraHeight, constantSpeed, variableSpeed, false);
 		write(msg);
 	}
 

@@ -101,6 +101,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.rsprot.protocol.api.Session;
 import net.rsprot.protocol.api.util.ZonePartialEnclosedCacheBuffer;
+import net.rsprot.protocol.game.outgoing.info.Infos;
 import net.rsprot.protocol.game.outgoing.info.npcinfo.NpcInfo;
 import net.rsprot.protocol.game.outgoing.info.playerinfo.PlayerInfo;
 
@@ -430,6 +431,9 @@ public abstract class PlayerAttributesRuntime extends Entity {
 	public transient PlayerUpdater updater = null;
 	public transient PlayerNPCUpdater npcUpdater = null;
 	public transient PlayerOpsUpdate playerOpsUpdate = null;
+	// rsprot 241 allocates player, npc and world-entity info together; the two fields below
+	// are views into this bundle.
+	public transient Infos rsprotInfos;
 	public transient PlayerInfo rsprotPlayerInfo;
 
 	public transient List<PerkSets> activePerkSetsList = new ArrayList<>();

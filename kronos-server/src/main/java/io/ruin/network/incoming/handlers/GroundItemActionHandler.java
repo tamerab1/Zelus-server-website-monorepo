@@ -8,14 +8,14 @@ import io.ruin.model.map.ground.GroundItem;
 import io.ruin.model.map.ground.GroundItemAction;
 import io.ruin.network.incoming.Incoming;
 import io.ruin.utility.IdHolder;
-import net.rsprot.protocol.game.incoming.objs.OpObj;
+import net.rsprot.protocol.game.incoming.objs.OpObjV2;
 import net.rsprot.protocol.game.incoming.objs.OpObj6;
 import net.rsprot.protocol.message.codec.incoming.MessageConsumer;
 
 import static io.ruin.network.ClientProt204.*;
 
 @IdHolder(ids = {OPOBJ1, OPOBJ2, OPOBJ3, OPOBJ4, OPOBJ5, OPOBJ6})
-public class GroundItemActionHandler implements Incoming, MessageConsumer<Player, OpObj> {
+public class GroundItemActionHandler implements Incoming, MessageConsumer<Player, OpObjV2> {
 
 	public static class Examine implements MessageConsumer<Player, OpObj6> {
 
@@ -26,7 +26,7 @@ public class GroundItemActionHandler implements Incoming, MessageConsumer<Player
 	}
 
 	@Override
-	public void consume(Player player, OpObj msg) {
+	public void consume(Player player, OpObjV2 msg) {
 		handle(player, msg.getId(), msg.getX(), msg.getZ(), msg.getOp(), msg.getControlKey() ? 1 : 0);
 	}
 

@@ -87,13 +87,12 @@ public class ZelusBotPlayer extends Player {
 
         // Allocate RSProt player info so the bot appears to other clients.
         // rsprotSession is left null — playersWriteUpdate skips bots with no session.
-        this.rsprotPlayerInfo = RSProtService.service()
-                .getPlayerInfoProtocol()
+        // (rsprot 241 allocates player + NPC info together, so the bot's NPC updater has one too.)
+        this.rsprotInfos = RSProtService.service()
+                .getInfoProtocols()
                 .alloc(slot, OldSchoolClientType.DESKTOP);
-        // Also allocate NPC info so the bot's NPC updater doesn't crash
-        this.rsprotNPCInfo = RSProtService.service()
-                .getNpcInfoProtocol()
-                .alloc(slot, OldSchoolClientType.DESKTOP);
+        this.rsprotPlayerInfo = this.rsprotInfos.getPlayerInfo();
+        this.rsprotNPCInfo = this.rsprotInfos.getNpcInfo();
         // Mark as "visible" (online=true so RSProt processes this player's coords)
         this.online   = true;
         // Allow Player.process() to run each tick (normally set by Player.start())

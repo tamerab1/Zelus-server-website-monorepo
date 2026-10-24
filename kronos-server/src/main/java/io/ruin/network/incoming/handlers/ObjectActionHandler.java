@@ -8,7 +8,7 @@ import io.ruin.model.map.object.GameObject;
 import io.ruin.model.map.object.actions.ObjectAction;
 import io.ruin.utility.DebugMessage;
 import io.ruin.utility.IdHolder;
-import net.rsprot.protocol.game.incoming.locs.OpLoc;
+import net.rsprot.protocol.game.incoming.locs.OpLocV2;
 import net.rsprot.protocol.game.incoming.locs.OpLoc6;
 import net.rsprot.protocol.message.codec.incoming.MessageConsumer;
 
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static io.ruin.network.ClientProt204.*;
 
 @IdHolder(ids = {OPLOC1, OPLOC2, OPLOC3, OPLOC4, OPLOC5, OPLOC6})
-public class ObjectActionHandler implements MessageConsumer<Player, OpLoc> {
+public class ObjectActionHandler implements MessageConsumer<Player, OpLocV2> {
 
 	public static class Examine implements MessageConsumer<Player, OpLoc6> {
 
@@ -29,7 +29,7 @@ public class ObjectActionHandler implements MessageConsumer<Player, OpLoc> {
 	}
 
 	@Override
-	public void consume(Player player, OpLoc msg) {
+	public void consume(Player player, OpLocV2 msg) {
 		handle(player, msg.getOp(), msg.getX(), msg.getZ(), msg.getId(), msg.getControlKey() ? 1 : 0);
 	}
 

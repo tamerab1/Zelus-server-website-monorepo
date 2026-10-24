@@ -17,7 +17,7 @@ import io.ruin.model.map.route.routes.TargetRoute;
 import io.ruin.network.incoming.Incoming;
 import io.ruin.utility.DebugMessage;
 import io.ruin.utility.IdHolder;
-import net.rsprot.protocol.game.incoming.npcs.OpNpc;
+import net.rsprot.protocol.game.incoming.npcs.OpNpcV2;
 import net.rsprot.protocol.game.incoming.npcs.OpNpc6;
 import net.rsprot.protocol.message.codec.incoming.MessageConsumer;
 
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import static io.ruin.network.ClientProt204.*;
 
 @IdHolder(ids = {OPNPC1, OPNPC2, OPNPC3, OPNPC4, OPNPC5, OPNPC6})
-public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
+public class NPCActionHandler implements MessageConsumer<Player, OpNpcV2> {
 
 	public static class Examine implements MessageConsumer<Player, OpNpc6> {
 		@Override
@@ -37,7 +37,7 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpc> {
 	}
 
 	@Override
-	public void consume(Player player, OpNpc msg) {
+	public void consume(Player player, OpNpcV2 msg) {
 		handle(player, msg.getOp(), msg.getIndex(), msg.getControlKey() ? 1 : 0);
 	}
 
