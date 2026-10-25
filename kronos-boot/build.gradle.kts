@@ -105,6 +105,13 @@ val jrebelAgentPath: String = when {
 	else -> throw GradleException("Unsupported OS for JRebel agent")
 }
 
+// Local `run` only (prod's start scripts keep -Xmx6g above): the rev 241 map is loaded whole at boot and its live set
+// is ~4.8 GB after a full GC, so 6 GB left too little headroom and the server hit OutOfMemoryError in play.
+// The later -Xmx wins. Prod's heap has to be sized for this before rev 241 ships.
+tasks.named<JavaExec>("run") {
+	jvmArgs("-Xmx10g")
+}
+
 tasks.register<JavaExec>("run_hotswap") {
 	environment["RUST_LOG"] = "info"
 	classpath = sourceSets["main"].runtimeClasspath
