@@ -66,8 +66,9 @@ def main():
         # backup copies (e.g. npcs/spawns_backup_*) are never loaded by the server
         dirs[:] = [d for d in dirs if 'backup' not in d.lower()]
         if rel_root == '.':
-            dirs[:] = [d for d in dirs if d not in skip]
             rel_root = ''
+        # skip entries are paths relative to <data> ("runtime/saves", "cache")
+        dirs[:] = [d for d in dirs if ((rel_root + '/' + d) if rel_root else d) not in skip]
         for f in files:
             rel = (rel_root + '/' + f) if rel_root else f
             if rel in skip or f == MARKER:
