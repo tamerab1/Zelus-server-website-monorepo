@@ -244,8 +244,27 @@ public class BuildBinary241 {
 		return b.toString();
 	}
 
+	/** what the 241 client's texture loader accepts: one frame, 128x128 or 64x64 */
+	static boolean validTextureSprite(int id, byte[] data) {
+		SpriteDefinition[] f = new SpriteLoader().load(id, data);
+		return f.length == 1 && f[0].getMaxWidth() == f[0].getMaxHeight() && (f[0].getMaxWidth() == 128 || f[0].getMaxWidth() == 64);
+	}
+
+	/** our sprites written at a new id because their vanilla id is a texture sprite: old -> new (stage 5 follows) */
+	static final Map<Integer, Integer> spriteMoves = new TreeMap<>();
+
 	static void sprites() throws Exception {
 		Set<Integer> base = ids(v231, 8);
+		// sprites vanilla 241 textures use (index 9 still holds vanilla 241's textures: textures() runs later).
+		// Zelus wrote 30x30 perk icons over texture sprites 4664-4667; the 231 client tolerated it (those
+		// terrain textures rendered wrong), the 241 client rejects a texture sprite that isn't 128 or 64 wide
+		// and crashes. Such overwrites keep Jagex's sprite and ours moves to a free id.
+		Set<Integer> textureSprites = new HashSet<>();
+		for (byte[] t : files(out, out.findIndex(9).getArchive(0)).values()) textureSprites.add(((t[0] & 0xff) << 8) | (t[1] & 0xff));
+		Set<Integer> used = new HashSet<>(ids(out, 8));
+		used.addAll(ids(local, 8));
+		int nextFree = 0;
+		for (int u : used) if (u < 0x10000) nextFree = Math.max(nextFree, u + 1);
 		int customs = 0;
 		List<Integer> taken = new ArrayList<>(), goneIn241 = new ArrayList<>(), frameMerged = new ArrayList<>(), undecodable = new ArrayList<>();
 		Map<String, Integer> mergeNotes = new TreeMap<>();
@@ -258,6 +277,13 @@ public class BuildBinary241 {
 			try {
 				String s0 = spriteSig(id, b), s1 = spriteSig(id, data);
 				if (s0.equals(s1)) continue; // re-encoded only
+				// a real texture reskin (e.g. 5604, texture 124) is a single 128x128 / 64x64 frame and stays
+				if (textureSprites.contains(id) && !validTextureSprite(id, data)) {
+					if (nextFree > 0xFFFF) throw new IllegalStateException("no free sprite id under 65536 for " + id);
+					store(8, nextFree, data, la.getFileData());
+					spriteMoves.put(id, nextFree++);
+					continue;
+				}
 				Archive ta = out.findIndex(8).getArchive(id);
 				if (ta != null && spriteSig(id, read(out, ta)).equals(s0)) { store(8, id, data, la.getFileData()); taken.add(id); }
 				else if (ta == null) { store(8, id, data, la.getFileData()); goneIn241.add(id); } // deleted by Jagex; our interfaces may use it
@@ -268,8 +294,10 @@ public class BuildBinary241 {
 				}
 			} catch (Exception e) { undecodable.add(id); }
 		}
-		report.append(String.format("  \"sprites\": {\"customsWritten\": %d, \"zelusReskinsTaken\": %d, \"reskinsOfSpritesDeletedIn241KeptOurs\": %s, \"frameMerged\": %d, \"frameMergeNotes\": %s, \"undecodable\": %s},%n",
-			customs, taken.size(), list(goneIn241), frameMerged.size(), mergeNotesJson(mergeNotes), list(undecodable)));
+		StringJoiner moves = new StringJoiner(", ", "{", "}");
+		spriteMoves.forEach((k, v) -> moves.add("\"" + k + "\": " + v));
+		report.append(String.format("  \"sprites\": {\"customsWritten\": %d, \"zelusReskinsTaken\": %d, \"reskinsOfSpritesDeletedIn241KeptOurs\": %s, \"frameMerged\": %d, \"frameMergeNotes\": %s, \"undecodable\": %s, \"textureSpriteOverwritesMovedOursTo\": %s},%n",
+			customs, taken.size(), list(goneIn241), frameMerged.size(), mergeNotesJson(mergeNotes), list(undecodable), moves));
 	}
 
 	/**

@@ -33,7 +33,11 @@
     "script 10106 instr 4: iconst 10107 -> 14690",
     "script 10194 instr 34: iconst 10616874 -> 10616875",
     "script 10194 instr 50: iconst 10616874 -> 10616875",
-    "script 10196 instr 0: iconst 10195 -> 14778"
+    "script 10196 instr 0: iconst 10195 -> 14778",
+    "script 10589 instr 0: iconst 4664 -> 24632",
+    "script 10590 instr 0: iconst 4665 -> 24633",
+    "script 10591 instr 0: iconst 4666 -> 24634",
+    "script 10592 instr 0: iconst 4667 -> 24635"
   ],
   "callsToScriptsMissingInLive231": {
     "script 10227 -> 10087": "missing in live 231; a different Jagex script in 241",

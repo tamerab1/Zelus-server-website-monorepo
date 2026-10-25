@@ -21,7 +21,7 @@ import java.util.*;
  *      once; anything else keeps 241 and is listed with its diff for manual porting.
  *
  * args: localCache v231Cache pristineV241Cache outDir manifest interfacesReport.json report.json
- *       ours-alignment-231.json component-map-241.json
+ *       ours-alignment-231.json component-map-241.json binaryReport.json (sprite moves)
  */
 public class BuildScripts241 {
 	public static void main(String[] a) throws Exception {
@@ -35,6 +35,11 @@ public class BuildScripts241 {
 		var ifr = com.google.gson.JsonParser.parseString(Files.readString(Path.of(a[5]))).getAsJsonObject();
 		for (var e : ifr.getAsJsonArray("componentRemap")) componentMoves.put(e.getAsJsonObject().get("from").getAsInt(), e.getAsJsonObject().get("to").getAsInt());
 		Map<Integer, Integer> scriptMap = manifest.maps.get("clientscript");
+		// our sprites stage 2 moved off vanilla texture sprites (the perk icons 4664-4667)
+		Map<Integer, Integer> spriteMoves = new HashMap<>();
+		var bin = com.google.gson.JsonParser.parseString(Files.readString(Path.of(a[9]))).getAsJsonObject();
+		bin.getAsJsonObject("sprites").getAsJsonObject("textureSpriteOverwritesMovedOursTo").entrySet()
+			.forEach(e -> spriteMoves.put(Integer.parseInt(e.getKey()), e.getValue().getAsInt()));
 		java.util.function.IntUnaryOperator componentRefs = BuildInterfaces241.loadRefs(Path.of(a[7]), Path.of(a[8]),
 			RoundTripInterfaces.components(local), RoundTripInterfaces.components(v231), RoundTripInterfaces.components(v241));
 
@@ -65,6 +70,7 @@ public class BuildScripts241 {
 					Integer n = null;
 					if (scriptMap.containsKey(v) && scriptMap.get(v).intValue() != v) n = scriptMap.get(v);
 					else if (componentMoves.containsKey(v)) n = componentMoves.get(v);
+					else if (spriteMoves.containsKey(v)) n = spriteMoves.get(v);
 					else if (v > 0xFFFF && componentRefs.applyAsInt(v) != v) n = componentRefs.applyAsInt(v);
 					if (n == null) return v;
 					iconstRemaps.add("    \"script " + sid + " instr " + index + ": iconst " + v + " -> " + n + "\"");
