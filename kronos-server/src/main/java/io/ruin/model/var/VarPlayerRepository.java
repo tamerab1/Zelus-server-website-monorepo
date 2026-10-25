@@ -24,7 +24,8 @@ public class VarPlayerRepository {
 	// with any real client-rendered varp for this revision. Not saved -- always
 	// recomputed fresh from the player's current group on login. Client-side:
 	// gates the Developer Tools panel to Owner only (see DevToolsPlugin.java).
-	public static final VarPlayerRepository OWNER_CLIENT_FLAG = varp(29999, false);
+	// read by the client's DevTools plugin (OWNER_CLIENT_FLAG_VARP); must be below PacketSender.CLIENT_VARP_COUNT
+	public static final VarPlayerRepository OWNER_CLIENT_FLAG = varp(8000, false);
 
 	public static final VarPlayerRepository TEMPOROSS_REWARDS = varpbit(11936, false);
 

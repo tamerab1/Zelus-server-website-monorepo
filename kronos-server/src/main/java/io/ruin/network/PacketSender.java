@@ -684,7 +684,17 @@ public final class PacketSender {
 		write(msg);
 	}
 
+	/**
+	 * The rev 241 client's varp array is 8341 long (a hard size, not the cache's varp count) and a varp packet
+	 * past it throws in the packet handler, which drops the connection: the login just fails with no message.
+	 * Our server-only varps (slayer state at 11022/11023/16002-16004, the 20000s) live above it; they stay on
+	 * the server and in saves, and no client script reads them.
+	 */
+	public static final int CLIENT_VARP_COUNT = 8341;
+
 	public void sendVarp(int id, int value) {
+		if (id < 0 || id >= CLIENT_VARP_COUNT)
+			return;
 		if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
 			var msg = new VarpLarge(id, value);
 			write(msg);
