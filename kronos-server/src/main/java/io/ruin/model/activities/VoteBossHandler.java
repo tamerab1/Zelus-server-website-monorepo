@@ -20,8 +20,10 @@ public class VoteBossHandler {
 	public static DynamicMap map;
 
 	public static void init() throws DynamicMap.DynamicMapBuildException {
-		// the event boss cavern (EventBossArea, 2026-10-20): no instance any more, everyone fights in one place
-		teleportPosition = io.ruin.model.activities.bosses.EventBossArea.TELEPORT;
+		// the vote boss fights in its own instance of the event boss cavern (EventBossArea.Arena.VOTE), apart from
+		// the global and donation bosses
+		io.ruin.model.activities.bosses.EventBossArea.init();
+		teleportPosition = io.ruin.model.activities.bosses.EventBossArea.Arena.VOTE.teleport();
 		// Without this, NPC.setCombat() falls back to default BasicCombat, which has no
 		// loot table for this npc id -- VoteBoss's attack pattern AND its whole
 		// rewardPlayer()/loot table on death silently never ran.
@@ -60,7 +62,7 @@ public class VoteBossHandler {
 
 		World.startEvent(e -> {
 			e.delay(100);
-			boss = new NPC(id).spawn(io.ruin.model.activities.bosses.EventBossArea.spawnFor(id));
+			boss = new NPC(id).spawn(io.ruin.model.activities.bosses.EventBossArea.Arena.VOTE.spawnFor(id));
 			GlobalBroadcastHook.sendEventSpawnAnnouncement(boss.getName(), null);
 		});
 	}

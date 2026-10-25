@@ -30,6 +30,8 @@ public class IcyEventBossHandler {
     }
 
     private static void spawnBoss() {
+        if (boss != null && !boss.isRemoved() && boss.getHp() > 0)
+            return; // never stack a second Icy on a live one
         boss = new NPC(17042).spawn(spawnPosition);
         broadcastAll("<col=00ffff>[Icy Event Boss]</col> has appeared! Type ::icy to fight it.");
     }
