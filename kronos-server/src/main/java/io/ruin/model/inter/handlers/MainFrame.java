@@ -40,9 +40,9 @@ public class MainFrame {
 				}
 			};
 			h.actions[36] = (SimpleAction) p -> p.getCombat().toggleSpecial();// 45 is wiki
-			// the Teleports orb (AddTeleportOrb, 231 ids 54-58) is 59-63 in rev 241, in its original draw order;
-			// 62 is its click layer
-			h.actions[62] = (SimpleAction) TeleportNexus::openAnywhere;
+			// the Teleports orb (AddTeleportOrb, 231 ids 54-58) is 57-61 in rev 241, in its original draw order,
+			// right after Jagex's last component (56); 60 is its click layer
+			h.actions[60] = (SimpleAction) TeleportNexus::openAnywhere;
 		});
 		InterfaceHandler.register(Interface.CHAT_BAR, h -> {
 			h.actions[7] = (OptionAction) (player, option) -> {

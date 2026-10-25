@@ -108,7 +108,13 @@ public class BuildInterfaces241 {
 				// 60/61) above its icon (58, unmoved) and the orb drew as a blank circle
 				var customs = new TreeSet<>(e.getValue().custom);
 				Integer firstCollision = customs.stream().filter(tb::containsKey).findFirst().orElse(null);
-				if (firstCollision != null) for (int k : customs.tailSet(firstCollision)) moved.put(k, next++);
+				if (firstCollision != null) {
+					// the block starts right after the highest id that stays (241's, or ours below the collision): a group
+					// with a hole in its component ids NPEs the client when the interface opens (160 at 59-63 left 57/58
+					// empty and broke login)
+					next = Math.max(Collections.max(tb.keySet()), customs.headSet(firstCollision).stream().max(Integer::compare).orElse(-1)) + 1;
+					for (int k : customs.tailSet(firstCollision)) moved.put(k, next++);
+				}
 			for (var r : RESOLUTIONS.entrySet())
 				if (r.getKey().startsWith(gid + ":") && r.getValue().endsWith("moveOurs")) moved.put(Integer.parseInt(r.getKey().split(":")[1]), next++);
 			customMoves.put(gid, moved);
@@ -274,6 +280,13 @@ public class BuildInterfaces241 {
 		for (var e : outGroups.entrySet()) {
 			var onDisk = C.get(e.getKey());
 			if (!onDisk.keySet().equals(e.getValue().keySet())) throw new IllegalStateException("interface " + e.getKey() + " components differ after write");
+			// the client NPEs opening an interface with a hole in its component ids
+			if (Collections.max(onDisk.keySet()) != onDisk.size() - 1) {
+				// a gap we introduced in a merged vanilla group fails the build (160 broke login); custom interfaces
+				// with a gap carried over from live 231 (1089) are only listed
+				if (T.containsKey(e.getKey())) throw new IllegalStateException("interface " + e.getKey() + " has a gap in its component ids: " + new TreeSet<>(onDisk.keySet()));
+				System.out.println("WARN custom interface " + e.getKey() + " has a gap in its component ids (as in live 231): " + onDisk.size() + " components, max id " + Collections.max(onDisk.keySet()));
+			}
 			for (var c : onDisk.entrySet()) {
 				if (!Arrays.equals(c.getValue(), e.getValue().get(c.getKey()))) throw new IllegalStateException("component " + e.getKey() + ":" + c.getKey() + " differs");
 				InterfaceRewriter.run(c.getValue(), DefRewriter.IDENTITY, true, true, v -> false); // valid 241 grammar
