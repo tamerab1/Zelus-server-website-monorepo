@@ -157,49 +157,6 @@ public class PumpkinChest {
 		new LootItem(23071, 1, 10)
 	);
 
-	private static void showLoot(Player player) {
-		//player.sendMessage(Color.DARK_GREEN, "<img=15> Showing Daily Login Chest rewards...");
-		/**
-		 * sends the drop table interface
-		 */
-//        player.openInterface(ToplevelComponent.MAINMODAL, Bestiary.DROP_TABLE_INTERFACE);
-
-		/**
-		 * sends clientscript #id 10004, handles the popular searches on the left hand side
-		 * params are int, string "is", amount of text, text seperated by a divider |.
-		 */
-		player.getPacketSender().sendClientScript(10004, "is", 0, "");
-		//   player.getPacketSender().sendClientScript(10004, "is", 10, "Abyssal Demon|Green Dragon|Cow|Goblin|Elvarg|General Graa'dor|Kree'arra|Vorkath|Zulrah|Great olm");
-
-		/**
-		 * gets the npc's loot table and checks / verifies the items to then display onto the interface.
-		 */
-		LootTable table = DAILY_REWARDS_CHEST_TABLE;
-
-		table.calculateWeight();
-
-		int index = 0;
-		for (LootTable.ItemsTable it : table.tables) {
-			for (LootItem tableItem : it.items) {
-				/**
-				 * drop weight percentage
-				 */
-				double percentage = (it.weight / (double) table.totalWeight) * (tableItem.weight / (double) it.totalWeight) * 100;
-				/**
-				 * sends clientscript #id 10006, paramTypes: int int int string string string, gets the container index, item ids + drops and formating them.
-				 */
-				player.getPacketSender().sendClientScript(10006, "iiisss", index, tableItem.id, tableItem.max, tableItem.max + "", String.format("%.2f", percentage) + "%", "");
-				index++;
-			}
-		}
-
-		/**
-		 * sends clientscript 10085, handling of component 25 & 26 for interface 801.
-		 */
-		//player.getPacketSender().sendClientScript(10085, "iii", (Bestiary.DROP_TABLE_INTERFACE << 16) | 25, (Bestiary.DROP_TABLE_INTERFACE << 16) | 26, index * 40);
-
-	}
-
 //    public static void register() {
 //        ObjectAction.register(41462, "examine", (player, obj) -> showLoot(player));
 //        ObjectAction.register(41462, 1, (player, obj) -> {
