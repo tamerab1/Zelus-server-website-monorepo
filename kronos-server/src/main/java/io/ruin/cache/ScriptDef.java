@@ -68,13 +68,16 @@ public class ScriptDef {
 		InBuffer buffer = new InBuffer(data);
 		buffer.position(data.length - 2);
 		int i_13_ = buffer.readUnsignedShort();
-		int i_14_ = data.length - 2 - i_13_ - 12;
+		// rev 237+ footer is 16 bytes: count i32, localInt, localObj, localLong, intArgs, objArgs, longArgs (u16 each)
+		int i_14_ = data.length - 2 - i_13_ - 16;
 		buffer.position(i_14_);
 		int instructionCount = buffer.readInt();
 		localIntCount = buffer.readUnsignedShort();
 		localStringCount = buffer.readUnsignedShort();
+		buffer.readUnsignedShort(); // local long count
 		intArgumentCount = buffer.readUnsignedShort();
 		stringArgumentCount = buffer.readUnsignedShort();
+		buffer.readUnsignedShort(); // long argument count
 		int switchCount = buffer.readUnsignedByte();
 		if (switchCount > 0) {
 			for (int i = 0; i < switchCount; i++) {
@@ -96,7 +99,9 @@ public class ScriptDef {
 			int i_34_ = buffer.readUnsignedShort();
 			if (i_34_ == 3)
 				stringOperands[i_33_] = buffer.readStringCp1252NullTerminated();
-			else if (i_34_ < 100 && i_34_ != 21 && i_34_ != 38 && i_34_ != 39)
+			else if (i_34_ == 61)
+				intOperands[i_33_] = (int) buffer.readLong(); // LCONST: i64 operand, low bits kept
+			else if (i_34_ < 100 && i_34_ != 21 && i_34_ != 38 && i_34_ != 39 && i_34_ != 63)
 				intOperands[i_33_] = buffer.readInt();
 			else
 				intOperands[i_33_] = buffer.readUnsignedByte();

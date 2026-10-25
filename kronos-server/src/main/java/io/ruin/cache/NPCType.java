@@ -562,14 +562,16 @@ public class NPCType {
 			headModels = new int[var4];
 			for (int var5 = 0; var5 < var4; var5++)
 				headModels[var5] = var1.readInt();
-		} else if (op == 252) {
-			// New in a recent OSRS revision, undocumented meaning -- reading PAST it (not
-			// interpreting it) is enough to keep the rest of the record aligned. Length of 14 is
-			// measured, not guessed: RS-Realm-Server-Package's own decoder notes npc "Mortimer"
-			// carries three of these back to back with an identical 14-byte body each, which
-			// brackets the payload exactly. Appears on a handful of npcs, e.g. Mad Angel's
-			// dormant form (16306).
-			var1.skip(14);
+		} else if (op == 252 || op == 253) {
+			// conditional op: u8 index, [u8 subIndex, u8 (253 only)], varp, varbit, int min,
+			// int max, string. Appears on a handful of npcs, e.g. Mad Angel's dormant form (16306).
+			var1.skip(op == 253 ? 15 : 13);
+			var1.readStringCp1252NullTerminated();
+		} else if (op == 251) {
+			var1.skip(2); // sub-op: u8 index, u8 subIndex, string
+			var1.readStringCp1252NullTerminated();
+		} else if (op == 130 || op == 145 || op == 147) {
+			// rev 241 flags with no payload
 		} else if (op == 93) {
 			isMinimapVisible = false;
 		} else if (op >= 74 && op <= 79) {
@@ -665,10 +667,12 @@ public class NPCType {
 			if (attributes == null)
 				attributes = new HashMap<>();
 			for (int i = 0; i < size; i++) {
-				boolean stringType = var1.readUnsignedByte() == 1;
+				int type = var1.readUnsignedByte(); // 0 int, 1 string, 2 long
 				int key = var1.readMedium();
-				if (stringType)
+				if (type == 1)
 					attributes.put(key, var1.readStringCp1252NullTerminated());
+				else if (type == 2)
+					attributes.put(key, var1.readLong());
 				else
 					attributes.put(key, var1.readInt());
 			}

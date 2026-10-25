@@ -75,6 +75,10 @@ public class ParamType {
 			autoDisable = false;
 		else if (5 == opcode)
 			defaultStringValue = buffer.readStringCp1252NullTerminated();
+		else if (opcode == 7)
+			buffer.readLong(); // default long value
+		else if (opcode == 8)
+			buffer.readUnsignedByte(); // rev 241, u8
 	}
 
 	public boolean isStringVarType() {

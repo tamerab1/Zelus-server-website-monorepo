@@ -734,6 +734,11 @@ public class ObjType {
 			}
 		} else if (opcode == 42) {
 			shiftClickDropIndex = buffer.readByte();
+		} else if (opcode == 43) {
+			// rev 241: u8 index, then (u8 subIndex, string) pairs until a 0 subIndex
+			buffer.readUnsignedByte();
+			while (buffer.readUnsignedByte() != 0)
+				buffer.readStringCp1252NullTerminated();
 		}
 		// BUG FIXED 2026-09-13: opcodes 44-54 (rev 237+ wide/4-byte model-id variants of opcodes
 		// 1/23/24/25/26/78/79/90/91/92/93 respectively -- allows model ids past 65535) were entirely
@@ -786,6 +791,8 @@ public class ObjType {
 			category = buffer.readUnsignedShort();
 		else if (opcode == 95)
 			zan2d = buffer.readUnsignedShort();
+		else if (opcode == 99)
+			buffer.readUnsignedShort(); // rev 241 full recolour
 		else if (opcode == 97)
 			notedId = buffer.readUnsignedShort();
 		else if (opcode == 98)
@@ -822,13 +829,27 @@ public class ObjType {
 			if (attributes == null)
 				attributes = new HashMap<>();
 			for (int i = 0; i < size; i++) {
-				boolean stringType = buffer.readUnsignedByte() == 1;
+				int type = buffer.readUnsignedByte(); // 0 int, 1 string, 2 long
 				int key = buffer.readMedium();
-				if (stringType)
+				if (type == 1)
 					attributes.put(key, buffer.readStringCp1252NullTerminated());
+				else if (type == 2)
+					attributes.put(key, buffer.readLong());
 				else
 					attributes.put(key, buffer.readInt());
 			}
+		} else if (opcode == 161) {
+			// rev 241: u16 count, then that many seq ids
+			int count = buffer.readUnsignedShort();
+			for (int i = 0; i < count; i++)
+				buffer.readUnsignedShort();
+		} else if (opcode == 200) {
+			buffer.skip(2); // sub-op: u8 index, u8 subIndex, string
+			buffer.readStringCp1252NullTerminated();
+		} else if (opcode == 201 || opcode == 202) {
+			// conditional op: index, [subIndex], varp, varbit, min, max, text
+			buffer.skip(opcode == 202 ? 15 : 13);
+			buffer.readStringCp1252NullTerminated();
 		}
 	}
 

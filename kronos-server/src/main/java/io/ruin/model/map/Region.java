@@ -2,7 +2,6 @@ package io.ruin.model.map;
 
 import io.ruin.Server;
 import io.ruin.api.buffer.InBuffer;
-import io.ruin.api.filestore.IndexFile;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.containers.bank.BankActions;
 import io.ruin.model.map.object.GameObject;
@@ -211,11 +210,12 @@ public class Region {
 		return tile;
 	}
 
+	// Rev 241 map index: group id = region id, file 0 = terrain, file 1 = locs (no names, no XTEA).
+	// Terrain is the 231 tile grammar plus a trailing extra-layer count this engine doesn't need.
+	private static final int TERRAIN_FILE = 0, LOCS_FILE = 1;
+
 	public byte[] getLandscapeData() {
-		IndexFile index = Server.fileStore.get(5);
-		int landArchiveId = index.getArchiveId("l" + ((baseX >> 3) / 8) + "_" + ((baseY >> 3) / 8));
-		return landArchiveId == -1 ? null
-				: index.getFile(landArchiveId, 0, null);
+		return Server.fileStore.get(5).getFile(id, LOCS_FILE);
 	}
 
 	/**
@@ -276,8 +276,6 @@ public class Region {
 	}
 
 	private byte[] getMapData() {
-		IndexFile index = Server.fileStore.get(5);
-		int mapArchiveId = index.getArchiveId("m" + ((baseX >> 3) / 8) + "_" + ((baseY >> 3) / 8));
-		return mapArchiveId == -1 ? null : index.getFile(mapArchiveId, 0);
+		return Server.fileStore.get(5).getFile(id, TERRAIN_FILE);
 	}
 }

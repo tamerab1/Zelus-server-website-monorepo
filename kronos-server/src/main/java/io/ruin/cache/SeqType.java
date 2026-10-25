@@ -45,7 +45,6 @@ public class SeqType {
 	public int id;
 	public int[] frameLengths;
 	public int[] frameData;
-	public int[] anIntArray3611;
 	public int forcedPriority = 5;
 	public int frameStep = -1;
 	public boolean oneSquareAnimation = false;
@@ -110,11 +109,22 @@ public class SeqType {
 			for (int var5 = 0; var5 < var4; var5++)
 				anIntArray3609[var5] += buffer.readUnsignedShort() << 16;
 		} else if (opcode == 13) {
-			int var4 = buffer.readUnsignedByte();
-			anIntArray3611 = new int[var4];
-			for (int var5 = 0; var5 < var4; var5++)
-				anIntArray3611[var5] = buffer.readMedium();
+			buffer.readInt(); // skeletal (maya) animation id
+		} else if (opcode == 14) {
+			// frame sounds: u16 count, then (u16 frame, u16 sound, u8 weight, u8 loops, u8 location, u8 retain)
+			int count = buffer.readUnsignedShort();
+			buffer.skip(count * 8);
+		} else if (opcode == 15) {
+			buffer.skip(4); // skeletal frame range
+		} else if (opcode == 16) {
+			buffer.readUnsignedByte();
+		} else if (opcode == 17) {
+			int count = buffer.readUnsignedByte();
+			buffer.skip(count);
+		} else if (opcode == 18) {
+			buffer.readStringCp1252NullTerminated();
 		}
+		// opcode 19 has no payload
 	}
 
 	public static SortedSet<Integer> findAnimationsWithSameRigging(int... ids) { // idk about this name LOL

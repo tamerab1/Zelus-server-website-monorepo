@@ -60,6 +60,12 @@ public class SpotAnimType {
 			modelId = var1.readUnsignedShort();
 		else if (var2 == 2)
 			animationId = var1.readUnsignedShort();
+		else if (var2 == 3)
+			modelId = var1.readInt(); // rev 237+ wide model id
+		else if (var2 == 9)
+			var1.readStringCp1252NullTerminated();
+		else if (var2 == 42)
+			var1.readUnsignedShort();
 		else if (var2 == 4)
 			anInt3341 = var1.readUnsignedShort();
 		else if (var2 == 5)

@@ -66,6 +66,13 @@ public class IdkType {
 				anIntArray84[i_8_] = stream.readUnsignedShort();
 		} else if (i == 3)
 			aBool53 = true;
+		else if (i == 5) {
+			// rev 237+ wide variant of opcode 2
+			int count = stream.readUnsignedByte();
+			anIntArray84 = new int[count];
+			for (int m = 0; m < count; m++)
+				anIntArray84[m] = stream.readInt();
+		}
 		else if (i == 40) {
 			int i_9_ = stream.readUnsignedByte();
 			aShortArray3 = new short[i_9_];
@@ -84,6 +91,8 @@ public class IdkType {
 			}
 		} else if (i >= 60 && i < 70)
 			anIntArray85[i - 60] = stream.readUnsignedShort();
+		else if (i >= 70 && i < 80)
+			anIntArray85[i - 70] = stream.readInt(); // rev 237+ wide variant of 60-69
 	}
 
 }
