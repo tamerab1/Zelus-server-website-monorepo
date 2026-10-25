@@ -255,8 +255,8 @@ public class WidgetID {
 		static final int ITEM_COUNT_BAR = 6;
 		static final int ITEM_COUNT_BOTTOM = 7;
 		static final int CONTENT_CONTAINER = 10;
-		static final int TAB_CONTAINER = 11;
-		static final int ITEM_CONTAINER = 13;
+		static final int TAB_CONTAINER = 10; // rev 241 (231: 11)
+		static final int ITEM_CONTAINER = 12; // rev 241 (231: 13); withdraw ops were enabled on the wrong component
 		static final int SCROLLBAR = 14;
 		static final int UNNOTED_BUTTON = 21;
 		static final int NOTED_BUTTON = 23;
@@ -264,7 +264,7 @@ public class WidgetID {
 		static final int DEPOSIT_INVENTORY = 42;
 		static final int DEPOSIT_EQUIPMENT = 44;
 		static final int INCINERATOR = 46;
-		static final int INCINERATOR_CONFIRM = 47;
+		static final int INCINERATOR_CONFIRM = 50; // rev 241 (231: 47, the same component)
 		static final int EQUIPMENT_CONTENT_CONTAINER = 69;
 		static final int SETTINGS_BUTTON = 112;
 		static final int EQUIPMENT_BUTTON = 113;

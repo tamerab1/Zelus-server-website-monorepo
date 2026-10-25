@@ -156,7 +156,7 @@ public final class DefRewriter {
 
 	/**
 	 * Rev 241 re-encoded every model reference as an int under new opcodes (objects 1/5 -> 6/7, npcs 1/60 ->
-	 * 61/62, items 1/23-26/78/79/90-93 -> 44-54), and the 241 client no longer reads the old object opcodes:
+	 * 61/62, items 1/23-26/78/79/90-93 -> 44-54, spotanims 1 -> 3), and the 241 client no longer reads the old object opcodes:
 	 * it skips their models without consuming them, so the rest of the definition misparses (a custom object
 	 * with model 0xf91c read 0xf9 as opcode 249 and crashed the client at login). Rewrites the opcode just
 	 * written to its 241 form; the caller then emits the models with {@link #legacyModel()}.
@@ -433,7 +433,7 @@ public final class DefRewriter {
 	private void spotanim() {
 		for (int op; (op = op()) != 0; ) {
 			switch (op) {
-				case 1 -> id16("model");
+				case 1 -> { upgradeOp(3); legacyModel(); } // rev 241: models are opcode 3 (int); 101 of ours used 1
 				case 2 -> id16("seq");
 				case 3 -> model32();
 				case 4, 5, 6, 42 -> copy(2);

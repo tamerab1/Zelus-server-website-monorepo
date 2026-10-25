@@ -75,6 +75,10 @@ public class PlayerDisplayMode {
 		var ps = player.getPacketSender();
 
 		updateDisplay(player);
+		// rev 241's camera_do_zoom (script 42) clamps the zoom to varcs 1338-1341 instead of 231's constant
+		// 128..896; those varcs aren't persisted and start at 0, and only script 626 (camera zoom defaults) sets
+		// them. Without it the zoom range is 0..0: the wheel and the slider did nothing.
+		ps.sendClientScript(626);
 
 		player.openInterface(ToplevelComponent.CHATBOX);
 		player.openInterface(ToplevelComponent.PRIVATE_CHAT);
