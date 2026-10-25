@@ -51,7 +51,12 @@ def main():
     for _, _, t in jrules:
         assert t in moves, 'unknown type ' + t
 
-    if apply and os.path.exists(os.path.join(data, MARKER)):
+    # dropIds: reviewed ids whose entries are dead in our 231 data (the id was undefined in our cache) but would
+    # bind to Jagex content in 241; they are removed from the id arrays. --drops-only applies just this step
+    # (idempotent) to an already-remapped data dir.
+    drops = {t: set(v) for t, v in rules.get('dropIds', {}).items() if not t.startswith('_')}
+    drops_only = '--drops-only' in sys.argv
+    if apply and not drops_only and os.path.exists(os.path.join(data, MARKER)):
         sys.exit('refusing: %s already exists (this data dir was remapped)' % MARKER)
 
     stats = collections.Counter()      # (file group, rule path/type) -> replacements
@@ -76,7 +81,7 @@ def main():
             p = os.path.join(root, f)
 
             # id-named files
-            for g, t in frules:
+            for g, t in ([] if drops_only else frules):
                 if g.match(rel):
                     stem, ext = os.path.splitext(f)
                     if stem.isdigit() and int(stem) in moves[t]:
@@ -92,12 +97,23 @@ def main():
                     errors.append('%s: %s' % (rel, e))
                     continue
                 edits = []
+                drop_arrays = {}  # '[' offset -> ']' offset of id arrays holding a dropped id
                 for a, b, v, path, is_key, in_str in toks:
                     hit = None
                     for g, rx, t in jrules:
                         if g.match(rel) and rx.search(path):
                             hit = t
                             break
+                    if hit and v in drops.get(hit, ()) and path.endswith('[]'):
+                        lo, hi = text.rfind('[', 0, a), text.find(']', b)
+                        if lo < 0 or hi < 0 or not re.fullmatch(r'[\d,\s]*', text[lo + 1:hi]):
+                            errors.append('%s: dropped id %d is not in a plain number array' % (rel, v))
+                        else:
+                            drop_arrays[lo] = (hi, hit)
+                            stats[(rel, path, 'DROPPED ' + hit)] += 1
+                        continue
+                    if drops_only:
+                        continue
                     if hit:
                         if v in moves[hit]:
                             edits.append((a, b, str(moves[hit][v])))
@@ -110,6 +126,9 @@ def main():
                             if v in mv and t not in ('texture', 'frames', 'skeleton', 'overlay'):
                                 unruled[(rel, path, t)] += 1
                                 unruled_ex.setdefault((rel, path, t), v)
+                for lo, (hi, dropped_t) in drop_arrays.items():
+                    keep = [x for x in re.findall(r'\d+', text[lo + 1:hi]) if int(x) not in drops.get(dropped_t, ())]
+                    edits.append((lo + 1, hi, (' ' + ', '.join(keep) + ' ') if keep else ''))
                 if edits:
                     files_changed += 1
                     if apply:
@@ -118,7 +137,7 @@ def main():
                         with open(p, 'w', encoding='utf-8', errors='surrogateescape', newline='') as fh:
                             fh.write(text)
 
-            elif f.endswith(('.yaml', '.yml')):
+            elif f.endswith(('.yaml', '.yml')) and not drops_only:
                 for g, r in yrules:
                     if not g.match(rel):
                         continue
@@ -147,7 +166,7 @@ def main():
                                 fh.writelines(lines)
 
     clash = [dst for _, dst, _ in renames if os.path.exists(dst)]
-    if apply:
+    if apply and not drops_only:
         if clash:
             errors.append('rename targets already exist (not renamed): %s' % clash[:10])
         else:

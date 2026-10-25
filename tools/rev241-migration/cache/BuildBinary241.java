@@ -331,7 +331,7 @@ public class BuildBinary241 {
 				int target = manifest.map("texture", e.getKey());
 				if (target == e.getKey() && t.containsKey(target) && manifest.isImported("texture", target)) continue;
 				if (t.containsKey(target)) throw new IllegalStateException("texture " + e.getKey() + " -> " + target + " is vanilla 241");
-				result.put(target, e.getValue());
+				result.put(target, texture231To241(e.getKey(), e.getValue()));
 				customs++;
 			} else if (!Arrays.equals(e.getValue(), b.get(e.getKey()))) vanillaDiffer.add(e.getKey());
 		}
@@ -342,6 +342,25 @@ public class BuildBinary241 {
 		store(9, 0, SpliceItemOption.joinChunks(contents), fd);
 		report.append(String.format("  \"textures\": {\"customsWritten\": %d, \"total\": %d, \"vanillaTexturesThatDifferKeptVanilla241\": %s},%n",
 			customs, result.size(), list(vanillaDiffer)));
+	}
+
+	/**
+	 * Texture definitions changed format between 231 and 241. 231: u16 average colour, u8 transparent,
+	 * u8 sprite count, u16 sprite id per sprite, (count - 1) x 2 bytes when count > 1, i32 per sprite,
+	 * u8 animation direction, u8 animation speed. 241: u16 sprite id, u16 average colour, u8 transparent,
+	 * u8 animation direction, u8 animation speed (one sprite). Copied unconverted, the 241 client read the
+	 * colour as a sprite id and crashed at "loading textures". Anything not exactly representable is refused.
+	 */
+	static byte[] texture231To241(int id, byte[] d) {
+		java.nio.ByteBuffer in = java.nio.ByteBuffer.wrap(d);
+		int average = in.getShort() & 0xffff, transparent = in.get() & 0xff, count = in.get() & 0xff;
+		if (count != 1) throw new IllegalStateException("texture " + id + ": " + count + " sprites; rev 241 textures have one");
+		int sprite = in.getShort() & 0xffff;
+		int perSprite = in.getInt();
+		if (perSprite != 0) throw new IllegalStateException("texture " + id + ": per-sprite field " + perSprite + " has no rev 241 equivalent");
+		int direction = in.get() & 0xff, speed = in.get() & 0xff;
+		if (in.hasRemaining()) throw new IllegalStateException("texture " + id + ": " + in.remaining() + " bytes left over");
+		return new byte[]{(byte) (sprite >> 8), (byte) sprite, (byte) (average >> 8), (byte) average, (byte) transparent, (byte) direction, (byte) speed};
 	}
 
 	static Map<Integer, byte[]> files(Store s, Archive ar) throws Exception {

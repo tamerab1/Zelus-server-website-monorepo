@@ -17,7 +17,9 @@ public class FileStore {
 		RandomAccessFile mainDataFile = new RandomAccessFile(path + "main_file_cache.dat2", "rw");
 		RandomAccessFile mainDataFile255 = new RandomAccessFile(path + "main_file_cache.idx255", "rw");
 
-		this.index255 = new IndexFile(255, mainDataFile, mainDataFile255, 500000);
+		// reference tables: rev 241's models table alone is 525,411 bytes (540,634 with ours), over the old
+		// 500,000 cap, which left index 7 unloaded and unservable over JS5
+		this.index255 = new IndexFile(255, mainDataFile, mainDataFile255, 10_000_000);
 		this.files = new IndexFile[index255.getArchivesCount()];
 
 		for (int index = 0; index < files.length; index++) {

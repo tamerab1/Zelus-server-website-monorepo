@@ -2,6 +2,7 @@ package io.ruin.model.map;
 
 import io.ruin.Server;
 import io.ruin.api.buffer.InBuffer;
+import io.ruin.api.filestore.IndexFile;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.containers.bank.BankActions;
 import io.ruin.model.map.object.GameObject;
@@ -212,10 +213,16 @@ public class Region {
 
 	// Rev 241 map index: group id = region id, file 0 = terrain, file 1 = locs (no names, no XTEA).
 	// Terrain is the 231 tile grammar plus a trailing extra-layer count this engine doesn't need.
-	private static final int TERRAIN_FILE = 0, LOCS_FILE = 1;
+	// Every map square group has 5 files; group 25287 (37 files) is a colour palette, not a map square.
+	private static final int TERRAIN_FILE = 0, LOCS_FILE = 1, MAP_GROUP_FILES = 5;
+
+	private byte[] mapFile(int file) {
+		IndexFile index = Server.fileStore.get(5);
+		return index.getValidFilesCount(id) == MAP_GROUP_FILES ? index.getFile(id, file) : null;
+	}
 
 	public byte[] getLandscapeData() {
-		return Server.fileStore.get(5).getFile(id, LOCS_FILE);
+		return mapFile(LOCS_FILE);
 	}
 
 	/**
@@ -276,6 +283,6 @@ public class Region {
 	}
 
 	private byte[] getMapData() {
-		return Server.fileStore.get(5).getFile(id, TERRAIN_FILE);
+		return mapFile(TERRAIN_FILE);
 	}
 }

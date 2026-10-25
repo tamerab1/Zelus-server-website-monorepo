@@ -166,5 +166,36 @@
     "npcs-summary.json",
     "xteas.json",
     "region_keys.json"
-  ]
+  ],
+  "dropIds": {
+    "_why": "Reviewed 2026-10-25: these npc ids were undefined in our live 231 cache, so their entries were dead, but they are Jagex npcs in rev 241 and the entries would attach custom combat / drops to them (e.g. the Nomad boss handler on 15087 = Fishing spot, combat-pet handlers whose classes no longer exist on Rainbow crab / Gwyna / Ocean Man, custom drop tables on 15000/15003/15021 = Sailor-era npcs). Found by checking every rule-typed id: undefined in 231, defined in 241, not a remap target.",
+    "npc": [
+      15000,
+      15001,
+      15002,
+      15003,
+      15021,
+      15087,
+      15091,
+      15092,
+      15094,
+      15095,
+      15104,
+      15105,
+      15106,
+      15107,
+      15108,
+      15109,
+      15110,
+      15111,
+      15112,
+      15113,
+      15114,
+      15115,
+      15116,
+      15117,
+      15118,
+      15119
+    ]
+  }
 }
