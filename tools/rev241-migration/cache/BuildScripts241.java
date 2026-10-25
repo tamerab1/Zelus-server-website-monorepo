@@ -46,7 +46,7 @@ public class BuildScripts241 {
 		var B = RoundTripScripts.scripts(v231);
 		var T = RoundTripScripts.scripts(v241);
 		Map<Integer, byte[]> written = new TreeMap<>();
-		List<String> iconstRemaps = new ArrayList<>(), edits = new ArrayList<>();
+		List<String> iconstRemaps = new ArrayList<>(), edits = new ArrayList<>(), missingCalls = new ArrayList<>();
 		int customs = 0, imported = 0;
 
 		for (var e : L.entrySet()) {
@@ -58,7 +58,13 @@ public class BuildScripts241 {
 				if (target == id && T.containsKey(id) && manifest.isImported("clientscript", id)) { imported++; continue; }
 				if (T.containsKey(target)) throw new IllegalStateException("script " + id + " -> " + target + " is vanilla 241");
 				final int sid = id;
-				ScriptRewriter r = ScriptRewriter.run(d, manifest, false, true, (index, v) -> {
+				// a call to a script our cache never had already failed on live; record what the id holds in 241
+				DefRewriter.Ids ids = (kind, ref) -> {
+					if (kind.equals("clientscript") && !L.containsKey(ref))
+						missingCalls.add("    \"script " + sid + " -> " + ref + "\": \"missing in live 231" + (T.containsKey(ref) ? "; a different Jagex script in 241" : "; missing in 241 too") + "\"");
+					return manifest.map(kind, ref);
+				};
+				ScriptRewriter r = ScriptRewriter.run(d, ids, false, true, (index, v) -> {
 					Integer n = null;
 					if (scriptMap.containsKey(v) && scriptMap.get(v).intValue() != v) n = scriptMap.get(v);
 					else if (componentMoves.containsKey(v)) n = componentMoves.get(v);
@@ -162,7 +168,8 @@ public class BuildScripts241 {
 			ScriptRewriter.run(e.getValue(), DefRewriter.IDENTITY, true, true, (i, v) -> v); // valid 241 layout
 		}
 		Files.writeString(Path.of(a[6]), "{\n  \"stage\": \"clientscripts\",\n  \"customScriptsWritten\": " + customs + ",\n  \"importedVanillaKept\": " + imported
-			+ ",\n  \"vanillaEdits\": {\n" + String.join(",\n", edits) + "\n  },\n  \"iconstRemaps\": [\n" + String.join(",\n", iconstRemaps) + "\n  ]\n}\n");
+			+ ",\n  \"vanillaEdits\": {\n" + String.join(",\n", edits) + "\n  },\n  \"iconstRemaps\": [\n" + String.join(",\n", iconstRemaps)
+			+ "\n  ],\n  \"callsToScriptsMissingInLive231\": {\n" + String.join(",\n", missingCalls) + "\n  }\n}\n");
 		System.out.println("RESULT scripts: custom " + customs + " written, imported vanilla kept " + imported + ", vanilla edits handled " + edits.size()
 			+ ", ICONST remaps " + iconstRemaps.size() + ", groups written+verified " + written.size());
 	}

@@ -247,7 +247,8 @@ public class BuildBinary241 {
 	static void sprites() throws Exception {
 		Set<Integer> base = ids(v231, 8);
 		int customs = 0;
-		List<Integer> taken = new ArrayList<>(), needFrameMerge = new ArrayList<>(), undecodable = new ArrayList<>();
+		List<Integer> taken = new ArrayList<>(), goneIn241 = new ArrayList<>(), frameMerged = new ArrayList<>(), undecodable = new ArrayList<>();
+		Map<String, Integer> mergeNotes = new TreeMap<>();
 		for (Archive la : local.findIndex(8).getArchives()) {
 			int id = la.getArchiveId();
 			byte[] data = read(local, la);
@@ -259,11 +260,61 @@ public class BuildBinary241 {
 				if (s0.equals(s1)) continue; // re-encoded only
 				Archive ta = out.findIndex(8).getArchive(id);
 				if (ta != null && spriteSig(id, read(out, ta)).equals(s0)) { store(8, id, data, la.getFileData()); taken.add(id); }
-				else needFrameMerge.add(id);
+				else if (ta == null) { store(8, id, data, la.getFileData()); goneIn241.add(id); } // deleted by Jagex; our interfaces may use it
+				else {
+					byte[] merged = mergeSpriteFrames(b, data, read(out, ta), mergeNotes, id);
+					store(8, id, merged, la.getFileData());
+					frameMerged.add(id);
+				}
 			} catch (Exception e) { undecodable.add(id); }
 		}
-		report.append(String.format("  \"sprites\": {\"customsWritten\": %d, \"zelusReskinsTaken\": %d, \"reskinsPendingFrameMergeKeptVanilla241\": %s, \"undecodable\": %s},%n",
-			customs, taken.size(), list(needFrameMerge), list(undecodable)));
+		report.append(String.format("  \"sprites\": {\"customsWritten\": %d, \"zelusReskinsTaken\": %d, \"reskinsOfSpritesDeletedIn241KeptOurs\": %s, \"frameMerged\": %d, \"frameMergeNotes\": %s, \"undecodable\": %s},%n",
+			customs, taken.size(), list(goneIn241), frameMerged.size(), mergeNotesJson(mergeNotes), list(undecodable)));
+	}
+
+	/**
+	 * Frame-level three-way merge of a sprite group both sides changed: a frame we changed (pixels or
+	 * geometry) takes ours, otherwise 241's; frames only one side appended are kept; our canvas wins
+	 * if we changed it. Mixed results get one re-built palette (<= 255 colours).
+	 */
+	static byte[] mergeSpriteFrames(byte[] base, byte[] ours, byte[] theirs, Map<String, Integer> notes, int id) {
+		var gb = SpriteCodec.decode(base); var go = SpriteCodec.decode(ours); var gt = SpriteCodec.decode(theirs);
+		int n = Math.max(Math.max(gb.frames.size(), go.frames.size()), gt.frames.size());
+		List<SpriteCodec.Frame> frames = new ArrayList<>();
+		List<int[]> palettes = new ArrayList<>();
+		boolean anyOurs = false, anyTheirs = false;
+		for (int i = 0; i < n; i++) {
+			SpriteCodec.Frame fb = i < gb.frames.size() ? gb.frames.get(i) : null;
+			SpriteCodec.Frame fo = i < go.frames.size() ? go.frames.get(i) : null;
+			SpriteCodec.Frame ft = i < gt.frames.size() ? gt.frames.get(i) : null;
+			boolean oursChanged = fb == null ? fo != null : fo == null || !SpriteCodec.sameFrame(gb, fb, go, fo);
+			if (oursChanged && fo != null) { frames.add(fo); palettes.add(go.palette); anyOurs = true; }
+			else if (!oursChanged && ft != null) { frames.add(ft); palettes.add(gt.palette); anyTheirs = true; }
+			else if (fo == null && fb != null && ft != null && SpriteCodec.sameFrame(gb, fb, gt, ft)) { /* we removed it, Jagex didn't touch it */ }
+			else if (ft != null) { frames.add(ft); palettes.add(gt.palette); anyTheirs = true; }
+		}
+		boolean oursCanvas = go.maxWidth != gb.maxWidth || go.maxHeight != gb.maxHeight;
+		int w = oursCanvas ? go.maxWidth : gt.maxWidth, h = oursCanvas ? go.maxHeight : gt.maxHeight;
+		if (anyOurs && !anyTheirs && w == go.maxWidth && h == go.maxHeight && frames.size() == go.frames.size()) {
+			notes.merge("all frames ours (Jagex's changes were to the same frames)", 1, Integer::sum);
+			return ours;
+		}
+		notes.merge("mixed: ours + 241 frames, palette rebuilt", 1, Integer::sum);
+		byte[] out = SpriteCodec.encode(SpriteCodec.assemble(w, h, frames, palettes));
+		// verify: every frame decodes to exactly the source frame's pixels and geometry
+		var check = SpriteCodec.decode(out);
+		for (int i = 0; i < frames.size(); i++) {
+			int[] want = frames.get(i).argb(palettes.get(i)), got = check.frames.get(i).argb(check.palette);
+			if (!Arrays.equals(want, got)) throw new IllegalStateException("sprite " + id + " frame " + i + " changed in merge");
+		}
+		return out;
+	}
+
+	static String mergeNotesJson(Map<String, Integer> m) {
+		StringBuilder b = new StringBuilder("{");
+		int i = 0;
+		for (var e : m.entrySet()) b.append(i++ == 0 ? "" : ", ").append('"').append(e.getKey()).append("\": ").append(e.getValue());
+		return b.append('}').toString();
 	}
 
 	// ------------------------------------------------------------------ textures

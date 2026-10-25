@@ -39,4 +39,5 @@ echo "== stage 2: binary";       run BuildBinary241     "$data/cache" "$v231" "$
 echo "== stage 3: maps";         run BuildMaps241       "$data/cache" "$v231" "$out" "$m" "$data/region_keys.json" "$data/xteas.json" "$k231" "$here/cache/build-maps-report.json" "$overrides" "$v241"
 echo "== stage 4: interfaces";   run BuildInterfaces241 "$data/cache" "$v231" "$v241" "$out" "$m" "$here/cache/build-interfaces-report.json"
 echo "== stage 5: clientscripts"; run BuildScripts241   "$data/cache" "$v231" "$v241" "$out" "$m" "$here/cache/build-interfaces-report.json" "$here/cache/build-scripts-report.json"
+echo "== integrity"; run IntegrityCheck241 "$out" "$v241" "$here/cache/integrity-report.json" "$data/cache" "$v231"
 echo "== done: $out"

@@ -30,5 +30,30 @@
     "script 10069 instr 268: iconst 10071 -> 22060",
     "script 10106 instr 4: iconst 10107 -> 22096",
     "script 10196 instr 0: iconst 10195 -> 22184"
-  ]
+  ],
+  "callsToScriptsMissingInLive231": {
+    "script 10227 -> 10087": "missing in live 231; a different Jagex script in 241",
+    "script 10230 -> 10087": "missing in live 231; a different Jagex script in 241",
+    "script 10328 -> 10087": "missing in live 231; a different Jagex script in 241",
+    "script 10329 -> 10215": "missing in live 231; missing in 241 too",
+    "script 10414 -> 10013": "missing in live 231; a different Jagex script in 241",
+    "script 10414 -> 10013": "missing in live 231; a different Jagex script in 241",
+    "script 10421 -> 10013": "missing in live 231; a different Jagex script in 241",
+    "script 10453 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10453 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10453 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10453 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10454 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10455 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10456 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10456 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10456 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10456 -> 10003": "missing in live 231; a different Jagex script in 241",
+    "script 10458 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10458 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10458 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10458 -> 10004": "missing in live 231; a different Jagex script in 241",
+    "script 10471 -> 10087": "missing in live 231; a different Jagex script in 241",
+    "script 10489 -> 10087": "missing in live 231; a different Jagex script in 241"
+  }
 }
