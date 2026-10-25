@@ -81,6 +81,10 @@ public class Bank extends ItemContainerG<BankItem> {
 		 * hidden by default in the cache and must be explicitly shown. */
 		player.getPacketSender().setHidden(12, 61, false);
 		player.getPacketSender().setHidden(12, 158, false);
+		// rev 241 puts its own Next page button (102) in the strip exactly under our Presets (158), and adds a
+		// "Show menu" sack button (106) the server doesn't handle; hide both so the bank looks as it did in 231
+		player.getPacketSender().setHidden(12, 102, true);
+		player.getPacketSender().setHidden(12, 106, true);
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");
 			return;

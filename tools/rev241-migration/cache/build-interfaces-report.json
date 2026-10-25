@@ -7,7 +7,7 @@
     "12": "merged: 159 components (base 141, ours 141, 241 158); moved {120=158}; edits placed []; both-changed [120@102=theirs+moveOurs]",
     "79": "ours outright (26 components; 241 had 2)",
     "119": "ours outright (206 components; 241 had 221)",
-    "160": "merged: 62 components (base 54, ours 59, 241 57); moved {54=59, 55=60, 56=61}; edits placed [49->50]; both-changed [49@50=theirs+hidden]",
+    "160": "merged: 62 components (base 54, ours 59, 241 57); moved {54=59, 55=60, 56=61, 57=62, 58=63}; edits placed [49->50]; both-changed [49@50=theirs+hidden]",
     "161": "merged: 99 components (base 98, ours 98, 241 99); moved {}; edits placed []; both-changed []",
     "164": "merged: 98 components (base 97, ours 97, 241 98); moved {}; edits placed []; both-changed []",
     "218": "merged: 211 components (base 204, ours 203, 241 211); moved {}; edits placed [7->6, 103->108, 104->109, 148->153, 193->201, 202->210]; both-changed [0@0=theirs]",
@@ -41,7 +41,9 @@
     {"from": 786552, "to": 786590, "name": "12:120 -> 12:158"},
     {"from": 10485814, "to": 10485819, "name": "160:54 -> 160:59"},
     {"from": 10485815, "to": 10485820, "name": "160:55 -> 160:60"},
-    {"from": 10485816, "to": 10485821, "name": "160:56 -> 160:61"}
+    {"from": 10485816, "to": 10485821, "name": "160:56 -> 160:61"},
+    {"from": 10485817, "to": 10485822, "name": "160:57 -> 160:62"},
+    {"from": 10485818, "to": 10485823, "name": "160:58 -> 160:63"}
   ],
   "hookArgsEqualToMovingIds": {
     "count": 0,

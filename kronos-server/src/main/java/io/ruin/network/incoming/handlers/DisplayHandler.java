@@ -54,10 +54,32 @@ public class DisplayHandler implements Incoming, MessageConsumer<Player, WindowS
 			io.ruin.model.content.equipmentpresets.GearPresetInterface.shrinkIfOpen(player);
 			io.ruin.model.content.gearloadouts.GearLoadoutInterface.shrinkIfOpen(player);
 		}
+		// rev 241 switches the game client layout client-side (the Settings dropdown never reaches the server)
+		// and reports it here: 1 = fixed, 2 = resizable. Follow it, or the client resizes its canvas around the
+		// fixed 548 toplevel (black borders, wrongly scaled viewport). Classic vs modern resizable isn't in the
+		// packet: keep the player's current resizable flavour, else their side-panels setting.
+		var wanted = clientLayout(player, displayMode);
 		if (!player.started) {
+			if (wanted != null)
+				player.displayMode = wanted.raw();
 			PlayerDisplayMode.refresh(player);
 			player.start();
+		} else if (wanted != null && wanted != PlayerDisplayMode.mode(player)) {
+			PlayerDisplayMode.set(player, wanted);
 		}
+	}
+
+	private static PlayerDisplayMode.Mode clientLayout(Player player, int displayMode) {
+		var current = PlayerDisplayMode.mode(player);
+		if (displayMode == 1)
+			return PlayerDisplayMode.Mode.Fixed;
+		if (displayMode == 2) {
+			if (current != PlayerDisplayMode.Mode.Fixed)
+				return current;
+			return io.ruin.model.var.VarPlayerRepository.SIDE_PANELS.get(player) == 1
+				? PlayerDisplayMode.Mode.ResizableModern : PlayerDisplayMode.Mode.Resizable;
+		}
+		return null;
 	}
 
 	public static void sendTopLevel(Player player, ToplevelInterfaceType newMode) {

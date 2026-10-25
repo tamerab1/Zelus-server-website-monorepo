@@ -103,7 +103,12 @@ public class BuildInterfaces241 {
 			var tb = T.get(gid);
 			int next = Math.max(Collections.max(tb.keySet()), Collections.max(L.get(gid).keySet())) + 1;
 			Map<Integer, Integer> moved = new TreeMap<>();
-			for (int k : new TreeSet<>(e.getValue().custom)) if (tb.containsKey(k)) moved.put(k, next++);
+			// children draw in component id order, so once one of ours collides every later one of ours moves
+				// with it, in order: moving only the colliding ones put the Zelus Teleports orb's frame (160:55/56 ->
+				// 60/61) above its icon (58, unmoved) and the orb drew as a blank circle
+				var customs = new TreeSet<>(e.getValue().custom);
+				Integer firstCollision = customs.stream().filter(tb::containsKey).findFirst().orElse(null);
+				if (firstCollision != null) for (int k : customs.tailSet(firstCollision)) moved.put(k, next++);
 			for (var r : RESOLUTIONS.entrySet())
 				if (r.getKey().startsWith(gid + ":") && r.getValue().endsWith("moveOurs")) moved.put(Integer.parseInt(r.getKey().split(":")[1]), next++);
 			customMoves.put(gid, moved);
