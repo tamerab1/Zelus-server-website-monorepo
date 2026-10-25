@@ -42,7 +42,7 @@ public class TabClanChat {
 				boolean iron = p.getGameMode().isGroupIronman();
 				p.getPacketSender().sendClientScript(828, "i", 1);
 				p.getPacketSender().sendToplevelSubInterface(76, 7, iron ? ToplevelComponent.GROUP_CLAN_TAB_AREA : ToplevelComponent.CLAN_TAB_AREA);
-				p.getPacketSender().sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+				p.getPacketSender().sendIfEvents(76, 28, 0, 23, getMask(ClickOp1));
 				VarPlayerRepository.CLAN_ACTIVE_TAB.set(p.player, 3);
 			};
 		});
@@ -73,7 +73,7 @@ public class TabClanChat {
 				boolean iron = p.getGameMode().isGroupIronman();
 				p.getPacketSender().sendClientScript(828, "i", 1);
 				p.getPacketSender().sendToplevelSubInterface(76, 7, iron ? ToplevelComponent.GROUP_CLAN_TAB_AREA : ToplevelComponent.CLAN_TAB_AREA);
-				p.getPacketSender().sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+				p.getPacketSender().sendIfEvents(76, 28, 0, 23, getMask(ClickOp1));
 				VarPlayerRepository.CLAN_ACTIVE_TAB.set(p.player, 3);
 			};
 		});

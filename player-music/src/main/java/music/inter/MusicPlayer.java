@@ -25,25 +25,26 @@ public class MusicPlayer {
 
 		InterfaceHandler.register(Interface.MUSIC_PLAYER, h -> {
 			h.openAction = (player) -> {
-				player.getPacketSender().sendIfEvents(239, 6, 0, 794, getMask(ClickOp1, ClickOp2));
+				player.getPacketSender().sendIfEvents(239, 11, 0, 794, getMask(ClickOp1, ClickOp2));
 			};
 
-			h.actions[10] = (DefaultAction) (p, option, slot, item) -> {
+			h.actions[14] = (DefaultAction) (p, option, slot, item) -> {
 				VarPlayerRepository.MUSIC_PREFERENCE.set(p, 1);
 				p.sendMessage("You are now using the area music mode");
 			};
 
-			h.actions[13] = (DefaultAction) (p, option, slot, item) -> {
+			// rev 241 replaced Manual/Random with Single (16) and Shuffle (15)
+			h.actions[16] = (DefaultAction) (p, option, slot, item) -> {
 				VarPlayerRepository.MUSIC_PREFERENCE.set(p, 0);
 				p.sendMessage("You are now using the manual music mode");
 			};
 
-			h.actions[16] = (DefaultAction) (p, option, slot, item) -> {
+			h.actions[15] = (DefaultAction) (p, option, slot, item) -> {
 				VarPlayerRepository.MUSIC_PREFERENCE.set(p, 2);
 				p.sendMessage("You are now using the random music mode");
 			};
 
-			h.actions[6] = (DefaultAction) (p, option, slot, item) -> {
+			h.actions[11] = (DefaultAction) (p, option, slot, item) -> {
 				var track = tracks.get(slot);
 				if (track == null) {
 					return;
@@ -141,7 +142,7 @@ public class MusicPlayer {
 			}
 
 			VarPlayerRepository.MUSIC_PREFERENCE.set(player, 0);
-			player.getPacketSender().sendString(Interface.MUSIC_PLAYER, 9, name);
+			player.getPacketSender().sendString(Interface.MUSIC_PLAYER, 4, name);
 			player.getPacketSender().sendMusic(this.midiId);
 			player.sendMessage("Now playing " + this.name);
 		}

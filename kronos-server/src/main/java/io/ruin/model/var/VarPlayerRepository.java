@@ -1044,6 +1044,9 @@ public class VarPlayerRepository {
 
 	public static final VarPlayerRepository BANK_INSERT_MODE = varpbit(3959, true);
 
+	/** Withdraw-as-note; the rev 241 bank's single Item/Note toggle flips it client-side (script 291). */
+	public static final VarPlayerRepository BANK_WITHDRAW_NOTES = varpbit(3958, false);
+
 	public static final VarPlayerRepository BANK_ALWAYS_PLACEHOLDERS = varpbit(3755, true);
 
 	public static final VarPlayerRepository BANK_TAB_DISPLAY = varpbit(4170, true);

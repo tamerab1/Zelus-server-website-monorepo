@@ -137,12 +137,12 @@ public class TabPrayer {
 			default:
 				if (setup) {
 					player.getPacketSender().sendInterface(mode, ToplevelComponent.QUICK_PRAYERS_TAB_AREA);
-					player.getPacketSender().sendIfEvents(548, 84, -1, -1, 2);
+					player.getPacketSender().sendIfEvents(548, 85, -1, -1, 2);
 					player.getPacketSender().sendIfEvents(77, 4, 0, 28, 2);
 					player.getPacketSender().sendClientScript(915, "i", 5);
 				} else {
 					player.getPacketSender().sendInterface(mode, ToplevelComponent.PRAYER_TAB_AREA);
-					player.getPacketSender().sendIfEvents(548, 84, -1, -1, 2);
+					player.getPacketSender().sendIfEvents(548, 85, -1, -1, 2);
 					// checkPrayerSwap(player);
 				}
 				return;

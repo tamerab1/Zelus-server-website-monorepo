@@ -27,12 +27,12 @@ public class SettingsInterface {
 
 	static final int COMPONENT_MORE_INFO = 5;
 	static final int COMPONENT_CLOSE = 4;
-	static final int COMPONENT_SEARCH = 10;
-	static final int COMPONENT_SETTING = 19;
-	static final int COMPONENT_SLIDER = 21;
-	static final int COMPONENT_CATEGORY = 23;
-	static final int COMPONENT_CANCEL = 25;
-	static final int COMPONENT_DROPDOWN = 28;
+	static final int COMPONENT_SEARCH = 11;
+	static final int COMPONENT_SETTING = 20;
+	static final int COMPONENT_SLIDER = 22;
+	static final int COMPONENT_CATEGORY = 24;
+	static final int COMPONENT_CANCEL = 26;
+	static final int COMPONENT_DROPDOWN = 29;
 
 	public static void register() {
 		for (final Map<Integer, Integer> varpMaps : SettingVariables.ALL_VARP_SETTINGS) {

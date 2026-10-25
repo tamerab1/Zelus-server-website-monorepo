@@ -48,7 +48,7 @@ public class DeathStorage extends ItemContainer {
 				else
 					p.getDeathStorage().unlock();
 			};
-			h.actions[8] = (SimpleAction) p -> p.getDeathStorage().discardAll();
+			h.actions[10] = (SimpleAction) p -> p.getDeathStorage().discardAll();
 			h.closedAction = (p, integer) -> {
 				if (p.getDeathStorage().isUnlocked() && !p.getDeathStorage().isEmpty()) {
 					p.sendMessage(Color.RED.wrap("WARNING:")
@@ -197,7 +197,7 @@ public class DeathStorage extends ItemContainer {
 		if (!unlocked && cost != -1) {
 			player.addEvent(event -> {
 				event.delay(1);
-				player.getPacketSender().sendString(602, 11, "Fee to unlock:<br><col=ffffff>" + Utils.formatMoneyString(cost));
+				player.getPacketSender().sendString(602, 15, "Fee to unlock:<br><col=ffffff>" + Utils.formatMoneyString(cost));
 			});
 		}
 	}

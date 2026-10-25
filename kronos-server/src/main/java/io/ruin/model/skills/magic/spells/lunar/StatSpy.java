@@ -31,7 +31,7 @@ public class StatSpy extends Spell {
 				player.examinePlayer = entity.player;
 				overview(player);
 				player.openInterface(ToplevelComponent.SIDEMODAL, 523);
-				player.getPacketSender().sendString(523, 94, "Stats for " + entity.player.getName());
+				player.getPacketSender().sendString(523, 98, "Stats for " + entity.player.getName());
 				entity.player.graphics(736, 96, 0);
 				entity.player.sendMessage(player.getName() + " has just spied on your stats.");
 			});

@@ -1,0 +1,303 @@
+call:sendString	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	65	94	10	10	SAME	2279:2281	player.getPacketSender().sendString(Interface.CLAN_CHAT_SETTINGS, 10, name);
+call:sendString	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	69	94	13	13	SAME	2434:2436	player.getPacketSender().sendString(Interface.CLAN_CHAT_SETTINGS, 13, rank.text);
+call:sendString	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	73	94	16	16	SAME	2593:2595	player.getPacketSender().sendString(Interface.CLAN_CHAT_SETTINGS, 16, rank.text);
+call:sendString	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	77	94	19	19	SAME	2752:2754	player.getPacketSender().sendString(Interface.CLAN_CHAT_SETTINGS, 19, rank.text);
+actions	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	17	94	10	10	SAME	471:473	h.actions[10] = (OptionAction) (player, option) -> {
+actions	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	32	94	13	13	SAME	966:968	h.actions[13] = (OptionAction) (player, option) -> {
+actions	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	38	94	16	16	SAME	1250:1252	h.actions[16] = (OptionAction) (player, option) -> {
+actions	clanchat/src/main/java/clanchat/inter/FriendChatSettingsInterface.java	44	94	19	19	SAME	1534:1536	h.actions[19] = (OptionAction) (player, option) -> {
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	11	19857419	MOVE:12	1294:1302	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	13	19857421	MOVE:14	1304:1312	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	14	19857422	MOVE:15	1314:1322	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	15	19857423	MOVE:16	1324:1332	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	20	19857428	MOVE:21	1334:1342	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	18	19857426	MOVE:19	1344:1352	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	19	19857427	MOVE:20	1354:1362	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	16	19857424	MOVE:17	1364:1372	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+hashlit	doom-of-mokhaiotl/src/main/java/mokhaiotl/inter/Investigation.java	41	303	17	19857425	MOVE:18	1374:1382	player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+call:accessMasks	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	190	134	19	COMPONENT_SETTING	MOVE:20	6354:6371	player.accessMasks(INTERFACE_ID, COMPONENT_SETTING, 0,
+call:accessMasks	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	192	134	21	COMPONENT_SLIDER	MOVE:22	6468:6484	player.accessMasks(INTERFACE_ID, COMPONENT_SLIDER, 0, Settings.SLIDER_NOTCH_COUNT_SUM, AccessMasks.ClickOp1);
+call:accessMasks	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	193	134	23	COMPONENT_CATEGORY	MOVE:24	6580:6598	player.accessMasks(INTERFACE_ID, COMPONENT_CATEGORY, 0, Settings.CATEGORIES.size(), AccessMasks.ClickOp1);
+call:accessMasks	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	194	134	28	COMPONENT_DROPDOWN	MOVE:29	6689:6707	player.accessMasks(INTERFACE_ID, COMPONENT_DROPDOWN, 0, Settings.DROPDOWN_ENTRIES_MAX_COUNT * 3,
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	69	134	4	COMPONENT_CLOSE	SAME	2343:2358	h.actions[COMPONENT_CLOSE] = (SimpleAction) p -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	73	134	5	COMPONENT_MORE_INFO	SAME	2429:2448	h.actions[COMPONENT_MORE_INFO] = (SimpleAction) p -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	77	134	10	COMPONENT_SEARCH	MOVE:11	2550:2566	h.actions[COMPONENT_SEARCH] = (SimpleAction) p -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	83	134	21	COMPONENT_SLIDER	MOVE:22	2763:2779	h.actions[COMPONENT_SLIDER] = (SlotAction) (p, slot) -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	89	134	28	COMPONENT_DROPDOWN	MOVE:29	3030:3048	h.actions[COMPONENT_DROPDOWN] = (SlotAction) (player, slotId) -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	120	134	23	COMPONENT_CATEGORY	MOVE:24	4302:4320	h.actions[COMPONENT_CATEGORY] = (SlotAction) (p, slot) -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	128	134	25	COMPONENT_CANCEL	MOVE:26	4633:4649	h.actions[COMPONENT_CANCEL] = (SimpleAction) (p) -> {
+actions	interface-advancedsettings/src/main/java/io/ruin/model/inter/handlers/advancedsettings/SettingsInterface.java	132	134	19	COMPONENT_SETTING	MOVE:20	4746:4763	h.actions[COMPONENT_SETTING] = (SlotAction) (p, slot) -> {
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	26	116	104	104	MOVE:102	944:947	ps.sendIfEvents(116, 104, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	27	116	118	118	MOVE:116	1001:1004	ps.sendIfEvents(116, 118, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	28	116	133	133	MOVE:130	1058:1061	ps.sendIfEvents(116, 133, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	29	116	38	38	SAME	1115:1117	ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	30	116	39	39	SAME	1170:1172	ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
+call:sendIfEvents	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	31	116	41	41	REMOVED:CLIENT_TYPE_BUTTONS	1225:1227	ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	34	116	5	5	SAME	1276:1277	h.actions[5] = (SlotAction) (p, slot) -> VarPlayerRepository.PK_SKULL_PREVENTION.toggle(p);
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	35	116	29	29	SAME	1371:1373	h.actions[29] = (SimpleAction) VarPlayerRepository.ACCEPT_AID::toggle;
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	36	116	30	30	SAME	1445:1447	h.actions[30] = (SimpleAction) p -> p.getMovement().toggleRunning();
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	37	116	31	31	SAME	1517:1519	h.actions[31] = (SimpleAction) TabSettings.HouseOptions::open;
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	38	116	32	32	SAME	1583:1585	h.actions[32] = (SimpleAction) SettingsInterface::open;
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	39	116	38	38	SAME	1642:1644	h.actions[38] = (SlotAction) (p, slot) -> VarPlayerRepository.PLAYER_ATTACK_OPTION.set(p, slot - 1);
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	40	116	39	39	SAME	1746:1748	h.actions[39] = (SlotAction) (p, slot) -> VarPlayerRepository.NPC_ATTACK_OPTION.set(p, slot - 1);
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	42	116	41	41	REMOVED:CLIENT_TYPE_BUTTONS	1848:1850	h.actions[41] = (SlotAction) (p, slot) -> {
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	56	116	44	44	MOVE:43	2200:2202	h.actions[44] = (SlotAction) (p, slot) -> {
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	60	116	104	104	MOVE:102	2306:2309	h.actions[104] = (SlotAction) (p, slot) -> {
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	64	116	118	118	MOVE:116	2416:2419	h.actions[118] = (SlotAction) (p, slot) -> {
+actions	interface-tabsettings/src/main/java/io/ruin/model/inter/handlers/tabsettings/TabSettings.java	68	116	133	133	MOVE:130	2533:2536	h.actions[133] = (SlotAction) (p, slot) -> {
+call:register	kronos-server/src/main/java/io/ruin/model/activities/cluescrolls/impl/AnagramClue.java	89	490	?	" "	UNKNOWN	3359:3367	register(490, "I Even", ClueType.MEDIUM);
+call:register	kronos-server/src/main/java/io/ruin/model/activities/moonsofperil/MoonsOfPerilHandler.java	452	233	29078	29078	SAME	15397:15402	ItemItemAction.register(ItemID.PESTLE_AND_MORTAR, 29078, (player, primary, secondary) -> {
+call:register	kronos-server/src/main/java/io/ruin/model/activities/moonsofperil/MoonsOfPerilHandler.java	455	227	29079	29079	SAME	15555:15560	ItemItemAction.register(ItemID.VIAL_OF_WATER, 29079, (player, primary, secondary) -> {
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	20	303	2	2	SAME	461:462	HP_HUD << 16 | 2,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	21	303	4	4	SAME	481:482	HP_HUD << 16 | 4,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	22	303	5	5	SAME	501:502	HP_HUD << 16 | 5,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	23	303	8	8	SAME	521:522	HP_HUD << 16 | 8,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	24	303	10	10	SAME	541:543	HP_HUD << 16 | 10,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	25	303	20	20	MOVE:21	562:564	HP_HUD << 16 | 20,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	26	303	13	13	MOVE:14	583:585	HP_HUD << 16 | 13,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	27	303	14	14	MOVE:15	604:606	HP_HUD << 16 | 14,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	28	303	15	15	MOVE:16	625:627	HP_HUD << 16 | 15,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	29	303	9	9	SAME	646:647	HP_HUD << 16 | 9,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	30	303	6	6	SAME	666:667	HP_HUD << 16 | 6,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	31	303	7	7	SAME	686:687	HP_HUD << 16 | 7,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	32	303	11	11	MOVE:12	706:708	HP_HUD << 16 | 11,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	33	303	18	18	MOVE:19	727:729	HP_HUD << 16 | 18,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	34	303	19	19	MOVE:20	748:750	HP_HUD << 16 | 19,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	35	303	16	16	MOVE:17	769:771	HP_HUD << 16 | 16,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	36	303	17	17	MOVE:18	790:792	HP_HUD << 16 | 17,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	37	303	3	3	SAME	811:812	HP_HUD << 16 | 3
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	41	303	6	6	SAME	885:886	HP_HUD << 16 | 6,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	42	303	7	7	SAME	905:906	HP_HUD << 16 | 7,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	43	303	9	9	SAME	925:926	HP_HUD << 16 | 9,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	44	303	11	11	MOVE:12	945:947	HP_HUD << 16 | 11,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	45	303	13	13	MOVE:14	966:968	HP_HUD << 16 | 13,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	46	303	14	14	MOVE:15	987:989	HP_HUD << 16 | 14,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	47	303	15	15	MOVE:16	1008:1010	HP_HUD << 16 | 15,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	48	303	20	20	MOVE:21	1029:1031	HP_HUD << 16 | 20,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	49	303	18	18	MOVE:19	1050:1052	HP_HUD << 16 | 18,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	50	303	19	19	MOVE:20	1071:1073	HP_HUD << 16 | 19,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	51	303	16	16	MOVE:17	1092:1094	HP_HUD << 16 | 16,
+hash	kronos-server/src/main/java/io/ruin/model/entity/HealthHud.java	52	303	17	17	MOVE:18	1113:1115	HP_HUD << 16 | 17,
+call:register	kronos-server/src/main/java/io/ruin/model/entity/npc/actions/SarahsFarmingShop.java	11	501	?	" "	UNKNOWN	361:370	NPCAction.register(501, "talk-to", (player, npc) -> player.dialogue(new NPCDialogue(npc, "Hello, " + player.getName() + ". How can I be of assistance?"),
+call:register	kronos-server/src/main/java/io/ruin/model/entity/npc/actions/SarahsFarmingShop.java	19	501	?	" "	UNKNOWN	702:709	NPCAction.register(501, "trade", (player, npc) -> {
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	177	76	26	26	MOVE:28	5222:5224	ps.sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	179	116	23	23	SAME	5277:5279	ps.sendIfEvents(116, 23, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	180	116	55	55	MOVE:54	5331:5333	ps.sendIfEvents(116, 55, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	181	116	84	84	MOVE:83	5385:5387	ps.sendIfEvents(116, 84, 1, 3, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	182	116	38	38	SAME	5438:5440	ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	183	116	39	39	SAME	5491:5493	ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	184	116	41	41	REMOVED:CLIENT_TYPE_BUTTONS	5544:5546	ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	186	116	69	69	MOVE:68	5599:5601	ps.sendIfEvents(116, 69, 0, 21, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/entity/player/PlayerDisplayMode.java	189	218	198	198	MOVE:206	5961:5964	ps.sendIfEvents(Interface.MAGIC_BOOK, 198, 0, 6, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/dialogue/skill/SkillDialogue.java	127	270	?	14 + i	UNKNOWN	3593:3599	player.getPacketSender().sendIfEvents(Interface.MAKE_DIALOGUE, 14 + i, 1, 8, 1);
+actions	kronos-server/src/main/java/io/ruin/model/inter/dialogue/skill/SkillDialogue.java	27	270	?	14 + i	UNKNOWN	775:781	h.actions[14 + i] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	138	84	10	10	SAME	4078:4080	h.actions[10] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_HAT);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	139	84	11	11	SAME	4193:4195	h.actions[11] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_CAPE);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	140	84	12	12	SAME	4309:4311	h.actions[12] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_AMULET);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	141	84	13	13	SAME	4427:4429	h.actions[13] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_WEAPON);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	142	84	14	14	SAME	4545:4547	h.actions[14] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_CHEST);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	143	84	15	15	SAME	4662:4664	h.actions[15] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_SHIELD);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	144	84	16	16	SAME	4780:4782	h.actions[16] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_LEGS);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	145	84	17	17	SAME	4896:4898	h.actions[17] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_HANDS);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	146	84	18	18	SAME	5013:5015	h.actions[18] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_FEET);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	147	84	19	19	SAME	5129:5131	h.actions[19] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_RING);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/EquipmentStats.java	148	84	20	20	SAME	5245:5247	h.actions[20] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_AMMO);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	21	160	5	5	MOVE:6	766:767	h.actions[5] = (OptionAction) XpCounter::select;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	22	160	19	19	MOVE:20	818:820	h.actions[19] = (OptionAction) (p, option) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	29	160	27	27	MOVE:28	1001:1003	h.actions[27] = (SimpleAction) p -> p.getMovement().toggleRunning();
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	30	160	45	45	MOVE:46	1073:1075	h.actions[45] = (SimpleAction) p -> p.openUrl("https://zelusrsps.com/store");
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	31	160	53	53	MOVE:55	1154:1156	h.actions[53] = new InterfaceAction() {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	42	160	35	35	MOVE:36	1426:1428	h.actions[35] = (SimpleAction) p -> p.getCombat().toggleSpecial();// 45 is wiki
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	44	160	57	57	SAME	1580:1582	h.actions[57] = (SimpleAction) TeleportNexus::openAnywhere;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	47	162	7	7	SAME	1704:1705	h.actions[7] = (OptionAction) (player, option) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	68	548	69	69	MOVE:70	2528:2530	actions.actions[69] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	73	548	65	65	MOVE:66	2763:2765	actions.actions[65] = (SimpleAction) QuestTab.MAIN::send;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	77	161	65	65	SAME	2904:2906	actions.actions[65] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	82	161	61	61	SAME	3141:3143	actions.actions[61] = (SimpleAction) QuestTab.MAIN::send;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	87	164	52	52	SAME	3366:3368	actions.actions[52] = (SimpleAction) QuestTab.MAIN::send;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/MainFrame.java	91	164	57	57	SAME	3515:3517	actions.actions[57] = (DefaultAction) (player, option, slot, itemId) -> {
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabClanChat.java	45	76	26	26	MOVE:28	2223:2225	p.getPacketSender().sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabClanChat.java	76	76	26	26	MOVE:28	3842:3844	p.getPacketSender().sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	21	593	5	5	MOVE:6	777:778	h.actions[5] = (SimpleAction) p -> p.getCombat().changeAttackSet(0);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	22	593	9	9	MOVE:10	849:850	h.actions[9] = (SimpleAction) p -> p.getCombat().changeAttackSet(1);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	23	593	13	13	MOVE:14	921:923	h.actions[13] = (SimpleAction) p -> p.getCombat().changeAttackSet(2);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	24	593	17	17	MOVE:18	994:996	h.actions[17] = (SimpleAction) p -> p.getCombat().changeAttackSet(3);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	25	593	22	22	MOVE:23	1067:1069	h.actions[22] = (SimpleAction) p -> openAutocast(p, true);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	26	593	27	27	MOVE:28	1129:1131	h.actions[27] = (SimpleAction) p -> openAutocast(p, false);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	27	593	31	31	MOVE:32	1192:1194	h.actions[31] = (SimpleAction) VarPlayerRepository.AUTO_RETALIATE::toggle;
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabCombat.java	28	593	38	38	MOVE:41	1270:1272	h.actions[38] = (SimpleAction) p -> p.getCombat().toggleSpecial();
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	39	218	?	component	UNKNOWN	1732:1741	h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	114	218	?	component	UNKNOWN	5783:5792	h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	189	218	?	component	UNKNOWN	9834:9843	h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	264	218	?	component	UNKNOWN	13883:13892	h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	339	218	?	component	UNKNOWN	17901:17910	h.actions[component] = createAction(book, spell);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabMagic.java	344	218	198	198	MOVE:206	17977:17980	h.actions[198] = (DefaultAction) (player, option, slot, itemId) -> {
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	116	161	80	80	SAME	3930:3932	player.getPacketSender().sendIfEvents(161, 80, -1, -1, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	121	161	80	80	SAME	4215:4217	player.getPacketSender().sendIfEvents(161, 80, -1, -1, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	128	164	77	77	SAME	4467:4469	player.getPacketSender().sendIfEvents(164, 77, -1, -1, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	133	164	77	77	SAME	4752:4754	player.getPacketSender().sendIfEvents(164, 77, -1, -1, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	140	548	84	84	MOVE:85	4990:4992	player.getPacketSender().sendIfEvents(548, 84, -1, -1, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabPrayer.java	145	548	84	84	MOVE:85	5275:5277	player.getPacketSender().sendIfEvents(548, 84, -1, -1, 2);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	25	320	1	1	SAME	856:857	h.actions[1] = (OptionAction) (player, option) -> handleStat(player, StatType.Attack);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	26	320	2	2	SAME	946:947	h.actions[2] = (OptionAction) (player, option) -> handleStat(player, StatType.Strength);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	27	320	3	3	SAME	1038:1039	h.actions[3] = (OptionAction) (player, option) -> handleStat(player, StatType.Defence);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	28	320	4	4	SAME	1129:1130	h.actions[4] = (OptionAction) (player, option) -> handleStat(player, StatType.Ranged);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	29	320	5	5	SAME	1219:1220	h.actions[5] = (OptionAction) (player, option) -> handleStat(player, StatType.Prayer);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	30	320	6	6	SAME	1309:1310	h.actions[6] = (OptionAction) (player, option) -> handleStat(player, StatType.Magic);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	31	320	7	7	SAME	1398:1399	h.actions[7] = (OptionAction) (player, option) -> handleStat(player, StatType.Runecrafting);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	32	320	8	8	SAME	1494:1495	h.actions[8] = (OptionAction) (player, option) -> handleStat(player, StatType.Construction);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	33	320	9	9	SAME	1590:1591	h.actions[9] = (OptionAction) (player, option) -> handleStat(player, StatType.Hitpoints);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	34	320	10	10	SAME	1683:1685	h.actions[10] = (OptionAction) (player, option) -> handleStat(player, StatType.Agility);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	35	320	11	11	SAME	1775:1777	h.actions[11] = (OptionAction) (player, option) -> handleStat(player, StatType.Herblore);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	36	320	12	12	SAME	1868:1870	h.actions[12] = (OptionAction) (player, option) -> handleStat(player, StatType.Thieving);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	37	320	13	13	SAME	1961:1963	h.actions[13] = (OptionAction) (player, option) -> handleStat(player, StatType.Crafting);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	38	320	14	14	SAME	2054:2056	h.actions[14] = (OptionAction) (player, option) -> handleStat(player, StatType.Fletching);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	39	320	15	15	SAME	2148:2150	h.actions[15] = (OptionAction) (player, option) -> handleStat(player, StatType.Slayer);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	40	320	16	16	SAME	2239:2241	h.actions[16] = (OptionAction) (player, option) -> handleStat(player, StatType.Hunter);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	41	320	17	17	SAME	2330:2332	h.actions[17] = (OptionAction) (player, option) -> handleStat(player, StatType.Mining);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	42	320	18	18	SAME	2421:2423	h.actions[18] = (OptionAction) (player, option) -> handleStat(player, StatType.Smithing);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	43	320	19	19	SAME	2514:2516	h.actions[19] = (OptionAction) (player, option) -> handleStat(player, StatType.Fishing);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	44	320	20	20	SAME	2606:2608	h.actions[20] = (OptionAction) (player, option) -> handleStat(player, StatType.Cooking);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	45	320	21	21	SAME	2698:2700	h.actions[21] = (OptionAction) (player, option) -> handleStat(player, StatType.Firemaking);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	46	320	22	22	SAME	2793:2795	h.actions[22] = (OptionAction) (player, option) -> handleStat(player, StatType.Woodcutting);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	47	320	23	23	SAME	2889:2891	h.actions[23] = (OptionAction) (player, option) -> handleStat(player, StatType.Farming);
+actions	kronos-server/src/main/java/io/ruin/model/inter/handlers/TabStats.java	53	214	?	13 + i	UNKNOWN	3103:3109	h.actions[13 + i] = (SimpleAction) p -> selectCategory(p, category);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/actions/impl/ItemSet.java	134	451	2	2	SAME	4152:4153	player.getPacketSender().sendIfEvents(Interface.ITEM_SETS, 2, 0, 101, 1026);
+actions	kronos-server/src/main/java/io/ruin/model/item/actions/impl/ItemSet.java	90	451	2	2	SAME	2705:2706	h.actions[2] = (DefaultAction) (p, option, slot, itemId) -> {
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/actions/impl/storage/DeathStorage.java	200	602	11	11	MOVE:15	6348:6350	player.getPacketSender().sendString(602, 11, "Fee to unlock:<br><col=ffffff>" + Utils.formatMoneyString(cost));
+actions	kronos-server/src/main/java/io/ruin/model/item/actions/impl/storage/DeathStorage.java	37	602	3	3	SAME	1362:1363	h.actions[3] = (DefaultAction) (p, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/actions/impl/storage/DeathStorage.java	45	602	6	6	SAME	1604:1605	h.actions[6] = (SimpleAction) p -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/actions/impl/storage/DeathStorage.java	51	602	8	8	MOVE:10	1772:1773	h.actions[8] = (SimpleAction) p -> p.getDeathStorage().discardAll();
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	402	334	4	4	SAME	12262:12263	player.getPacketSender().sendString(334, 4, s == null ? "Are you sure you want to make this trade?" : s);
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	490	334	4	4	SAME	14299:14300	player.getPacketSender().sendString(334, 4, "Are you sure you want to make this trade?");
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	491	334	23	23	SAME	14391:14393	player.getPacketSender().sendString(334, 23, "You are about to give:");
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	492	334	24	24	SAME	14465:14467	player.getPacketSender().sendString(334, 24, "In return you will receive:");
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	493	334	30	30	SAME	14544:14546	player.getPacketSender().sendString(334, 30,
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	119	334	13	13	SAME	3395:3397	h.actions[13] = (SimpleTradeAction) p -> p.getTrade().accept(false);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/Trade.java	120	334	14	14	SAME	3467:3469	h.actions[14] = (SimpleTradeAction) p -> {
+call:setHidden	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	81	12	79	79	MOVE:61	2975:2977	player.getPacketSender().setHidden(12, 79, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	82	12	120	120	MOVE:158	3028:3031	player.getPacketSender().setHidden(12, 120, false);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	107	15	3	3	SAME	4698:4699	ps.sendIfEvents(Interface.BANK_INVENTORY, 3, 0, 27, ClickOp1, ClickOp2, ClickOp3, ClickOp4, ClickOp5, ClickOp6,
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	109	15	19	19	SAME	4886:4888	ps.sendIfEvents(Interface.BANK_INVENTORY, 19, 0, 27, ClickOp1, ClickOp2, ClickOp3, ClickOp4, ClickOp10);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	110	15	13	13	SAME	4993:4995	ps.sendIfEvents(Interface.BANK_INVENTORY, 13, 0, 27, ClickOp1, ClickOp2, ClickOp3, ClickOp4, ClickOp1);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	111	15	4	4	SAME	5099:5100	ps.sendIfEvents(Interface.BANK_INVENTORY, 4, 0, 27, ClickOp1, ClickOp10, DragDepth1, DragTargetable);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	113	12	49	49	MOVE:54	5285:5287	ps.sendIfEvents(Interface.BANK, 49, 0, 3, ClickOp1); // Tab display:
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	114	15	13	13	SAME	5344:5346	ps.sendIfEvents(15, 13, 0, 27, ClickOp1);
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	116	12	7	7	SAME	5421:5422	player.getPacketSender().sendString(Interface.BANK, 7, String.valueOf(getItems().length)); // used Slots
+call:sendString	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	117	12	9	9	MOVE:8	5528:5529	player.getPacketSender().sendString(Interface.BANK, 9, String.valueOf(getBankCapacity(player))); // total Slots
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	166	161	47	47	SAME	7239:7241	player.getPacketSender().sendIfEvents(161, 47, -1, -1, 0);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	167	161	48	48	SAME	7300:7302	player.getPacketSender().sendIfEvents(161, 48, -1, -1, 0);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/item/containers/bank/Bank.java	172	192	2	2	MOVE:3	7616:7617	player.getPacketSender().sendIfEvents(192, 2, 0, 27, 1180734);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	32	12	11	11	MOVE:10	1155:1157	h.actions[11] = new InterfaceAction() {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	45	12	120	120	MOVE:158	1588:1591	h.actions[120] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	47	12	4	4	SAME	1762:1763	h.actions[4] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	48	12	13	13	MOVE:12	1836:1838	h.actions[13] = new InterfaceAction() {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	95	12	19	19	REMOVED:SWAP	3077:3079	h.actions[19] = (SimpleAction) p -> VarPlayerRepository.BANK_INSERT_MODE.set(p, 0);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	96	12	21	21	REMOVED:INSERT	3164:3166	h.actions[21] = (SimpleAction) p -> VarPlayerRepository.BANK_INSERT_MODE.set(p, 1);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	97	12	24	24	REMOVED:ITEM	3251:3253	h.actions[24] = (SimpleAction) p -> p.getBank().asNote = false;
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	98	12	26	26	MOVE:25	3318:3320	h.actions[26] = (SimpleAction) p -> p.getBank().asNote = true;
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	99	12	30	30	MOVE:29	3384:3386	h.actions[30] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 0);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	100	12	32	32	MOVE:31	3476:3478	h.actions[32] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 1);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	101	12	34	34	MOVE:33	3568:3570	h.actions[34] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 2);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	102	12	36	36	MOVE:35	3660:3662	h.actions[36] = (OptionAction) (p, option) -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	115	12	38	38	MOVE:37	4116:4118	h.actions[38] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 4);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	116	12	40	40	SAME	4208:4210	h.actions[40] = (SimpleAction) VarPlayerRepository.BANK_ALWAYS_PLACEHOLDERS::toggle;
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	117	12	44	44	MOVE:47	4296:4298	h.actions[44] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	118	12	49	49	MOVE:54	4380:4382	h.actions[49] = (DefaultAction) (p, option, slot, itemId) -> p.getBank().incinerate(slot, itemId);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	119	12	46	46	MOVE:49	4482:4484	h.actions[46] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	120	12	56	56	MOVE:130	4566:4568	h.actions[56] = (SimpleAction) VarPlayerRepository.BANK_INCINERATOR::toggle;
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	121	12	62	62	MOVE:134	4646:4648	h.actions[62] = (SimpleAction) VarPlayerRepository.BANK_DEPOSIT_EQUIPMENT::toggle;
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	122	12	64	64	MOVE:138	4732:4734	h.actions[64] = (SimpleAction) p -> p.getBank().releasePlaceholders();
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	123	12	76	76	MOVE:151	4806:4808	h.actions[76] = (SimpleAction) p -> p.getBank().fillBank(); // todo@@ add support for amt
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	128	12	84	84	MOVE:66	4930:4932	h.actions[84] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HAT);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	129	12	85	85	MOVE:67	5026:5028	h.actions[85] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CAPE);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	130	12	86	86	MOVE:68	5123:5125	h.actions[86] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMULET);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	131	12	87	87	MOVE:69	5222:5224	h.actions[87] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_WEAPON);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	132	12	88	88	MOVE:70	5321:5323	h.actions[88] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CHEST);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	133	12	89	89	MOVE:71	5419:5421	h.actions[89] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_SHIELD);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	134	12	90	90	MOVE:72	5518:5520	h.actions[90] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_LEGS);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	135	12	91	91	MOVE:73	5615:5617	h.actions[91] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HANDS);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	136	12	92	92	MOVE:74	5713:5715	h.actions[92] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_FEET);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	137	12	93	93	MOVE:75	5810:5812	h.actions[93] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_RING);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	138	12	94	94	MOVE:76	5907:5909	h.actions[94] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMMO);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	152	15	3	3	SAME	6316:6317	h.actions[3] = new InterfaceAction() {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	243	15	8	8	SAME	9070:9071	h.actions[8] = (SimpleAction) p -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	251	15	13	13	SAME	9330:9332	h.actions[13] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	277	15	4	4	SAME	9978:9979	h.actions[4] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	292	192	2	2	MOVE:3	10337:10338	h.actions[2] = (DefaultAction) (player, option, slot, itemId) -> {
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	314	192	4	4	MOVE:5	10875:10876	h.actions[4] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	315	192	6	6	MOVE:7	10958:10959	h.actions[6] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
+actions	kronos-server/src/main/java/io/ruin/model/item/containers/bank/BankInterface.java	316	192	8	8	MOVE:9	11041:11042	h.actions[8] = (SimpleAction) p -> p.getBank().deposit(p.getLootingBag(), true);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	268	57	?	canoeStation.childId	UNKNOWN	10310:10330	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, canoeStation.childId, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	269	57	11	11	SAME	10407:10409	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 11, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	270	57	13	13	SAME	10486:10488	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 13, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	271	57	15	15	SAME	10565:10567	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 15, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	272	57	38	38	SAME	10644:10646	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 38, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	273	57	31	31	SAME	10723:10725	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 31, false);
+call:setHidden	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	274	57	32	32	SAME	10802:10804	player.getPacketSender().setHidden(Interface.CANOE_LOCATION, 32, false);
+actions	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/CanoeStation.java	292	57	?	i	UNKNOWN	11339:11340	h.actions[i] = (SimpleAction) p -> travelToDestination(p, canoeStation);
+call:sendString	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/FairyRing.java	145	381	?	ring.childId	UNKNOWN	8156:8168	player.getPacketSender().sendString(Interface.FAIRY_RING_TRAVEL_LOG, ring.childId, (ring.targetName.equals("") ? "" : "<br>" + ring.targetName));
+actions	kronos-server/src/main/java/io/ruin/model/map/object/actions/impl/FairyRing.java	225	381	?	fairyRing.childId	UNKNOWN	11432:11449	h.actions[fairyRing.childId] = (SimpleAction) p -> {
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/shop/Shop.java	143	300	16	16	SAME	4973:4975	player.getPacketSender().sendIfEvents(300, 16, 0, ShopManager.SHOP_MAX_CAPACITY, 1086);
+hash	kronos-server/src/main/java/io/ruin/model/shop/Shop.java	140	300	16	16	SAME	4795:4797	player.getPacketSender().sendClientScript(149, "iiiiiisssss", 300 << 16 | 16, 24, 8, 5, 0, -1, "Value<col=ff9040>",
+actions	kronos-server/src/main/java/io/ruin/model/shop/ShopManager.java	134	300	16	16	SAME	4123:4125	h.actions[16] = (DefaultAction) (player, option, slot, itemId) -> {
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	34	523	94	94	MOVE:98	1058:1060	player.getPacketSender().sendString(523, 94, "Stats for " + entity.player.getName());
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	46	523	1	1	SAME	1394:1395	player.getPacketSender().sendString(523, 1, "" + examined.getStats().get(StatType.Attack).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	47	523	2	2	SAME	1501:1502	player.getPacketSender().sendString(523, 2, "" + examined.getStats().get(StatType.Attack).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	48	523	5	5	SAME	1606:1607	player.getPacketSender().sendString(523, 5, "" + examined.getStats().get(StatType.Hitpoints).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	49	523	6	6	SAME	1716:1717	player.getPacketSender().sendString(523, 6, "" + examined.getStats().get(StatType.Hitpoints).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	50	523	9	9	SAME	1824:1825	player.getPacketSender().sendString(523, 9, "" + examined.getStats().get(StatType.Mining).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	51	523	10	10	SAME	1931:1933	player.getPacketSender().sendString(523, 10, "" + examined.getStats().get(StatType.Mining).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	52	523	13	13	SAME	2037:2039	player.getPacketSender().sendString(523, 13, "" + examined.getStats().get(StatType.Strength).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	53	523	14	14	SAME	2147:2149	player.getPacketSender().sendString(523, 14, "" + examined.getStats().get(StatType.Strength).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	54	523	17	17	SAME	2255:2257	player.getPacketSender().sendString(523, 17, "" + examined.getStats().get(StatType.Agility).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	55	523	18	18	SAME	2364:2366	player.getPacketSender().sendString(523, 18, "" + examined.getStats().get(StatType.Agility).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	56	523	21	21	SAME	2471:2473	player.getPacketSender().sendString(523, 21, "" + examined.getStats().get(StatType.Smithing).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	57	523	22	22	SAME	2581:2583	player.getPacketSender().sendString(523, 22, "" + examined.getStats().get(StatType.Smithing).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	58	523	25	25	SAME	2689:2691	player.getPacketSender().sendString(523, 25, "" + examined.getStats().get(StatType.Defence).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	59	523	26	26	SAME	2798:2800	player.getPacketSender().sendString(523, 26, "" + examined.getStats().get(StatType.Defence).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	60	523	29	29	SAME	2905:2907	player.getPacketSender().sendString(523, 29, "" + examined.getStats().get(StatType.Herblore).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	61	523	30	30	SAME	3015:3017	player.getPacketSender().sendString(523, 30, "" + examined.getStats().get(StatType.Herblore).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	62	523	33	33	SAME	3123:3125	player.getPacketSender().sendString(523, 33, "" + examined.getStats().get(StatType.Fishing).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	63	523	34	34	SAME	3232:3234	player.getPacketSender().sendString(523, 34, "" + examined.getStats().get(StatType.Fishing).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	64	523	37	37	SAME	3339:3341	player.getPacketSender().sendString(523, 37, "" + examined.getStats().get(StatType.Ranged).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	65	523	38	38	SAME	3447:3449	player.getPacketSender().sendString(523, 38, "" + examined.getStats().get(StatType.Ranged).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	66	523	41	41	SAME	3553:3555	player.getPacketSender().sendString(523, 41, "" + examined.getStats().get(StatType.Thieving).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	67	523	42	42	SAME	3663:3665	player.getPacketSender().sendString(523, 42, "" + examined.getStats().get(StatType.Thieving).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	68	523	45	45	SAME	3771:3773	player.getPacketSender().sendString(523, 45, "" + examined.getStats().get(StatType.Cooking).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	69	523	46	46	SAME	3880:3882	player.getPacketSender().sendString(523, 46, "" + examined.getStats().get(StatType.Cooking).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	70	523	49	49	SAME	3987:3989	player.getPacketSender().sendString(523, 49, "" + examined.getStats().get(StatType.Prayer).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	71	523	50	50	SAME	4095:4097	player.getPacketSender().sendString(523, 50, "" + examined.getStats().get(StatType.Prayer).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	72	523	53	53	SAME	4201:4203	player.getPacketSender().sendString(523, 53, "" + examined.getStats().get(StatType.Crafting).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	73	523	54	54	SAME	4311:4313	player.getPacketSender().sendString(523, 54, "" + examined.getStats().get(StatType.Crafting).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	74	523	57	57	SAME	4419:4421	player.getPacketSender().sendString(523, 57, "" + examined.getStats().get(StatType.Firemaking).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	75	523	58	58	SAME	4531:4533	player.getPacketSender().sendString(523, 58, "" + examined.getStats().get(StatType.Firemaking).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	76	523	61	61	SAME	4641:4643	player.getPacketSender().sendString(523, 61, "" + examined.getStats().get(StatType.Magic).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	77	523	62	62	SAME	4748:4750	player.getPacketSender().sendString(523, 62, "" + examined.getStats().get(StatType.Magic).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	78	523	65	65	SAME	4853:4855	player.getPacketSender().sendString(523, 65, "" + examined.getStats().get(StatType.Fletching).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	79	523	66	66	SAME	4964:4966	player.getPacketSender().sendString(523, 66, "" + examined.getStats().get(StatType.Fletching).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	80	523	69	69	SAME	5073:5075	player.getPacketSender().sendString(523, 69, "" + examined.getStats().get(StatType.Woodcutting).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	81	523	70	70	SAME	5186:5188	player.getPacketSender().sendString(523, 70, "" + examined.getStats().get(StatType.Woodcutting).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	82	523	73	73	SAME	5297:5299	player.getPacketSender().sendString(523, 73, "" + examined.getStats().get(StatType.Runecrafting).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	83	523	74	74	SAME	5411:5413	player.getPacketSender().sendString(523, 74, "" + examined.getStats().get(StatType.Runecrafting).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	84	523	77	77	SAME	5523:5525	player.getPacketSender().sendString(523, 77, "" + examined.getStats().get(StatType.Slayer).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	85	523	78	78	SAME	5631:5633	player.getPacketSender().sendString(523, 78, "" + examined.getStats().get(StatType.Slayer).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	86	523	81	81	SAME	5737:5739	player.getPacketSender().sendString(523, 81, "" + examined.getStats().get(StatType.Farming).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	87	523	82	82	SAME	5846:5848	player.getPacketSender().sendString(523, 82, "" + examined.getStats().get(StatType.Farming).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	88	523	85	85	SAME	5953:5955	player.getPacketSender().sendString(523, 85, "" + examined.getStats().get(StatType.Construction).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	89	523	86	86	SAME	6067:6069	player.getPacketSender().sendString(523, 86, "" + examined.getStats().get(StatType.Construction).fixedLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	90	523	89	89	SAME	6179:6181	player.getPacketSender().sendString(523, 89, "" + examined.getStats().get(StatType.Hunter).currentLevel);
+call:sendString	kronos-server/src/main/java/io/ruin/model/skills/magic/spells/lunar/StatSpy.java	91	523	90	90	SAME	6287:6289	player.getPacketSender().sendString(523, 90, "" + examined.getStats().get(StatType.Hunter).fixedLevel);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/skills/slayer/SlayerUnlock.java	275	426	8	8	MOVE:11	10099:10100	player.getPacketSender().sendIfEvents(426, 8, 0, 69, 2);
+call:sendIfEvents	kronos-server/src/main/java/io/ruin/model/skills/slayer/SlayerUnlock.java	276	426	23	23	MOVE:25	10158:10160	player.getPacketSender().sendIfEvents(426, 23, 0, 8, 1052);
+actions	kronos-server/src/main/java/io/ruin/model/skills/slayer/SlayerUnlock.java	126	426	8	8	MOVE:11	5442:5443	handler.actions[8] = (SlotAction) SlayerUnlock::handleUnlock;
+actions	kronos-server/src/main/java/io/ruin/model/skills/slayer/SlayerUnlock.java	127	426	23	23	MOVE:25	5507:5509	handler.actions[23] = (DefaultAction) SlayerUnlock::buyItem;
+hashlit	kronos-server/src/main/java/io/ruin/network/incoming/handlers/InterfaceOnGroundItemHandler.java	55	218	23	14286871	MOVE:26	1906:1914	int telegrabHash = 14286871;
+hashlit	kronos-server/src/main/java/io/ruin/network/incoming/handlers/InterfaceOnObjectHandler.java	25	218	27	14286875	MOVE:30	908:916	int telegrabHash = 14286875;
+actions	player-groupiron/src/main/java/io/ruin/model/entity/player/groupironmode/GroupBank.java	33	12	8	8	MOVE:125	1113:1114	h.actions[8] = (SimpleAction) p -> p.getGroupBank().open(p);
+call:sendIfEvents	player-music/src/main/java/music/inter/MusicPlayer.java	28	239	6	6	MOVE:11	782:783	player.getPacketSender().sendIfEvents(239, 6, 0, 794, getMask(ClickOp1, ClickOp2));
+call:sendString	player-music/src/main/java/music/inter/MusicPlayer.java	144	239	9	9	MOVE:4	4061:4062	player.getPacketSender().sendString(Interface.MUSIC_PLAYER, 9, name);
+actions	player-music/src/main/java/music/inter/MusicPlayer.java	31	239	10	10	MOVE:14	843:845	h.actions[10] = (DefaultAction) (p, option, slot, item) -> {
+actions	player-music/src/main/java/music/inter/MusicPlayer.java	36	239	13	13	REMOVED:MANUAL	1026:1028	h.actions[13] = (DefaultAction) (p, option, slot, item) -> {
+actions	player-music/src/main/java/music/inter/MusicPlayer.java	41	239	16	16	REMOVED:RANDOM	1211:1213	h.actions[16] = (DefaultAction) (p, option, slot, item) -> {
+actions	player-music/src/main/java/music/inter/MusicPlayer.java	46	239	6	6	MOVE:11	1396:1397	h.actions[6] = (DefaultAction) (p, option, slot, item) -> {

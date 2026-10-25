@@ -38,7 +38,7 @@ public class Investigation {
 
 	public static void openInterfaceForPlayer(Player player) {
 		var delveLevel = player.get("MOKHAIOTL_DELVE_LEVEL", 1);
-		player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857419, 19857421, 19857422, 19857423, 19857428, 19857426, 19857427, 19857424, 19857425, 0);
+		player.getPacketSender().sendClientScript(2889, 19857413, 19857416, 19857414, 19857415, 19857417, 19857420, 19857422, 19857423, 19857424, 19857429, 19857427, 19857428, 19857425, 19857426, 0);
 		player.getPacketSender().sendClientScript(2524, -1, -1);
 		player.openInterface(ToplevelComponent.MAINMODAL, INVESTIGATION_INTERFACE);
 		player.getPacketSender().sendClientScript(7927, (delveLevel - 1), 0, 0);

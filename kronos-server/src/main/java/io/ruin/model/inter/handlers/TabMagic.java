@@ -18,6 +18,7 @@ import io.ruin.model.map.Position;
 import io.ruin.model.map.object.GameObject;
 import io.ruin.model.skills.magic.Spell;
 import io.ruin.model.skills.magic.SpellBook;
+import io.ruin.model.skills.magic.spells.HomeTeleport;
 import io.ruin.model.skills.magic.spells.ancient.AncientTeleport;
 import io.ruin.model.skills.magic.spells.arceuus.ArceuusTeleport;
 import io.ruin.model.skills.magic.spells.lunar.LunarTeleport;
@@ -30,8 +31,11 @@ public class TabMagic {
 		InterfaceHandler.register(Interface.MAGIC_BOOK, h -> {
 			for (SpellBook book : SpellBook.VALUES) {
 				for (int i = 0; i < book.spells.length; i++) {
-					int component = book.spellIdOffset + i;
-					if (component == 6) {
+					int component = book.component(i);
+					// the four home teleports also carry the Zelus "Previous" option (op 9); keyed on the spell, as
+					// the old component checks (6/100/101/148) missed three homes and caught Annakarl/Ghorrock
+					Spell spell = book.spells[i];
+					if (spell == HomeTeleport.MODERN) {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								ModernTeleport.teleport(player, World.HOME);
@@ -106,7 +110,7 @@ public class TabMagic {
 								}
 							}
 						};
-					} else if (component == 100) {
+					} else if (spell == HomeTeleport.ANCIENT) {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								AncientTeleport.teleport(player, World.HOME);
@@ -181,7 +185,7 @@ public class TabMagic {
 								}
 							}
 						};
-					} else if (component == 101) {
+					} else if (spell == HomeTeleport.LUNAR) {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								LunarTeleport.teleport(player, World.HOME);
@@ -256,7 +260,7 @@ public class TabMagic {
 								}
 							}
 						};
-					} else if (component == 148) {
+					} else if (spell == HomeTeleport.ARCEUUS) {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								ArceuusTeleport.teleport(player, World.HOME);
@@ -332,12 +336,12 @@ public class TabMagic {
 							}
 						};
 					} else {
-						h.actions[book.spellIdOffset + i] = createAction(book, book.spells[i]);
+						h.actions[component] = createAction(book, spell);
 					}
 				}
 			}
 			;
-			h.actions[198] = (DefaultAction) (player, option, slot, itemId) -> {
+			h.actions[206] = (DefaultAction) (player, option, slot, itemId) -> {
 				if (slot == 0)
 					VarPlayerRepository.SHOW_COMBAT_SPELLS.toggle(player);
 				if (slot == 1)

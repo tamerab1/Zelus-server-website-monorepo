@@ -2,8 +2,9 @@ package io.ruin.model.inter;
 
 public enum Subcomponent {
 
-	DIALOGUE(566, ToplevelComponent.CHATBOX),
-	YES_NO_DIALOGUE(565, ToplevelComponent.CHATBOX);
+	// chatbox (162) CHATMODAL / CHATOVERLAY, rev 241 ids
+	DIALOGUE(568, ToplevelComponent.CHATBOX),
+	YES_NO_DIALOGUE(567, ToplevelComponent.CHATBOX);
 
 	public int getComponent() {
 		return component;

@@ -24,7 +24,7 @@ public class SkillDialogue implements Dialogue {
 		InterfaceHandler.register(Interface.MAKE_DIALOGUE, h -> {
 			for (int i = 0; i < 10; i++) {
 				int index = i;
-				h.actions[14 + i] = (DefaultAction) (player, option, slot, itemId) -> {
+				h.actions[15 + i] = (DefaultAction) (player, option, slot, itemId) -> {
 					select(player, index, slot);
 				};
 			}
@@ -124,7 +124,7 @@ public class SkillDialogue implements Dialogue {
 			getItem(5).id, getItem(6).id, getItem(7).id, getItem(8).id, getItem(9).id,
 			player.lastMakeXAmount);
 		for (int i = 0; i < items.length; i++) {
-			player.getPacketSender().sendIfEvents(Interface.MAKE_DIALOGUE, 14 + i, 1, 8, 1);
+			player.getPacketSender().sendIfEvents(Interface.MAKE_DIALOGUE, 15 + i, 1, 8, 1);
 		}
 		VarPlayerRepository.CHATBOX_INTERFACE_USE_FULL_FRAME.set(player, 1);
 	}

@@ -50,7 +50,7 @@ public class TabStats {
 		InterfaceHandler.register(Interface.SKILL_GUIDE, h -> {
 			for (int i = 0; i < 14; i++) {
 				var category = i;
-				h.actions[13 + i] = (SimpleAction) p -> selectCategory(p, category);
+				h.actions[12 + i] = (SimpleAction) p -> selectCategory(p, category);
 			}
 		});
 	}

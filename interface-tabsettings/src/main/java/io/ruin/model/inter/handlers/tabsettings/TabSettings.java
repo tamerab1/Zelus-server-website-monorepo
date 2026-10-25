@@ -23,9 +23,9 @@ public class TabSettings {
 		InterfaceHandler.register(116, h -> {
 			h.openAction = (p) -> {
 				var ps = p.getPacketSender();
-				ps.sendIfEvents(116, 104, 0, 21, getMask(ClickOp1));
-				ps.sendIfEvents(116, 118, 0, 21, getMask(ClickOp1));
-				ps.sendIfEvents(116, 133, 0, 21, getMask(ClickOp1));
+				ps.sendIfEvents(116, 102, 0, 21, getMask(ClickOp1));
+				ps.sendIfEvents(116, 116, 0, 21, getMask(ClickOp1));
+				ps.sendIfEvents(116, 130, 0, 21, getMask(ClickOp1));
 				ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
 				ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
 				ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
@@ -53,19 +53,19 @@ public class TabSettings {
 				}
 			};
 
-			h.actions[44] = (SlotAction) (p, slot) -> {
+			h.actions[43] = (SlotAction) (p, slot) -> {
 				VarPlayerRepository.ZOOMING_DISABLED.toggle(p);
 			};
 
-			h.actions[104] = (SlotAction) (p, slot) -> {
+			h.actions[102] = (SlotAction) (p, slot) -> {
 				VarPlayerRepository.MUSIC_VOLUME.set(p, slot * 5);
 			};
 
-			h.actions[118] = (SlotAction) (p, slot) -> {
+			h.actions[116] = (SlotAction) (p, slot) -> {
 				VarPlayerRepository.SOUND_EFFECT_VOLUME.set(p, slot * 5);
 			};
 
-			h.actions[133] = (SlotAction) (p, slot) -> {
+			h.actions[130] = (SlotAction) (p, slot) -> {
 				VarPlayerRepository.AREA_SOUND_EFFECT_VOLUME.set(p, slot * 5);
 			};
 

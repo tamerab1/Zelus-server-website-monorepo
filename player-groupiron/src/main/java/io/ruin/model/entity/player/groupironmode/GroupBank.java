@@ -30,7 +30,7 @@ public class GroupBank {
 
 	public static void register() {
 		InterfaceHandler.register(Interface.BANK, h -> {
-			h.actions[8] = (SimpleAction) p -> p.getGroupBank().open(p);
+			h.actions[125] = (SimpleAction) p -> p.getGroupBank().open(p);
 		});
 
 		InterfaceHandler.register(1114, h -> {

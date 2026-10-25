@@ -7,6 +7,7 @@ import io.ruin.model.entity.Entity
 import io.ruin.model.entity.npc.NPC
 import io.ruin.model.entity.player.Player
 import io.ruin.model.entity.shared.listeners.*
+import io.ruin.model.inter.ComponentID.MessageDialogueComps
 import io.ruin.model.inter.Interface
 import io.ruin.model.inter.InterfaceEventMask
 import io.ruin.model.inter.InterfaceEventMask.getMask
@@ -124,12 +125,12 @@ suspend fun Player.messageBox(msg: String, hideContinue: Boolean = false, lineHe
 		Subcomponent.DIALOGUE,
 		ToplevelComponent.CHATBOX
 	);
-	player.packetSender.sendString(Interface.MESSAGE_DIALOGUE, 1, msg)
-	player.packetSender.setTextStyle(Interface.MESSAGE_DIALOGUE, 1, 1, 1, lineHeight)
+	player.packetSender.sendString(Interface.MESSAGE_DIALOGUE, MessageDialogueComps.TEXT, msg)
+	player.packetSender.setTextStyle(Interface.MESSAGE_DIALOGUE, MessageDialogueComps.TEXT, 1, 1, lineHeight)
 	if (hideContinue)
-		player.packetSender.setHidden(Interface.MESSAGE_DIALOGUE, 2, true)
+		player.packetSender.setHidden(Interface.MESSAGE_DIALOGUE, MessageDialogueComps.CONTINUE, true)
 	else
-		player.packetSender.sendString(Interface.MESSAGE_DIALOGUE, 2, "Click here to continue")
+		player.packetSender.sendString(Interface.MESSAGE_DIALOGUE, MessageDialogueComps.CONTINUE, "Click here to continue")
 
 	event.yield()
 	player.packetSender.removeSubInterface(ToplevelComponent.CHATBOX.interfaceId, Subcomponent.DIALOGUE.component)

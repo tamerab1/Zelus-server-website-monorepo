@@ -76,10 +76,11 @@ public class Bank extends ItemContainerG<BankItem> {
 			return;
 		}
 		asNote = false;
-		/* Component 79 is the sidebar strip that contains the Presets button (120); both are
+		VarPlayerRepository.BANK_WITHDRAW_NOTES.set(player, 0);
+		/* Component 61 is the sidebar strip that contains the Presets button (158); both are
 		 * hidden by default in the cache and must be explicitly shown. */
-		player.getPacketSender().setHidden(12, 79, false);
-		player.getPacketSender().setHidden(12, 120, false);
+		player.getPacketSender().setHidden(12, 61, false);
+		player.getPacketSender().setHidden(12, 158, false);
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");
 			return;
@@ -110,11 +111,11 @@ public class Bank extends ItemContainerG<BankItem> {
 		ps.sendIfEvents(Interface.BANK_INVENTORY, 13, 0, 27, ClickOp1, ClickOp2, ClickOp3, ClickOp4, ClickOp1);
 		ps.sendIfEvents(Interface.BANK_INVENTORY, 4, 0, 27, ClickOp1, ClickOp10, DragDepth1, DragTargetable);
 		ps.sendIfEvents(WidgetInfo.BANK_INCINERATOR_CONFIRM, 1, getItems().length + 1, ClickOp1);
-		ps.sendIfEvents(Interface.BANK, 49, 0, 3, ClickOp1); // Tab display:
+		ps.sendIfEvents(Interface.BANK, 54, 0, 3, ClickOp1); // Tab display:
 		ps.sendIfEvents(15, 13, 0, 27, ClickOp1);
 
 		player.getPacketSender().sendString(Interface.BANK, 7, String.valueOf(getItems().length)); // used Slots
-		player.getPacketSender().sendString(Interface.BANK, 9, String.valueOf(getBankCapacity(player))); // total Slots
+		player.getPacketSender().sendString(Interface.BANK, 8, String.valueOf(getBankCapacity(player))); // total Slots
 
 		// this shit is actually per bit basis, each bit represents whether
 		// the slot is 'active', 28 slots, 28 bits
@@ -169,7 +170,7 @@ public class Bank extends ItemContainerG<BankItem> {
 		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.DEPOSIT_BOX);
 		player.openInterface(ToplevelComponent.SIDEMODAL, 78);
-		player.getPacketSender().sendIfEvents(192, 2, 0, 27, 1180734);
+		player.getPacketSender().sendIfEvents(192, 3, 0, 27, 1180734);
 	}
 
 	@Override
@@ -855,7 +856,7 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	private void sendWornItemBonuses() {
-		EquipmentStats.update(player, Interface.BANK, 98);
+		EquipmentStats.update(player, Interface.BANK, 80); // rev 241: the bank's stat panel moved from 98 to 80
 	}
 
 	public void addCoinsOrPlatTokens(long amount) {

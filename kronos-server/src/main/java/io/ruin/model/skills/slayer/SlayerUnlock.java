@@ -123,8 +123,8 @@ public enum SlayerUnlock {
 		}
 		SlayerCodex.register();
 		InterfaceHandler.register(426, handler -> {
-			handler.actions[8] = (SlotAction) SlayerUnlock::handleUnlock;
-			handler.actions[23] = (DefaultAction) SlayerUnlock::buyItem;
+			handler.actions[11] = (SlotAction) SlayerUnlock::handleUnlock;
+			handler.actions[25] = (DefaultAction) SlayerUnlock::buyItem;
 		});
 	}
 
@@ -272,8 +272,8 @@ public enum SlayerUnlock {
 	static void openLegacyRewards(Player player) {
 		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
 		player.openInterface(ToplevelComponent.MAINMODAL, 426);
-		player.getPacketSender().sendIfEvents(426, 8, 0, 69, 2);
-		player.getPacketSender().sendIfEvents(426, 23, 0, 8, 1052);
+		player.getPacketSender().sendIfEvents(426, 11, 0, 69, 2);
+		player.getPacketSender().sendIfEvents(426, 25, 0, 8, 1052);
 		refreshInterface(player);
 	}
 

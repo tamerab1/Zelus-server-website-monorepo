@@ -174,19 +174,19 @@ public class PlayerDisplayMode {
 		ps.sendIfEvents(712, 3, 3, 7, getMask(ClickOp1, ClickOp2, ClickOp3, ClickOp4));
 
 		ps.sendIfEvents(259, 2, 0, 11, getMask(ClickOp1, ClickOp2));
-		ps.sendIfEvents(76, 26, 0, 23, getMask(ClickOp1));
+		ps.sendIfEvents(76, 28, 0, 23, getMask(ClickOp1));
 
 		ps.sendIfEvents(116, 23, 0, 21, getMask(ClickOp1));
-		ps.sendIfEvents(116, 55, 0, 21, getMask(ClickOp1));
-		ps.sendIfEvents(116, 84, 1, 3, getMask(ClickOp1));
+		ps.sendIfEvents(116, 54, 0, 21, getMask(ClickOp1));
+		ps.sendIfEvents(116, 83, 1, 3, getMask(ClickOp1));
 		ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
 		ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
 		ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
 
-		ps.sendIfEvents(116, 69, 0, 21, getMask(ClickOp1));
+		ps.sendIfEvents(116, 68, 0, 21, getMask(ClickOp1));
 		ps.sendIfEvents(728, 15, 0, 0, getMask(ClickOp1));
 		ps.sendIfEvents(149, 0, 0, 27, getMask(ClickOp2, ClickOp3, ClickOp4, ClickOp6, ClickOp7, ClickOp10, UseOnGroundItem, UseOnNpc, UseOnObject, UseOnPlayer, UseOnInventory, UseOnComponent, DragDepth1, DragTargetable, ComponentTargetable));
-		ps.sendIfEvents(Interface.MAGIC_BOOK, 198, 0, 6, getMask(ClickOp1));
+		ps.sendIfEvents(Interface.MAGIC_BOOK, 206, 0, 6, getMask(ClickOp1));
 		ps.sendIfEvents(216, 2, 0, 53, getMask(ClickOp1, ClickOp2));
 		CS2Script.SETTINGS_INTERFACE_SCALING.sendScript(player, 0);
 		CS2Script.BUFF_BAR_LAYOUT_REDRAW.sendScript(player);

@@ -18,17 +18,17 @@ public class MainFrame {
 
 	public static void register() {
 		InterfaceHandler.register(Interface.ORBS, h -> {
-			h.actions[5] = (OptionAction) XpCounter::select;
-			h.actions[19] = (OptionAction) (p, option) -> {
+			h.actions[6] = (OptionAction) XpCounter::select;
+			h.actions[20] = (OptionAction) (p, option) -> {
 				if (option == 1) {
 					p.getPrayer().toggleQuickPrayers();
 				} else {
 					TabPrayer.setupQuickPrayers(p, true);
 				}
 			};
-			h.actions[27] = (SimpleAction) p -> p.getMovement().toggleRunning();
-			h.actions[45] = (SimpleAction) p -> p.openUrl("https://zelusrsps.com/store");
-			h.actions[53] = new InterfaceAction() {
+			h.actions[28] = (SimpleAction) p -> p.getMovement().toggleRunning();
+			h.actions[46] = (SimpleAction) p -> p.openUrl("https://zelusrsps.com/store");
+			h.actions[55] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {
 					if (option == 3) {
@@ -39,7 +39,7 @@ public class MainFrame {
 					}
 				}
 			};
-			h.actions[35] = (SimpleAction) p -> p.getCombat().toggleSpecial();// 45 is wiki
+			h.actions[36] = (SimpleAction) p -> p.getCombat().toggleSpecial();// 45 is wiki
 			// 54-58: the Teleports orb (AddTeleportOrb); 57 is its click layer
 			h.actions[57] = (SimpleAction) TeleportNexus::openAnywhere;
 		});
@@ -65,12 +65,12 @@ public class MainFrame {
 			};
 		});
 		InterfaceHandler.register(Interface.FIXED_SCREEN, actions -> {
-			actions.actions[69] = (DefaultAction) (player, option, slot, itemId) -> {
+			actions.actions[70] = (DefaultAction) (player, option, slot, itemId) -> {
 				if (option == 2)
 					VarPlayerRepository.DISABLE_SPELL_FILTERING.toggle(player);
 			};
 			InterfaceHandler.register(Interface.FIXED_SCREEN, player -> {
-				actions.actions[65] = (SimpleAction) QuestTab.MAIN::send;
+				actions.actions[66] = (SimpleAction) QuestTab.MAIN::send;
 			});
 		});
 		InterfaceHandler.register(Interface.RESIZED_SCREEN, actions -> {

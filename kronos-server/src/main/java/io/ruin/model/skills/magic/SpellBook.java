@@ -216,8 +216,6 @@ public enum SpellBook {
 
 	public final String name;
 
-	public int spellIdOffset;
-
 	SpellBook(Spell... spells) {
 		this.spells = spells;
 		this.name = name().toLowerCase();
@@ -234,14 +232,16 @@ public enum SpellBook {
 		return VarPlayerRepository.MAGIC_BOOK.get(player) == ordinal();
 	}
 
-	public static void updateSpellOffsets() {
-		SpellBook.MODERN.spellIdOffset = 7;
-		SpellBook.ANCIENT.spellIdOffset = 79;
-		SpellBook.LUNAR.spellIdOffset = 104;
-		SpellBook.ARCEUUS.spellIdOffset = 148;
-	}
-
-	static {
-		updateSpellOffsets();
+	/**
+	 * The spellbook interface (218) component of spell {@code index} in this book, rev 241 layout: Jagex moved the
+	 * standard home teleport to 6 and inserted spells, so the standard book is no longer one run.
+	 */
+	public int component(int index) {
+		return switch (this) {
+			case MODERN -> index == 0 ? 6 : 10 + index;
+			case ANCIENT -> 84 + index;
+			case LUNAR -> 109 + index;
+			case ARCEUUS -> 153 + index;
+		};
 	}
 }

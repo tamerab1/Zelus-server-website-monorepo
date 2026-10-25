@@ -29,7 +29,7 @@ public class BankInterface {
 		 * Main
 		 */
 		InterfaceHandler.register(Interface.BANK, h -> {
-			h.actions[11] = new InterfaceAction() {
+			h.actions[10] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {
 					player.getBank().selectTab(option, slot);
@@ -42,10 +42,10 @@ public class BankInterface {
 						player.getBank().swapTabs(fromSlot, toSlot);
 				}
 			};
-			h.actions[120] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
+			h.actions[158] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
 			// The old "?" tutorial button (script 3369 repointed to the Presets icon/option in the cache)
 			h.actions[4] = (SimpleAction) p -> p.getGearPresetInterface().open(p);
-			h.actions[13] = new InterfaceAction() {
+			h.actions[12] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {
 					var pBank = player.getBank();
@@ -92,14 +92,17 @@ public class BankInterface {
 					}
 				}
 			};
-			h.actions[19] = (SimpleAction) p -> VarPlayerRepository.BANK_INSERT_MODE.set(p, 0);
-			h.actions[21] = (SimpleAction) p -> VarPlayerRepository.BANK_INSERT_MODE.set(p, 1);
-			h.actions[24] = (SimpleAction) p -> p.getBank().asNote = false;
-			h.actions[26] = (SimpleAction) p -> p.getBank().asNote = true;
-			h.actions[30] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 0);
-			h.actions[32] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 1);
-			h.actions[34] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 2);
-			h.actions[36] = (OptionAction) (p, option) -> {
+			// rev 241: one Swap/Insert toggle and one Item/Note toggle (the client flips varbits 3959/3958
+			// itself, scripts 288/291), where 231 had a button per mode
+			h.actions[23] = (SimpleAction) VarPlayerRepository.BANK_INSERT_MODE::toggle;
+			h.actions[25] = (SimpleAction) p -> {
+				p.getBank().asNote = !p.getBank().asNote;
+				VarPlayerRepository.BANK_WITHDRAW_NOTES.set(p, p.getBank().asNote ? 1 : 0);
+			};
+			h.actions[29] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 0);
+			h.actions[31] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 1);
+			h.actions[33] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 2);
+			h.actions[35] = (OptionAction) (p, option) -> {
 				switch (option) {
 					case 1:
 						VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 3);
@@ -112,30 +115,30 @@ public class BankInterface {
 						break;
 				}
 			};
-			h.actions[38] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 4);
+			h.actions[37] = (SimpleAction) p -> VarPlayerRepository.BANK_DEFAULT_QUANTITY.set(p, 4);
 			h.actions[40] = (SimpleAction) VarPlayerRepository.BANK_ALWAYS_PLACEHOLDERS::toggle;
-			h.actions[44] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
-			h.actions[49] = (DefaultAction) (p, option, slot, itemId) -> p.getBank().incinerate(slot, itemId);
-			h.actions[46] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
-			h.actions[56] = (SimpleAction) VarPlayerRepository.BANK_INCINERATOR::toggle;
-			h.actions[62] = (SimpleAction) VarPlayerRepository.BANK_DEPOSIT_EQUIPMENT::toggle;
-			h.actions[64] = (SimpleAction) p -> p.getBank().releasePlaceholders();
-			h.actions[76] = (SimpleAction) p -> p.getBank().fillBank(); // todo@@ add support for amt
+			h.actions[47] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
+			h.actions[54] = (DefaultAction) (p, option, slot, itemId) -> p.getBank().incinerate(slot, itemId);
+			h.actions[49] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
+			h.actions[130] = (SimpleAction) VarPlayerRepository.BANK_INCINERATOR::toggle;
+			h.actions[134] = (SimpleAction) VarPlayerRepository.BANK_DEPOSIT_EQUIPMENT::toggle;
+			h.actions[138] = (SimpleAction) p -> p.getBank().releasePlaceholders();
+			h.actions[151] = (SimpleAction) p -> p.getBank().fillBank(); // todo@@ add support for amt
 
 			/**
 			 * Equipment
 			 */
-			h.actions[84] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HAT);
-			h.actions[85] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CAPE);
-			h.actions[86] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMULET);
-			h.actions[87] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_WEAPON);
-			h.actions[88] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CHEST);
-			h.actions[89] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_SHIELD);
-			h.actions[90] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_LEGS);
-			h.actions[91] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HANDS);
-			h.actions[92] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_FEET);
-			h.actions[93] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_RING);
-			h.actions[94] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMMO);
+			h.actions[66] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HAT);
+			h.actions[67] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CAPE);
+			h.actions[68] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMULET);
+			h.actions[69] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_WEAPON);
+			h.actions[70] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_CHEST);
+			h.actions[71] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_SHIELD);
+			h.actions[72] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_LEGS);
+			h.actions[73] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_HANDS);
+			h.actions[74] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_FEET);
+			h.actions[75] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_RING);
+			h.actions[76] = (OptionAction) (player, option) -> Bank.unequip(player, Equipment.SLOT_AMMO);
 
 			h.closedAction = (p, i) -> {
 				p.getBank().removeBlankItems();
@@ -289,7 +292,7 @@ public class BankInterface {
 		 */
 		InterfaceHandler.register(Interface.DEPOSIT_BOX, h -> {
 
-			h.actions[2] = (DefaultAction) (player, option, slot, itemId) -> {
+			h.actions[3] = (DefaultAction) (player, option, slot, itemId) -> {
 				Item item = player.getInventory().get(slot, itemId);
 				if (item == null)
 					return;
@@ -311,9 +314,9 @@ public class BankInterface {
 				}
 			};
 
-			h.actions[4] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
-			h.actions[6] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
-			h.actions[8] = (SimpleAction) p -> p.getBank().deposit(p.getLootingBag(), true);
+			h.actions[5] = (SimpleAction) p -> p.getBank().deposit(p.getInventory(), true);
+			h.actions[7] = (SimpleAction) p -> p.getBank().deposit(p.getEquipment(), true);
+			h.actions[9] = (SimpleAction) p -> p.getBank().deposit(p.getLootingBag(), true);
 
 			h.closedAction = (p, i) -> {
 				p.getPacketSender().sendClientScript(915, "i", 3);

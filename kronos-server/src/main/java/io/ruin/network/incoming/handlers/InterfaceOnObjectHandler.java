@@ -22,7 +22,7 @@ public class InterfaceOnObjectHandler {
 
 		@Override
 		public void consume(Player player, OpObjT msg) {
-			int telegrabHash = 14286875;
+			int telegrabHash = 14286878;
 			if (msg.getSelectedCombinedId() == telegrabHash) {
 				handleTelegrab(player, msg.getId(), msg.getX(), msg.getZ(), msg.getControlKey());
 			}
