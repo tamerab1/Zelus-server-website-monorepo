@@ -42,6 +42,9 @@ public class RSProtHandlers {
 		builder.addListener(If3Button.class, new ActionButtonHandler.If3());
 		builder.addListener(IfSubOp.class, new ActionButtonHandler.IfSub());
 		builder.addListener(If1Button.class, new ActionButtonHandler.If1());
+		// TEMP rev241 audit: rev 241 adds IF_SCRIPT_TRIGGER; log what arrives before deciding how to handle it
+		builder.addListener(net.rsprot.protocol.game.incoming.buttons.IfScriptTrigger.class, (player, msg) ->
+			System.out.println("[rev241 ifscripttrigger] if " + msg.getInterfaceId() + ":" + msg.getComponentId() + " sub " + msg.getSub() + " obj " + msg.getObj() + " crc " + msg.getCrc()));
 		builder.addListener(IfButtonD.class, new InterfaceDragHandler());
 		builder.addListener(IfButtonT.class, new InterfaceOnInterfaceHandler.OnItem());
 		builder.addListener(CloseModal.class, new CloseInterfaceHandler());

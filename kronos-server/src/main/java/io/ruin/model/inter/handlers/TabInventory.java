@@ -74,6 +74,8 @@ public class TabInventory {
 	private static void click(Player player, int ifbutton, int slot, int itemId) {
 		// System.err.println(ifbutton + " s" + slot + " itm" + itemId);
 		Item item = player.getInventory().get(slot, itemId);
+		// TEMP rev241 audit: remove once inventory clicks are confirmed working
+		System.out.println("[rev241 inv] button " + ifbutton + " slot " + slot + " obj " + itemId + " -> " + (item == null ? "NO ITEM (server has " + player.getInventory().get(slot) + ")" : item.getId() + " locked=" + player.isLockedExclude(LockType.FULL_ALLOW_EAT)));
 		if (item == null)
 			return;
 

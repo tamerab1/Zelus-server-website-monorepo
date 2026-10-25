@@ -634,7 +634,14 @@ public final class PacketSender {
 			return;
 		}
 		int mask = AccessMasks.combine(masks);
-		var msg = new IfSetEventsV2(interfaceId, childParentId, minChildId, maxChildId, mask);
+		// rev 241's IF_SETEVENTS carries two masks: events1 = everything but the op buttons (bits 1..10 ignored),
+		// events2 = one bit per op button (button n -> bit n - 1). Our masks keep the 231 layout (ClickOpN =
+		// 1 << N). The 241 rsprot 5-int constructor is (combinedId, start, end, events1, events2), so passing
+		// the old (interface, component, start, end, mask) compiled but shifted every field: no component got
+		// its ops and item clicks (inventory, bank) were never sent by the client.
+		int events1 = mask & ~0x7FE;
+		int events2 = (mask >>> 1) & 0x3FF;
+		var msg = new IfSetEventsV2(interfaceId, childParentId, minChildId, maxChildId, events1, events2);
 		write(msg);
 	}
 

@@ -77,13 +77,12 @@ public class Bank extends ItemContainerG<BankItem> {
 		}
 		asNote = false;
 		VarPlayerRepository.BANK_WITHDRAW_NOTES.set(player, 0);
-		/* Component 61 is the sidebar strip that contains the Presets button (158); both are
-		 * hidden by default in the cache and must be explicitly shown. */
-		player.getPacketSender().setHidden(12, 61, false);
-		player.getPacketSender().setHidden(12, 158, false);
-		// rev 241 puts its own Next page button (102) in the strip exactly under our Presets (158), and adds a
-		// "Show menu" sack button (106) the server doesn't handle; hide both so the bank looks as it did in 231
-		player.getPacketSender().setHidden(12, 102, true);
+		/* rev 241: 12:61 (231's 79) is Jagex's worn-items panel ("Equip your character...") and showing it put our
+		 * text-only Presets copy (158, 231's 120) on top of the chestplate slot. Leave the panel to the client's own
+		 * Show worn items button and hide the text copy; the Presets button is 12:4, the old tutorial "?" that
+		 * script 3369 draws with the Presets icon (actions[4]). The new sack "Show menu" (106) has no server
+		 * handling yet, so it is hidden too. */
+		player.getPacketSender().setHidden(12, 158, true);
 		player.getPacketSender().setHidden(12, 106, true);
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");

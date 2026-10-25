@@ -88,6 +88,8 @@ public class SettingsInterface {
 
 			h.actions[COMPONENT_DROPDOWN] = (SlotAction) (player, slotId) -> {
 				final Setting setting = Settings.getCurrentDropdownSetting(player);
+				// TEMP rev241 audit: remove once the layout dropdown is confirmed working
+				System.out.println("[rev241 settings] dropdown slot " + slotId + " (entry " + (slotId / 3) + ") for " + (setting == null ? "no open dropdown" : setting.getName() + " struct " + setting.getStructId()));
 				if (setting == null)
 					return;
 				if (!setting.checkSetting(player))
@@ -133,6 +135,8 @@ public class SettingsInterface {
 				var category = Settings.getCurrentSelectedCategory(p);
 				var settings = category != null ? category.getSettings() : Settings.ALL_SETTINGS;
 				var setting = settings.get(slot);
+				// TEMP rev241 audit: remove once the layout dropdown is confirmed working
+				System.out.println("[rev241 settings] click slot " + slot + " -> " + setting.getName() + " struct " + setting.getStructId() + " type " + setting.getType());
 				p.debug(
 						"setting: name: " + setting.getName() + " struct: " + setting.getStructId() + " id: " + setting.getId()
 								+ " type: " + setting.getType());
