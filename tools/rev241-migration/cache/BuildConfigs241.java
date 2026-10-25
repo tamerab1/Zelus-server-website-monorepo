@@ -25,6 +25,21 @@ public class BuildConfigs241 {
 	/** custom (absent from vanilla 231) ids that are Jagex content vanilla 241 now has at the same id */
 	static final Map<String, Set<Integer>> JAGEX_NATIVE_IN_241 = Map.of("npc", Set.of(16305, 16306, 16307, 16308));
 
+	/**
+	 * Jagex's 241 Mad Angel hides her "Wake" option behind a conditional op (252: slot 0 shows "" while varbit
+	 * 15759, her quest's progress, is 0-19). Zelus doesn't run that quest, so the option was always hidden
+	 * and the fight couldn't start; npc conditional ops (252/253) are dropped from these copies.
+	 */
+	static byte[] withoutQuestGatedOps(byte[] def, DefRewriter.ParamKinds pk) {
+		java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+		for (byte[] seg : DefRewriter.segments("npc", def, DefRewriter.IDENTITY, pk)) {
+			int op = seg[0] & 0xff;
+			if (op != 252 && op != 253) b.writeBytes(seg);
+		}
+		b.write(0);
+		return b.toByteArray();
+	}
+
 	public static void main(String[] a) throws Exception {
 		Store local = new Store(new File(a[0])); local.load();
 		Store v231 = new Store(new File(a[1])); v231.load();
@@ -63,7 +78,7 @@ public class BuildConfigs241 {
 					// Jagex content Zelus imported early from another cache, which vanilla 241 now ships at the same id:
 					// write Jagex's own definition at our (moved) id, so it uses Jagex's native models and animations
 					// instead of the moved duplicates of our import (Mad Angel 16305-16308 -> 22026-22029)
-					if (JAGEX_NATIVE_IN_241.getOrDefault(type, Set.of()).contains(id) && theirs.containsKey(id)) { bytes = theirs.get(id); jagexNative++; }
+					if (JAGEX_NATIVE_IN_241.getOrDefault(type, Set.of()).contains(id) && theirs.containsKey(id)) { bytes = withoutQuestGatedOps(theirs.get(id), pk); jagexNative++; }
 					if (type.equals("seq")) {
 						byte[] fixed = fixSwappedSounds(bytes);
 						if (!Arrays.equals(fixed, bytes)) seqSoundFixes++;

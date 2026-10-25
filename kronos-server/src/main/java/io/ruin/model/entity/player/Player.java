@@ -2141,6 +2141,9 @@ public class Player extends PlayerAttributes {
 		VarPlayerRepository.varpbit(12933, false).set(player, 1);
 		VarPlayerRepository.UNLOCK_BLOCK_TASK_SIX.set(player, 1);
 		VarPlayerRepository.LOCK_CAMERA.set(player, 0);
+		// rev 241: the bank's Presets button (12:4, script 3369) only shows once tutorial progress (varp 281) is
+		// 1000, as on a finished account; Zelus has no tutorial island, so every player counts as done
+		VarPlayerRepository.TUTORIAL_PROGRESS.set(player, 1000);
 
 		VarPlayerRepository.save(this);
 	}

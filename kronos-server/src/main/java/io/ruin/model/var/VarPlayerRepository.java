@@ -25,6 +25,8 @@ public class VarPlayerRepository {
 	// recomputed fresh from the player's current group on login. Client-side:
 	// gates the Developer Tools panel to Owner only (see DevToolsPlugin.java).
 	// read by the client's DevTools plugin (OWNER_CLIENT_FLAG_VARP); must be below PacketSender.CLIENT_VARP_COUNT
+	/** Tutorial progress; 1000 = finished. Set at login: rev 241 gates the bank Presets button on it. */
+	public static final VarPlayerRepository TUTORIAL_PROGRESS = varp(281, false);
 	public static final VarPlayerRepository OWNER_CLIENT_FLAG = varp(8000, false);
 
 	public static final VarPlayerRepository TEMPOROSS_REWARDS = varpbit(11936, false);
