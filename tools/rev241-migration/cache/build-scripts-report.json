@@ -23,7 +23,7 @@
     "enum 836": "key=i val=s defS='Character Summary' strings=[0=Character Summary, 1=Server Info, 2=Achievement Diaries, 3=Adventure Paths, 4=Wilderness]",
     "enum 837": "key=i val=d defI=1709 ints=[0=1709, 1=908, 2=1299, 3=1713, 4=168]",
     "2480": "Zelus 241 edit: 4 strings",
-    "3369 size": "Zelus 241 edit: Presets button 36x24"
+    "3369 size": "Zelus 241 edit: Presets button 36x36"
   },
   "iconstRemaps": [
     "script 10035 instr 69: iconst 10040 -> 14623",

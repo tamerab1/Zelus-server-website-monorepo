@@ -162,7 +162,7 @@ public class BuildScripts241 {
 			edits.add("    \"" + patch.getKey() + "\": \"Zelus 241 edit: " + changed + " strings\"");
 		}
 
-		// 3369 (bank Presets button, the old tutorial "?"): drawn 36x24 instead of 21x21, to match the 36x24 Presets
+		// 3369 (bank Presets button, the old tutorial "?"): drawn 36x36 instead of 21x21, to match the 36x36 Presets
 		// sprites (assets/sprites/24500-24501) and the widened 12:4 (BuildInterfaces241 PATCHES)
 		{
 			byte[] pb = written.get(3369);
@@ -179,9 +179,9 @@ public class BuildScripts241 {
 			}
 			if (hit == -1) throw new IllegalStateException("3369: 21x21 size not found");
 			sa.code.get(hit).i = 36;
-			sa.code.get(hit + 1).i = 24;
+			sa.code.get(hit + 1).i = 36;
 			written.put(3369, sa.encode(true));
-			edits.add("    \"3369 size\": \"Zelus 241 edit: Presets button 36x24\"");
+			edits.add("    \"3369 size\": \"Zelus 241 edit: Presets button 36x36\"");
 		}
 
 		// ---- write
