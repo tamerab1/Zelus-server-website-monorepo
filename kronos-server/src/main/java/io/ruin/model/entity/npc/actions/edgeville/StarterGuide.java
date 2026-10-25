@@ -290,7 +290,7 @@ public class StarterGuide {
 									player.logoutListener = null;
 									VarPlayerRepository.ESCAPE_CLOSES.toggle(player);
 									player.tutorialStage = 0;
-									SecurityPin.CreateSecurityPin(player);
+									SecurityPin.offerSetup(player); // optional: offered, not required
 									if (hooks.handle(new Hook.Finished(player, player.getGameMode()))) {
 										return;
 									}
@@ -406,7 +406,7 @@ public class StarterGuide {
 			e.delay(3);
 
 			VarPlayerRepository.ESCAPE_CLOSES.toggle(player);
-			SecurityPin.CreateSecurityPin(player);
+			SecurityPin.offerSetup(player); // optional: offered, not required
 			player.tutorialStage = 0;
 			player.getPacketSender().resetCamera();
 		});

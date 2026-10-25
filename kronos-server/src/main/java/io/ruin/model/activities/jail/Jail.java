@@ -234,7 +234,12 @@ public class Jail {
 		};
 
 		for (GameObject gate : gates) {
-			ObjectAction.register(gate, "Open", (player, obj) -> player.sendMessage("The gate is locked."));
+			ObjectAction.register(gate, "Open", (player, obj) -> {
+				if (io.ruin.model.entity.player.SecurityPin.isHeld(player))
+					io.ruin.model.entity.player.SecurityPin.prompt(player); // the way out is the security PIN
+				else
+					player.sendMessage("The gate is locked.");
+			});
 			ObjectAction.register(gate, "Search", (player, obj) -> player.sendMessage("You search the gate but find nothing."));
 		}
 

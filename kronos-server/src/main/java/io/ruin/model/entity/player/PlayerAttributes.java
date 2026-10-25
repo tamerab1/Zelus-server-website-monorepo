@@ -1623,6 +1623,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public Position cannonPosition;
 	public Position bossSlayerPosition;
 	public Position crystalMemoryPosition;
+	/** where a player held for their security PIN goes back to once it's entered (saved: survives a logout in the cell) */
+	public Position securityPinReturnPosition;
 	public Position slayerTaskPosition;
 	public Position pvpInstancePosition;
 

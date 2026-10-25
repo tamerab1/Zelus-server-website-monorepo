@@ -912,33 +912,29 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "pin": {
+				io.ruin.model.entity.player.SecurityPin.prompt(player);
+				return true;
+			}
+
 			case "changesecuritypin": {
-				int[] bannedPins = { 12345, 54321, 11111, 22222, 33333, 44444, 55555, 66666, 77777, 88888, 99999,
-						10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 12121, 21212, 98765 };
-				player.integerInput("Enter your new security pin:", pin -> {
-					boolean pinTooEasy = false;
-					String number = String.valueOf(pin);
-					char[] digits = number.toCharArray();
-					for (int j = 0; j <= bannedPins.length - 1; j++) {
-						if (pin == bannedPins[j]) {
-							pinTooEasy = true;
+				// a player held for their PIN (new device) must not be able to set a new one and "verify" with it, and
+				// changing an existing PIN needs the current one
+				if (io.ruin.model.entity.player.SecurityPin.isHeld(player)) {
+					player.sendMessage("Enter your current security PIN first (::pin).");
+					return true;
+				}
+				if (player.securityPin != 0) {
+					player.integerInput("Enter your CURRENT security pin:", current -> {
+						if (current != player.securityPin) {
+							player.sendMessage("That's not your current security pin.");
+							return;
 						}
-					}
-					if (digits.length != 4) {
-						player.sendMessage("Your security pin must be 4 digits long.");
-						return;
-					}
-					if (pin == player.securityPin) {
-						player.sendMessage("You cannot set your security pin to your current pin.");
-						return;
-					}
-					if (pinTooEasy) {
-						player.sendMessage("Your security pin is too easy to guess.");
-						return;
-					}
-					player.securityPin = pin;
-					player.sendMessage("Your security pin has been changed to " + pin + ".");
-				});
+						io.ruin.model.entity.player.SecurityPin.CreateSecurityPin(player);
+					});
+					return true;
+				}
+				io.ruin.model.entity.player.SecurityPin.CreateSecurityPin(player);
 				return true;
 			}
 
