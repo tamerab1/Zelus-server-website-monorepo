@@ -966,6 +966,8 @@ public class VarPlayerRepository {
 			varp(3575, true),
 			varp(4066, true),
 			varp(4411, true),
+			varp(4944, true), // rev 241: MUSICMULTI_26
+			varp(5238, true), // rev 241: MUSICMULTI_27
 	};
 
 	public static final VarPlayerRepository MUSIC_PREFERENCE = varp(18, true);

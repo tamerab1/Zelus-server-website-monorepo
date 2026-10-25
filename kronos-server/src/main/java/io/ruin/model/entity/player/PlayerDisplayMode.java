@@ -188,7 +188,7 @@ public class PlayerDisplayMode {
 		ps.sendIfEvents(149, 0, 0, 27, getMask(ClickOp2, ClickOp3, ClickOp4, ClickOp6, ClickOp7, ClickOp10, UseOnGroundItem, UseOnNpc, UseOnObject, UseOnPlayer, UseOnInventory, UseOnComponent, DragDepth1, DragTargetable, ComponentTargetable));
 		ps.sendIfEvents(Interface.MAGIC_BOOK, 206, 0, 6, getMask(ClickOp1));
 		ps.sendIfEvents(216, 2, 0, 53, getMask(ClickOp1, ClickOp2));
-		CS2Script.SETTINGS_INTERFACE_SCALING.sendScript(player, 0);
+		// script 2358 (SETTINGS_INTERFACE_SCALING) is an argument-less stub in rev 241: nothing to send
 		CS2Script.BUFF_BAR_LAYOUT_REDRAW.sendScript(player);
 		if (player.currentSection == null)
 			player.currentSection = JournalTab.Section.PLAYER_INFO;

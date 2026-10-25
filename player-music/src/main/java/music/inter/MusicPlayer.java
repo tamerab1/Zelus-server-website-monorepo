@@ -126,7 +126,7 @@ public class MusicPlayer {
 		}
 
 		public void unlock(Player player) {
-			if (alwaysUnlocked()) {
+			if (alwaysUnlocked() || !knownVarp()) {
 				return;
 			}
 			var config = VarPlayerRepository.MUSIC_UNLOCKS[this.varpIndex - 1];
@@ -147,9 +147,17 @@ public class MusicPlayer {
 			player.sendMessage("Now playing " + this.name);
 		}
 
+		/** a track whose unlock varp isn't in MUSIC_UNLOCKS (a newer revision's) counts as locked instead of throwing during login */
+		private boolean knownVarp() {
+			return this.varpIndex >= 1 && this.varpIndex <= VarPlayerRepository.MUSIC_UNLOCKS.length;
+		}
+
 		public boolean isUnlocked(Player player) {
 			if (this.alwaysUnlocked()) {
 				return true;
+			}
+			if (!knownVarp()) {
+				return false;
 			}
 			var config = VarPlayerRepository.MUSIC_UNLOCKS[this.varpIndex - 1];
 			var value = config.get(player);

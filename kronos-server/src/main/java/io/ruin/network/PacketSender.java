@@ -61,11 +61,11 @@ import net.rsprot.protocol.game.outgoing.misc.client.HintArrow;
 import net.rsprot.protocol.game.outgoing.misc.client.HintArrow.HintArrowType;
 import net.rsprot.protocol.game.outgoing.misc.client.MinimapToggle;
 import net.rsprot.protocol.game.outgoing.misc.client.SendPing;
-import net.rsprot.protocol.game.outgoing.misc.client.UpdateRebootTimerV1;
+import net.rsprot.protocol.game.outgoing.misc.client.UpdateRebootTimerV2;
 import net.rsprot.protocol.game.outgoing.misc.client.UrlOpen;
 import net.rsprot.protocol.game.outgoing.misc.player.MessageGame;
 import net.rsprot.protocol.game.outgoing.misc.player.RunClientScript;
-import net.rsprot.protocol.game.outgoing.misc.player.SetMapFlagV1;
+import net.rsprot.protocol.game.outgoing.misc.player.SetMapFlagV2;
 import net.rsprot.protocol.game.outgoing.misc.player.SetPlayerOp;
 import net.rsprot.protocol.game.outgoing.misc.player.UpdateRunEnergy;
 import net.rsprot.protocol.game.outgoing.misc.player.UpdateRunWeight;
@@ -639,8 +639,34 @@ public final class PacketSender {
 	}
 
 	public void sendClientScript(int id, Object... params) {
+		if (!clientScriptArgsFit(id, params))
+			return;
 		var msg = new RunClientScript(id, Arrays.asList(params));
 		write(msg);
+	}
+
+	private static final java.util.Set<Integer> WARNED_SCRIPTS = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+	/**
+	 * The client copies a RunClientScript's arguments into the script's int/string locals, so more ints or
+	 * strings than it has locals throws in the packet handler (script 2358 became a no-argument stub in rev 241
+	 * and our one int crashed it). Such calls are dropped; a call that only differs from the declared argument
+	 * counts still goes out. Both are logged once per script so the caller can be fixed.
+	 */
+	private static boolean clientScriptArgsFit(int id, Object[] params) {
+		io.ruin.cache.ScriptDef def = io.ruin.cache.ScriptDef.get(id);
+		if (def == null)
+			return true;
+		int ints = 0, strings = 0;
+		for (Object p : params) {
+			if (p instanceof String) strings++;
+			else ints++;
+		}
+		boolean fits = ints <= def.localIntCount() && strings <= def.localStringCount();
+		if ((!fits || ints != def.intArgumentCount() || strings != def.stringArgumentCount()) && WARNED_SCRIPTS.add(id))
+			log.warn("client script {} takes {} int / {} string args, server sent {} / {}{}", id, def.intArgumentCount(),
+				def.stringArgumentCount(), ints, strings, fits ? "" : ": NOT SENT (would crash the client)");
+		return fits;
 	}
 
 	public void sendClientScript(int id, String type, Object... params) {
@@ -653,12 +679,14 @@ public final class PacketSender {
 			}
 		}
 
+		if (!clientScriptArgsFit(id, params))
+			return;
 		var msg = new RunClientScript(id, Arrays.asList(params));
 		write(msg);
 	}
 
 	public void sendSystemUpdate(int time) {
-		var msg = new UpdateRebootTimerV1(time * 50 / 30);
+		var msg = new UpdateRebootTimerV2(time * 50 / 30, UpdateRebootTimerV2.IgnoreUpdateMessage.INSTANCE);
 		write(msg);
 	}
 
@@ -857,7 +885,9 @@ public final class PacketSender {
 	}
 
 	public void resetMapFlag() {
-		var msg = new SetMapFlagV1(-1, -1);
+		// rev 241 rsprot only encodes SetMapFlagV2; a V1 has no encoder, which threw in netty and closed the
+		// connection whenever an interface opened ("Connection lost")
+		var msg = SetMapFlagV2.getRESET();
 		write(msg);
 	}
 

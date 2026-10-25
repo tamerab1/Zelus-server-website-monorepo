@@ -64,6 +64,11 @@ public class ScriptDef {
 	int stringArgumentCount;
 	public int[] intOperands;
 
+	public int localIntCount() { return localIntCount; }
+	public int localStringCount() { return localStringCount; }
+	public int intArgumentCount() { return intArgumentCount; }
+	public int stringArgumentCount() { return stringArgumentCount; }
+
 	private void decode(byte[] data) {
 		InBuffer buffer = new InBuffer(data);
 		buffer.position(data.length - 2);
