@@ -698,7 +698,9 @@ public class MadAngel extends NPCCombat {
         // never-classified model id -- untested with 117HD off. Animation (the telegraph itself,
         // SEQ_SMITE/_ENRAGED above) is unaffected and still plays; only the sky-beam visual is
         // pulled pending that test, rather than swapping in an unverified substitute id blind.
-        // npc.graphics(wasEnraged ? GFX_SMITE_CHARGE_ENRAGED : GFX_SMITE_CHARGE);
+        // rev 241: back on. The deformed mesh was our 231-era import of model 60639; cache241 holds Jagex's own
+        // 241 model and spotanim at these ids
+        npc.graphics(wasEnraged ? GFX_SMITE_CHARGE_ENRAGED : GFX_SMITE_CHARGE);
         smiteLandsAt = Server.currentTick() + SMITE_CHARGE_TICKS;
         smiteFollowUps = wasEnraged ? 2 : 0;
         t.sendMessage("The Mad Angel's eyes glow blue — protect from Magic!");
@@ -744,7 +746,8 @@ public class MadAngel extends NPCCombat {
     // =========================================================================================
 
     /**
-     * PERMANENTLY OFF the authentic id as of 2026-09-13. Full history: spotanim 4015
+     * HISTORY (rev 231 only; rev 241 uses the authentic id again, see the note on PROJ_BOMB_OUT below). Was off
+     * as of 2026-09-13. Full history: spotanim 4015
      * ({@link MadAngelIds#GFX_BOMB_TRAVEL}, model 60632 -- shared by every bomb GFX id, 4014-4017)
      * is the id source itself sends for both legs of the throw, and was tried three separate times
      * across this and an earlier session -- confirmed BOTH times to render as a giant, room-filling
@@ -767,11 +770,14 @@ public class MadAngel extends NPCCombat {
      * the entire window instead of pausing first. If it still reads as fast after this, the
      * remaining suspect is model 3116's own baked animation length, not these timing numbers.
      */
+    // rev 241: Jagex's own bomb projectile (VFX_MAD_ANGEL_ATTACK_BOMB_THROW_PROJECTILE). The broken mesh above was
+    // our 231-era import of model 60632 under the 231 client; cache241 holds Jagex's native 241 model and
+    // spotanim 4015 is byte-identical to Jagex's, so the placeholder ball (160) is retired.
     private static final Projectile PROJ_BOMB_OUT =
-            new Projectile(160, 220, 30, 0, 150, 0, 40, 0);
+            new Projectile(GFX_BOMB_TRAVEL, 220, 30, 0, 150, 0, 40, 0);
     /** The 1-tick return leg. Same id/history as {@link #PROJ_BOMB_OUT} above -- see its javadoc. */
     private static final Projectile PROJ_BOMB_BACK =
-            new Projectile(160, 30, 220, 0, 30, 0, 17, 0);
+            new Projectile(GFX_BOMB_TRAVEL, 30, 220, 0, 30, 0, 17, 0);
 
     private void startBomb(Player t) {
         bombThrowsLeft = BOMB_BOUNCES;
@@ -784,7 +790,7 @@ public class MadAngel extends NPCCombat {
         // TEMP SWAPPED 2026-09-13: was GFX_BOMB_THROW (spotanim 4014, model 60632) -- same model,
         // same reasoning as PROJ_BOMB_OUT above. Same substitute (gfx 76) already used for
         // detonate()/the reflect flash, for consistency.
-        npc.graphics(76);
+        npc.graphics(GFX_BOMB_THROW); // rev 241: Jagex's throw VFX (was placeholder 76)
 
         Position tile = scatterTile(t);
         bombTile = tile;
@@ -808,7 +814,7 @@ public class MadAngel extends NPCCombat {
             // TEMP SWAPPED 2026-09-13: was GFX_BOMB_REFLECT (spotanim 4017, model 60632) -- see
             // PROJ_BOMB_BACK's javadoc above for why this exact moment is the isolated culprit.
             // gfx 76 is Saradomin Strike's own hit splash (SaradominStrike.java), standard content.
-            npc.graphics(76, 0, BOMB_BACK_TICKS * CLIENT_CYCLES_PER_TICK);
+            npc.graphics(GFX_BOMB_REFLECT, 0, BOMB_BACK_TICKS * CLIENT_CYCLES_PER_TICK); // rev 241: Jagex's impact (was 76)
             t.sendMessage("You bounce the light back at the Mad Angel!");
 
             if (npc.getHp() <= 0) {
@@ -845,12 +851,12 @@ public class MadAngel extends NPCCombat {
                     continue;
                 }
                 int ring = Math.max(Math.abs(dx), Math.abs(dz));
-                World.sendGraphics(76, 0, ring * DETONATE_SPREAD_PER_RING, tile);
+                World.sendGraphics(GFX_BOMB_IMPACT, 0, ring * DETONATE_SPREAD_PER_RING, tile); // rev 241: Jagex's impact (was 76)
             }
         }
         int damage = Random.get(DETONATE_MIN, DETONATE_MAX);
         t.hit(new Hit(npc, AttackStyle.MAGIC).fixedDamage(damage).delay(HIT_NOW).ignoreDefence());
-        t.graphics(76, 0, 0);
+        t.graphics(GFX_BOMB_IMPACT, 0, 0);
         t.sendMessage("The light detonates across the cathedral!");
     }
 

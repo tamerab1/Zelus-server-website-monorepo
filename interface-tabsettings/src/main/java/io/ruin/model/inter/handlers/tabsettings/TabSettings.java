@@ -28,7 +28,9 @@ public class TabSettings {
 				ps.sendIfEvents(116, 130, 0, 21, getMask(ClickOp1));
 				ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
 				ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
-				ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
+				// rev 241: the game client layout dropdown is DISPLAY_DYNAMIC_SETTING_1 (struct 2732), options on 116:40;
+				// 116:41 is now the renderer dropdown (231 had the layout buttons there)
+				ps.sendIfEvents(116, 40, 0, 21, getMask(ClickOp1));
 			};
 
 			h.actions[5] = (SlotAction) (p, slot) -> VarPlayerRepository.PK_SKULL_PREVENTION.toggle(p);
@@ -39,7 +41,9 @@ public class TabSettings {
 			h.actions[38] = (SlotAction) (p, slot) -> VarPlayerRepository.PLAYER_ATTACK_OPTION.set(p, slot - 1);
 			h.actions[39] = (SlotAction) (p, slot) -> VarPlayerRepository.NPC_ATTACK_OPTION.set(p, slot - 1);
 
-			h.actions[41] = (SlotAction) (p, slot) -> {
+			h.actions[40] = (SlotAction) (p, slot) -> {
+				// TEMP rev241 audit: remove once the layout dropdown is confirmed
+				System.out.println("[rev241 settings] layout dropdown slot " + slot);
 				switch (slot) {
 					case 1 -> {
 						PlayerDisplayMode.set(p, PlayerDisplayMode.Mode.Fixed);

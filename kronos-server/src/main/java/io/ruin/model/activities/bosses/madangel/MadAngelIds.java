@@ -75,13 +75,13 @@ public final class MadAngelIds {
     // unchanged, so no content rewrite was needed for the remap itself.
 
     /** Remapped from source id 3321 (collided). */
-    public static final int SEQ_SPAWN = 20882;
+    public static final int SEQ_SPAWN = 3321; // rev 241: Jagex's native id (was our moved copy 20882)
     /** Remapped from source id 4589 (collided). */
-    public static final int SEQ_MELEE = 20883;
+    public static final int SEQ_MELEE = 4589; // rev 241: Jagex's native id (was our moved copy 20883)
     /** Remapped from source id 4590 (collided). */
-    public static final int SEQ_SMITE = 20884;
+    public static final int SEQ_SMITE = 4590; // rev 241: Jagex's native id (was our moved copy 20884)
     /** Remapped from source id 8543 (collided). */
-    public static final int SEQ_SMITE_ENRAGED = 20885;
+    public static final int SEQ_SMITE_ENRAGED = 8543; // rev 241: Jagex's native id (was our moved copy 20885)
     /** Unchanged from source -- was already free in Zelus. */
     public static final int SEQ_BOMB = 14443;
     /** Unchanged from source -- was already free in Zelus. */
@@ -97,9 +97,9 @@ public final class MadAngelIds {
      * provenance (remapped from source 4588, which collided) is on record. Fighting (16305) and
      * rising (16307) forms both use it.
      */
-    public static final int SEQ_IDLE_FIGHTING = 20886;
+    public static final int SEQ_IDLE_FIGHTING = 4588; // rev 241: Jagex's native id (was our moved copy 20886)
     /** Same as {@link #SEQ_IDLE_FIGHTING} but for the dormant (16306) and dead (16308) forms; remapped from source 1991 (collided). */
-    public static final int SEQ_IDLE_DORMANT = 20887;
+    public static final int SEQ_IDLE_DORMANT = 1991; // rev 241: Jagex's native id (was our moved copy 20887)
 
     /**
      * The cleave sweep is a state machine, not one animation per side -- see
@@ -123,11 +123,13 @@ public final class MadAngelIds {
     public static final int GFX_SPAWN = 4010;
     public static final int GFX_SMITE_CHARGE = 4011;
     public static final int GFX_SMITE_CHARGE_ENRAGED = 4012;
-    public static final int GFX_SMITE_HIT = 6420;
+    public static final int GFX_SMITE_HIT = 4013; // rev 241: Jagex's native id (was our moved copy 6420)
     public static final int GFX_BOMB_THROW = 4014;
     public static final int GFX_BOMB_TRAVEL = 4015;
     // 4016 exists in the cache but a live capture never sends it -- the only impact vfx used is 4017.
     public static final int GFX_BOMB_HIT = 4017;
+    /** rev 241: VFX_MAD_ANGEL_ATTACK_BOMB_THROW_IMPACT_01 (4017 is _02). */
+    public static final int GFX_BOMB_IMPACT = 4016;
     public static final int GFX_BOMB_REFLECT = 4017;
     /** gargboss_debris_shadow_150 -- was ALREADY present in Zelus byte-identical; not re-imported. */
     public static final int GFX_BOMB_SHADOW = 1448;

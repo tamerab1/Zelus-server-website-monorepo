@@ -185,7 +185,7 @@ public class PlayerDisplayMode {
 		ps.sendIfEvents(116, 83, 1, 3, getMask(ClickOp1));
 		ps.sendIfEvents(116, 38, 1, 4, getMask(ClickOp1));
 		ps.sendIfEvents(116, 39, 1, 5, getMask(ClickOp1));
-		ps.sendIfEvents(116, 41, 0, 21, getMask(ClickOp1));
+		ps.sendIfEvents(116, 40, 0, 21, getMask(ClickOp1)); // rev 241 game client layout options (231: 41)
 
 		ps.sendIfEvents(116, 68, 0, 21, getMask(ClickOp1));
 		ps.sendIfEvents(728, 15, 0, 0, getMask(ClickOp1));

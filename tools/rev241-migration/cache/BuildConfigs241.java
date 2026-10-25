@@ -22,6 +22,9 @@ import java.util.*;
 public class BuildConfigs241 {
 	static final Map<String, Integer> TYPES = new LinkedHashMap<>(RoundTripDefs.GROUPS);
 
+	/** custom (absent from vanilla 231) ids that are Jagex content vanilla 241 now has at the same id */
+	static final Map<String, Set<Integer>> JAGEX_NATIVE_IN_241 = Map.of("npc", Set.of(16305, 16306, 16307, 16308));
+
 	public static void main(String[] a) throws Exception {
 		Store local = new Store(new File(a[0])); local.load();
 		Store v231 = new Store(new File(a[1])); v231.load();
@@ -34,7 +37,7 @@ public class BuildConfigs241 {
 
 		StringBuilder report = new StringBuilder("{\n  \"stage\": \"configs\",\n  \"types\": {\n");
 		List<String> conflictLines = new ArrayList<>();
-		int seqSoundFixes = 0, itemLinksReordered = 0;
+		int seqSoundFixes = 0, itemLinksReordered = 0, jagexNative = 0;
 		Map<Integer, Map<Integer, byte[]>> newGroups = new LinkedHashMap<>();
 		Map<Integer, Map<Integer, byte[]>> expectedCustom = new HashMap<>();
 
@@ -57,6 +60,10 @@ public class BuildConfigs241 {
 					if (newId == id && theirs.containsKey(id) && manifest.isImported(type, id)) { importedKept++; continue; } // Jagex content imported early: keep 241's
 					if (theirs.containsKey(newId)) throw new IllegalStateException(type + " " + id + " -> " + newId + " is a vanilla 241 id");
 					byte[] bytes = DefRewriter.rewrite(type, def, manifest, pk);
+					// Jagex content Zelus imported early from another cache, which vanilla 241 now ships at the same id:
+					// write Jagex's own definition at our (moved) id, so it uses Jagex's native models and animations
+					// instead of the moved duplicates of our import (Mad Angel 16305-16308 -> 22026-22029)
+					if (JAGEX_NATIVE_IN_241.getOrDefault(type, Set.of()).contains(id) && theirs.containsKey(id)) { bytes = theirs.get(id); jagexNative++; }
 					if (type.equals("seq")) {
 						byte[] fixed = fixSwappedSounds(bytes);
 						if (!Arrays.equals(fixed, bytes)) seqSoundFixes++;
@@ -163,7 +170,7 @@ public class BuildConfigs241 {
 				if (!Arrays.equals(onDisk.get(ex.getKey()), ex.getValue())) throw new IllegalStateException("custom " + ex.getKey() + " wrong");
 		}
 		Files.writeString(Path.of(a[4]), report.toString());
-		System.out.println("RESULT configs written and verified: " + verified + " definitions across " + newGroups.size() + " groups; conflicts " + conflictLines.size() + "; seq sound fixes " + seqSoundFixes + "; item links reordered for 241 " + itemLinksReordered);
+		System.out.println("RESULT configs written and verified: " + verified + " definitions across " + newGroups.size() + " groups; conflicts " + conflictLines.size() + "; seq sound fixes " + seqSoundFixes + "; item links reordered for 241 " + itemLinksReordered + "; Jagex-native defs used " + jagexNative);
 	}
 
 	/** Custom seq sounds written by the packer as (weight 1, loops 100): swap back to (100, 1). */
