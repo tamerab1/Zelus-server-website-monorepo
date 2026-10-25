@@ -61,6 +61,52 @@ public final class DefRewriter {
 		return r.out.toByteArray();
 	}
 
+	private static final java.util.Map<Integer, Integer> ITEM_LINK_TEMPLATE = java.util.Map.of(97, 98, 139, 140, 148, 149);
+
+	/**
+	 * Rev 241's item loader pre-reads the definition's FIRST opcode: if it is a link (97 note, 139 bought,
+	 * 148 placeholder) it takes that id and the NEXT opcode's u16 as the template, loads both items
+	 * recursively and only then decodes this one. So a templated item must start with [link][template], and
+	 * an untemplated item must not start with a link (the client would read the next opcode's payload as a
+	 * template id and recurse into garbage: StackOverflowError at login). Vanilla 241 follows both rules; this
+	 * reorders ours to match. Field order doesn't matter to anything else. Returns the input when nothing moves.
+	 */
+	public static byte[] orderItemLinks241(byte[] def, ParamKinds params) {
+		java.util.List<byte[]> segs = new java.util.ArrayList<>(segments("item", def, IDENTITY, params));
+		int template = -1;
+		for (int i = 0; i < segs.size(); i++) {
+			if (ITEM_LINK_TEMPLATE.containsValue(segs.get(i)[0] & 0xff)) {
+				if (template != -1) throw new IllegalStateException("item has two templates");
+				template = i;
+			}
+		}
+		java.util.List<byte[]> order = new java.util.ArrayList<>();
+		if (template != -1) {
+			int top = segs.get(template)[0] & 0xff, link = -1;
+			for (int i = 0; i < segs.size(); i++) if (ITEM_LINK_TEMPLATE.getOrDefault(segs.get(i)[0] & 0xff, -1) == top) link = i;
+			if (link == -1) throw new IllegalStateException("item template opcode " + top + " without its link");
+			order.add(segs.get(link));
+			order.add(segs.get(template));
+			for (int i = 0; i < segs.size(); i++) if (i != link && i != template) order.add(segs.get(i));
+		} else if (!segs.isEmpty() && ITEM_LINK_TEMPLATE.containsKey(segs.get(0)[0] & 0xff)) {
+			int first = -1;
+			for (int i = 0; i < segs.size() && first == -1; i++) if (!ITEM_LINK_TEMPLATE.containsKey(segs.get(i)[0] & 0xff)) first = i;
+			if (first == -1) {
+				// nothing but links (a bare placeholder/note stub): lead with opcode 4 at its default (zoom2d 2000)
+				order.add(new byte[]{4, (byte) (2000 >> 8), (byte) 2000});
+				order.addAll(segs);
+			} else {
+				order.add(segs.get(first));
+				for (int i = 0; i < segs.size(); i++) if (i != first) order.add(segs.get(i));
+			}
+		} else return def;
+		ByteArrayOutputStream b = new ByteArrayOutputStream();
+		for (byte[] seg : order) b.writeBytes(seg);
+		b.write(0);
+		byte[] outBytes = b.toByteArray();
+		return java.util.Arrays.equals(outBytes, def) ? def : outBytes;
+	}
+
 	// ---------------------------------------------------------------- helpers
 
 	private final java.util.List<Integer> opStarts = new java.util.ArrayList<>();

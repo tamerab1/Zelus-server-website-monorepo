@@ -34,7 +34,7 @@ public class BuildConfigs241 {
 
 		StringBuilder report = new StringBuilder("{\n  \"stage\": \"configs\",\n  \"types\": {\n");
 		List<String> conflictLines = new ArrayList<>();
-		int seqSoundFixes = 0;
+		int seqSoundFixes = 0, itemLinksReordered = 0;
 		Map<Integer, Map<Integer, byte[]>> newGroups = new LinkedHashMap<>();
 		Map<Integer, Map<Integer, byte[]>> expectedCustom = new HashMap<>();
 
@@ -75,6 +75,16 @@ public class BuildConfigs241 {
 				if (!r.conflicts.isEmpty()) {
 					conflicts++;
 					conflictLines.add("    {\"type\": \"" + type + "\", \"id\": " + id + ", \"fields\": \"" + String.join(",", r.conflicts) + "\"}");
+				}
+			}
+			if (type.equals("item")) {
+				for (var f : result.entrySet()) {
+					byte[] ordered = DefRewriter.orderItemLinks241(f.getValue(), pk);
+					if (ordered != f.getValue()) {
+						f.setValue(ordered);
+						if (expected.containsKey(f.getKey())) expected.put(f.getKey(), ordered);
+						itemLinksReordered++;
+					}
 				}
 			}
 			newGroups.put(group, result);
@@ -153,7 +163,7 @@ public class BuildConfigs241 {
 				if (!Arrays.equals(onDisk.get(ex.getKey()), ex.getValue())) throw new IllegalStateException("custom " + ex.getKey() + " wrong");
 		}
 		Files.writeString(Path.of(a[4]), report.toString());
-		System.out.println("RESULT configs written and verified: " + verified + " definitions across " + newGroups.size() + " groups; conflicts " + conflictLines.size() + "; seq sound fixes " + seqSoundFixes);
+		System.out.println("RESULT configs written and verified: " + verified + " definitions across " + newGroups.size() + " groups; conflicts " + conflictLines.size() + "; seq sound fixes " + seqSoundFixes + "; item links reordered for 241 " + itemLinksReordered);
 	}
 
 	/** Custom seq sounds written by the packer as (weight 1, loops 100): swap back to (100, 1). */
