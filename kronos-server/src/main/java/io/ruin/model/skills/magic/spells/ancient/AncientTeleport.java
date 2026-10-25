@@ -29,17 +29,14 @@ public class AncientTeleport extends Spell {
 	public static boolean teleport(Player player, int x, int y, int z) {
 		return player.getMovement().startTeleport(e -> {
 			e.setCancelCondition(() -> player.teleportListener != null && !player.teleportListener.allow(player));
-			player.animate(8805);
 			if (player.getInventory().contains(25104)) {
 				player.sendMessage("The crystal of memories stores your last location as an available teleport.");
 				player.crystalMemoryPosition = player.getPosition().copy();
 			}
-			player.graphics(392, 92, 0);
-			player.animate(1979);
-			e.delay(3);
+			// the server's cyan teleport (same cast/arrive as the standard spellbook), was the ancient 1979 + gfx 392
+			player.publicSound(200);
+			io.ruin.model.skills.magic.spells.modern.ModernTeleport.playEffect(e, player);
 			player.getMovement().teleport(x, y, z);
-			player.graphics(-1);
-			player.animate(-1);
 		});
 	}
 }

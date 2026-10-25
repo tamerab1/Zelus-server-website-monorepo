@@ -18,6 +18,8 @@ public class MainFrame {
 
 	public static void register() {
 		InterfaceHandler.register(Interface.ORBS, h -> {
+			// rev 241: the Activity Adviser button (CR_BUTTON) is relabelled "Daily tasks" (script 2480 in the cache build)
+			h.actions[4] = (SimpleAction) p -> p.getDailyTaskInterface().open(p);
 			h.actions[6] = (OptionAction) XpCounter::select;
 			h.actions[20] = (OptionAction) (p, option) -> {
 				if (option == 1) {

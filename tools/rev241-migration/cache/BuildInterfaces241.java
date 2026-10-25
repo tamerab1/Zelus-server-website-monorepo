@@ -242,6 +242,15 @@ public class BuildInterfaces241 {
 		}
 		decisions.add("    \"hookOrParentRefsRenumbered\": " + refChanges[0]);
 
+		// ---- Zelus layout edits made on rev 241 components: {group, component, x, y, width, height}
+		// 12:4, the bank Presets button: 36x24 (assets/sprites/24500-24501) and moved off the capacity text
+		for (int[] p : new int[][]{{12, 4, 70, 5, 36, 24}}) {
+			byte[] c = outGroups.get(p[0]).get(p[1]).clone();
+			if ((c[0] & 0xff) != 0xff) throw new IllegalStateException(p[0] + ":" + p[1] + " is not an if3 component");
+			for (int k = 0; k < 4; k++) { c[4 + 2 * k] = (byte) (p[2 + k] >> 8); c[5 + 2 * k] = (byte) p[2 + k]; }
+			outGroups.get(p[0]).put(p[1], c);
+		}
+
 		// ---- write
 		Index index = out.findIndex(3);
 		for (var e : outGroups.entrySet()) {

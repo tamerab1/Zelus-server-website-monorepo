@@ -147,6 +147,43 @@ public class BuildScripts241 {
 			writeConfigGroup(out, 8, enums);
 		}
 
+		// ---- Zelus edits made directly on rev 241 scripts (no 231 counterpart to port)
+		// 2480 (minimap orb setup): the Activity Adviser button becomes "Daily tasks"; the server opens the Daily
+		// Tasks interface on its click (160:4, MainFrame). The click handler (489) only plays a sound.
+		for (var patch : Map.of(2480, Map.of("Open ", "", "Close ", "", "Activity Adviser", "Daily tasks")).entrySet()) {
+			Archive par = out.findIndex(12).getArchive(patch.getKey());
+			byte[] pb = written.containsKey(patch.getKey()) ? written.get(patch.getKey()) : par.decompress(out.getStorage().loadArchive(par));
+			ScriptAsm sa = ScriptAsm.decode(pb, true);
+			int changed = 0;
+			for (var n : sa.code)
+				if (n.op == ScriptRewriter.SCONST && patch.getValue().containsKey(n.s)) { n.s = patch.getValue().get(n.s); changed++; }
+			if (changed == 0) throw new IllegalStateException("script " + patch.getKey() + ": patch strings not found");
+			written.put(patch.getKey(), sa.encode(true));
+			edits.add("    \"" + patch.getKey() + "\": \"Zelus 241 edit: " + changed + " strings\"");
+		}
+
+		// 3369 (bank Presets button, the old tutorial "?"): drawn 36x24 instead of 21x21, to match the 36x24 Presets
+		// sprites (assets/sprites/24500-24501) and the widened 12:4 (BuildInterfaces241 PATCHES)
+		{
+			byte[] pb = written.get(3369);
+			if (pb == null) { Archive par = out.findIndex(12).getArchive(3369); pb = par.decompress(out.getStorage().loadArchive(par)); }
+			ScriptAsm sa = ScriptAsm.decode(pb, true);
+			int hit = -1;
+			for (int i = 0; i + 4 < sa.code.size(); i++) {
+				var c = sa.code;
+				if (c.get(i).op == 0 && c.get(i).i == 21 && c.get(i + 1).op == 0 && c.get(i + 1).i == 21
+					&& c.get(i + 2).op == 0 && c.get(i + 3).op == 0 && c.get(i + 4).op == 1001 /* cc_setsize */) {
+					if (hit != -1) throw new IllegalStateException("3369: size pattern found twice");
+					hit = i;
+				}
+			}
+			if (hit == -1) throw new IllegalStateException("3369: 21x21 size not found");
+			sa.code.get(hit).i = 36;
+			sa.code.get(hit + 1).i = 24;
+			written.put(3369, sa.encode(true));
+			edits.add("    \"3369 size\": \"Zelus 241 edit: Presets button 36x24\"");
+		}
+
 		// ---- write
 		Index index = out.findIndex(12);
 		for (var e : written.entrySet()) {

@@ -29,6 +29,7 @@ import java.util.*;
 public class BuildBinary241 {
 	static Store local, v231, out;
 	static Manifest manifest;
+	static String a3;
 	static final StringBuilder report = new StringBuilder("{\n  \"stage\": \"binary\",\n");
 	static final List<String> written = new ArrayList<>();
 
@@ -37,6 +38,7 @@ public class BuildBinary241 {
 		v231 = new Store(new File(a[1])); v231.load();
 		out = new Store(new File(a[2])); out.load();
 		manifest = new Manifest(Path.of(a[3]));
+		a3 = a[3];
 
 		models();
 		singleFileIndex(4, "sound", null);
@@ -253,6 +255,31 @@ public class BuildBinary241 {
 	/** our sprites written at a new id because their vanilla id is a texture sprite: old -> new (stage 5 follows) */
 	static final Map<Integer, Integer> spriteMoves = new TreeMap<>();
 
+	static FileData fileZero() { FileData f = new FileData(); f.setId(0); return f; }
+
+	/** a PNG (<= 255 colours, alpha 0 = transparent) as a one-frame cache sprite */
+	static byte[] pngSprite(java.nio.file.Path png) throws Exception {
+		java.awt.image.BufferedImage im = javax.imageio.ImageIO.read(png.toFile());
+		SpriteCodec.Frame f = new SpriteCodec.Frame();
+		f.width = im.getWidth(); f.height = im.getHeight();
+		f.index = new byte[f.width * f.height];
+		List<Integer> colours = new ArrayList<>(List.of(0));
+		Map<Integer, Integer> pal = new HashMap<>();
+		for (int y = 0; y < f.height; y++)
+			for (int x = 0; x < f.width; x++) {
+				int argb = im.getRGB(x, y);
+				if ((argb >>> 24) < 128) continue;
+				int rgb = argb & 0xffffff;
+				if (rgb == 0) rgb = 1; // 0 is transparent in sprites
+				Integer n = pal.get(rgb);
+				if (n == null) { n = colours.size(); colours.add(rgb); pal.put(rgb, n); }
+				f.index[y * f.width + x] = (byte) (int) n;
+			}
+		if (colours.size() > 256) throw new IllegalStateException(png + ": more than 255 colours");
+		SpriteCodec.Group g = SpriteCodec.assemble(f.width, f.height, List.of(f), List.of(colours.stream().mapToInt(Integer::intValue).toArray()));
+		return SpriteCodec.encode(g);
+	}
+
 	static void sprites() throws Exception {
 		Set<Integer> base = ids(v231, 8);
 		// sprites vanilla 241 textures use (index 9 still holds vanilla 241's textures: textures() runs later).
@@ -294,6 +321,19 @@ public class BuildBinary241 {
 				}
 			} catch (Exception e) { undecodable.add(id); }
 		}
+		// Zelus art made for rev 241 (tools/rev241-migration/assets/sprites/<id>.png): replaces the sprite at that id,
+		// e.g. the bank Presets button (24500/24501, a backpack instead of the worn-items mannequin)
+		java.nio.file.Path art = Path.of(a3).toAbsolutePath().getParent().getParent().resolve("assets/sprites");
+		int artWritten = 0;
+		if (Files.isDirectory(art))
+			try (var pngs = Files.list(art)) {
+				for (var png : (Iterable<java.nio.file.Path>) pngs.filter(x -> x.toString().endsWith(".png")).sorted()::iterator) {
+					int sid = Integer.parseInt(png.getFileName().toString().replace(".png", ""));
+					store(8, sid, pngSprite(png), new FileData[]{fileZero()});
+					artWritten++;
+				}
+			}
+		report.append(String.format("  \"spriteArt\": %d,%n", artWritten));
 		StringJoiner moves = new StringJoiner(", ", "{", "}");
 		spriteMoves.forEach((k, v) -> moves.add("\"" + k + "\": " + v));
 		report.append(String.format("  \"sprites\": {\"customsWritten\": %d, \"zelusReskinsTaken\": %d, \"reskinsOfSpritesDeletedIn241KeptOurs\": %s, \"frameMerged\": %d, \"frameMergeNotes\": %s, \"undecodable\": %s, \"textureSpriteOverwritesMovedOursTo\": %s},%n",

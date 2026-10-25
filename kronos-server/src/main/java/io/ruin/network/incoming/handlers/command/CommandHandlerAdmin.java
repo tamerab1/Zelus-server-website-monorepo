@@ -805,7 +805,8 @@ public class CommandHandlerAdmin {
 				// than directly on it, so they land cleanly on the path instead of stacked in the
 				// doorway. See MadAngelIds' javadoc: this real-world tile is only a single imported
 				// mapsquare, so it's void-bordered the same way the instance is.
-				player.getMovement().teleport(
+				// a real teleport (cyan cast + arrival, blocked where teleports are), not an instant ::tele jump
+				io.ruin.model.skills.magic.spells.modern.ModernTeleport.teleport(player,
 						io.ruin.model.activities.bosses.madangel.MadAngelIds.PEW_OUTSIDE_X,
 						io.ruin.model.activities.bosses.madangel.MadAngelIds.PEW_OUTSIDE_Y, 0);
 				return true;

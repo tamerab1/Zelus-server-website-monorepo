@@ -109,6 +109,10 @@ public class BuildConfigs241 {
 					}
 				}
 			}
+			// 65535 is "no object" on the wire: the server sends it when a loc is removed at runtime, so a real object
+			// there showed up wherever anything was removed (custom 62455, the cyan brazier, at Sylvaroth's cleared logs)
+			if (type.equals("obj") && result.containsKey(65535) && !theirs.containsKey(65535))
+				throw new IllegalStateException("object id 65535 is reserved (removed-loc placeholder); move it in the manifest");
 			newGroups.put(group, result);
 			expectedCustom.put(group, expected);
 			report.append(String.format("    \"%s\": {\"group\": %d, \"vanilla241\": %d, \"customsAdded\": %d, \"importedVanillaKept\": %d, \"emptyCustomsSkipped\": %d, \"vanillaEditsMerged\": %d, \"conflictsOursKept\": %d, \"packerArtifactOnlySkipped\": %d, \"total\": %d}%s%n",
