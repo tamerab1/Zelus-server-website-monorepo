@@ -49,7 +49,7 @@ public class SoulTreeInterface {
 
 	/** The node waiting in the Rank Up confirmation, per player: a point is only spent by its Confirm. */
 	private static final java.util.Map<Integer, Integer> confirming = new java.util.HashMap<>();
-	private static final int SOUND_RANK_UP = 101, GFX_SOUL_BURST = 4420;
+	private static final int SOUND_RANK_UP = 101, GFX_SOUL_BURST = 6827;
 
 	static void register() {
 		InterfaceHandler.register(INTERFACE, h -> {

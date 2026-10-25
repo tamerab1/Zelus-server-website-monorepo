@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Constants {
 	public static final Projectile MAGIC_PROJECTILE = new Projectile(3173, 65, 43, 45, 90, 0, 20, 240).regionBased();
-	public static final Projectile MAGIC_CHAIN_PROJECTILE = new Projectile(4231, 43, 43, 30, 90, 0, 20, 11).regionBased();
+	public static final Projectile MAGIC_CHAIN_PROJECTILE = new Projectile(6638, 43, 43, 30, 90, 0, 20, 11).regionBased();
 	public static final Projectile RANGED_PROJECTILE = new Projectile(289, 25, 30, 45, 50, 10, 20, 240).regionBased();
 
 	public static final int TRANSFORM_ANIM = 6270;

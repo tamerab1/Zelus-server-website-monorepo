@@ -42,7 +42,7 @@ public class SummerStore extends NewShop {
 			new ShopItem(new Item(30460, 1), 40, ShopCategories.TREASURES, null, true),
 			new ShopItem(new Item(608, 1), 80, ShopCategories.TREASURES, null, true),
 			new ShopItem(new Item(2528, 1), 275, ShopCategories.TREASURES, null, true),
-			new ShopItem(new Item(33020, 1), 300, ShopCategories.TREASURES, null, true)
+			new ShopItem(new Item(43820, 1), 300, ShopCategories.TREASURES, null, true)
 		);
 	}
 

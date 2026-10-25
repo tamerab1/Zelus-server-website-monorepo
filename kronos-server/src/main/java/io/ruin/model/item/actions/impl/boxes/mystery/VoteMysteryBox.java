@@ -122,10 +122,10 @@ public class VoteMysteryBox {
 			generateReward(player);
 			player.getBox().sendUpdates();
 			player.openInterface(ToplevelComponent.MAINMODAL, 702);
-			player.getPacketSender().sendClientScript(10034, "ssii", "Spins", "Get ready to test your luck with our wheel of fortune! Click the \"spin\" button when you're ready. There's all sorts of items to be won within this mystery spinning box!<br><br>If you wish to skip the rolling, you can click \"Spin\" again.<br><br><col=ffff00>Will you walk away with riches... or with rubbish? Good luck!", 15, 0);
+			player.getPacketSender().sendClientScript(14617, "ssii", "Spins", "Get ready to test your luck with our wheel of fortune! Click the \"spin\" button when you're ready. There's all sorts of items to be won within this mystery spinning box!<br><br>If you wish to skip the rolling, you can click \"Spin\" again.<br><br><col=ffff00>Will you walk away with riches... or with rubbish? Good luck!", 15, 0);
 		} else {
 			player.getBox().sendUpdates();
-			player.getPacketSender().sendClientScript(10034, "ssii", "Spins", "Get ready to test your luck with our wheel of fortune! Click the \"spin\" button when you're ready. There's all sorts of items to be won within this mystery spinning box!<br><br>If you wish to skip the rolling, you can click \"Spin\" again.<br><br><col=ffff00>Will you walk away with riches... or with rubbish? Good luck!", 15, 1);
+			player.getPacketSender().sendClientScript(14617, "ssii", "Spins", "Get ready to test your luck with our wheel of fortune! Click the \"spin\" button when you're ready. There's all sorts of items to be won within this mystery spinning box!<br><br>If you wish to skip the rolling, you can click \"Spin\" again.<br><br><col=ffff00>Will you walk away with riches... or with rubbish? Good luck!", 15, 1);
 		}
 	}
 

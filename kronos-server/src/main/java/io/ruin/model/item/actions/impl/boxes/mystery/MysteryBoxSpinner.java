@@ -130,7 +130,7 @@ public final class MysteryBoxSpinner {
 		more.put(290, new SpinBox("Super Mystery Box", SuperMysteryBox.ECO_MYSTERY_BOX_TABLE, false, true));
 		more.put(30426, new SpinBox("Limited Mystery Box", LimitedMysteryBox.ECO_MYSTERY_BOX_TABLE, false, true));
 		more.put(30185, new SpinBox("Summer Mystery Box", SummerMysteryBox.summerMboxLoot, false, true));
-		more.put(33017, new SpinBox("Echo Orb Mystery Box", EchoOrbMysteryBox.summerMboxLoot, false, false));
+		more.put(43817, new SpinBox("Echo Orb Mystery Box", EchoOrbMysteryBox.summerMboxLoot, false, false));
 		more.put(6831, new SpinBox("3rd Age Mystery Box", ThirdAgeMysteryBox.THIRD_AGE_BOX_TABLE, false, true, true, null));
 		more.put(22330, new SpinBox("PvP Armour Mystery Box", PVPArmourMysteryBox.PVP_ARMOUR_BOX_TABLE, false, false));
 		more.put(6829, new SpinBox("Vote Mystery Box", VoteMysteryBox.ECO_VOTING_BOX_TABLE, false, false));
@@ -170,7 +170,7 @@ public final class MysteryBoxSpinner {
 	/** Called at the end of MysteryBox.register(): takes over the boxes' Open option (last registration wins). */
 	static void register() {
 		BOXES.put(6199, new SpinBox("Mystery Box", MysteryBox.MYSTERY_BOX_TABLE, false, true));
-		BOXES.put(31618, new SpinBox("Arcane Mystery Box", MysteryBox.MYSTERY_BOX_TABLE, false, true));
+		BOXES.put(42418, new SpinBox("Arcane Mystery Box", MysteryBox.MYSTERY_BOX_TABLE, false, true));
 		BOXES.put(30461, new SpinBox("Donator Mystery Box", MysteryBox.ADVANCED_MYSTERY_BOX_COMMON_TABLE, true, false));
 		BOXES.put(30444, new SpinBox("Donator Mystery Box", MysteryBox.ADVANCED_MYSTERY_BOX_COMMON_TABLE, true, false));
 		BOXES.put(30529, new SpinBox("ToB Mystery Box", MysteryBox.TOB_MYSTERY_BOX_TABLE, false, false));

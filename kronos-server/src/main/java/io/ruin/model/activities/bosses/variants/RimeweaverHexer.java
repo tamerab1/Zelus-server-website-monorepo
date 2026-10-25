@@ -11,7 +11,7 @@ import io.ruin.model.skills.prayer.Prayer;
  */
 public class RimeweaverHexer extends BossVariant {
 
-	private static final int GFX_FROST = 4284, GFX_FROST_HIT = 4285, GFX_SHARD = 4286, GFX_PERMAFROST = 4287;
+	private static final int GFX_FROST = 6691, GFX_FROST_HIT = 6692, GFX_SHARD = 6693, GFX_PERMAFROST = 6694;
 	private static final int ANIM_ATTACK = 1540;
 	private static final int FREEZE_SECONDS = 3; // Sanctum guardian nerf 2026-10-20 (players: "so aggressive"): was 5 s, special every 5, 18-32
 

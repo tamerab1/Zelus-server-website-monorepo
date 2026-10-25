@@ -24,7 +24,7 @@ public class GloomfangDevourer extends BossVariant {
 	}
 
 
-	private static final int GFX_ORB = 4280, GFX_ORB_HIT = 4281, GFX_ECLIPSE = 4282;
+	private static final int GFX_ORB = 6687, GFX_ORB_HIT = 6688, GFX_ECLIPSE = 6689;
 	private static final int ANIM_ATTACK = 2731;
 
 	@Override

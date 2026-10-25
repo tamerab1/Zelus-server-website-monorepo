@@ -25,11 +25,11 @@ public final class RivalsItems {
 
 	/** {base weapon, celestial version}. */
 	private static final int[][] CELESTIAL = {
-		{20997, 31778},   // Twisted bow
-		{11802, 31784},   // Armadyl godsword
-		{27690, 31786},   // Voidwaker
-		{24423, 31788},   // Harmonised nightmare staff
-		{59626, 31818},   // Nightfall bow -> Nightfall bow (celestial): own look, attack animation, arrows and special
+		{20997, 42578},   // Twisted bow
+		{11802, 42584},   // Armadyl godsword
+		{27690, 42586},   // Voidwaker
+		{24423, 42588},   // Harmonised nightmare staff
+		{59626, 42618},   // Nightfall bow -> Nightfall bow (celestial): own look, attack animation, arrows and special
 	};
 
 	/**

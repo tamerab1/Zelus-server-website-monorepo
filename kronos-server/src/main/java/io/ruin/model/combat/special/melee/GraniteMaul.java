@@ -16,7 +16,7 @@ public class GraniteMaul implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("granite maul") || def.id == 31532; // Obsidian maul (Wilderness Forge)
+		return name.contains("granite maul") || def.id == 42332; // Obsidian maul (Wilderness Forge)
 	}
 
 	@Override

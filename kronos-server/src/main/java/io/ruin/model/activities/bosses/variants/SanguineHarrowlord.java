@@ -23,7 +23,7 @@ public class SanguineHarrowlord extends BossVariant {
 	}
 
 
-	private static final int GFX_BOLT = 4275, GFX_BOLT_HIT = 4276, GFX_TITHE = 4277;
+	private static final int GFX_BOLT = 6682, GFX_BOLT_HIT = 6683, GFX_TITHE = 6684;
 	private static final int ANIM_CAST = 9194;
 
 	@Override

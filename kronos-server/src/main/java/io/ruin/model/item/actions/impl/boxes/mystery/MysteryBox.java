@@ -55,13 +55,13 @@ public class MysteryBox {
 			boost += 3;
 		if(player.familiar == Pet.SUMMER_SPIRIT)
 			boost += 3;
-		if (MysteryBox.wearingItem(player, 33007, Equipment.SLOT_WEAPON)) // Summer Boxing gloves
+		if (MysteryBox.wearingItem(player, 43807, Equipment.SLOT_WEAPON)) // Summer Boxing gloves
 			boost += 2;
 		if (MysteryBox.wearingItem(player, 11705, Equipment.SLOT_WEAPON)) // Beach boxing gloves
 			boost += 2;
 		if (MysteryBox.wearingItem(player, 11706, Equipment.SLOT_WEAPON)) // Beach boxing gloves
 			boost += 2;
-		if (MysteryBox.wearingItem(player, 33010, Equipment.SLOT_FEET)) // Summer Flippers
+		if (MysteryBox.wearingItem(player, 43810, Equipment.SLOT_FEET)) // Summer Flippers
 			boost += 2;
 		if (MysteryBox.wearingItem(player, 12600, Equipment.SLOT_HAT)) // Druidic wreath
 			boost += 2;
@@ -136,7 +136,7 @@ public class MysteryBox {
 		new LootItem(1038, 1, 1).broadcast(Broadcast.GLOBAL),
 		new LootItem(1042, 1, 1).broadcast(Broadcast.GLOBAL),
 		new LootItem(30625, 1, 1).broadcast(Broadcast.GLOBAL),
-		new LootItem(32001, 1, 4).broadcast(Broadcast.GLOBAL),
+		new LootItem(42801, 1, 4).broadcast(Broadcast.GLOBAL),
 		new LootItem(27248, 1, 2).broadcast(Broadcast.GLOBAL),
 		// Added new items
 		new LootItem(7927, 1, 1).broadcast(Broadcast.GLOBAL),
@@ -146,8 +146,8 @@ public class MysteryBox {
 	);
 	public static final LootTable SUMMER_MYSTERY_BOX = new LootTable().addTable(1,
 		// Added new items
-		new LootItem(33009, 1, 1).broadcast(Broadcast.GLOBAL),
-		new LootItem(33008, 1, 1).broadcast(Broadcast.GLOBAL),
+		new LootItem(43809, 1, 1).broadcast(Broadcast.GLOBAL),
+		new LootItem(43808, 1, 1).broadcast(Broadcast.GLOBAL),
 		new LootItem(11705, 1, 2).broadcast(Broadcast.GLOBAL),
 		new LootItem(11706, 1, 2).broadcast(Broadcast.GLOBAL),
 
@@ -197,7 +197,7 @@ public class MysteryBox {
 		new LootItem(1038, 1, 1).broadcast(Broadcast.GLOBAL),
 		new LootItem(1042, 1, 1).broadcast(Broadcast.GLOBAL),
 		new LootItem(30625, 1, 1).broadcast(Broadcast.GLOBAL),
-		new LootItem(32001, 1, 4).broadcast(Broadcast.GLOBAL),
+		new LootItem(42801, 1, 4).broadcast(Broadcast.GLOBAL),
 		new LootItem(27248, 1, 2).broadcast(Broadcast.GLOBAL)
 	);
 	public static final LootTable DONATOR_WEAPON_BOX = new LootTable().addTable(1,
@@ -1338,7 +1338,7 @@ public class MysteryBox {
 		};
 		ItemAction.registerInventory(6199, "Open", mysteryBoxAction);
 		// Arcane mystery box: the animated-texture version (textured_items.txt), same loot for now.
-		ItemAction.registerInventory(31618, "Open", mysteryBoxAction);
+		ItemAction.registerInventory(42418, "Open", mysteryBoxAction);
 		ItemAction.registerInventory(30530, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();
@@ -1568,7 +1568,7 @@ public class MysteryBox {
 		ItemAction.registerInventory(59524, "open", donatorWeaponBoxAction);
 		ItemAction.registerInventory(30628, "open", donatorWeaponBoxAction);
 
-		ItemAction.registerInventory(32000, "open", (player, item) -> {
+		ItemAction.registerInventory(42800, "open", (player, item) -> {
 			if (!player.getInventory().hasFreeSlots(1)) {
 				player.sendMessage("You need at least 1 free inventory space to open this box.");
 				return;
@@ -1601,7 +1601,7 @@ public class MysteryBox {
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(32000).getDef().name);
+					jsonObject.put("source", new Item(42800).getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}
@@ -1639,7 +1639,7 @@ public class MysteryBox {
 					jsonObject.put("player_z", player.getPosition().getZ());
 					jsonObject.put("item", reward.getDef().getName());
 					jsonObject.put("item_id", reward.getId());
-					jsonObject.put("source", new Item(32000).getDef().name);
+					jsonObject.put("source", new Item(42800).getDef().name);
 
 				RareBoxOpenHook.sendBoxDiscordMessage(jsonObject);
 			}

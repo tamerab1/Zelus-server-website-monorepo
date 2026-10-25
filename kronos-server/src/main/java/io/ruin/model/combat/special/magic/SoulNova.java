@@ -17,7 +17,7 @@ public class SoulNova implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 31840;
+		return def.id == 42640;
 	}
 
 	@Override

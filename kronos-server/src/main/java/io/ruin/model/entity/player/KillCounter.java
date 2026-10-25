@@ -51,7 +51,7 @@ public class KillCounter {
 		// Mad Angel's dormant/idle forms (16306-16308) share the exact same display name "Mad Angel"
 		// as her real combat form -- matched by npc id (16305) instead of name to avoid assigning
 		// this counter to forms that never actually die in combat (harmless either way, but precise).
-		set(p -> p.madAngelKills, 16305);
+		set(p -> p.madAngelKills, 22026);
 		// Draco by id (all 6 forms 30560-30565) -- the name overload is a substring match and would
 		// also pick up "Draco Whelp" / "Baby Draco".
 		set(p -> p.dracoKills, 30560, 30561, 30562, 30563, 30564, 30565);

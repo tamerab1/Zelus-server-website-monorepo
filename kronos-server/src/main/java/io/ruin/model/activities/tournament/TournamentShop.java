@@ -32,35 +32,35 @@ public final class TournamentShop {
 
 	/** Four per row, in the order the rows are shown. */
 	private static final Stock[] STOCK = {
-		new Stock(31694, 1, 200),               // Frostbite partyhat
-		new Stock(31692, 1, 180),               // Inferno partyhat
-		new Stock(31614, 1, 160),               // Prismatic partyhat
-		new Stock(31690, 1, 150),               // Toxic partyhat
+		new Stock(42494, 1, 200),               // Frostbite partyhat
+		new Stock(42492, 1, 180),               // Inferno partyhat
+		new Stock(42414, 1, 160),               // Prismatic partyhat
+		new Stock(42490, 1, 150),               // Toxic partyhat
 
-		new Stock(31698, 1, 160),               // Midnight santa hat
-		new Stock(31616, 1, 150),               // Festive santa hat
-		new Stock(31700, 1, 140),               // Candy cane santa hat
-		new Stock(31702, 1, 120),               // Golden santa hat
+		new Stock(42498, 1, 160),               // Midnight santa hat
+		new Stock(42416, 1, 150),               // Festive santa hat
+		new Stock(42500, 1, 140),               // Candy cane santa hat
+		new Stock(42502, 1, 120),               // Golden santa hat
 
-		new Stock(31756, 1, 450),               // Cosmic Champion Gloves
-		new Stock(31754, 1, 300),               // Infernal Fury Gloves
-		new Stock(31750, 1, 60),                // Brawler's Golden Gloves
-		new Stock(31748, 1, 100),               // Astral Spore
+		new Stock(42556, 1, 450),               // Cosmic Champion Gloves
+		new Stock(42554, 1, 300),               // Infernal Fury Gloves
+		new Stock(42550, 1, 60),                // Brawler's Golden Gloves
+		new Stock(42548, 1, 100),               // Astral Spore
 
-		new Stock(31662, 1, 80),                // Solarflare chausses
-		new Stock(31660, 1, 80),                // Solarflare cuirass
-		new Stock(31658, 1, 50),                // Solarflare helm
-		new Stock(31608, 1, 50),                // Soulfire sword
+		new Stock(42462, 1, 80),                // Solarflare chausses
+		new Stock(42460, 1, 80),                // Solarflare cuirass
+		new Stock(42458, 1, 50),                // Solarflare helm
+		new Stock(42408, 1, 50),                // Soulfire sword
 
-		new Stock(31680, 1, 80),                // Starheart platebody
-		new Stock(31682, 1, 80),                // Starheart platelegs
-		new Stock(31678, 1, 60),                // Starheart full helm
-		new Stock(31606, 1, 50),                // Frostbrand sword
+		new Stock(42480, 1, 80),                // Starheart platebody
+		new Stock(42482, 1, 80),                // Starheart platelegs
+		new Stock(42478, 1, 60),                // Starheart full helm
+		new Stock(42406, 1, 50),                // Frostbrand sword
 
 		new Stock(BoxingMysteryChest.ID, 1, 100), // Tournament Chest
-		new Stock(31642, 1, 40),                // Wildfang blade
-		new Stock(31650, 1, 80),                // Skyhunter bow
-		new Stock(31610, 1, 70),                // Voidrend axe
+		new Stock(42442, 1, 40),                // Wildfang blade
+		new Stock(42450, 1, 80),                // Skyhunter bow
+		new Stock(42410, 1, 70),                // Voidrend axe
 	};
 
 

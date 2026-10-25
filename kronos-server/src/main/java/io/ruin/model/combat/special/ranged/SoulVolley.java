@@ -22,7 +22,7 @@ public class SoulVolley implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 31834;
+		return def.id == 42634;
 	}
 
 	@Override

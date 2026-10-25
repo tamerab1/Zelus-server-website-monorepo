@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class AzureflamePyretyrant extends BossVariant {
 
-	private static final int GFX_FIREBALL = 4278, GFX_BURST = 4279;
+	private static final int GFX_FIREBALL = 6685, GFX_BURST = 6686;
 	private static final int ANIM_ATTACK = 1582;
 	private static final int EXTRA_TILES = 4;
 

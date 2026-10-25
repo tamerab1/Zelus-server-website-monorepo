@@ -15,7 +15,7 @@ import io.ruin.model.entity.player.Player;
 public class UrsineChainmace implements Special {
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 8872 || def.id == 31648; // 31648 = Grizzlemaw chainmace (Wilderness Forge)
+		return def.id == 8872 || def.id == 42448; // 31648 = Grizzlemaw chainmace (Wilderness Forge)
 	}
 
 	private int getTicks(int delay) {

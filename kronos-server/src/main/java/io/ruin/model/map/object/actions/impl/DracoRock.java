@@ -16,7 +16,7 @@ import io.ruin.model.stat.StatType;
 // minigame will eventually spend), same currency-drop shape as ShootingStars.mine()'s Stardust.
 public class DracoRock {
 
-	private static final int DRACO_ROCK_ID = 62390;
+	private static final int DRACO_ROCK_ID = 65470;
 	private static final int REQUIRED_MINING_LEVEL = 82;
 	private static final double MINING_XP = 500;
 	private static final int DRACODUST_ID = 60389;

@@ -23,9 +23,9 @@ import io.ruin.utility.Broadcast;
  */
 public final class BoxingMysteryChest {
 
-	public static final int ID = 31758;
-	private static final int ASTRAL_SPORE = 31748;
-	private static final int GOLDEN_GLOVES = 31750, OBSIDIAN_GLOVES = 31752, INFERNAL_GLOVES = 31754, COSMIC_GLOVES = 31756;
+	public static final int ID = 42558;
+	private static final int ASTRAL_SPORE = 42548;
+	private static final int GOLDEN_GLOVES = 42550, OBSIDIAN_GLOVES = 42552, INFERNAL_GLOVES = 42554, COSMIC_GLOVES = 42556;
 
 	public static final LootTable TABLE = new LootTable()
 		.addTable(1_500,

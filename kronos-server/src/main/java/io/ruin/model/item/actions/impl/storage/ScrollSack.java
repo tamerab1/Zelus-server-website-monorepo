@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ScrollSack extends ItemContainer {
 
-	public static final int CLOSED_BAG = 33035;
+	public static final int CLOSED_BAG = 43835;
 
 	public static void register() {
 		InterfaceHandler.register(Interface.MATERIAL_BAG, h -> {

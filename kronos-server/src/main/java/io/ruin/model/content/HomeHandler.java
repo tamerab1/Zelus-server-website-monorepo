@@ -75,13 +75,13 @@ public class HomeHandler {
 			}
 			io.ruin.model.content.gearloadouts.GearLoadoutInterface.open(player);
 		};
-		var devouringForge = GameObject.spawn(60003, 3081, 3516, 0, 10, 0);
+		var devouringForge = GameObject.spawn(65048, 3081, 3516, 0, 10, 0);
 		ObjectAction.register(devouringForge, 1, devouringForgeAction);
 		// Second devouring forge instance in the FunPK zone, spawned from data/objects/spawns/custom_objects.json.
 		// Actions are per-instance, not per-object-id (see ObjectAction.register javadoc), so it needs its own
 		// registration even though it shares the same object id (60003) as the home one.
-		ObjectAction.register(60003, 3322, 4754, 0, 1, devouringForgeAction);
-		var bhChest = GameObject.spawn(60001, 3094, 3516, 0, 10, 0);
+		ObjectAction.register(65048, 3322, 4754, 0, 1, devouringForgeAction);
+		var bhChest = GameObject.spawn(65046, 3094, 3516, 0, 10, 0);
 		ObjectAction.register(bhChest, 1, (player, obj) -> io.ruin.model.activities.wilderness.WantedManager.openMenu(player));
 		// Loot Chest for wilderness loot keys: a coffer (29087, "Use") facing west; only this one opens keys
 		var lootChest = GameObject.spawn(29087, 3102, 3518, 0, 10, 1);
@@ -95,9 +95,9 @@ public class HomeHandler {
 		var slayerChest = GameObject.spawn(46243, 3109, 3486, 0, 10, 1);
 		//var singingBowl = GameObject.spawn(36552, 3091, 3510, 0, 10, 5);
 		//var pohPortal = GameObject.spawn(15478, 3085, 3511, 0, 10, 2);
-		var upgradeStation = GameObject.spawn(60015, 3116, 3485, 0, 10, 3); // Zelus Upgrader (was 46241)
-		var upgradeStation2 = GameObject.spawn(60016, 3114, 3482, 0, 10, 3); // Zelus Workbench (was 53226)
-		var panda = GameObject.spawn(60011, 3100, 3492, 0, 10, 2);
+		var upgradeStation = GameObject.spawn(65060, 3116, 3485, 0, 10, 3); // Zelus Upgrader (was 46241)
+		var upgradeStation2 = GameObject.spawn(65061, 3114, 3482, 0, 10, 3); // Zelus Workbench (was 53226)
+		var panda = GameObject.spawn(65056, 3100, 3492, 0, 10, 2);
 		ObjectAction.register(panda, 1, (player, obj) -> io.ruin.model.inter.handlers.shopinterface.CustomShop2.openPvmShop(player));
 		var gambleBarrier = GameObject.spawn(34433, 3123, 3478, 0, 10, 2);
 		ObjectAction.register(gambleBarrier, "Pass", (player, obj) -> {
@@ -489,7 +489,7 @@ public class HomeHandler {
 
 		ObjType.forEach(itemDef -> {
 			if (itemDef != null) {
-				ItemObjectAction.register(itemDef.id, 60016, (player, item, obj) -> {
+				ItemObjectAction.register(itemDef.id, 65061, (player, item, obj) -> {
 					if (ItemBreakingHandler.getTotalAttachments(item).isEmpty()) {
 						player.sendMessage("This item does not have any perks to break.");
 						return;
@@ -505,8 +505,8 @@ public class HomeHandler {
 		ObjectAction.register(31681, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 1, (player, obj) -> enterGrotesqueGuardians(player));
 		ObjectAction.register(31672, 2, (player, obj) -> enterGrotesqueGuardians(player));
-		ObjectAction.register(60016, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
-		ObjectAction.register(60016, 3, (player, obj) -> player.getItemBreakInterface().open(player));
+		ObjectAction.register(65061, 2, (player, obj) -> player.getItemUpgradeInterface().open(player, true));
+		ObjectAction.register(65061, 3, (player, obj) -> player.getItemBreakInterface().open(player));
 		ObjectAction.register(33410, 3, (player, obj) -> openTeleportInterface(player));
 		ObjectAction.register(31861, actions -> {
 			actions[1] = (player, obj) -> {

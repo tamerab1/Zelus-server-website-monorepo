@@ -57,100 +57,100 @@ public class GroundItem extends Position {
 	// the real one. All server-side logic (pickup, hooks, inventory crediting) keeps using the
 	// real `id` field unchanged; only what's sent over the wire is remapped.
 	private static final java.util.Map<Integer, Integer> GROUND_DISPLAY_PROXY_ID = java.util.Map.ofEntries(
-			java.util.Map.entry(60256, 31132), // Aetherial Scythe
-			java.util.Map.entry(60257, 31133), // Angelic Greatsword
-			java.util.Map.entry(60258, 31134), // Nether Defender
-			java.util.Map.entry(60259, 31135), // Ward of the Depths
-			java.util.Map.entry(60260, 31136), // Owner Cape
-			java.util.Map.entry(60261, 31137), // Owner Wings
-			java.util.Map.entry(60262, 31138), // Souly Wings
-			java.util.Map.entry(60263, 31139), // Zealot's Horned Visage
-			java.util.Map.entry(60264, 31140), // Zealot's Warplate
-			java.util.Map.entry(60265, 31141), // Zealot's Greaves
-			java.util.Map.entry(60266, 31142), // Zealot's Gloves
-			java.util.Map.entry(60267, 31143), // Zealot's Striders
-			java.util.Map.entry(60268, 31144), // Ancient Cleaver
-			java.util.Map.entry(60269, 31145), // Ancient Signet
-			java.util.Map.entry(60270, 31146), // Warlord's Dreadcloak
-			java.util.Map.entry(60271, 31147), // Zarosian Dreadhelm
-			java.util.Map.entry(60272, 31148), // Zarosian Platelegs
-			java.util.Map.entry(60273, 31149), // Zarosian Sabatons
-			java.util.Map.entry(60274, 31150), // Zarosian Warplate
-			java.util.Map.entry(60275, 31151), // Draconic Hornbow
-			java.util.Map.entry(60276, 31152), // Brimstone Hornbow
-			java.util.Map.entry(60277, 31153), // 1: Bond of the Blood Titan
-			java.util.Map.entry(60278, 31154), // 2: Bond of the Slayer King
-			java.util.Map.entry(60279, 31155), // 3: Bond of the Astral Archmage
-			java.util.Map.entry(60280, 31156), // 4: Bond of the Sovereign Monarch
-			java.util.Map.entry(60281, 31157), // 5: Bond of the Artisan
-			java.util.Map.entry(60282, 31158), // 6: Bond of the Void Deadeye
-			java.util.Map.entry(59531, 31159), // AsVal Gun
-			java.util.Map.entry(59548, 31160), // Icenier Sword
-			java.util.Map.entry(59604, 31161), // Imperial staff
-			java.util.Map.entry(59605, 31162), // Imperial bow
-			java.util.Map.entry(59606, 31163), // Imperial top
-			java.util.Map.entry(59609, 31164), // Crimson hat
-			java.util.Map.entry(59626, 31165), // Nightfall bow
-			java.util.Map.entry(34027, 31166), // Hallowfell
-			java.util.Map.entry(34030, 31167), // Jar of light
-			java.util.Map.entry(34032, 31168), // Sunstone crystal
-			java.util.Map.entry(34033, 31169), // Ardeaglais teleport
-			java.util.Map.entry(59603, 31170), // Nox
-			java.util.Map.entry(60236, 31171), // Teumo
-			java.util.Map.entry(60237, 31172), // Orrvor quo Maten
-			java.util.Map.entry(60238, 31173), // Lord Trobin
-			java.util.Map.entry(60239, 31174), // Wandering impling
-			java.util.Map.entry(60240, 31175), // Wagchin
-			java.util.Map.entry(60241, 31176), // The Monkey's Aunt
-			java.util.Map.entry(60242, 31177), // Tempoross
-			java.util.Map.entry(60243, 31178), // Strisath
-			java.util.Map.entry(60244, 31179), // Starlight
-			java.util.Map.entry(60245, 31180), // Star Sprite
-			java.util.Map.entry(60246, 31181), // Spooky dog
-			java.util.Map.entry(60247, 31182), // Spit goblin
-			java.util.Map.entry(60248, 31183), // Shadow Keeper
-			java.util.Map.entry(60249, 31184), // Slimetoes
-			java.util.Map.entry(60250, 31185), // SteelWill
-			java.util.Map.entry(60251, 31186), // Mossfists
-			java.util.Map.entry(60252, 31187), // Damo
-			java.util.Map.entry(60253, 31188), // Sliske
-			java.util.Map.entry(60254, 31189), // Light Leech
-			java.util.Map.entry(60255, 31190), // ToxiSkele
-			java.util.Map.entry(34042, 31191), // Aggy
-			java.util.Map.entry(60330, 31192), // Sylvaroth's Sprout (pet)
-			java.util.Map.entry(60331, 31193), // Draconic Cape
-			java.util.Map.entry(60332, 31194), // Draconic Godsword
-			java.util.Map.entry(60333, 31195), // Draconic Helmet
-			java.util.Map.entry(60334, 31196), // Draconic Longsword
-			java.util.Map.entry(60335, 31197), // Draconic Platebody
-			java.util.Map.entry(60336, 31198), // Draconic Platelegs
-			java.util.Map.entry(60337, 31199), // Draconic Wings
-			java.util.Map.entry(60338, 31200), // Draconies Hood
-			java.util.Map.entry(60339, 31201), // Draconies Platebody
-			java.util.Map.entry(60340, 31202), // Draconies Platelegs
-			java.util.Map.entry(60341, 31203), // Draconies Warhammer
-			java.util.Map.entry(60342, 31204), // Draconies Wings
-			java.util.Map.entry(60355, 31205), // Drakonbone Boots
-			java.util.Map.entry(60356, 31206), // Drakonbone Crest
-			java.util.Map.entry(60357, 31207), // Drakonbone Cuirass
-			java.util.Map.entry(60358, 31208), // Drakonbone Gloves
-			java.util.Map.entry(60359, 31209), // Drakonbone Platelegs
-			java.util.Map.entry(60360, 31210), // Hallowed Cape
-			java.util.Map.entry(60361, 31211), // Hallowed Elf Boots
-			java.util.Map.entry(60362, 31212), // Hallowed Gloves
-			java.util.Map.entry(60363, 31213), // Hallowed Goster
-			java.util.Map.entry(60364, 31214), // Hallowed Jack-o
-			java.util.Map.entry(60365, 31215), // Hallowed Trousers
-			java.util.Map.entry(60366, 31216), // Halloween Bow
-			java.util.Map.entry(60367, 31217), // Halloween Godsword
-			java.util.Map.entry(60368, 31218), // Halloween Key
-			java.util.Map.entry(60369, 31219), // Halloween Scimitar
-			java.util.Map.entry(60370, 31220), // Halloween Staff
-			java.util.Map.entry(60371, 31221), // Halloween Whip
-			java.util.Map.entry(60389, 31222), // Dracodust
-			java.util.Map.entry(60391, 31223), // Baby Draco (pet)
-			java.util.Map.entry(60400, 31224), // Draconic Pickaxe
-			java.util.Map.entry(60405, 31225)  // Draco Pickaxe
+			java.util.Map.entry(60256, 41932), // Aetherial Scythe
+			java.util.Map.entry(60257, 41933), // Angelic Greatsword
+			java.util.Map.entry(60258, 41934), // Nether Defender
+			java.util.Map.entry(60259, 41935), // Ward of the Depths
+			java.util.Map.entry(60260, 41936), // Owner Cape
+			java.util.Map.entry(60261, 41937), // Owner Wings
+			java.util.Map.entry(60262, 41938), // Souly Wings
+			java.util.Map.entry(60263, 41939), // Zealot's Horned Visage
+			java.util.Map.entry(60264, 41940), // Zealot's Warplate
+			java.util.Map.entry(60265, 41941), // Zealot's Greaves
+			java.util.Map.entry(60266, 41942), // Zealot's Gloves
+			java.util.Map.entry(60267, 41943), // Zealot's Striders
+			java.util.Map.entry(60268, 41944), // Ancient Cleaver
+			java.util.Map.entry(60269, 41945), // Ancient Signet
+			java.util.Map.entry(60270, 41946), // Warlord's Dreadcloak
+			java.util.Map.entry(60271, 41947), // Zarosian Dreadhelm
+			java.util.Map.entry(60272, 41948), // Zarosian Platelegs
+			java.util.Map.entry(60273, 41949), // Zarosian Sabatons
+			java.util.Map.entry(60274, 41950), // Zarosian Warplate
+			java.util.Map.entry(60275, 41951), // Draconic Hornbow
+			java.util.Map.entry(60276, 41952), // Brimstone Hornbow
+			java.util.Map.entry(60277, 41953), // 1: Bond of the Blood Titan
+			java.util.Map.entry(60278, 41954), // 2: Bond of the Slayer King
+			java.util.Map.entry(60279, 41955), // 3: Bond of the Astral Archmage
+			java.util.Map.entry(60280, 41956), // 4: Bond of the Sovereign Monarch
+			java.util.Map.entry(60281, 41957), // 5: Bond of the Artisan
+			java.util.Map.entry(60282, 41958), // 6: Bond of the Void Deadeye
+			java.util.Map.entry(59531, 41959), // AsVal Gun
+			java.util.Map.entry(59548, 41960), // Icenier Sword
+			java.util.Map.entry(59604, 41961), // Imperial staff
+			java.util.Map.entry(59605, 41962), // Imperial bow
+			java.util.Map.entry(59606, 41963), // Imperial top
+			java.util.Map.entry(59609, 41964), // Crimson hat
+			java.util.Map.entry(59626, 41965), // Nightfall bow
+			java.util.Map.entry(44827, 41966), // Hallowfell
+			java.util.Map.entry(44830, 41967), // Jar of light
+			java.util.Map.entry(44832, 41968), // Sunstone crystal
+			java.util.Map.entry(44833, 41969), // Ardeaglais teleport
+			java.util.Map.entry(59603, 41970), // Nox
+			java.util.Map.entry(60236, 41971), // Teumo
+			java.util.Map.entry(60237, 41972), // Orrvor quo Maten
+			java.util.Map.entry(60238, 41973), // Lord Trobin
+			java.util.Map.entry(60239, 41974), // Wandering impling
+			java.util.Map.entry(60240, 41975), // Wagchin
+			java.util.Map.entry(60241, 41976), // The Monkey's Aunt
+			java.util.Map.entry(60242, 41977), // Tempoross
+			java.util.Map.entry(60243, 41978), // Strisath
+			java.util.Map.entry(60244, 41979), // Starlight
+			java.util.Map.entry(60245, 41980), // Star Sprite
+			java.util.Map.entry(60246, 41981), // Spooky dog
+			java.util.Map.entry(60247, 41982), // Spit goblin
+			java.util.Map.entry(60248, 41983), // Shadow Keeper
+			java.util.Map.entry(60249, 41984), // Slimetoes
+			java.util.Map.entry(60250, 41985), // SteelWill
+			java.util.Map.entry(60251, 41986), // Mossfists
+			java.util.Map.entry(60252, 41987), // Damo
+			java.util.Map.entry(60253, 41988), // Sliske
+			java.util.Map.entry(60254, 41989), // Light Leech
+			java.util.Map.entry(60255, 41990), // ToxiSkele
+			java.util.Map.entry(44842, 41991), // Aggy
+			java.util.Map.entry(60330, 41992), // Sylvaroth's Sprout (pet)
+			java.util.Map.entry(60331, 41993), // Draconic Cape
+			java.util.Map.entry(60332, 41994), // Draconic Godsword
+			java.util.Map.entry(60333, 41995), // Draconic Helmet
+			java.util.Map.entry(60334, 41996), // Draconic Longsword
+			java.util.Map.entry(60335, 41997), // Draconic Platebody
+			java.util.Map.entry(60336, 41998), // Draconic Platelegs
+			java.util.Map.entry(60337, 41999), // Draconic Wings
+			java.util.Map.entry(60338, 42000), // Draconies Hood
+			java.util.Map.entry(60339, 42001), // Draconies Platebody
+			java.util.Map.entry(60340, 42002), // Draconies Platelegs
+			java.util.Map.entry(60341, 42003), // Draconies Warhammer
+			java.util.Map.entry(60342, 42004), // Draconies Wings
+			java.util.Map.entry(60355, 42005), // Drakonbone Boots
+			java.util.Map.entry(60356, 42006), // Drakonbone Crest
+			java.util.Map.entry(60357, 42007), // Drakonbone Cuirass
+			java.util.Map.entry(60358, 42008), // Drakonbone Gloves
+			java.util.Map.entry(60359, 42009), // Drakonbone Platelegs
+			java.util.Map.entry(60360, 42010), // Hallowed Cape
+			java.util.Map.entry(60361, 42011), // Hallowed Elf Boots
+			java.util.Map.entry(60362, 42012), // Hallowed Gloves
+			java.util.Map.entry(60363, 42013), // Hallowed Goster
+			java.util.Map.entry(60364, 42014), // Hallowed Jack-o
+			java.util.Map.entry(60365, 42015), // Hallowed Trousers
+			java.util.Map.entry(60366, 42016), // Halloween Bow
+			java.util.Map.entry(60367, 42017), // Halloween Godsword
+			java.util.Map.entry(60368, 42018), // Halloween Key
+			java.util.Map.entry(60369, 42019), // Halloween Scimitar
+			java.util.Map.entry(60370, 42020), // Halloween Staff
+			java.util.Map.entry(60371, 42021), // Halloween Whip
+			java.util.Map.entry(60389, 42022), // Dracodust
+			java.util.Map.entry(60391, 42023), // Baby Draco (pet)
+			java.util.Map.entry(60400, 42024), // Draconic Pickaxe
+			java.util.Map.entry(60405, 42025)  // Draco Pickaxe
 	);
 
 	/** The id to use for ground-item network packets -- see GROUND_DISPLAY_PROXY_ID above. */

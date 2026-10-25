@@ -75,12 +75,12 @@ public class Vorath extends NPCCombat {
     private static final int EYE_HEIGHT = 560, EYE_EVERY = 5;
     private int eyeTicks = 0, eyeColour = 0;
 
-    private static final int CHRONOS = 16201, MAX_KEEPERS = 2, ATTACKER_MEMORY = 17, SPECIAL_EVERY = 6;
+    private static final int CHRONOS = 21922, MAX_KEEPERS = 2, ATTACKER_MEMORY = 17, SPECIAL_EVERY = 6;
 
     private static final int MYSTERY_BOX = 6199, SUPER_MYSTERY_BOX = 290, LIMITED_MYSTERY_BOX = 30426, ULTRA_MYSTERY_BOX = 30430,
-        DONATOR_MYSTERY_BOX = 30461, ARCANE_MYSTERY_BOX = 31618, COINS = 995, ZULRAHS_SCALES = 12934, MASTER_CLUE = 19835,
+        DONATOR_MYSTERY_BOX = 30461, ARCANE_MYSTERY_BOX = 42418, COINS = 995, ZULRAHS_SCALES = 12934, MASTER_CLUE = 19835,
         DRAGON_BOLTS = 9341, ONYX_BOLTS_E = 9245,
-        CELESTIAL_CROWN = 31870, CELESTIAL_TOP = 31872, CELESTIAL_BOTTOM = 31874, CELESTIAL_STAFF = 31876;
+        CELESTIAL_CROWN = 42670, CELESTIAL_TOP = 42672, CELESTIAL_BOTTOM = 42674, CELESTIAL_STAFF = 42676;
 
     /**
      * The one roll after the guaranteed box + coins, per 10,000 kills: unique (a Celestial piece) 500 (1/20), very rare 40 (1/250), rare 166 (~1/60), uncommon

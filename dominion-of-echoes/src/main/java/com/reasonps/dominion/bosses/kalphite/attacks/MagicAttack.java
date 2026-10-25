@@ -40,7 +40,7 @@ public class MagicAttack implements Attack {
 			while (dest != null && bounces < 4) {
 				int delay = MAGIC_PROJECTILE.send(source, target);
 				event.delay(World.getTicks(delay));
-				World.sendGraphics(4232, 0, 0, target.getPosition());
+				World.sendGraphics(6639, 0, 0, target.getPosition());
 
 				// The magic attack will also drain prayer points if it is not prayed against correctly
 				if (dest.isPlayer() && !dest.player.getPrayer().isActive(Prayer.PROTECT_FROM_MAGIC)) {

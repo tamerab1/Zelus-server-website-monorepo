@@ -20,21 +20,21 @@ public enum UpgradeItems {
 
 	// Vermilion masori (customs19, 2026-10-19): the Masori (f) piece + the plain Masori piece, bound with Zulrah's scales
 	VERMILION_MASORI_MASK(
-		new Item(31850),
+		new Item(42650),
 		new Ingredient[]{new Ingredient(27235), new Ingredient(27226)},
 		80,
 		new Item(12934, 1250),
 		"Fortified masori reforged in blood-red, giving more ranged accuracy and strength than the Masori mask (f)."
 	),
 	VERMILION_MASORI_BODY(
-		new Item(31852),
+		new Item(42652),
 		new Ingredient[]{new Ingredient(27238), new Ingredient(27229)},
 		80,
 		new Item(12934, 3500),
 		"Fortified masori reforged in blood-red, giving more ranged accuracy and strength than the Masori body (f)."
 	),
 	VERMILION_MASORI_CHAPS(
-		new Item(31854),
+		new Item(42654),
 		new Ingredient[]{new Ingredient(27241), new Ingredient(27232)},
 		80,
 		new Item(12934, 3500),
@@ -42,7 +42,7 @@ public enum UpgradeItems {
 	),
 	// Zaryte Stormpiercer (customs19, 2026-10-19): the Zaryte crossbow + a Dragon hunter crossbow, bound with a Snake tail
 	ZARYTE_STORMPIERCER(
-		new Item(31856),
+		new Item(42656),
 		new Ingredient[]{new Ingredient(26374), new Ingredient(new int[]{ItemID.DRAGON_HUNTER_CROSSBOW, 25916, 25918})}, // any DHCB: plain / (t) / (b)
 		80,
 		new Item(30622),
@@ -76,7 +76,7 @@ public enum UpgradeItems {
 			new Item(30548),
 			"This twisted bow is imbued with the power of a Zaryte crossbow allowing it to fire any arrow or bolt."
 	),
-	HARMONISED_SHADOW(new Item(33000),
+	HARMONISED_SHADOW(new Item(43800),
 		new Ingredient[]{new Ingredient(27275), new Ingredient(24423)},
 		60, new Item(MORYTANIA_ECHO_ORB),
 		"This harmonised shadow attacks faster than the tumeken's and also possesses more power."
@@ -177,21 +177,21 @@ public enum UpgradeItems {
 			"This item is imbued with the power of Torva full helm and Justiciar faceguard, it will provide the second best melee stats for this slot."
 	),
 
-	VIRELITH_HAT(new Item(33001),
+	VIRELITH_HAT(new Item(43801),
 		new Ingredient[]{new Ingredient(ItemID.ANCESTRAL_HAT), new Ingredient(ItemID.VIRTUS_MASK)},
 		50,
 		new Item(KANDARIN_ECHO_ORB),
 		"This item is imbued with the power of Ancestral hat and Virtus mask, it will provide the best magic stats for this slot."
 	),
 	VIRELITH_ROBE_TOP(
-		new Item(33002),
+		new Item(43802),
 		new Ingredient[]{new Ingredient(ItemID.ANCESTRAL_ROBE_TOP), new Ingredient(ItemID.VIRTUS_ROBE_TOP)},
 		50,
 		new Item(KANDARIN_ECHO_ORB),
 		"This item is imbued with the power of Ancestral robe top and Virtus robe top, it will provide the best magic stats for this slot."
 	),
 	VIRELITH_ROBE_BOTTOM(
-		new Item(33003),
+		new Item(43803),
 		new Ingredient[]{new Ingredient(ItemID.ANCESTRAL_ROBE_BOTTOM), new Ingredient(ItemID.VIRTUS_ROBE_BOTTOM)},
 		50,
 		new Item(KANDARIN_ECHO_ORB),
@@ -201,7 +201,7 @@ public enum UpgradeItems {
 		new Item(31097),
 		new Ingredient[]{new Ingredient(30520), new Ingredient(31088)},
 		70,
-		new Item(33032),
+		new Item(43832),
 		"These boots are imbued with the power of Corrupted boots and Avernic treads. They will provide the best in slot stats for any style."
 	),
 

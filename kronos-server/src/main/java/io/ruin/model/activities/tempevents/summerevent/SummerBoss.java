@@ -29,8 +29,8 @@ public class SummerBoss extends NPCCombat {
 	private List<Player> damagingPlayers = new ArrayList<>();
 
 	public static final LootTable table = new LootTable().addTable(1,
-			new LootItem(33010, 1, 1, 1).broadcast(Broadcast.GLOBAL),
-			new LootItem(33007, 1, 1, 1).broadcast(Broadcast.GLOBAL),
+			new LootItem(43810, 1, 1, 1).broadcast(Broadcast.GLOBAL),
+			new LootItem(43807, 1, 1, 1).broadcast(Broadcast.GLOBAL),
 			new LootItem(ItemID.DRUIDIC_WREATH, 1, 1).broadcast(Broadcast.GLOBAL),
 			new LootItem(ItemID.SHINY_MINERALS, 50, 150, 6),
 			new LootItem(ItemID.GLISTENING_MINERALS, 50, 120, 4),

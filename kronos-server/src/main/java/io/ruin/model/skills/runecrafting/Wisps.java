@@ -29,10 +29,10 @@ public class Wisps {
 		public int runeId, rune2Id, rune3Id, rune4Id;
 
 
-		private static int LightWisp = 15023;
-		private static int AncientWisp = 15024;
-		private static int HolyWisp = 15025;
-		private static int DarkWisp = 15026;
+		private static int LightWisp = 20744;
+		private static int AncientWisp = 20745;
+		private static int HolyWisp = 20746;
+		private static int DarkWisp = 20747;
 
 		public static void register() {
 			NPCAction.register(LightWisp, "Harvest", (player, npc) -> Lightwisp(player, npc));

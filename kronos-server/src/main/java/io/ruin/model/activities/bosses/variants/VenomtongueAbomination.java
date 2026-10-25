@@ -23,7 +23,7 @@ public class VenomtongueAbomination extends BossVariant {
 	}
 
 
-	private static final int GFX_LASH = 4283;
+	private static final int GFX_LASH = 6690;
 	private static final int ANIM_ATTACK = 1552;
 	private static final int REACH = 2;
 

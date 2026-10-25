@@ -77,7 +77,7 @@ public class SuperiorGarden {
 		});
 		ObjectAction.register(obelisk, "set destination", (player, obj) -> WildernessObelisk.chooseDestination(player));
 		ObjectAction.register(obelisk, "teleport to destination", (player, obj) -> {
-			if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111 || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 31642) {
+			if (player.obeliskRedirectionScroll || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 13111 || player.getEquipment().getId(Equipment.SLOT_WEAPON) == 42442) {
 				if (player.obeliskDestination == null)
 					player.sendFilteredMessage("You need to set a destination before attempting to do this.");
 				else

@@ -37,9 +37,9 @@ public class FortuneInterface {
 	private static final String[] QUICK_LABELS = {"1M", "5M", "25M", "Custom", "All cash"};
 	/** Statue state model + idle seq per loc (BuildFortuneStatue). */
 	private static final Map<Integer, int[]> MODELS = Map.of(
-			StatueOfFortune.DORMANT, new int[]{61136, 16203},
-			StatueOfFortune.CHARGED, new int[]{61137, 16204},
-			StatueOfFortune.BLESSED, new int[]{61138, 16205});
+			StatueOfFortune.DORMANT, new int[]{65277, 16203},
+			StatueOfFortune.CHARGED, new int[]{65278, 16204},
+			StatueOfFortune.BLESSED, new int[]{65279, 16205});
 	private static final int MODEL_ZOOM = 3360, MODEL_PITCH = 110, MODEL_YAW = 0;
 
 	private static final class View {

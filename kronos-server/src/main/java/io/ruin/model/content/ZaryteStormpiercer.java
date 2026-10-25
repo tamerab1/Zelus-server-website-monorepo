@@ -8,7 +8,7 @@ import io.ruin.model.item.actions.ItemAction;
  * still lists "Drop" (an item record without op4 gets the client's default), so the refusal lives here.
  */
 public final class ZaryteStormpiercer {
-	public static final int ITEM = 31856;
+	public static final int ITEM = 42656;
 
 	private ZaryteStormpiercer() {
 	}

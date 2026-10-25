@@ -338,16 +338,16 @@ public enum CustomShop2 {
 		Currency.DONATOR,
 		new ShopItem[]{
 			// Top row: the Zelus donator exclusives (2026-10-15; no gloves), slots 0-9
-			new ShopItem(31794, 15000),  // Zelus Partyhat
-			new ShopItem(31796, 15000),  // Zelus H'ween Mask
-			new ShopItem(31798, 15000),  // Zelus Santa Hat
-			new ShopItem(31800, 8000),   // Zelus Relic Hood
-			new ShopItem(31802, 12000),  // Zelus Relic Coat
-			new ShopItem(31804, 12000),  // Zelus Relic Legs
-			new ShopItem(31806, 8000),   // Zelus Relic Boots
-			new ShopItem(31808, 35000),  // Zelus Scythe of Vitur
-			new ShopItem(31810, 20000),  // Zelus Cosmic Wings
-			new ShopItem(31812, 15000),  // Zelus Celestial Halo
+			new ShopItem(42594, 15000),  // Zelus Partyhat
+			new ShopItem(42596, 15000),  // Zelus H'ween Mask
+			new ShopItem(42598, 15000),  // Zelus Santa Hat
+			new ShopItem(42600, 8000),   // Zelus Relic Hood
+			new ShopItem(42602, 12000),  // Zelus Relic Coat
+			new ShopItem(42604, 12000),  // Zelus Relic Legs
+			new ShopItem(42606, 8000),   // Zelus Relic Boots
+			new ShopItem(42608, 35000),  // Zelus Scythe of Vitur
+			new ShopItem(42610, 20000),  // Zelus Cosmic Wings
+			new ShopItem(42612, 15000),  // Zelus Celestial Halo
 
 			// Line 1 (was the top row)
 			new ShopItem(11862, 10000),  // Black partyhat
@@ -451,7 +451,7 @@ public enum CustomShop2 {
 			new ShopItem(20240, 20),     // Crier coat
 			new ShopItem(12319, 20),     // Crier hat
 			new ShopItem(2528, 500),     // Donator lamp
-			new ShopItem(33020, 750),    // Perk exp lamp
+			new ShopItem(43820, 750),    // Perk exp lamp
 			new ShopItem(59600, 1),      // Donator ticket
 			new ShopItem(59980, 5000),   // Verdant pet
 			new ShopItem(59977, 7000),   // Frostbane pet
@@ -976,7 +976,7 @@ public enum CustomShop2 {
 			new ShopItem(21295, 120000), // Infernal cape
 			new ShopItem(28951, 100000), // Dizana's quiver
 			new ShopItem(6199, 1000),    // Mystery box
-			new ShopItem(32002, 50000),  // Summer mystery box
+			new ShopItem(42802, 50000),  // Summer mystery box
 			new ShopItem(30570, 10000),  // Perk point scroll
 			// Line 2
 			new ShopItem(30460, 1000),   // Double exp scroll (30 min)

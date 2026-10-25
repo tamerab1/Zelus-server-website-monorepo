@@ -103,7 +103,7 @@ public class EchoTreasureRoom extends Dominion {
 
 			player.set("dominion_of_echos_rewarded", true);
 			// Spawn a Reward Object into the room
-			GameObject.spawn(60000, pos(map, 9, 37), 10, 0);
+			GameObject.spawn(65045, pos(map, 9, 37), 10, 0);
 			GameObject.spawn(-1, pos(map, 8, 37), 4, 0);
 
 			int petBaseRate = player.doePetRate;

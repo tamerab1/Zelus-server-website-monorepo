@@ -7,7 +7,7 @@ import io.ruin.model.map.object.actions.ObjectAction;
 
 public class ScratchMachine {
 
-	private static final int SCRATCH_MACHINE_ID = 60013;
+	private static final int SCRATCH_MACHINE_ID = 65058;
 	private static final int SCRATCH_CARD_ID = 10600;
 
 	public static void register() {

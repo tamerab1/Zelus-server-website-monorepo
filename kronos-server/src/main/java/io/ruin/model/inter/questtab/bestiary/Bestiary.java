@@ -144,7 +144,7 @@ public class Bestiary {
 		String entries = buildEntries(results);
 
 		player.getPacketSender().sendIfEvents(847, 16, 0, results.size(), 2);
-		player.getPacketSender().sendClientScript(10191, "is", results.size(), entries);
+		player.getPacketSender().sendClientScript(14774, "is", results.size(), entries);
 	}
 
 	private static void sendBoxes(Player player) {
@@ -160,7 +160,7 @@ public class Bestiary {
 		String entries = buildEntries(results);
 
 		player.getPacketSender().sendIfEvents(847, 16, 0, results.size(), 2);
-		player.getPacketSender().sendClientScript(10191, "is", results.size(), entries);
+		player.getPacketSender().sendClientScript(14774, "is", results.size(), entries);
 	}
 
 	private static void clickEntry(Player player, int slot) {

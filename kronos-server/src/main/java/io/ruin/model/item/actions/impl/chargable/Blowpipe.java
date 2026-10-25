@@ -43,7 +43,7 @@ public class Blowpipe {
 		RUNE(811, RangedWeapon.RUNE_DART.data),
 		DRAGON(11230, RangedWeapon.DRAGON_DART.data),
 		AMETHYST(25849, RangedWeapon.AMETHYST_DART.data),
-		DRYGORE(33011, RangedWeapon.AMETHYST_DART.data)
+		DRYGORE(43811, RangedWeapon.AMETHYST_DART.data)
 		;
 
 		public final int id;
@@ -171,7 +171,7 @@ public class Blowpipe {
 	 */
 
 	private static void load(Player player, Item blowpipe, Item dartItem, Dart dart) {
-		if(dartItem.getId() == 33011) {
+		if(dartItem.getId() == 43811) {
 			player.sendMessage("This weapon cannot hold these kind of darts.");
 			return;
 		}

@@ -11,7 +11,7 @@ import io.ruin.utility.Broadcast;
 
 public class ZelusChest {
 
-	private static final int ZELUS_CHEST_ID = 60012;
+	private static final int ZELUS_CHEST_ID = 65057;
 	private static final int Z_GOLDEN_KEY = 59960;
 
 	// Same tiers/odds as the Enhanced crystal key chest (io.ruin.model.map.object.actions.impl.

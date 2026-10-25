@@ -29,7 +29,7 @@ import java.util.Map;
 public final class CapeForge {
 
 	public static final int INTERFACE = 1167;
-	public static final int UPGRADER_OBJECT = 60015;
+	public static final int UPGRADER_OBJECT = 65060;
 	/** "Cape Forge Master" (was 'Lecherous' Lee), spawned at home 3095,3504 (build_cape_forge_master.sh dresses it). */
 	public static final int FORGE_MASTER = 3873;
 	private static final int CLOSE = 2, TITLE = 3, PREVIEW_NAME = 9, MODEL = 14, DESC = 15, FIRST_REQ = 18,
@@ -42,7 +42,7 @@ public final class CapeForge {
 	private static final int TOKKUL = 6529, CRYSTAL_SHARD = 23962, ANCIENT_SHARD = 19677, ZULRAHS_SCALES = 12934,
 		STARDUST = 25527, NIHIL_SHARD = 26231;
 	/** The themed max hoods (MaxCape.MaxCapes GLACIAL / COSMIC / VOID), handed out with the themed max capes. */
-	private static final int GLACIAL_MAX_HOOD = 31412, COSMIC_MAX_HOOD = 31414, VOID_MAX_HOOD = 31416;
+	private static final int GLACIAL_MAX_HOOD = 42212, COSMIC_MAX_HOOD = 42214, VOID_MAX_HOOD = 42216;
 
 	private static final String GREEN = "<col=00ff00>", RED = "<col=ff5050>", WHITE = "<col=ffffff>", GREY = "<col=9a9a9a>",
 		GOLD = "<col=ffc35a>", END = "</col>";
@@ -50,20 +50,20 @@ public final class CapeForge {
 
 	/** Grid order = enum order: row 1 themed max capes, row 2 themed Infernal capes, row 3 themed Fire capes. */
 	enum Recipe {
-		VOID_MAX(31410, VOID_MAX_HOOD, "Void<br>Max cape", INFERNAL_MAX_CAPE,
+		VOID_MAX(42210, VOID_MAX_HOOD, "Void<br>Max cape", INFERNAL_MAX_CAPE,
 			"Cut from the space between worlds. Same stats as an Infernal max cape; comes with its hood.",
 			new Item(TOKKUL, 250_000), new Item(NIHIL_SHARD, 3_500)),
-		GLACIAL_MAX(31406, GLACIAL_MAX_HOOD, "Glacial<br>Max cape", INFERNAL_MAX_CAPE,
+		GLACIAL_MAX(42206, GLACIAL_MAX_HOOD, "Glacial<br>Max cape", INFERNAL_MAX_CAPE,
 			"Living ice flowing like lava. Same stats as an Infernal max cape; comes with its hood.",
 			new Item(TOKKUL, 250_000), new Item(CRYSTAL_SHARD, 750)),
-		COSMIC_MAX(31408, COSMIC_MAX_HOOD, "Cosmic<br>Max cape", INFERNAL_MAX_CAPE,
+		COSMIC_MAX(42208, COSMIC_MAX_HOOD, "Cosmic<br>Max cape", INFERNAL_MAX_CAPE,
 			"A swirl of starlight and nebula. Same stats as an Infernal max cape; comes with its hood.",
 			new Item(TOKKUL, 250_000), new Item(STARDUST, 7_500)),
-		VOID(31404, -1, "Void<br>Cape", INFERNAL_CAPE, "Cut from the space between worlds. Same stats as an Infernal cape.",
+		VOID(42204, -1, "Void<br>Cape", INFERNAL_CAPE, "Cut from the space between worlds. Same stats as an Infernal cape.",
 			new Item(TOKKUL, 200_000), new Item(NIHIL_SHARD, 2_500)),
-		GLACIAL(31400, -1, "Glacial<br>Cape", INFERNAL_CAPE, "Living ice flowing like lava. Same stats as an Infernal cape.",
+		GLACIAL(42200, -1, "Glacial<br>Cape", INFERNAL_CAPE, "Living ice flowing like lava. Same stats as an Infernal cape.",
 			new Item(TOKKUL, 200_000), new Item(CRYSTAL_SHARD, 500)),
-		COSMIC(31402, -1, "Cosmic<br>Cape", INFERNAL_CAPE, "A swirl of starlight and nebula. Same stats as an Infernal cape.",
+		COSMIC(42202, -1, "Cosmic<br>Cape", INFERNAL_CAPE, "A swirl of starlight and nebula. Same stats as an Infernal cape.",
 			new Item(TOKKUL, 200_000), new Item(STARDUST, 5_000)),
 		VENOMOUS_FIRE(59985, -1, "Venomous<br>Fire cape", FIRE_CAPE, "A fire cape steeped in Zulrah's venom. Same stats as a Fire cape.",
 			new Item(TOKKUL, 50_000), new Item(ZULRAHS_SCALES, 25_000)),

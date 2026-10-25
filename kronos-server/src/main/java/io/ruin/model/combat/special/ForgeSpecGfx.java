@@ -14,26 +14,26 @@ import java.util.Set;
 public final class ForgeSpecGfx {
 
 	/** Bloodforged godsword .. Riftbreaker: every forge weapon with a special attack. */
-	private static final Set<Integer> FORGE_WEAPONS = Set.of(31524, 31526, 31528, 31530, 31532, 31534, 31536, 31538,
-			31574, 31576, 31578, 31580);
+	private static final Set<Integer> FORGE_WEAPONS = Set.of(42324, 42326, 42328, 42330, 42332, 42334, 42336, 42338,
+			42374, 42376, 42378, 42380);
 
 	private static final Map<Integer, Integer> CRIMSON = Map.ofEntries(
-			Map.entry(1211, 4400), // AGS
-			Map.entry(1212, 4401), // BGS
-			Map.entry(1171, 4402), // dragon claws
-			Map.entry(252, 4403), // dragon dagger
-			Map.entry(347, 4404), // dragon scimitar
-			Map.entry(1292, 4405), // dragon warhammer
-			Map.entry(340, 4406), // granite maul
-			Map.entry(2363, 4407), // voidwaker
-			Map.entry(301, 4408), // armadyl crossbow bolt
-			Map.entry(344, 4409), // ballista impact
-			Map.entry(1099, 4410), // dark bow dragon heads
-			Map.entry(1101, 4411), // dark bow smoke
-			Map.entry(1100, 4412), // dark bow dragon impact
-			Map.entry(1103, 4413), // dark bow smoke impact
-			Map.entry(698, 4414), // dragon crossbow bolt
-			Map.entry(1466, 4415)); // dragon crossbow blast
+			Map.entry(1211, 6807), // AGS
+			Map.entry(1212, 6808), // BGS
+			Map.entry(1171, 6809), // dragon claws
+			Map.entry(252, 6810), // dragon dagger
+			Map.entry(347, 6811), // dragon scimitar
+			Map.entry(1292, 6812), // dragon warhammer
+			Map.entry(340, 6813), // granite maul
+			Map.entry(2363, 6814), // voidwaker
+			Map.entry(301, 6815), // armadyl crossbow bolt
+			Map.entry(344, 6816), // ballista impact
+			Map.entry(1099, 6817), // dark bow dragon heads
+			Map.entry(1101, 6818), // dark bow smoke
+			Map.entry(1100, 6819), // dark bow dragon impact
+			Map.entry(1103, 6820), // dark bow smoke impact
+			Map.entry(698, 6821), // dragon crossbow bolt
+			Map.entry(1466, 6822)); // dragon crossbow blast
 
 	private ForgeSpecGfx() {
 	}

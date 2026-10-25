@@ -114,7 +114,7 @@ public class DrygoreBlowpipe {
 		RUNE(811, RangedWeapon.RUNE_DART.data),
 		DRAGON(11230, RangedWeapon.DRAGON_DART.data),
 		AMETHYST(25849, RangedWeapon.AMETHYST_DART.data),
-		DRYGORE(33011, RangedWeapon.AMETHYST_DART.data)
+		DRYGORE(43811, RangedWeapon.AMETHYST_DART.data)
 		;
 
 		private final int id;

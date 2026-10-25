@@ -17,12 +17,12 @@ import io.ruin.model.map.Projectile;
 //splash; spec bar via cache enums 906 / 1739 (stormpiercer_spec_enums.txt).
 public class GlacialEvoke implements Special {
 
-	private static final Projectile ICE_BOLT = new Projectile(4428, 38, 36, 41, 51, 5, 5, 11);
+	private static final Projectile ICE_BOLT = new Projectile(6835, 38, 36, 41, 51, 5, 5, 11);
 	private static final int ICE_SPLASH = 369, FREEZE_SECONDS = 5;
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 31856;
+		return def.id == 42656;
 	}
 
 	@Override

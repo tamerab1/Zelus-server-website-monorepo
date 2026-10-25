@@ -34,7 +34,7 @@ public class DonatorPointStore extends NewShop {
 				new ShopItem(new Item(30448), 3050, ShopCategories.TREASURES, null, true),
 				new ShopItem(new Item(30449), 4850, ShopCategories.TREASURES, null, true),
 				new ShopItem(new Item(2528), 800, ShopCategories.TREASURES, null, true),
-				new ShopItem(new Item(33020), 1000, ShopCategories.TREASURES, null, true),
+				new ShopItem(new Item(43820), 1000, ShopCategories.TREASURES, null, true),
 				new ShopItem(new Item(ItemID.BLACK_PARTYHAT), 12000, ShopCategories.RARES, null, true),
 				new ShopItem(new Item(ItemID.BLACK_HWEEN_MASK), 7500, ShopCategories.RARES, null, true),
 				new ShopItem(new Item(ItemID.BLACK_SANTA_HAT), 8500, ShopCategories.RARES, null, true),

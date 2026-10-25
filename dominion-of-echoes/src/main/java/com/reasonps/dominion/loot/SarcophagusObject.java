@@ -23,7 +23,7 @@ public class SarcophagusObject {
 	private static final int RAID_REWARD_INTERFACE_CHILD = RAID_REWARD_INTERFACE << 16;
 
 	public static void register() {
-		ObjectAction.register(60000, "Search", SarcophagusObject::openSarcophagus);
+		ObjectAction.register(65045, "Search", SarcophagusObject::openSarcophagus);
 	}
 
 	private static void openSarcophagus(Player player, GameObject casket) {

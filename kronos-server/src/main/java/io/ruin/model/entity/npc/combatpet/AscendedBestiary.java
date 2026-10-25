@@ -29,7 +29,7 @@ import java.util.List;
  */
 public final class AscendedBestiary {
 
-	public static final int ID = 31746;
+	public static final int ID = 42546;
 
 	public static final String SUMMON_HINT = "Combat pets are summoned with the Spawn option of a charged Ascended Bestiary.";
 

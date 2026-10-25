@@ -30,8 +30,8 @@ public enum Pickaxe {
 	// correctly. Fix: seq 14455/14456 are new sequences (CloneSeqWithHandItem, cloned from Dragon's
 	// 7139) with rightHandItem repointed at 60400/60405 respectively -- confirmed via CheckSeqHandItems
 	// after applying.
-	DRACONIC(82, 60400, 48, 14455, 14455),
-	DRACO_PICKAXE(83, 60405, 50, 14456, 14456);;
+	DRACONIC(82, 60400, 48, 20888, 20888),
+	DRACO_PICKAXE(83, 60405, 50, 20889, 20889);;
 
 	public final int levelReq, id, points, regularAnimationID, crystalAnimationID;
 

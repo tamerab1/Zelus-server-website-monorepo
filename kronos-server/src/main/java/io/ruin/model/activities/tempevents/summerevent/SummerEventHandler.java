@@ -24,7 +24,7 @@ public class SummerEventHandler {
 				new LootItem(2528, 1, 1).broadcast(Broadcast.GLOBAL)
 				)
 		.addTable(1,
-			new LootItem(33016, 1, 1).broadcast(Broadcast.GLOBAL)
+			new LootItem(43816, 1, 1).broadcast(Broadcast.GLOBAL)
 			);
 
 	public static LootTable summerImpLootTable = new LootTable()
@@ -38,7 +38,7 @@ public class SummerEventHandler {
 			new LootItem(2528, 1, 1).broadcast(Broadcast.GLOBAL)
 		)
 		.addTable(1,
-			new LootItem(33015, 1, 1).broadcast(Broadcast.GLOBAL)
+			new LootItem(43815, 1, 1).broadcast(Broadcast.GLOBAL)
 		);
 
 

@@ -67,7 +67,7 @@ public class DailyLoginInterface {
 			new Item(ItemID.BLUE_PARTYHAT, 1),
 			new Item(ItemID.BANDOS_TASSETS, 1),
 			new Item(30452, 1),                              // Slayer mystery box
-			new Item(33020, 1),                              // Perk Exp Lamp
+			new Item(43820, 1),                              // Perk Exp Lamp
 			new Item(DONATOR_POINTS_ICON, 350),              // Day 15: 350 Donator Points (see DONATOR_POINTS_DAYS)
 			new Item(ItemID.COINS_995, 10000000),
 			new Item(ItemID.ABYSSAL_WHIP, 1),

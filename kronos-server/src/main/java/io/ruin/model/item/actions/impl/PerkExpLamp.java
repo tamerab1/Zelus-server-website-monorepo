@@ -7,7 +7,7 @@ import io.ruin.model.item.actions.ItemAction;
 public class PerkExpLamp {
 	public static void register() {
 		int perkExp = 250_000; //Change this value to whatever
-		ItemAction.registerInventory(33020, "rub", (player, item) -> {
+		ItemAction.registerInventory(43820, "rub", (player, item) -> {
 			player.dialogue(
 				new YesNoDialogue(
 					"Are you sure you want to rub this lamp?",

@@ -16,7 +16,7 @@ import io.ruin.model.item.actions.impl.pet.Pet;
  */
 public final class CombatPetUpgrades {
 
-	public static final int ASTRAL_SPORE = 31748;
+	public static final int ASTRAL_SPORE = 42548;
 
 	/** Spores needed for T1 -> T2 and T2 -> T3. */
 	static final int[] SPORES = { 1, 3 };

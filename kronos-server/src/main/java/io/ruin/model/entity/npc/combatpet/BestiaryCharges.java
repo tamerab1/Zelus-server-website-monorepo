@@ -26,8 +26,8 @@ import io.ruin.model.item.attributes.AttributeExtensions;
  */
 public final class BestiaryCharges {
 
-	public static final int EMPTY_ID = 31814;
-	public static final int SHARD = 31816;
+	public static final int EMPTY_ID = 42614;
+	public static final int SHARD = 42616;
 
 	public static final int MAX_CHARGES = 2000;
 	public static final int ACTIVATE_AT = 100;

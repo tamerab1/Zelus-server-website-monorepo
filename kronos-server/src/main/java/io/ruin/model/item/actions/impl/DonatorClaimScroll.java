@@ -41,7 +41,7 @@ public class DonatorClaimScroll {
 				}),
 				new Option("Nevermind.")));
 		});
-		ItemAction.registerInventory(32001, "claim", (player, item) -> {
+		ItemAction.registerInventory(42801, "claim", (player, item) -> {
 			if (player.hasFreePerkUnlock) {
 				player.sendMessage("You are unable to claim another max perk unlock until you redeem your current unlock.");
 				return;

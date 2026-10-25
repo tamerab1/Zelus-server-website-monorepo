@@ -705,7 +705,7 @@ public class Gamble extends ItemContainer {
 			getGambleData().items.put(item.getId(), newAmount);
 		}
 
-		targetGamble.player.getPacketSender().sendClientScript(10060, "iii", 46137372, item.getSlot(), 46137417);
+		targetGamble.player.getPacketSender().sendClientScript(14643, "iii", 46137372, item.getSlot(), 46137417);
 		targetGamble.player.acceptDelay.delaySeconds(3);
 
 		targetGamble.player.sendMessage("Gamble Stake removal: " + moved + "x " + item.getDef().name + " removed!");

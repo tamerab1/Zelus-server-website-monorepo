@@ -21,7 +21,7 @@ public class EchoOrbMysteryBox {
 	);
 
 	public static void register() {
-		ItemAction.registerInventory(33017, "open", (player, item) -> {
+		ItemAction.registerInventory(43817, "open", (player, item) -> {
 			player.lock();
 			player.closeDialogue();
 			Item reward;

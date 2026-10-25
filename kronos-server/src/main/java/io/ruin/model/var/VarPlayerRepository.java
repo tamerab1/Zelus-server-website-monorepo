@@ -1288,14 +1288,14 @@ public class VarPlayerRepository {
 	// 34051, so growing one silently rendered growth state on all 9 objects at once. New
 	// dedicated varbits (17796-17803, each a whole new varp 4829-4836) added to the cache
 	// via .dev/cache-restore-tool/src/AddRedwoodVarbits.java + RepointRedwoodObjects.java.
-	public static final VarPlayerRepository FARMING_PATCH_14 = varpbit(17796, false);
-	public static final VarPlayerRepository FARMING_PATCH_15 = varpbit(17797, false);
-	public static final VarPlayerRepository FARMING_PATCH_16 = varpbit(17798, false);
-	public static final VarPlayerRepository FARMING_PATCH_17 = varpbit(17799, false);
-	public static final VarPlayerRepository FARMING_PATCH_18 = varpbit(17800, false);
-	public static final VarPlayerRepository FARMING_PATCH_19 = varpbit(17801, false);
-	public static final VarPlayerRepository FARMING_PATCH_20 = varpbit(17802, false);
-	public static final VarPlayerRepository FARMING_PATCH_21 = varpbit(17803, false);
+	public static final VarPlayerRepository FARMING_PATCH_14 = varpbit(25641, false);
+	public static final VarPlayerRepository FARMING_PATCH_15 = varpbit(25642, false);
+	public static final VarPlayerRepository FARMING_PATCH_16 = varpbit(25643, false);
+	public static final VarPlayerRepository FARMING_PATCH_17 = varpbit(25644, false);
+	public static final VarPlayerRepository FARMING_PATCH_18 = varpbit(25645, false);
+	public static final VarPlayerRepository FARMING_PATCH_19 = varpbit(25646, false);
+	public static final VarPlayerRepository FARMING_PATCH_20 = varpbit(25647, false);
+	public static final VarPlayerRepository FARMING_PATCH_21 = varpbit(25648, false);
 	public static final VarPlayerRepository STORAGE_RAKE = varpbit(1435, true);
 	public static final VarPlayerRepository STORAGE_SEED_DIBBER = varpbit(1436, true);
 	public static final VarPlayerRepository STORAGE_SPADE = varpbit(1437, true);

@@ -20,7 +20,7 @@ public class Probita {
 	public List<Integer> getPetsToReturn(Player player) {
 		List<Integer> pets = new ArrayList<>();
 		for (Integer petItemId : player.petItemIdsObtained) {
-			if (petItemId == 33008 || petItemId == 33009 || petItemId == 33010 || petItemId == 30596 || pets.contains(petItemId))
+			if (petItemId == 43808 || petItemId == 43809 || petItemId == 43810 || petItemId == 30596 || pets.contains(petItemId))
 				continue;
 			if (player.getInventory().contains(petItemId) || player.getBank().contains(petItemId) || (player.pet != null && player.pet.itemId == petItemId))
 				continue;

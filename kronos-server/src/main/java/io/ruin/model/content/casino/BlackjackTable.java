@@ -22,7 +22,7 @@ import io.ruin.model.map.object.actions.ObjectAction;
  * behind the table's straight side at 3123,3463 facing north: Talk-to greets, Play Blackjack opens the same window.
  */
 public class BlackjackTable {
-	public static final int OBJECT = 62442, DEALER = 30609;
+	public static final int OBJECT = 65522, DEALER = 30609;
 	private static final Position DEALER_SPOT = new Position(3123, 3463, 0);
 
 	public static void register() {

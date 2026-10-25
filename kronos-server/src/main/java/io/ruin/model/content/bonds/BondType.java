@@ -25,42 +25,42 @@ public enum BondType {
 	// Perk text describes what each tier grants in total (it's what Inspect and ::bonds show), and must
 	// match what BondPerks actually implements. Combat perks apply against NPCs only. Each tier is a
 	// few short lines separated by \n (max ~42 chars each -- the ::bonds scroll doesn't wrap).
-	MELEE("Bond of the Blood Titan", "Melee", 60277, 31153, 31340,
+	MELEE("Bond of the Blood Titan", "Melee", 60277, 41953, 42140,
 			"Heal 0.5% of melee damage dealt\n2% chance to save spec energy",
 			"Heal 1% of melee damage dealt\n4% spec save | +2 melee strength",
 			"Heal 1.5% of melee damage dealt\n6% spec save | +2 melee strength\n5% cleave to 2 adjacent monsters\n(cleave only in multi-combat)",
 			"Heal 2% of melee damage dealt\n8% spec save | +4 melee strength\n10% cleave to 2 adjacent monsters",
 			"Heal 2.5% of melee damage dealt\n10% spec save | +4 melee strength\n20% cleave to 2 adjacent monsters\nMonster stat drains halved"),
 
-	SLAYER("Bond of the Slayer King", "Slayer & Bossing", 60278, 31154, 31350,
+	SLAYER("Bond of the Slayer King", "Slayer & Bossing", 60278, 41954, 42150,
 			"+10% Slayer points per task",
 			"+10% Slayer points per task\nTask skip & block costs halved",
 			"+15% Slayer points | half skip costs\nSuperiors appear 25% more often",
 			"+20% Slayer points | half skip costs\nSuperiors appear 25% more often\n+5% accuracy & damage vs your task",
 			"Everything from T4\nRare drops (1/100+) 5% more likely"),
 
-	MAGIC("Bond of the Astral Archmage", "Magic", 60279, 31155, 31360,
+	MAGIC("Bond of the Astral Archmage", "Magic", 60279, 41955, 42160,
 			"Free Air runes\n3% chance for Spell Echo (50% dmg)",
 			"Free Air & Water runes\n6% Spell Echo | +2% magic damage",
 			"Free Air, Water & Earth runes\n9% Spell Echo | +4% magic damage",
 			"Free Air, Water, Earth & Fire runes\n12% Spell Echo | +6% magic damage",
 			"All basic elemental runes free\n15% Spell Echo | +8% magic damage\nMagic hits 40+ restore 2 Prayer"),
 
-	UTILITY("Bond of the Sovereign Monarch", "Utility", 60280, 31156, 31370,
+	UTILITY("Bond of the Sovereign Monarch", "Utility", 60280, 41956, 42170,
 			"Infinite run energy",
 			"Infinite run energy\n2x HP & spec regen near banks/home",
 			"Infinite run | 2x safe-zone regen\nDrops go straight to your inventory",
 			"Everything from T3\nPocket Bank: ::bank every 10 mins\n(not in Wilderness or PvP areas)\nPotion & food boosts last 10% longer",
 			"Everything from T4\nDrops that don't fit go to your bank\n(toggle with ::vaultloot)"),
 
-	SKILLING("Bond of the Artisan", "Skilling", 60281, 31157, 31380,
+	SKILLING("Bond of the Artisan", "Skilling", 60281, 41957, 42180,
 			"+5% non-combat skill XP",
 			"+5% skilling XP\n10% double resources\n(Mining, Woodcutting, Fishing)",
 			"+5% skilling XP | 10% double\n15% chance to save bars, leather\nor herbs when making items",
 			"+5% skilling XP | 10% double\n15% material saving\n25% of resources go to your bank",
 			"+15% skilling XP | 35% double\n15% material saving | 25% auto-bank\n10% chance: resources become coins"),
 
-	RANGED("Bond of the Void Deadeye", "Ranged", 60282, 31158, 31390,
+	RANGED("Bond of the Void Deadeye", "Ranged", 60282, 41958, 42190,
 			"20% chance to save ammo\nIgnore 3% of target's defence",
 			"40% ammo saving | +2 ranged str\nIgnore 6% of target's defence",
 			"60% ammo saving | +2 ranged str\nIgnore 9% of target's defence\nHit streak: +5% accuracy\n(streak = 2+ hits in a row)",

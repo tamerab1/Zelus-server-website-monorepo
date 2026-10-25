@@ -49,7 +49,7 @@ public class CommandHandlerBeta {
 			}
 
 			case "max_mage" -> {
-				var items = List.of(33000, 33001, 33002, 33003, 33021, 30376, 30509, 30520, 30378, 30380, 30591);
+				var items = List.of(43800, 43801, 43802, 43803, 43821, 30376, 30509, 30520, 30378, 30380, 30591);
 				for (var id : items) {
 					player.getInventory().add(id);
 				}
@@ -140,7 +140,7 @@ public class CommandHandlerBeta {
 						30462,
 						30448,
 						30449,
-						32000));
+						42800));
 
 				var ids = NumberUtils.toIntArray(args[0]);
 				var amount = args.length > 1 ? NumberUtils.intValue(args[1]) : 1;

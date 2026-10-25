@@ -20,7 +20,7 @@ public class KronosRejuvinationPool {
 
 	private static void heal(Player player) {
 		player.animate(833);
-		player.graphics(4295); // cyan copy of 1039 to match the reskinned pool (pool_cyan_gfx.txt)
+		player.graphics(6702); // cyan copy of 1039 to match the reskinned pool (pool_cyan_gfx.txt)
 		player.getStats().restore(true);
 		player.getMovement().restoreEnergy(100);
 		player.curePoison(1);

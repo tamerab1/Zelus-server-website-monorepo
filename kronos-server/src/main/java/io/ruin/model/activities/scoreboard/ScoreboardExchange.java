@@ -63,40 +63,40 @@ public final class ScoreboardExchange {
 	}
 
 	private static final Stock[] STOCK = {
-		new Stock(Category.WILDSTALKER, 31666, 500), // Wildstalker top
-		new Stock(Category.WILDSTALKER, 31668, 500), // Wildstalker trousers
-		new Stock(Category.WILDSTALKER, 31664, 350), // Wildstalker hood
-		new Stock(Category.WILDSTALKER, 31670, 250), // Wildstalker boots
+		new Stock(Category.WILDSTALKER, 42466, 500), // Wildstalker top
+		new Stock(Category.WILDSTALKER, 42468, 500), // Wildstalker trousers
+		new Stock(Category.WILDSTALKER, 42464, 350), // Wildstalker hood
+		new Stock(Category.WILDSTALKER, 42470, 250), // Wildstalker boots
 		new Stock(Category.CLOWN, 22689, 300),       // Clown mask
 		new Stock(Category.CLOWN, 22695, 250),       // Clown gown
 		new Stock(Category.CLOWN, 22698, 250),       // Clown trousers
 		new Stock(Category.CLOWN, 22692, 180),       // Clown bow tie
 		new Stock(Category.CLOWN, 22701, 180),       // Clown shoes
 		// round 2 (2026-10-21, .dev/cache-restore-tool/sbx2_*.txt): recoloured Ankou sets, 5 pieces each
-		new Stock(Category.ANKOU, 31914, 600),       // Crimson Ankou mask
-		new Stock(Category.ANKOU, 31916, 600),       // Crimson Ankou top
-		new Stock(Category.ANKOU, 31918, 600),       // Crimson Ankou leggings
-		new Stock(Category.ANKOU, 31920, 600),       // Crimson Ankou gloves
-		new Stock(Category.ANKOU, 31922, 600),       // Crimson Ankou socks
-		new Stock(Category.ANKOU, 31924, 600),       // Verdant Ankou mask
-		new Stock(Category.ANKOU, 31926, 600),       // Verdant Ankou top
-		new Stock(Category.ANKOU, 31928, 600),       // Verdant Ankou leggings
-		new Stock(Category.ANKOU, 31930, 600),       // Verdant Ankou gloves
-		new Stock(Category.ANKOU, 31932, 600),       // Verdant Ankou socks
-		new Stock(Category.ANKOU, 31934, 600),       // Abyssal Ankou mask
-		new Stock(Category.ANKOU, 31936, 600),       // Abyssal Ankou top
-		new Stock(Category.ANKOU, 31938, 600),       // Abyssal Ankou leggings
-		new Stock(Category.ANKOU, 31940, 600),       // Abyssal Ankou gloves
-		new Stock(Category.ANKOU, 31942, 600),       // Abyssal Ankou socks
-		new Stock(Category.ANKOU, 31944, 750),       // Celestial Ankou mask
-		new Stock(Category.ANKOU, 31946, 750),       // Celestial Ankou top
-		new Stock(Category.ANKOU, 31948, 750),       // Celestial Ankou leggings
-		new Stock(Category.ANKOU, 31950, 750),       // Celestial Ankou gloves
-		new Stock(Category.ANKOU, 31952, 750),       // Celestial Ankou socks
-		new Stock(Category.RARES, 31954, 2500),      // Starwoven partyhat
-		new Stock(Category.RARES, 31956, 2500),      // Gildshadow partyhat
-		new Stock(Category.RARES, 31958, 1500),      // Stormcoil whip
-		new Stock(Category.RARES, 31960, 1500),      // Magmatide whip
+		new Stock(Category.ANKOU, 42714, 600),       // Crimson Ankou mask
+		new Stock(Category.ANKOU, 42716, 600),       // Crimson Ankou top
+		new Stock(Category.ANKOU, 42718, 600),       // Crimson Ankou leggings
+		new Stock(Category.ANKOU, 42720, 600),       // Crimson Ankou gloves
+		new Stock(Category.ANKOU, 42722, 600),       // Crimson Ankou socks
+		new Stock(Category.ANKOU, 42724, 600),       // Verdant Ankou mask
+		new Stock(Category.ANKOU, 42726, 600),       // Verdant Ankou top
+		new Stock(Category.ANKOU, 42728, 600),       // Verdant Ankou leggings
+		new Stock(Category.ANKOU, 42730, 600),       // Verdant Ankou gloves
+		new Stock(Category.ANKOU, 42732, 600),       // Verdant Ankou socks
+		new Stock(Category.ANKOU, 42734, 600),       // Abyssal Ankou mask
+		new Stock(Category.ANKOU, 42736, 600),       // Abyssal Ankou top
+		new Stock(Category.ANKOU, 42738, 600),       // Abyssal Ankou leggings
+		new Stock(Category.ANKOU, 42740, 600),       // Abyssal Ankou gloves
+		new Stock(Category.ANKOU, 42742, 600),       // Abyssal Ankou socks
+		new Stock(Category.ANKOU, 42744, 750),       // Celestial Ankou mask
+		new Stock(Category.ANKOU, 42746, 750),       // Celestial Ankou top
+		new Stock(Category.ANKOU, 42748, 750),       // Celestial Ankou leggings
+		new Stock(Category.ANKOU, 42750, 750),       // Celestial Ankou gloves
+		new Stock(Category.ANKOU, 42752, 750),       // Celestial Ankou socks
+		new Stock(Category.RARES, 42754, 2500),      // Starwoven partyhat
+		new Stock(Category.RARES, 42756, 2500),      // Gildshadow partyhat
+		new Stock(Category.RARES, 42758, 1500),      // Stormcoil whip
+		new Stock(Category.RARES, 42760, 1500),      // Magmatide whip
 		new Stock(Category.RARES, 60262, 1200),      // Souly Wings
 	};
 

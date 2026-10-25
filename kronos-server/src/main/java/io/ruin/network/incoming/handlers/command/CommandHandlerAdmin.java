@@ -777,7 +777,7 @@ public class CommandHandlerAdmin {
 				}
 				// "::testallbosses new" = round 2 (2026-10-20): 16217-16225
 				boolean round2 = args.length > 0 && args[0].equalsIgnoreCase("new");
-				int first = round2 ? 16217 : 16200, last = round2 ? 16225 : 16214;
+				int first = round2 ? 21938 : 21921, last = round2 ? 21946 : 21935;
 				int x = player.getPosition().getX() + 2, y = player.getPosition().getY(), z = player.getPosition().getZ();
 				for (int id = first; id <= last; id++) {
 					NPCType def = NPCType.get(id);

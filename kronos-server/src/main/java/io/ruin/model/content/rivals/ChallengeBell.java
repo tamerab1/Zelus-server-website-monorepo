@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public final class ChallengeBell {
 
-	public static final int BELL = 62396;
+	public static final int BELL = 65476;
 	public static final Position SPOT = new Position(3355, 3231, 0);
 
 	private static final long PLAYER_COOLDOWN_MS = 15 * 60_000L, GLOBAL_COOLDOWN_MS = 2 * 60_000L;

@@ -18,12 +18,12 @@ public class ArmadylGodsword implements Special {
 
 	// Wilderness Forge upgrade. Its spec uses seq 14457: a copy of 7644 with the forced
 	// right-hand item (the regular AGS) stripped, so the wielded model shows.
-	private static final int TEMPEST_GODSWORD = 31524;
-	private static final int TEMPEST_SPEC_ANIM = 14457;
+	private static final int TEMPEST_GODSWORD = 42324;
+	private static final int TEMPEST_SPEC_ANIM = 20890;
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.equalsIgnoreCase("armadyl godsword") || def.id == TEMPEST_GODSWORD || def.id == 31784; // + AGS (celestial)
+		return name.equalsIgnoreCase("armadyl godsword") || def.id == TEMPEST_GODSWORD || def.id == 42584; // + AGS (celestial)
 	}
 
 	@Override

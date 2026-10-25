@@ -25,7 +25,7 @@ public class DragonCrossbow implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 21902 || def.id == 31578; // 31578 = Hellfire crossbow (Wilderness Forge)
+		return def.id == 21902 || def.id == 42378; // 31578 = Hellfire crossbow (Wilderness Forge)
 	}
 
 	@Override

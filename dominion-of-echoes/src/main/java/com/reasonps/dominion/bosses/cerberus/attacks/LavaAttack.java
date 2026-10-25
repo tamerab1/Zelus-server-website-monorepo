@@ -20,8 +20,8 @@ import static core.combat.api.ReasonUtils.pos;
  */
 public class LavaAttack implements Attack, IDirectional {
 
-	public static final int LAVA_GFX = 4234;
-	private final int LAVA_SPAWN_GFX = 4235;
+	public static final int LAVA_GFX = 6641;
+	private final int LAVA_SPAWN_GFX = 6642;
 
 	@Override
 	public void invoke(Player target, NPCCombat boss) {

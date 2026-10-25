@@ -15,7 +15,7 @@ public class Voidwaker implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("voidwaker") || def.id == 31580; // Riftbreaker (Wilderness Forge)
+		return name.contains("voidwaker") || def.id == 42380; // Riftbreaker (Wilderness Forge)
 	}
 
 	@Override

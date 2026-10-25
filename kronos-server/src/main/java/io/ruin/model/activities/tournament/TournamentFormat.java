@@ -54,7 +54,7 @@ public enum TournamentFormat {
 
 	/** Boxing gloves, weakest first: Red, Blue (T1), then the Pit glove tiers T2-T5. */
 	public static final int RED_GLOVES = 7671, BLUE_GLOVES = 7673;
-	public static final int[] BOXING_GLOVES = {RED_GLOVES, BLUE_GLOVES, 31750, 31752, 31754, 31756};
+	public static final int[] BOXING_GLOVES = {RED_GLOVES, BLUE_GLOVES, 42550, 42552, 42554, 42556};
 
 	public final String name;
 	public final String style;

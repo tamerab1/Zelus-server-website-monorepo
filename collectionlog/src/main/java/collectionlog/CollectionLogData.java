@@ -61,7 +61,7 @@ public enum CollectionLogData {
 					new Item(30452, 10)
 			}),
 	BALANCE_ELEMENTAL(CollectionLogUpdated.Categories.BOSSES, "Balance Elemental",
-		new Item[] { (new Item(33006)), new Item(21649), new Item(6721) },
+		new Item[] { (new Item(43806)), new Item(21649), new Item(6721) },
 		// completion rewards
 		new Item[] {
 			new Item(30461),
@@ -522,14 +522,14 @@ public enum CollectionLogData {
 					new Item(30458, 10),
 			}),
 	TORMENTED_DEMON(CollectionLogUpdated.Categories.BOSSES, "Tormented Demon",
-		new Item[] { (new Item(33031)/* Pet */),
+		new Item[] { (new Item(43831)/* Pet */),
 			(new Item(29580)/* Synapse */), (new Item(29574)/* claw */)},
 		// completion rewards
 		new Item[] {
 			new Item(30462, 1),
 			new Item(30459, 10),
 			new Item(2528, 1),
-			new Item(33020, 1)
+			new Item(43820, 1)
 		}),
 	VENENATIS(CollectionLogUpdated.Categories.BOSSES, "Venenatis",
 			new Item[] { (new Item(13177)/* Pet ven */), (new Item(12605)/* T ring */),
@@ -555,8 +555,8 @@ public enum CollectionLogData {
 			(new Item(2425)/* Vork head */),
 			(new Item(11286)/* Draconic visage */), (new Item(22006)/* Skele visage */), (new Item(22106)/* Jar of decay */),
 			(new Item(22111)/* Dragonbone necklace */),
-			(new Item(31858)/* Vorkath mask */), (new Item(31860)/* Vorkath platebody */),
-			(new Item(31862)/* Vorkath platelegs */) },
+			(new Item(42658)/* Vorkath mask */), (new Item(42660)/* Vorkath platebody */),
+			(new Item(42662)/* Vorkath platelegs */) },
 			// completion rewards
 			new Item[] {
 					new Item(7478, 12),
@@ -692,7 +692,7 @@ public enum CollectionLogData {
 		// completion rewards
 		new Item[] {
 			new Item(30572, 1), // 5% Drop Rate Scroll
-			new Item(33017, 1), // Echo orb box
+			new Item(43817, 1), // Echo orb box
 			new Item(30449, 1)  // Advanced Dono Mystery Chest
 		}
 	),
@@ -715,7 +715,7 @@ public enum CollectionLogData {
 			(new Item(23757)/* Youngllef */), (new Item(26348)/* Nexling */), (new Item(30600)/* Awwgentavis */),
 			(new Item(23495)/* Sraracha */), (new Item(30417)/* Baby Galvek */), (new Item(30617)/* Ophi the brute */),
 			(new Item(24491)/* Little Nightmare */), (new Item(28252)), (new Item(28250)), (new Item(28248)),
-			(new Item(28246)), (new Item(27590)), new Item(29836), new Item(28801), (new Item(21748)) /* Noon */, (new Item(28960)),(new Item(33006)) },
+			(new Item(28246)), (new Item(27590)), new Item(29836), new Item(28801), (new Item(21748)) /* Noon */, (new Item(28960)),(new Item(43806)) },
 			// completion rewards
 			new Item[] {
 					new Item(30449, 3),
@@ -1148,11 +1148,11 @@ public enum CollectionLogData {
 	// ids already wired in Zelus's own newDrops/16305.json. No completion-reward items are defined
 	// anywhere in source for her, so this is deliberately empty rather than invented.
 	MAD_ANGEL(CollectionLogUpdated.Categories.BOSSES, "Mad Angel", new Item[] {
-			new Item(34032) /* Sunstone crystal */,
-			new Item(34033) /* Ardeaglais teleport */,
-			new Item(34027) /* Hallowfell */,
-			new Item(34030) /* Jar of light */,
-			new Item(34042) /* Aggy */,
+			new Item(44832) /* Sunstone crystal */,
+			new Item(44833) /* Ardeaglais teleport */,
+			new Item(44827) /* Hallowfell */,
+			new Item(44830) /* Jar of light */,
+			new Item(44842) /* Aggy */,
 	},
 			// completion rewards
 			new Item[] {
@@ -1190,9 +1190,9 @@ public enum CollectionLogData {
 
 	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30594.json).
 	SANGUINE_HARROWLORD(CollectionLogUpdated.Categories.BOSSES, "Sanguine Harrowlord", new Item[] {
-			new Item(31722) /* Spectral Soulbinder (T1) */,
-			new Item(31740) /* Starbound Invoker (T1) */,
-			new Item(31748) /* Astral Spore */,
+			new Item(42522) /* Spectral Soulbinder (T1) */,
+			new Item(42540) /* Starbound Invoker (T1) */,
+			new Item(42548) /* Astral Spore */,
 	},
 			// completion rewards
 			new Item[] {
@@ -1202,9 +1202,9 @@ public enum CollectionLogData {
 
 	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30596.json).
 	GLOOMFANG_DEVOURER(CollectionLogUpdated.Categories.BOSSES, "Gloomfang Devourer", new Item[] {
-			new Item(31710) /* Voidmind Hexer (T1) */,
-			new Item(31716) /* Ironknuckle Brawler (T1) */,
-			new Item(31748) /* Astral Spore */,
+			new Item(42510) /* Voidmind Hexer (T1) */,
+			new Item(42516) /* Ironknuckle Brawler (T1) */,
+			new Item(42548) /* Astral Spore */,
 	},
 			// completion rewards
 			new Item[] {
@@ -1214,9 +1214,9 @@ public enum CollectionLogData {
 
 	// The Sanctum (Obsidian Reliquary) main boss: its two tier-1 combat pets + the Astral Spore (newDrops/30597.json).
 	VENOMTONGUE_ABOMINATION(CollectionLogUpdated.Categories.BOSSES, "Venomtongue Abomination", new Item[] {
-			new Item(31728) /* Magmafist Smasher (T1) */,
-			new Item(31734) /* Magma Skirmisher (T1) */,
-			new Item(31748) /* Astral Spore */,
+			new Item(42528) /* Magmafist Smasher (T1) */,
+			new Item(42534) /* Magma Skirmisher (T1) */,
+			new Item(42548) /* Astral Spore */,
 	},
 			// completion rewards
 			new Item[] {
@@ -1226,17 +1226,17 @@ public enum CollectionLogData {
 
 	// Chamber of Ascension: the Perkers room (Azurion / Verdanox / Crimsar / Aurelius), its three armour sets and the six bonds.
 	CHAMBER_OF_ASCENSION(CollectionLogUpdated.Categories.MINIGAMES, "Chamber of Ascension", new Item[] {
-			new Item(31300) /* Azurion's helm */,
-			new Item(31301) /* Azurion's body */,
-			new Item(31302) /* Azurion's legs */,
-			new Item(31303) /* Azurion's gauntlets */,
-			new Item(31304) /* Azurion's boots */,
-			new Item(31320) /* Verdanox's helm */,
-			new Item(31321) /* Verdanox's chestplate */,
-			new Item(31322) /* Verdanox's tassets */,
-			new Item(31310) /* Crimsongilt faceguard */,
-			new Item(31311) /* Crimsongilt chestguard */,
-			new Item(31312) /* Crimsongilt legguards */,
+			new Item(42100) /* Azurion's helm */,
+			new Item(42101) /* Azurion's body */,
+			new Item(42102) /* Azurion's legs */,
+			new Item(42103) /* Azurion's gauntlets */,
+			new Item(42104) /* Azurion's boots */,
+			new Item(42120) /* Verdanox's helm */,
+			new Item(42121) /* Verdanox's chestplate */,
+			new Item(42122) /* Verdanox's tassets */,
+			new Item(42110) /* Crimsongilt faceguard */,
+			new Item(42111) /* Crimsongilt chestguard */,
+			new Item(42112) /* Crimsongilt legguards */,
 			new Item(60277) /* Bond of the Blood Titan */,
 			new Item(60282) /* Bond of the Void Deadeye */,
 			new Item(60279) /* Bond of the Astral Archmage */,

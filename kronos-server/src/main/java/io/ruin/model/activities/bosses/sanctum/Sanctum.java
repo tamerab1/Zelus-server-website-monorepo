@@ -26,7 +26,7 @@ public final class Sanctum {
 	 * Hub portals along the south wall: objects 60020-60022 (portal 4150 clones named and coloured after their boss,
 	 * .dev/cache-restore-tool/build_sanctum_portals.sh, in SanctumWing order), and 60023, Saradomin's, still sealed.
 	 */
-	private static final int FIRST_PORTAL = 60020, SEALED_PORTAL_ID = 60023, HUB_EXIT = 4389;
+	private static final int FIRST_PORTAL = 65062, SEALED_PORTAL_ID = 65065, HUB_EXIT = 4389;
 	private static final int[][] HUB_PORTALS = {{1946, 11033}, {1950, 11033}, {1955, 11033}};
 	private static final int[] SEALED_PORTAL = {1959, 11033};
 	private static final int[] HUB_EXIT_POS = {1952, 11045};

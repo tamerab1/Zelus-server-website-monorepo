@@ -93,7 +93,7 @@ public enum PotionDrink {
 	EGNIOL_POTION(new int[]{ItemID.EGNIOL_POTION_4, ItemID.EGNIOL_POTION_3, ItemID.EGNIOL_POTION_2, ItemID.EGNIOL_POTION_1}),
 	BLIGHTED_SUPER_RESTORE(new int[]{24598, 24601, 24603, 24605}),
 	/** Wilderness Forge: divine super combat + divine ranging fused into one overpowered brew. */
-	DIVINE_WRATH(new int[]{31598, 31600, 31602, 31604}),
+	DIVINE_WRATH(new int[]{42398, 42400, 42402, 42404}),
 	;
 
 

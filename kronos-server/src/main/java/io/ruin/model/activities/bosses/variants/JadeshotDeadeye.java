@@ -11,7 +11,7 @@ import io.ruin.model.entity.player.Player;
  */
 public class JadeshotDeadeye extends BossVariant {
 
-	private static final int GFX_ARROW = 4289, GFX_VOLLEY_HIT = 4290;
+	private static final int GFX_ARROW = 6696, GFX_VOLLEY_HIT = 6697;
 	private static final int ANIM_ATTACK = 1540;
 	private static final int RANGE = 8;
 

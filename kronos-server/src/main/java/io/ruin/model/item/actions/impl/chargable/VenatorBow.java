@@ -96,7 +96,7 @@ public class VenatorBow {
 	}
 
 
-	public static final int SKYHUNTER_BOW = 31650;
+	public static final int SKYHUNTER_BOW = 42450;
 
 	public static void handlePassiveEffect(Player player, NPC target) {
 		Item weapon = player.getEquipment().get(Equipment.SLOT_WEAPON);

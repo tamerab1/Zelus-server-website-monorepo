@@ -7129,7 +7129,7 @@ public final class ItemID {
 	public static final int DRAGON_ARROWP_11228 = 11228;
 	public static final int DRAGON_ARROWP_11229 = 11229;
 	public static final int DRAGON_DART = 11230;
-	public static final int DRYGORE_DART = 33011;
+	public static final int DRYGORE_DART = 43811;
 	public static final int DRAGON_DARTP = 11231;
 	public static final int DRAGON_DART_TIP = 11232;
 	public static final int DRAGON_DARTP_11233 = 11233;
@@ -11467,7 +11467,7 @@ public final class ItemID {
 	public static final int CRITICAL_HIT_SIGIL = 30541;
 	public static final int DONATOR_WEAPON_BOX = 59524;
 	public static final int DONATOR_ARMOUR_BOX = 59525;
-	public static final int HOLIDAY_MYSTERY_BOX = 32000;
+	public static final int HOLIDAY_MYSTERY_BOX = 42800;
 	public static final int TWISTED_HORNS = 24466;
 	public static final int REINFORCED_GOGGLES = 24942;
 
@@ -11505,9 +11505,9 @@ public final class ItemID {
 	public static final int DEMON_TEAR = 31111;
 	public static final int EYE_OF_AYAK = 31113;
 
-	public static final int SUMMER_MYSTERY_BOX = 32002;
+	public static final int SUMMER_MYSTERY_BOX = 42802;
 
-	public static final int KEEPER_OF_ECHO_PET = 33018;
+	public static final int KEEPER_OF_ECHO_PET = 43818;
 
 	// Brand-new item, never reused an existing id - see io.ruin.model.content.referral.ReferralSystem
 	// and .item.actions.impl.boxes.mystery.ReferPackage. Verified free (raw literal + ObjType.java

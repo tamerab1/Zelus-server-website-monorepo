@@ -22,9 +22,9 @@ import io.ruin.model.map.object.actions.ObjectAction;
  * Examine is answered by ObjectActionHandler with {@link #EXAMINE}.
  */
 public final class SoulAltar {
-	public static final int OBJECT = 62445;
+	public static final int OBJECT = 65525;
 	public static final String EXAMINE = "A conduit of ancient souls, resonating with living weapons.";
-	private static final int ANIM_PRAY = 645, GFX_SOUL_BURST = 4420;
+	private static final int ANIM_PRAY = 645, GFX_SOUL_BURST = 6827;
 
 	private SoulAltar() {
 	}

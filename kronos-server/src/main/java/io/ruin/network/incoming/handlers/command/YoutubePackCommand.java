@@ -23,52 +23,52 @@ public final class YoutubePackCommand {
 	private static final int[][] PACK = {
 		// custom cosmetics, weapons and armour
 		{59591, 1}, {59592, 1}, {59593, 1},             // Morveth fullhelm / platebody / platelegs (or)
-		{31778, 1},                                     // Twisted bow (celestial)
-		{31818, 1},                                     // Nightfall bow (celestial)
-		{31800, 1}, {31802, 1}, {31804, 1},             // Zelus Relic hood / coat / legs
-		{31794, 1}, {31798, 1},                         // Zelus Partyhat, Zelus Santa Hat
-		{31768, 1}, {31770, 1}, {31772, 1}, {31776, 1}, // Emerald Draconies hood / platebody / platelegs / wings
-		{31774, 1},                                     // Emerald Draconies Warhammer (EmeraldDraconiesWarhammer special)
+		{42578, 1},                                     // Twisted bow (celestial)
+		{42618, 1},                                     // Nightfall bow (celestial)
+		{42600, 1}, {42602, 1}, {42604, 1},             // Zelus Relic hood / coat / legs
+		{42594, 1}, {42598, 1},                         // Zelus Partyhat, Zelus Santa Hat
+		{42568, 1}, {42570, 1}, {42572, 1}, {42576, 1}, // Emerald Draconies hood / platebody / platelegs / wings
+		{42574, 1},                                     // Emerald Draconies Warhammer (EmeraldDraconiesWarhammer special)
 		{59985, 1},                                     // Venomous Fire cape
-		{31764, 1},                                     // Frostfall Wings
-		{31796, 1},                                     // Zelus H'ween Mask
-		{31810, 1},                                     // Zelus Cosmic Wings
+		{42564, 1},                                     // Frostfall Wings
+		{42596, 1},                                     // Zelus H'ween Mask
+		{42610, 1},                                     // Zelus Cosmic Wings
 		{59576, 1},                                     // Youtube Cape
 		// boxes, pet shards and combat pets
-		{31618, 3},                                     // Arcane mystery box
-		{31792, 2},                                     // Rivals mystery box
+		{42418, 3},                                     // Arcane mystery box
+		{42592, 2},                                     // Rivals mystery box
 		{6199, 3},                                      // Mystery box
-		{31814, 1},                                     // Ascended Bestiary (empty)
-		{31748, 10},                                    // Astral Spore
-		{31816, 2000},                                  // Combat Pet Shard
-		{31738, 1},                                     // Magma Skirmisher (T3)
-		{31730, 1},                                     // Magmafist Smasher (T2)
-		{31716, 1},                                     // Ironknuckle Brawler (T1)
-		{31722, 1},                                     // Spectral Soulbinder (T1)
-		{31742, 1},                                     // Starbound Invoker (T2)
+		{42614, 1},                                     // Ascended Bestiary (empty)
+		{42548, 10},                                    // Astral Spore
+		{42616, 2000},                                  // Combat Pet Shard
+		{42538, 1},                                     // Magma Skirmisher (T3)
+		{42530, 1},                                     // Magmafist Smasher (T2)
+		{42516, 1},                                     // Ironknuckle Brawler (T1)
+		{42522, 1},                                     // Spectral Soulbinder (T1)
+		{42542, 1},                                     // Starbound Invoker (T2)
 		// endgame PvM / hybrid and Wilderness Forge upgrades
 		{30777, 1}, {30779, 1}, {30781, 1},             // Radiant oathplate helm / chest / legs
-		{31808, 1},                                     // Zelus Scythe of Vitur
+		{42608, 1},                                     // Zelus Scythe of Vitur
 		{59983, 1},                                     // Lunar Fire cape
-		{31428, 1},                                     // Volcanic whip
+		{42228, 1},                                     // Volcanic whip
 		{27552, 1},                                     // Ghommal's avernic defender 6
-		{31754, 1},                                     // Infernal Fury Gloves
+		{42554, 1},                                     // Infernal Fury Gloves
 		{60280, 1},                                     // Bond of the Sovereign Monarch (T1)
-		{31380, 1},                                     // Bond of the Artisan (T2)
-		{31361, 1},                                     // Bond of the Astral Archmage (T3)
-		{31410, 1},                                     // Void max cape
-		{31596, 1},                                     // Starweave boots
-		{31524, 1},                                     // Bloodforged godsword
-		{31526, 1},                                     // Bloodfang claws
-		{31650, 1},                                     // Skyhunter bow
+		{42180, 1},                                     // Bond of the Artisan (T2)
+		{42161, 1},                                     // Bond of the Astral Archmage (T3)
+		{42210, 1},                                     // Void max cape
+		{42396, 1},                                     // Starweave boots
+		{42324, 1},                                     // Bloodforged godsword
+		{42326, 1},                                     // Bloodfang claws
+		{42450, 1},                                     // Skyhunter bow
 		{11212, 1000},                                  // Dragon arrow
-		{31568, 1}, {31570, 1}, {31572, 1},             // Warbringer Bandos chestplate / tassets / boots
+		{42368, 1}, {42370, 1}, {42372, 1},             // Warbringer Bandos chestplate / tassets / boots
 		{60400, 1},                                     // Draconic Pickaxe
-		{31582, 1},                                     // Amulet of carnage
-		{31546, 1},                                     // Warlord ring
-		{31584, 1},                                     // Necklace of agony
+		{42382, 1},                                     // Amulet of carnage
+		{42346, 1},                                     // Warlord ring
+		{42384, 1},                                     // Necklace of agony
 		{30467, 1},                                     // $50 Donator bond
-		{31648, 1},                                     // Grizzlemaw chainmace
+		{42448, 1},                                     // Grizzlemaw chainmace
 	};
 
 	private YoutubePackCommand() {

@@ -194,10 +194,10 @@ public class NewShopInterface {
 							if (itemId == 30462 || itemId == 30449 || itemId == 30448) {
 								player.getLootsViewer().updateInterface(player, LootsTables.REGULAR_MYSTERY_BOX);
 							}
-							if (itemId == 32000) {
+							if (itemId == 42800) {
 								player.getLootsViewer().updateInterface(player, LootsTables.HOLIDAY_MYSTERY_BOX);
 							}
-							if (itemId == 32002) {
+							if (itemId == 42802) {
 								player.getLootsViewer().updateInterface(player, LootsTables.SUMMER_MYSTERY_BOX);
 							}
 							break;

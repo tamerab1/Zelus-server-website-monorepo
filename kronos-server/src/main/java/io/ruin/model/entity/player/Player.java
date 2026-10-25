@@ -237,7 +237,7 @@ public class Player extends PlayerAttributes {
 			4732, 4928, 4929, 4930, 4931, 4736, 4940, 4941, 4942, 4943,
 			4738, 4946, 4947, 4948, 4949, 4734, 4934, 4935, 4936, 4937, 22516,
 			// Wilderness Forge upgrades: Bloodrage Dharok's, Sanguine Karil's, Arcanist Ahrim's
-			31500, 31502, 31504, 31506, 31508, 31510, 31512, 31514, 31516, 31518, 31520, 31522);
+			42300, 42302, 42304, 42306, 42308, 42310, 42312, 42314, 42316, 42318, 42320, 42322);
 
 	public CustomXericRaid getCustomXericRaid() {
 		if (customXericRaid == null)
@@ -4493,7 +4493,7 @@ public class Player extends PlayerAttributes {
 			specialRestoreMaxTick = 25;
 		// Sunbearer (Wilderness Forge upgrade of the lightbearer) restores special energy even faster.
 		if (player.getEquipment().get(Equipment.SLOT_RING) != null
-				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 31588)
+				&& player.getEquipment().get(Equipment.SLOT_RING).getId() == 42388)
 			specialRestoreMaxTick = 20;
 		specialRestoreMaxTick = io.ruin.model.item.actions.impl.pet.perk.PetPerkHandler
 				.applySpecialRegenBoost(this, specialRestoreMaxTick);

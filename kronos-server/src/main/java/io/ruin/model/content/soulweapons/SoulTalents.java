@@ -32,7 +32,7 @@ public final class SoulTalents {
 	/** Cleave / Ricochet / Arcane Surge: how far around the struck monster, and how many extra monsters at most. */
 	private static final int CLEAVE_RANGE = 1, CLEAVE_TARGETS = 3, CHAIN_RANGE = 3, SURGE_RANGE = 2, SURGE_TARGETS = 4;
 	private static final double CRIT_MULTIPLIER = 1.30, EXECUTE_BELOW = 0.35, CHAIN_DAMAGE = 0.50;
-	private static final int GFX_CRIT = 4421, GFX_WARD = 4422, GFX_SURGE = 2127;
+	private static final int GFX_CRIT = 6828, GFX_WARD = 6829, GFX_SURGE = 2127;
 	private static final Projectile CHAIN_ARROW = new Projectile(1924, 30, 31, 0, 30, 6, 16, 11);
 
 	private SoulTalents() {

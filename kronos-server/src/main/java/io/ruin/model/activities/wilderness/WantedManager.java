@@ -29,7 +29,7 @@ import io.ruin.utility.Broadcast;
 public class WantedManager {
 
     /** Object ID of the BH Chest — defined in 1_patches/object/60010.toml. */
-    private static final int BH_CHEST_ID = 60010;
+    private static final int BH_CHEST_ID = 65055;
 
     /** Blood Money item ID (13307). */
     private static final int BLOOD_MONEY = ItemID.BLOOD_MONEY;

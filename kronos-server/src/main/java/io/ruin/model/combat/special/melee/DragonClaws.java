@@ -26,7 +26,7 @@ public class DragonClaws implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return name.contains("dragon claws") || def.id == 31526; // Bloodfang claws (Wilderness Forge)
+		return name.contains("dragon claws") || def.id == 42326; // Bloodfang claws (Wilderness Forge)
 	}
 
 	@Override

@@ -38,13 +38,13 @@ public final class MadAngelIds {
     // ==== NPCs (imported, unchanged ids) ======================================================
 
     /** Fighting form, 755 hp (via data/npcs/combat/mad_angel.json), op2 "Attack". */
-    public static final int NPC_MAD_ANGEL = 16305;
+    public static final int NPC_MAD_ANGEL = 22026;
     /** Dormant form, op1 "Wake". */
-    public static final int NPC_DORMANT = 16306;
+    public static final int NPC_DORMANT = 22027;
     /** Ops-less form worn only while she rises. */
-    public static final int NPC_RISING = 16307;
+    public static final int NPC_RISING = 22028;
     /** Corpse form. */
-    public static final int NPC_DEAD = 16308;
+    public static final int NPC_DEAD = 22029;
 
     // ==== Locs / objects (Fallen Cathedral pew) -- both imported, only 62250 in active use =====
     // 62250 ("Climb") was already part of the Cathedral furniture pass (ImportCathedralObjects.java)
@@ -75,13 +75,13 @@ public final class MadAngelIds {
     // unchanged, so no content rewrite was needed for the remap itself.
 
     /** Remapped from source id 3321 (collided). */
-    public static final int SEQ_SPAWN = 14449;
+    public static final int SEQ_SPAWN = 20882;
     /** Remapped from source id 4589 (collided). */
-    public static final int SEQ_MELEE = 14450;
+    public static final int SEQ_MELEE = 20883;
     /** Remapped from source id 4590 (collided). */
-    public static final int SEQ_SMITE = 14451;
+    public static final int SEQ_SMITE = 20884;
     /** Remapped from source id 8543 (collided). */
-    public static final int SEQ_SMITE_ENRAGED = 14452;
+    public static final int SEQ_SMITE_ENRAGED = 20885;
     /** Unchanged from source -- was already free in Zelus. */
     public static final int SEQ_BOMB = 14443;
     /** Unchanged from source -- was already free in Zelus. */
@@ -97,9 +97,9 @@ public final class MadAngelIds {
      * provenance (remapped from source 4588, which collided) is on record. Fighting (16305) and
      * rising (16307) forms both use it.
      */
-    public static final int SEQ_IDLE_FIGHTING = 14453;
+    public static final int SEQ_IDLE_FIGHTING = 20886;
     /** Same as {@link #SEQ_IDLE_FIGHTING} but for the dormant (16306) and dead (16308) forms; remapped from source 1991 (collided). */
-    public static final int SEQ_IDLE_DORMANT = 14454;
+    public static final int SEQ_IDLE_DORMANT = 20887;
 
     /**
      * The cleave sweep is a state machine, not one animation per side -- see
@@ -123,7 +123,7 @@ public final class MadAngelIds {
     public static final int GFX_SPAWN = 4010;
     public static final int GFX_SMITE_CHARGE = 4011;
     public static final int GFX_SMITE_CHARGE_ENRAGED = 4012;
-    public static final int GFX_SMITE_HIT = 4013;
+    public static final int GFX_SMITE_HIT = 6420;
     public static final int GFX_BOMB_THROW = 4014;
     public static final int GFX_BOMB_TRAVEL = 4015;
     // 4016 exists in the cache but a live capture never sends it -- the only impact vfx used is 4017.
@@ -180,11 +180,11 @@ public final class MadAngelIds {
     // below is confirmed against the real wiki drop table (.data/drops/mad_angel.json in
     // RS-Realm-Server-Package) and matches what newDrops/16305.json already had wired. Now also
     // registered in collectionlog's CollectionLogData enum (MAD_ANGEL entry).
-    public static final int ITEM_SUNSTONE_CRYSTAL = 34032;
-    public static final int ITEM_ARDEAGLAIS_TELEPORT = 34033;
-    public static final int ITEM_HALLOWFELL = 34027;
-    public static final int ITEM_JAR_OF_LIGHT = 34030;
-    public static final int ITEM_AGGY = 34042;
+    public static final int ITEM_SUNSTONE_CRYSTAL = 44832;
+    public static final int ITEM_ARDEAGLAIS_TELEPORT = 44833;
+    public static final int ITEM_HALLOWFELL = 44827;
+    public static final int ITEM_JAR_OF_LIGHT = 44830;
+    public static final int ITEM_AGGY = 44842;
 
     // ==== World (imported 2026-09-11) ==========================================================
     // The real Fallen Cathedral mapsquare -- terrain (m39_34) and locs (l39_34), archives 10018/

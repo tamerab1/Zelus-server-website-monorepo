@@ -38,7 +38,7 @@ public class DarkBow implements Special {
 	public boolean accept(ObjType def, String name) {
 		if (def.id == StarfallVolley.CELESTIAL_NIGHTFALL_BOW) // has its own special
 			return false;
-		return name.contains("dark bow") || name.contains("nightfall bow") || def.id == 31534; // Eclipse bow (Wilderness Forge)
+		return name.contains("dark bow") || name.contains("nightfall bow") || def.id == 42334; // Eclipse bow (Wilderness Forge)
 	}
 
 	@Override

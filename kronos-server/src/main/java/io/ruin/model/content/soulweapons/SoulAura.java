@@ -14,9 +14,9 @@ import io.ruin.model.item.containers.Equipment;
  * built by .dev/cache-restore-tool soulbound_aura_gfx.txt.
  */
 public enum SoulAura {
-	SOUL_WISPS("Soul Wisps", 5, 4420),
-	ASCENDANT_RADIANCE("Ascendant Radiance", 8, 4421),
-	ETERNAL_SOULFIRE("Eternal Soulfire", 10, 4422);
+	SOUL_WISPS("Soul Wisps", 5, 6827),
+	ASCENDANT_RADIANCE("Ascendant Radiance", 8, 6828),
+	ETERNAL_SOULFIRE("Eternal Soulfire", 10, 6829);
 
 	private static final int PULSE_TICKS = 8, CALM_TICKS = 10;
 

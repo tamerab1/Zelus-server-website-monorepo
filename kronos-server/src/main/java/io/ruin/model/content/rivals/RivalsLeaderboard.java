@@ -23,7 +23,7 @@ public final class RivalsLeaderboard {
 	private static final int ROW_STRIDE = 7, RANK = 1, NAME = 2, COL1 = 3, COL2 = 4, COL3 = 5, ROWS_PER_PANEL = 10;
 	private static final int PERSONAL = 172, COUNTDOWN = 173, HUB_BUTTON = 174, FOOTER = 176;
 	/** The Rivals Leaderboard object (.dev/cache-restore-tool BuildChampionshipBoard "rivals"). */
-	public static final int BOARD_OBJECT = 62392;
+	public static final int BOARD_OBJECT = 65472;
 	private static final String[] MEDAL = {"<col=ffd700>", "<col=e0e0e0>", "<col=cd7f32>"};
 
 	private RivalsLeaderboard() {

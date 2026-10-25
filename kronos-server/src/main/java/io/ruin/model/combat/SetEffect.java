@@ -30,10 +30,10 @@ public enum SetEffect {
 		hit.boostDamage(Math.max(0, (player.getMaxHp() - player.getHp()) * 0.01))
 			.boostAttack(Math.max(0, (player.getMaxHp() - player.getHp()) * 0.005));
 	}, (player, hit) -> hit.attackStyle.isMelee(),
-		new Piece(Equipment.SLOT_HAT, 4716, 4980, 4981, 4982, 4983, 31500),
-		new Piece(Equipment.SLOT_CHEST, 4720, 4892, 4893, 4894, 4895, 31504),
-		new Piece(Equipment.SLOT_LEGS, 4722, 4898, 4899, 4900, 4901, 31506),
-		new Piece(Equipment.SLOT_WEAPON, 4718, 4886, 4887, 4888, 4889, 31502)),
+		new Piece(Equipment.SLOT_HAT, 4716, 4980, 4981, 4982, 4983, 42300),
+		new Piece(Equipment.SLOT_CHEST, 4720, 4892, 4893, 4894, 4895, 42304),
+		new Piece(Equipment.SLOT_LEGS, 4722, 4898, 4899, 4900, 4901, 42306),
+		new Piece(Equipment.SLOT_WEAPON, 4718, 4886, 4887, 4888, 4889, 42302)),
 	GUTHAN((player, target, hit) -> {
 		if (hit.damage > 0 && Random.rollPercent(25)) {
 			target.graphics(398, 0, 0);
@@ -90,10 +90,10 @@ public enum SetEffect {
 				target.player.getStats().get(StatType.Strength).drain(5);
 		}
 	}, (player, hit) -> hit.attackStyle.isMagic(),
-		new Piece(Equipment.SLOT_HAT, 4708, 4856, 4857, 4858, 4859, 31516),
-		new Piece(Equipment.SLOT_CHEST, 4712, 4868, 4869, 4870, 4871, 31520),
-		new Piece(Equipment.SLOT_LEGS, 4714, 4874, 4875, 4876, 4877, 31522),
-		new Piece(Equipment.SLOT_WEAPON, 4710, 4862, 4863, 4864, 4865, 31518)),
+		new Piece(Equipment.SLOT_HAT, 4708, 4856, 4857, 4858, 4859, 42316),
+		new Piece(Equipment.SLOT_CHEST, 4712, 4868, 4869, 4870, 4871, 42320),
+		new Piece(Equipment.SLOT_LEGS, 4714, 4874, 4875, 4876, 4877, 42322),
+		new Piece(Equipment.SLOT_WEAPON, 4710, 4862, 4863, 4864, 4865, 42318)),
 	KARIL((player, target, hit) -> {
 		if (Random.rollDie(4)) {
 			target.graphics(401, 100, 0);
@@ -101,10 +101,10 @@ public enum SetEffect {
 				target.player.getStats().get(StatType.Agility).drain(0.20);
 		}
 	}, (player, hit) -> hit.attackStyle.isRanged(),
-		new Piece(Equipment.SLOT_HAT, 4732, 4928, 4929, 4930, 4931, 31508),
-		new Piece(Equipment.SLOT_CHEST, 4736, 4940, 4941, 4942, 4943, 31512),
-		new Piece(Equipment.SLOT_LEGS, 4738, 4946, 4947, 4948, 4949, 31514),
-		new Piece(Equipment.SLOT_WEAPON, 4734, 4934, 4935, 4936, 4937, 31510)),
+		new Piece(Equipment.SLOT_HAT, 4732, 4928, 4929, 4930, 4931, 42308),
+		new Piece(Equipment.SLOT_CHEST, 4736, 4940, 4941, 4942, 4943, 42312),
+		new Piece(Equipment.SLOT_LEGS, 4738, 4946, 4947, 4948, 4949, 42314),
+		new Piece(Equipment.SLOT_WEAPON, 4734, 4934, 4935, 4936, 4937, 42310)),
 	VOID_MELEE((player, target, hit) -> {
 		hit.boostDamage(0.1).boostAttack(0.1);
 	}, (player, hit) -> hit.attackStyle.isMelee(),
@@ -170,7 +170,7 @@ public enum SetEffect {
 	HARMONISED_NIGHTMARESTAFF((player, target, hit) -> {
 		hit.boostDamage(0.15).boostAttack(0.25);
 	}, (player, hit) -> hit.attackStyle.isMagic(),
-		new Piece(Equipment.SLOT_WEAPON, 24423, 31788)), // + Harmonised nightmare staff (celestial)
+		new Piece(Equipment.SLOT_WEAPON, 24423, 42588)), // + Harmonised nightmare staff (celestial)
 
 
 	ELITE_VOID_MAGE((player, target, hit) -> {

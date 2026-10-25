@@ -75,7 +75,7 @@ public enum ServerTeleports {
 		new Item[]{(new Item(13231)), (new Item(13229)), (new Item(13227)), (new Item(13233))},
 		"A three-headed hound guardian <br>of the river of souls.", "Hard", "91 Slayer.", 29270, 4484),
 	BALANCE_ELEMENTAL("Balance Elemental", new Position(0, 0, 0),
-		new Item[]{(new Item(33005)), (new Item(21649)), (new Item(6721))},
+		new Item[]{(new Item(43805)), (new Item(21649)), (new Item(6721))},
 		"A Elemental that uses all styles.", "Master", "None.", 53290, 11352),
 	KRAKEN("Kraken", new Position(2292, 10008, 0),
 		new Item[]{(new Item(11905)), (new Item(12004))},
@@ -110,7 +110,7 @@ public enum ServerTeleports {
 	),
 	ARGENTAVIS("Argentavis", new Position(2143, 5526, 3),
 		new Item[]{(new Item(30595)), (new Item(30594)), (new Item(30513)), (new Item(30552))},
-		"A menace of the sky.", "Master", "No requirements.", 59368, 5029
+		"A menace of the sky.", "Master", "No requirements.", 64302, 5029
 	),
 	NEX("Nex", new Position(2905, 5204, 0),
 		new Item[]{(new Item(26376)), (new Item(26378)), (new Item(26380))
@@ -184,21 +184,21 @@ public enum ServerTeleports {
 		// colours. The teleport review window renders a raw model id via clientscript 10623 and
 		// does NOT apply NPC-level recolor overlays, so the un-baked 36160 always showed the
 		// plain unrecolored drake here -- see reference_teleport_preview_needs_baked_recolor.
-		"Hard", "Located in the Wilderness.", 60346, 8274
+		"Hard", "Located in the Wilderness.", 65133, 8274
 	),
 	SYLVAROTH("Sylvaroth", new Position(2611, 4775, 0),
 		new Item[]{new Item(60330), new Item(60269), new Item(60268), new Item(60258)},
 		"A towering, corrupted Ent wreathed in shifting colours. <br>Permanently immune to melee -- bring ranged or magic.",
 		// modelId 60345: baked-recolor copy of the base Ent model (28265), same reasoning as
 		// Cindermaw above.
-		"Hard", "No requirements.", 60345, 12502
+		"Hard", "No requirements.", 65132, 12502
 	),
 	// the Sanctum hub (io.ruin.model.activities.bosses.sanctum.Sanctum.HUB): guardians + Harrowlord / Gloomfang / Venomtongue.
 	// Preview: Sanguine Harrowlord (model 60037, stand 9195) -- teleport_previews.txt.
 	RELIQUARY("Obsidian Reliquary", new Position(1945, 11040, 0),
-		new Item[]{new Item(31722), new Item(31710), new Item(31728), new Item(31748), new Item(31816)},
+		new Item[]{new Item(42522), new Item(42510), new Item(42528), new Item(42548), new Item(42616)},
 		"A shattered god-fortress of obsidian and blood. <br>Slay its guardians to face the Sanguine Harrowlord, <br>the Gloomfang Devourer and the Venomtongue Abomination.",
-		"Elite", "No requirements.", 60037, 9195
+		"Elite", "No requirements.", 64942, 9195
 	),
 	TORMENTED_DEMON("Tormented Demon", new Position(4137, 4364, 0),
 		new Item[]{new Item(29580), new Item(29574), new Item(25778)},
@@ -206,9 +206,9 @@ public enum ServerTeleports {
 		"Hard", "No requirements.", 53287, 11391
 	),
 	MAD_ANGEL("Mad Angel", new Position(MadAngelIds.PEW_OUTSIDE_X, MadAngelIds.PEW_OUTSIDE_Y, 0),
-		new Item[]{new Item(34027), new Item(34030), new Item(34042)},
+		new Item[]{new Item(44827), new Item(44830), new Item(44842)},
 		"A fallen angel bound within the Fallen Cathedral. <br>Climb the church pew to wake her.",
-		"Hard", "No requirements.", 61847, 14453
+		"Hard", "No requirements.", 65486, 20886
 	),
 	SIRE("Abyssal sire", new Position(3030, 4771, 0),
 		new Item[]{(new Item(13263)), (new Item(13265))},
@@ -414,12 +414,12 @@ public enum ServerTeleports {
 		"Fight numerous high level monsters <br>within these raids.<br>",
 		"Grand Master", "No requirements, high stats recommended.", 35381, 8120),
 	CHAMBER_OF_ASCENSION("Chamber of Ascension", new Position(1631, 4959, 0),
-		new Item[]{new Item(31301), new Item(31311), new Item(31321), new Item(60277), new Item(60279), new Item(60282)},
+		new Item[]{new Item(42101), new Item(42111), new Item(42121), new Item(60277), new Item(60279), new Item(60282)},
 		"Face Azurion, Verdanox, Crimsar and Aurelius the Gilded<br>for their armour sets and the six Bonds.",
 		// modelId 60348: baked-recolor copy of 46348 (Aurelius's body) with its gold npc recolor
 		// pairs applied -- the review window renders a raw model id and never applies npc recolors
 		// (same as Draco 60347). anim 9741 = Aurelius's stand.
-		"Hard", "None.", 60348, 9741),
+		"Hard", "None.", 65135, 9741),
 	DRACO("Draco", new Position(3340, 3348, 0),
 		new Item[]{new Item(60391), new Item(11286), new Item(60275), new Item(60334), new Item(60341),
 			new Item(60405), new Item(60337), new Item(60342)},
@@ -427,7 +427,7 @@ public enum ServerTeleports {
 		// modelId 60347: baked-recolor copy of 32682 (Tekton's body) with Draco's own npc-level
 		// recolor pairs applied -- the review window renders a raw model id and never applies
 		// npc recolors (same as Cindermaw 60346 / Sylvaroth 60345). anim 7480 = Draco's stand.
-		"Hard", "82 Mining to mine the Draco Rock.", 60347, 7480
+		"Hard", "82 Mining to mine the Draco Rock.", 65134, 7480
 	),
 	TOMBS_OF_AMASCUT("Tombs of Amascut", new Position(3355, 9119, 0), new Item[]{new Item(27386),
 		new Item(27277), new Item(27226), new Item(27229), new Item(27232), new Item(25985), new Item(26219),

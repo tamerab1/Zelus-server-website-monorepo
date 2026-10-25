@@ -16,7 +16,7 @@ import io.ruin.utility.Broadcast;
 // that makes every item's real chance (and the viewer's displayed 1/X) match the configured rate.
 public class DracoChest {
 
-	public static final int DRACO_CHEST_ID = 62389;
+	public static final int DRACO_CHEST_ID = 65469;
 	public static final int DRACO_KEY = 3460;
 
 	private static final int SCALE = 10_000_000;

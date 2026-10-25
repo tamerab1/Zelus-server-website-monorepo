@@ -22,7 +22,7 @@ public class Ballista implements Special {
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 19478 || def.id == 19481 || def.id == 31536; // 31536 = Dreadblood ballista (Wilderness Forge)
+		return def.id == 19478 || def.id == 19481 || def.id == 42336; // 31536 = Dreadblood ballista (Wilderness Forge)
 	}
 
 	@Override

@@ -21,8 +21,8 @@ public class BandosGodsword implements Special {
 
 	// Wilderness Forge upgrade. Its spec uses seq 14458: a copy of 7642 with the forced
 	// right-hand item (the regular BGS) stripped, so the wielded model shows.
-	private static final int WARBRINGER_GODSWORD = 31576;
-	private static final int WARBRINGER_SPEC_ANIM = 14458;
+	private static final int WARBRINGER_GODSWORD = 42376;
+	private static final int WARBRINGER_SPEC_ANIM = 20891;
 
 	private static StatType[] DRAIN_ORDER = {StatType.Defence, StatType.Strength, StatType.Attack, StatType.Prayer, StatType.Magic, StatType.Ranged};
 

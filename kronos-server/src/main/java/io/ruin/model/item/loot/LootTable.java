@@ -461,7 +461,7 @@ public class LootTable {
 			}
 		}
 		if(npc.getId() == 14176) {
-			dropItems.add(new DropItem(33030, (int) 100000, 1, 1));
+			dropItems.add(new DropItem(43830, (int) 100000, 1, 1));
 		}
 
 		// Sort drop items by chance (drop rate)

@@ -145,8 +145,8 @@ public class UpgradeSystemInterface {
 	public static void register() {
 		RelicForge.register();
 		// Zelus Upgrader (was 46241): option 1 "Item Upgrader" -> the Relic Forge, option 2 "Wilderness Upgrader"
-		ObjectAction.register(60015, 1, (player, obj) -> player.getUpgradeSystemInterface().open(player));
-		ObjectAction.register(60015, 2, (player, obj) -> io.ruin.model.content.wildernessforge.WildernessForge.open(player));
+		ObjectAction.register(65060, 1, (player, obj) -> player.getUpgradeSystemInterface().open(player));
+		ObjectAction.register(65060, 2, (player, obj) -> io.ruin.model.content.wildernessforge.WildernessForge.open(player));
 		InterfaceHandler.register(1110, h -> {
 			h.actions[405] = (DefaultAction) (player, option, slot, itemId) -> {
 				switch (option) {

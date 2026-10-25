@@ -9,7 +9,7 @@ import io.ruin.model.map.object.actions.ObjectAction;
  * walk-through decoration with no options. Both are placed with custom_objects.json.
  */
 public class DiscordStatue {
-	public static final int OBJECT = 62443;
+	public static final int OBJECT = 65523;
 
 	public static void register() {
 		ObjectAction.register(OBJECT, 1, (player, obj) ->

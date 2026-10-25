@@ -411,7 +411,7 @@ public class PlayerCombat extends Combat {
 			NPC npc = (NPC) target;
 			global = npc.getId() == 8262 || npc.getId() == 1787 || npc.getId() == 11895 || npc.getId() == 11896
 					|| npc.getId() == 84 || npc.getId() == 30557
-					|| npc.getId() == 16215 || npc.getId() == 16216; // Nidhogg (::gb) / Volcanus (::vb), 2026-10-19
+					|| npc.getId() == 21936 || npc.getId() == 21937; // Nidhogg (::gb) / Volcanus (::vb), 2026-10-19
 		}
 
 		if (target.isNpc() && target.npc.getDef() != null) {
@@ -1297,7 +1297,7 @@ public class PlayerCombat extends Combat {
 				}
 			}
 			if (player.getEquipment().get(Equipment.SLOT_WEAPON) != null) {
-				if (player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000) {
+				if (player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800) {
 					baseAttackSpeed--;
 				}
 				if (AttributeExtensions.hasAttribute(player.getEquipment().get(Equipment.SLOT_WEAPON),
@@ -1883,14 +1883,14 @@ public class PlayerCombat extends Combat {
 			}
 			updateLastAttack(doubleAttackEffect ? 1 : baseAttackSpeed + attackTicks);
 		}
-		if (weaponDef.id == TumekensShadow.CHARGED || weaponDef.id == 33000) {// 9544 = fang special anim --- 9471 = fang
+		if (weaponDef.id == TumekensShadow.CHARGED || weaponDef.id == 43800) {// 9544 = fang special anim --- 9471 = fang
 																																					// normal hit anim
 			if (target.player != null) {
 				player.sendMessage(Color.RED.wrap("This staff's spell cannot be used against other players."));
 				return;
 			}
 			player.animate(9493);
-			player.graphics(weaponDef.id == 33000 ? 4201 : 2125, 92, 0);
+			player.graphics(weaponDef.id == 43800 ? 6608 : 2125, 92, 0);
 			if (player.getPlayerPerkHandler().getActivePerks(player).contains(Perks.GOD_WARS_VETERAN)) {
 				int perkIndex = player.getPlayerPerkHandler().getActivePerkIndex(player, Perks.GOD_WARS_VETERAN);
 				GodWarsVeteran c = (GodWarsVeteran) player.getPlayerPerkHandler().getActivePerks(player).get(perkIndex)
@@ -1910,7 +1910,7 @@ public class PlayerCombat extends Combat {
 					damageBoost += (damageBoost * c.getDamageBoost());
 				}
 			}
-			int duration = new Projectile(weaponDef.id == 33000 ? 4202 : 2126, 62, 31, 56, 56, 10, 32, 11).send(player,
+			int duration = new Projectile(weaponDef.id == 43800 ? 6609 : 2126, 62, 31, 56, 56, 10, 32, 11).send(player,
 					target);
 			Hit hit;
 			if (player.getEquipment().get(Equipment.SLOT_WEAPON) != null &&
@@ -1937,24 +1937,24 @@ public class PlayerCombat extends Combat {
 				int level = AttributeExtensions.getCharges(AttributeTypes.PRECISION_STRIKE,
 						player.getEquipment().get(Equipment.SLOT_WEAPON));
 				double multiplier = 0.02 * level;
-				minimumHit = (int) ((int) (getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000)
+				minimumHit = (int) ((int) (getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800)
 						* damageBoost) * multiplier);
 				int chance = 20 - (level * 2);
 				if (Random.get(chance) == 0)
 					hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost)
 							.randDamage(minimumHit,
-									(int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000))
+									(int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800))
 											* damageBoost))
 							.ignoreDefence().ignorePrayer()
 							.clientDelay(duration).setAttackWeapon(weaponDef);
 				else
 					hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost)
-							.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000))
+							.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800))
 									* damageBoost))
 							.clientDelay(duration).setAttackWeapon(weaponDef);
 			} else
 				hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost)
-						.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000))
+						.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800))
 								* damageBoost))
 						.clientDelay(duration).setAttackWeapon(weaponDef);
 
@@ -1972,7 +1972,7 @@ public class PlayerCombat extends Combat {
 					}
 				}
 				if (target != null) {
-					target.graphics(weaponDef.id == 33000 ? 4200 : 2127, 90, duration);
+					target.graphics(weaponDef.id == 43800 ? 6607 : 2127, 90, duration);
 				}
 			} else {
 				if (target != null) {
@@ -1983,7 +1983,7 @@ public class PlayerCombat extends Combat {
 			updateLastAttack(baseAttackSpeed + attackTicks);
 			if (doubleAttackEffect) {
 				target.hit(new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost)
-						.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 33000))
+						.randDamage((int) ((getShadowMaxHit(player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 43800))
 								* damageBoost))
 						.clientDelay(duration).setAttackWeapon(weaponDef));
 			}
@@ -2381,7 +2381,7 @@ public class PlayerCombat extends Combat {
 	}
 
 	/** Nightfall bow (celestial): a gold starlit arrow instead of the ammo's own projectile. */
-	private static final io.ruin.model.map.Projectile CELESTIAL_ARROW = io.ruin.model.map.Projectile.arrow(4417)[0];
+	private static final io.ruin.model.map.Projectile CELESTIAL_ARROW = io.ruin.model.map.Projectile.arrow(6824)[0];
 
 	private void attackAnim() {
 		if (attackSet.attackAnimation != null)
@@ -3150,7 +3150,7 @@ public class PlayerCombat extends Combat {
 				return;
 			}
 
-			boolean hasScytheEquipped = weapon.id == 22325 || weapon.id == 31808; // + the Zelus Scythe of Vitur (charge-free)
+			boolean hasScytheEquipped = weapon.id == 22325 || weapon.id == 42608; // + the Zelus Scythe of Vitur (charge-free)
 			if (hasScytheEquipped && target.isNpc()) {
 				attackWithScythe(player, target);
 				return;
@@ -3528,7 +3528,7 @@ public class PlayerCombat extends Combat {
 			boolean chins = wep.getId() == 10033 || wep.getId() == 10034 || wep.getId() == 11959 || wep.getId() == 30476;
 			boolean celestialNightfall = wep.getId() == io.ruin.model.combat.special.ranged.StarfallVolley.CELESTIAL_NIGHTFALL_BOW;
 			if (celestialNightfall)
-				player.graphics(4416, 96, 0); // starlit drawback (celestial_nightfall_gfx.txt)
+				player.graphics(6823, 96, 0); // starlit drawback (celestial_nightfall_gfx.txt)
 			else if (rangedData.drawbackId != -1)
 				player.graphics(rangedData.drawbackId, 96, 0);
 
@@ -3536,7 +3536,7 @@ public class PlayerCombat extends Combat {
 			final int delayTicks = chins ? getThrownHitDelay(distance) : getBowHitDelay(distance);
 			int delay = (celestialNightfall ? CELESTIAL_ARROW : rangedData.projectiles[0]).send(player, target);
 			if (celestialNightfall)
-				target.graphics(4293, 70, delay); // gold stardust on impact
+				target.graphics(6700, 70, delay); // gold stardust on impact
 			Hit hit;
 
 			if (player.getEquipment().get(Equipment.SLOT_WEAPON) != null && AttributeExtensions.hasAttribute(
@@ -5263,7 +5263,7 @@ public class PlayerCombat extends Combat {
 				hit.boostAttack(0.35).boostDamage(0.30);
 			// Zaryte Stormpiercer 31856: made from a Dragon hunter crossbow, so it keeps its dragonbane
 			if (hit.attackStyle.isRanged() && player.getEquipment().get(Equipment.SLOT_WEAPON) != null
-					&& player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 31856)
+					&& player.getEquipment().get(Equipment.SLOT_WEAPON).getId() == 42656)
 				hit.boostAttack(0.35).boostDamage(0.30);
 			// dragon hunter lance
 			if (hit.attackStyle.isMelee() && player.getEquipment().hasId(22978))
@@ -5335,7 +5335,7 @@ public class PlayerCombat extends Combat {
 		}
 
 		/* twisted bow */
-		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626) || player.getEquipment().hasId(31818)
+		boolean hasTwistedBow = player.getEquipment().hasId(20997) || player.getEquipment().hasId(30515) || player.getEquipment().hasId(59626) || player.getEquipment().hasId(42618)
 				|| player.getEquipment().hasId(io.ruin.model.content.cosmetic.Stardust.CELESTIAL_TWISTED_BOW);
 		if (hit.attackStyle != null && hit.attackStyle.isRanged() && hasTwistedBow) {
 			double magicLevel = target.getCombat().getLevel(StatType.Magic);

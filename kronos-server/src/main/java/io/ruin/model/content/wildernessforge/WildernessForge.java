@@ -85,109 +85,109 @@ public class WildernessForge {
 	// The list shows 4 items per row: armour is ordered one full set per row (pieces, then the set weapon).
 	private static final List<Recipe> RECIPES = List.of(
 		// Armour row 1: Bloodrage Dharok's set
-		new Recipe(Category.ARMOUR, 4716, 31500, 60, TIER_B), // Dharok's helm -> Bloodrage
-		new Recipe(Category.ARMOUR, 4720, 31504, 60, TIER_B), // Dharok's platebody -> Bloodrage
-		new Recipe(Category.ARMOUR, 4722, 31506, 60, TIER_B), // Dharok's platelegs -> Bloodrage
-		new Recipe(Category.ARMOUR, 4718, 31502, 60, TIER_B), // Dharok's greataxe -> Bloodrage
+		new Recipe(Category.ARMOUR, 4716, 42300, 60, TIER_B), // Dharok's helm -> Bloodrage
+		new Recipe(Category.ARMOUR, 4720, 42304, 60, TIER_B), // Dharok's platebody -> Bloodrage
+		new Recipe(Category.ARMOUR, 4722, 42306, 60, TIER_B), // Dharok's platelegs -> Bloodrage
+		new Recipe(Category.ARMOUR, 4718, 42302, 60, TIER_B), // Dharok's greataxe -> Bloodrage
 		// Armour row 2: Sanguine Karil's set
-		new Recipe(Category.ARMOUR, 4732, 31508, 60, TIER_B), // Karil's coif -> Sanguine
-		new Recipe(Category.ARMOUR, 4736, 31512, 60, TIER_B), // Karil's leathertop -> Sanguine
-		new Recipe(Category.ARMOUR, 4738, 31514, 60, TIER_B), // Karil's leatherskirt -> Sanguine
-		new Recipe(Category.ARMOUR, 4734, 31510, 60, TIER_B), // Karil's crossbow -> Sanguine
+		new Recipe(Category.ARMOUR, 4732, 42308, 60, TIER_B), // Karil's coif -> Sanguine
+		new Recipe(Category.ARMOUR, 4736, 42312, 60, TIER_B), // Karil's leathertop -> Sanguine
+		new Recipe(Category.ARMOUR, 4738, 42314, 60, TIER_B), // Karil's leatherskirt -> Sanguine
+		new Recipe(Category.ARMOUR, 4734, 42310, 60, TIER_B), // Karil's crossbow -> Sanguine
 		// Armour row 3: Arcanist Ahrim's set
-		new Recipe(Category.ARMOUR, 4708, 31516, 60, TIER_B), // Ahrim's hood -> Arcanist
-		new Recipe(Category.ARMOUR, 4712, 31520, 60, TIER_B), // Ahrim's robetop -> Arcanist
-		new Recipe(Category.ARMOUR, 4714, 31522, 60, TIER_B), // Ahrim's robeskirt -> Arcanist
-		new Recipe(Category.ARMOUR, 4710, 31518, 60, TIER_B), // Ahrim's staff -> Arcanist
+		new Recipe(Category.ARMOUR, 4708, 42316, 60, TIER_B), // Ahrim's hood -> Arcanist
+		new Recipe(Category.ARMOUR, 4712, 42320, 60, TIER_B), // Ahrim's robetop -> Arcanist
+		new Recipe(Category.ARMOUR, 4714, 42322, 60, TIER_B), // Ahrim's robeskirt -> Arcanist
+		new Recipe(Category.ARMOUR, 4710, 42318, 60, TIER_B), // Ahrim's staff -> Arcanist
 		// Armour row 4: Gorewing Armadyl set
-		new Recipe(Category.ARMOUR, 11826, 31562, 50, TIER_C), // Armadyl helmet -> Celestial
-		new Recipe(Category.ARMOUR, 11828, 31564, 50, TIER_C), // Armadyl chestplate -> Celestial
-		new Recipe(Category.ARMOUR, 11830, 31566, 50, TIER_C), // Armadyl chainskirt -> Celestial
-		new Recipe(Category.ARMOUR, 11785, 31574, 40, TIER_D), // Armadyl crossbow -> Gorewing crossbow
+		new Recipe(Category.ARMOUR, 11826, 42362, 50, TIER_C), // Armadyl helmet -> Celestial
+		new Recipe(Category.ARMOUR, 11828, 42364, 50, TIER_C), // Armadyl chestplate -> Celestial
+		new Recipe(Category.ARMOUR, 11830, 42366, 50, TIER_C), // Armadyl chainskirt -> Celestial
+		new Recipe(Category.ARMOUR, 11785, 42374, 40, TIER_D), // Armadyl crossbow -> Gorewing crossbow
 		// Armour row 5: Warbringer Bandos set
-		new Recipe(Category.ARMOUR, 11832, 31568, 50, TIER_C), // Bandos chestplate -> Warbringer
-		new Recipe(Category.ARMOUR, 11834, 31570, 50, TIER_C), // Bandos tassets -> Warbringer
-		new Recipe(Category.ARMOUR, 11836, 31572, 50, TIER_C), // Bandos boots -> Warbringer
-		new Recipe(Category.ARMOUR, 11804, 31576, 40, TIER_D), // Bandos godsword -> Warbringer godsword
+		new Recipe(Category.ARMOUR, 11832, 42368, 50, TIER_C), // Bandos chestplate -> Warbringer
+		new Recipe(Category.ARMOUR, 11834, 42370, 50, TIER_C), // Bandos tassets -> Warbringer
+		new Recipe(Category.ARMOUR, 11836, 42372, 50, TIER_C), // Bandos boots -> Warbringer
+		new Recipe(Category.ARMOUR, 11804, 42376, 40, TIER_D), // Bandos godsword -> Warbringer godsword
 		// Armour row 6: Gladiator's torso
-		new Recipe(Category.ARMOUR, 10551, 31560, 70, TIER_A), // Fighter torso -> Gladiator's torso
+		new Recipe(Category.ARMOUR, 10551, 42360, 70, TIER_A), // Fighter torso -> Gladiator's torso
 		rowBreak(Category.ARMOUR),
 		// Armour: Nightweaver (Dagon'hai)
-		new Recipe(Category.ARMOUR, 24288, 31626, 70, TIER_A), // Dagon'hai hat -> Nightweaver
-		new Recipe(Category.ARMOUR, 24291, 31628, 70, TIER_A), // Dagon'hai robe top -> Nightweaver
-		new Recipe(Category.ARMOUR, 24294, 31630, 70, TIER_A), // Dagon'hai robe bottom -> Nightweaver
+		new Recipe(Category.ARMOUR, 24288, 42426, 70, TIER_A), // Dagon'hai hat -> Nightweaver
+		new Recipe(Category.ARMOUR, 24291, 42428, 70, TIER_A), // Dagon'hai robe top -> Nightweaver
+		new Recipe(Category.ARMOUR, 24294, 42430, 70, TIER_A), // Dagon'hai robe bottom -> Nightweaver
 		rowBreak(Category.ARMOUR),
 		// Armour: Kingsguard (Shayzien 5)
-		new Recipe(Category.ARMOUR, 13379, 31632, 70, TIER_A), // Shayzien helm (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13381, 31634, 70, TIER_A), // Shayzien body (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13380, 31636, 70, TIER_A), // Shayzien greaves (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13378, 31638, 70, TIER_A), // Shayzien boots (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13377, 31640, 70, TIER_A), // Shayzien gloves (5) -> Kingsguard
+		new Recipe(Category.ARMOUR, 13379, 42432, 70, TIER_A), // Shayzien helm (5) -> Kingsguard
+		new Recipe(Category.ARMOUR, 13381, 42434, 70, TIER_A), // Shayzien body (5) -> Kingsguard
+		new Recipe(Category.ARMOUR, 13380, 42436, 70, TIER_A), // Shayzien greaves (5) -> Kingsguard
+		new Recipe(Category.ARMOUR, 13378, 42438, 70, TIER_A), // Shayzien boots (5) -> Kingsguard
+		new Recipe(Category.ARMOUR, 13377, 42440, 70, TIER_A), // Shayzien gloves (5) -> Kingsguard
 		rowBreak(Category.ARMOUR),
 		// Armour: Glacius (Virtus)
-		new Recipe(Category.ARMOUR, 30521, 31652, 40, TIER_D), // Virtus mask -> Glacius
-		new Recipe(Category.ARMOUR, 30522, 31654, 40, TIER_D), // Virtus robe top -> Glacius
-		new Recipe(Category.ARMOUR, 30523, 31656, 40, TIER_D), // Virtus robe bottom -> Glacius
+		new Recipe(Category.ARMOUR, 30521, 42452, 40, TIER_D), // Virtus mask -> Glacius
+		new Recipe(Category.ARMOUR, 30522, 42454, 40, TIER_D), // Virtus robe top -> Glacius
+		new Recipe(Category.ARMOUR, 30523, 42456, 40, TIER_D), // Virtus robe bottom -> Glacius
 		rowBreak(Category.ARMOUR),
 		// Armour: Solarflare (Sunfire fanatic)
-		new Recipe(Category.ARMOUR, 28933, 31658, 40, TIER_D), // Sunfire fanatic helm -> Solarflare
-		new Recipe(Category.ARMOUR, 28936, 31660, 40, TIER_D), // Sunfire fanatic cuirass -> Solarflare
-		new Recipe(Category.ARMOUR, 28939, 31662, 40, TIER_D), // Sunfire fanatic chausses -> Solarflare
+		new Recipe(Category.ARMOUR, 28933, 42458, 40, TIER_D), // Sunfire fanatic helm -> Solarflare
+		new Recipe(Category.ARMOUR, 28936, 42460, 40, TIER_D), // Sunfire fanatic cuirass -> Solarflare
+		new Recipe(Category.ARMOUR, 28939, 42462, 40, TIER_D), // Sunfire fanatic chausses -> Solarflare
 		rowBreak(Category.ARMOUR),
 		// Armour: Wildstalker (Trailblazer t3)
-		new Recipe(Category.ARMOUR, 25001, 31664, 70, TIER_A), // Trailblazer hood (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25004, 31666, 70, TIER_A), // Trailblazer top (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25007, 31668, 70, TIER_A), // Trailblazer trousers (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25010, 31670, 70, TIER_A), // Trailblazer boots (t3) -> Wildstalker
+		new Recipe(Category.ARMOUR, 25001, 42464, 70, TIER_A), // Trailblazer hood (t3) -> Wildstalker
+		new Recipe(Category.ARMOUR, 25004, 42466, 70, TIER_A), // Trailblazer top (t3) -> Wildstalker
+		new Recipe(Category.ARMOUR, 25007, 42468, 70, TIER_A), // Trailblazer trousers (t3) -> Wildstalker
+		new Recipe(Category.ARMOUR, 25010, 42470, 70, TIER_A), // Trailblazer boots (t3) -> Wildstalker
 		// Armour: Magmacore (Obsidian)
-		new Recipe(Category.ARMOUR, 21298, 31672, 70, TIER_A), // Obsidian helmet -> Magmacore
-		new Recipe(Category.ARMOUR, 21301, 31674, 70, TIER_A), // Obsidian platebody -> Magmacore
-		new Recipe(Category.ARMOUR, 21304, 31676, 70, TIER_A), // Obsidian platelegs -> Magmacore
+		new Recipe(Category.ARMOUR, 21298, 42472, 70, TIER_A), // Obsidian helmet -> Magmacore
+		new Recipe(Category.ARMOUR, 21301, 42474, 70, TIER_A), // Obsidian platebody -> Magmacore
+		new Recipe(Category.ARMOUR, 21304, 42476, 70, TIER_A), // Obsidian platelegs -> Magmacore
 		rowBreak(Category.ARMOUR),
 		// Armour: Starheart (Dragonstone)
-		new Recipe(Category.ARMOUR, 24034, 31678, 70, TIER_A), // Dragonstone full helm -> Starheart
-		new Recipe(Category.ARMOUR, 24037, 31680, 70, TIER_A), // Dragonstone platebody -> Starheart
-		new Recipe(Category.ARMOUR, 24040, 31682, 70, TIER_A), // Dragonstone platelegs -> Starheart
-		new Recipe(Category.ARMOUR, 24043, 31684, 70, TIER_A), // Dragonstone boots -> Starheart
-		new Recipe(Category.ARMOUR, 24046, 31686, 70, TIER_A), // Dragonstone gauntlets -> Starheart
-		new Recipe(Category.WEAPONS, 11802, 31524, 40, TIER_D), // Armadyl godsword -> Bloodforged godsword
-		new Recipe(Category.WEAPONS, 13652, 31526, 50, TIER_C), // Dragon claws -> Bloodfang claws
-		new Recipe(Category.WEAPONS, 4587, 31528, 70, TIER_A), // Dragon scimitar -> Vampiric scimitar
-		new Recipe(Category.WEAPONS, 5698, 31530, 70, TIER_A), // Dragon dagger(p++) -> Nightshade dagger(p++)
-		new Recipe(Category.WEAPONS, 4153, 31532, 70, TIER_A), // Granite maul -> Obsidian maul
-		new Recipe(Category.WEAPONS, 11235, 31534, 60, TIER_B), // Dark bow -> Eclipse bow
-		new Recipe(Category.WEAPONS, 19481, 31536, 50, TIER_C), // Heavy ballista -> Dreadblood ballista
-		new Recipe(Category.WEAPONS, 13576, 31538, 50, TIER_C), // Dragon warhammer -> Ravager warhammer
-		new Recipe(Category.WEAPONS, 22613, 31540, 40, TIER_D), // Vesta's longsword -> Bloodletter longsword
-		new Recipe(Category.WEAPONS, 21902, 31578, 50, TIER_C), // Dragon crossbow -> Hellfire crossbow
-		new Recipe(Category.WEAPONS, 27690, 31580, 40, TIER_D), // Voidwaker -> Riftbreaker
-		new Recipe(Category.WEAPONS, 4151, 31432, 50, TIER_C), // Abyssal whip -> Tidal whip
-		new Recipe(Category.WEAPONS, 13111, 31642, 60, TIER_B), // Wilderness sword 4 -> Wildfang blade
-		new Recipe(Category.WEAPONS, 23528, 31646, 60, TIER_B), // Sarachnis cudgel -> Broodmother cudgel
-		new Recipe(Category.WEAPONS, 8872, 31648, 50, TIER_C), // Ursine chainmace -> Grizzlemaw chainmace
-		new Recipe(Category.WEAPONS, 27610, 31650, 50, TIER_C), // Venator bow -> Skyhunter bow (no charges needed)
-		new Recipe(Category.JEWELLERY, 6585, 31542, 60, TIER_B), // Amulet of fury -> Amulet of havoc
-		new Recipe(Category.JEWELLERY, 12002, 31544, 60, TIER_B), // Occult necklace -> Eldritch necklace
-		new Recipe(Category.JEWELLERY, 11773, 31546, 60, TIER_B), // Berserker ring (i) -> Warlord ring
-		new Recipe(Category.JEWELLERY, 11771, 31548, 60, TIER_B), // Archers ring (i) -> Deadeye ring
-		new Recipe(Category.JEWELLERY, 11770, 31550, 60, TIER_B), // Seers ring (i) -> Mystic eye ring
-		new Recipe(Category.JEWELLERY, 19553, 31582, 40, TIER_D), // Amulet of torture -> Amulet of carnage
-		new Recipe(Category.JEWELLERY, 19547, 31584, 40, TIER_D), // Necklace of anguish -> Necklace of agony
-		new Recipe(Category.JEWELLERY, 19710, 31586, 50, TIER_C), // Ring of suffering (i) -> Ring of retribution
-		new Recipe(Category.JEWELLERY, 25975, 31588, 50, TIER_C), // Lightbearer -> Sunbearer
-		new Recipe(Category.JEWELLERY, 12853, 31644, 60, TIER_B), // Amulet of the damned -> Amulet of the forsaken
-		new Recipe(Category.ACCESSORIES, 12954, 31552, 60, TIER_B), // Dragon defender -> Bulwark defender
-		new Recipe(Category.ACCESSORIES, 7462, 31554, 60, TIER_B), // Barrows gloves -> Reaper gloves
-		new Recipe(Category.ACCESSORIES, 11840, 31556, 60, TIER_B), // Dragon boots -> Hellstride boots
-		new Recipe(Category.ACCESSORIES, 21795, 31558, 60, TIER_B), // Imbued zamorak cape -> Cape of chaos
-		new Recipe(Category.ACCESSORIES, 19544, 31590, 50, TIER_C), // Tormented bracelet -> Wraithbound bracelet
-		new Recipe(Category.ACCESSORIES, 13239, 31592, 50, TIER_C), // Primordial boots -> Ragefire boots
-		new Recipe(Category.ACCESSORIES, 13237, 31594, 50, TIER_C), // Pegasian boots -> Bloodstrider boots
-		new Recipe(Category.ACCESSORIES, 13235, 31596, 50, TIER_C), // Eternal boots -> Starweave boots
+		new Recipe(Category.ARMOUR, 24034, 42478, 70, TIER_A), // Dragonstone full helm -> Starheart
+		new Recipe(Category.ARMOUR, 24037, 42480, 70, TIER_A), // Dragonstone platebody -> Starheart
+		new Recipe(Category.ARMOUR, 24040, 42482, 70, TIER_A), // Dragonstone platelegs -> Starheart
+		new Recipe(Category.ARMOUR, 24043, 42484, 70, TIER_A), // Dragonstone boots -> Starheart
+		new Recipe(Category.ARMOUR, 24046, 42486, 70, TIER_A), // Dragonstone gauntlets -> Starheart
+		new Recipe(Category.WEAPONS, 11802, 42324, 40, TIER_D), // Armadyl godsword -> Bloodforged godsword
+		new Recipe(Category.WEAPONS, 13652, 42326, 50, TIER_C), // Dragon claws -> Bloodfang claws
+		new Recipe(Category.WEAPONS, 4587, 42328, 70, TIER_A), // Dragon scimitar -> Vampiric scimitar
+		new Recipe(Category.WEAPONS, 5698, 42330, 70, TIER_A), // Dragon dagger(p++) -> Nightshade dagger(p++)
+		new Recipe(Category.WEAPONS, 4153, 42332, 70, TIER_A), // Granite maul -> Obsidian maul
+		new Recipe(Category.WEAPONS, 11235, 42334, 60, TIER_B), // Dark bow -> Eclipse bow
+		new Recipe(Category.WEAPONS, 19481, 42336, 50, TIER_C), // Heavy ballista -> Dreadblood ballista
+		new Recipe(Category.WEAPONS, 13576, 42338, 50, TIER_C), // Dragon warhammer -> Ravager warhammer
+		new Recipe(Category.WEAPONS, 22613, 42340, 40, TIER_D), // Vesta's longsword -> Bloodletter longsword
+		new Recipe(Category.WEAPONS, 21902, 42378, 50, TIER_C), // Dragon crossbow -> Hellfire crossbow
+		new Recipe(Category.WEAPONS, 27690, 42380, 40, TIER_D), // Voidwaker -> Riftbreaker
+		new Recipe(Category.WEAPONS, 4151, 42232, 50, TIER_C), // Abyssal whip -> Tidal whip
+		new Recipe(Category.WEAPONS, 13111, 42442, 60, TIER_B), // Wilderness sword 4 -> Wildfang blade
+		new Recipe(Category.WEAPONS, 23528, 42446, 60, TIER_B), // Sarachnis cudgel -> Broodmother cudgel
+		new Recipe(Category.WEAPONS, 8872, 42448, 50, TIER_C), // Ursine chainmace -> Grizzlemaw chainmace
+		new Recipe(Category.WEAPONS, 27610, 42450, 50, TIER_C), // Venator bow -> Skyhunter bow (no charges needed)
+		new Recipe(Category.JEWELLERY, 6585, 42342, 60, TIER_B), // Amulet of fury -> Amulet of havoc
+		new Recipe(Category.JEWELLERY, 12002, 42344, 60, TIER_B), // Occult necklace -> Eldritch necklace
+		new Recipe(Category.JEWELLERY, 11773, 42346, 60, TIER_B), // Berserker ring (i) -> Warlord ring
+		new Recipe(Category.JEWELLERY, 11771, 42348, 60, TIER_B), // Archers ring (i) -> Deadeye ring
+		new Recipe(Category.JEWELLERY, 11770, 42350, 60, TIER_B), // Seers ring (i) -> Mystic eye ring
+		new Recipe(Category.JEWELLERY, 19553, 42382, 40, TIER_D), // Amulet of torture -> Amulet of carnage
+		new Recipe(Category.JEWELLERY, 19547, 42384, 40, TIER_D), // Necklace of anguish -> Necklace of agony
+		new Recipe(Category.JEWELLERY, 19710, 42386, 50, TIER_C), // Ring of suffering (i) -> Ring of retribution
+		new Recipe(Category.JEWELLERY, 25975, 42388, 50, TIER_C), // Lightbearer -> Sunbearer
+		new Recipe(Category.JEWELLERY, 12853, 42444, 60, TIER_B), // Amulet of the damned -> Amulet of the forsaken
+		new Recipe(Category.ACCESSORIES, 12954, 42352, 60, TIER_B), // Dragon defender -> Bulwark defender
+		new Recipe(Category.ACCESSORIES, 7462, 42354, 60, TIER_B), // Barrows gloves -> Reaper gloves
+		new Recipe(Category.ACCESSORIES, 11840, 42356, 60, TIER_B), // Dragon boots -> Hellstride boots
+		new Recipe(Category.ACCESSORIES, 21795, 42358, 60, TIER_B), // Imbued zamorak cape -> Cape of chaos
+		new Recipe(Category.ACCESSORIES, 19544, 42390, 50, TIER_C), // Tormented bracelet -> Wraithbound bracelet
+		new Recipe(Category.ACCESSORIES, 13239, 42392, 50, TIER_C), // Primordial boots -> Ragefire boots
+		new Recipe(Category.ACCESSORIES, 13237, 42394, 50, TIER_C), // Pegasian boots -> Bloodstrider boots
+		new Recipe(Category.ACCESSORIES, 13235, 42396, 50, TIER_C), // Eternal boots -> Starweave boots
 		new Recipe(Category.UTILITY, 12791, 27281, 75, new Item(BLOOD_MONEY, 2_500)), // Rune pouch -> Divine rune pouch
 		new Recipe(Category.UTILITY, 1712, 19707, 70, TIER_A), // Amulet of glory(4) -> Amulet of eternal glory
 		new Recipe(Category.UTILITY, 20724, 27641, 50, TIER_C), // Imbued heart -> Saturated heart
-		new Recipe(Category.UTILITY, 23685, 31598, 100, new Item(23733, 1), new Item(BLOOD_MONEY, 200)) // Divine super combat(4) + divine ranging(4) -> Divine wrath potion(4)
+		new Recipe(Category.UTILITY, 23685, 42398, 100, new Item(23733, 1), new Item(BLOOD_MONEY, 200)) // Divine super combat(4) + divine ranging(4) -> Divine wrath potion(4)
 	);
 
 	private static final class State {

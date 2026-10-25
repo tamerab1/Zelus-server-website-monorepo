@@ -34,10 +34,10 @@ import java.util.*;
  */
 @Slf4j
 public class StatueOfFortune {
-	public static final int DORMANT = 62393, CHARGED = 62394, BLESSED = 62395;
+	public static final int DORMANT = 65473, CHARGED = 65474, BLESSED = 65475;
 	public static final int[] LOCS = {DORMANT, CHARGED, BLESSED};
 	/** South-west tile of the 3x3 statue: exactly the home knight statue (38443)'s tiles. Ambient = the nexus cyan splash. */
-	static final int X = 3104, Y = 3506, SIZE = 3, AMBIENT_GFX = 4295;
+	static final int X = 3104, Y = 3506, SIZE = 3, AMBIENT_GFX = 6702;
 
 	static final long MINUTE = 60_000L, BLESSING_MS = 60 * MINUTE, CAP_MS = 180 * MINUTE;
 	static final long SURGE_FULL = 5_000_000L, SURGE_MIN = 1_000_000L, SURGE_BONUS_CAP = 25_000_000L, SURGE_COOLDOWN = 10 * MINUTE;

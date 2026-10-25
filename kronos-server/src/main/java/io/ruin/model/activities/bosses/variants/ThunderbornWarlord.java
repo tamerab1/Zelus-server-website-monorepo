@@ -10,7 +10,7 @@ import io.ruin.model.entity.player.Player;
  */
 public class ThunderbornWarlord extends BossVariant {
 
-	private static final int GFX_LIGHTNING = 4288;
+	private static final int GFX_LIGHTNING = 6695;
 	private static final int ANIM_ATTACK = 1540;
 	private static final int CLEAVE_RADIUS = 2;
 

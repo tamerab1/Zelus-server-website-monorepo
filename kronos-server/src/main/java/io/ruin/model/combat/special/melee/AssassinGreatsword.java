@@ -14,10 +14,10 @@ import io.ruin.model.entity.player.Player;
 //spec bar via cache enums 906 / 1739 (armor_1020_fix_enums.txt).
 public class AssassinGreatsword implements Special {
 
-	private static final int ASSASSIN_GREATSWORD = 31884;
+	private static final int ASSASSIN_GREATSWORD = 42684;
 	// 7644 with the forced right-hand item (the regular AGS) stripped, so the wielded model shows (as the Tempest godsword)
-	private static final int SPEC_ANIM = 14457;
-	private static final int SHADOW_SWIRL = 4429, SHADOW_BURST = 4430;
+	private static final int SPEC_ANIM = 20890;
+	private static final int SHADOW_SWIRL = 6836, SHADOW_BURST = 6837;
 
 	@Override
 	public boolean accept(ObjType def, String name) {

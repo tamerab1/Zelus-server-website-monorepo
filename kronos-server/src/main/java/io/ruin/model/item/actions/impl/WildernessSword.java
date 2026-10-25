@@ -20,8 +20,8 @@ public class WildernessSword {
 		ItemAction.registerInventory(13111, "teleport", WildernessSword::teleport);
 		ItemAction.registerEquipment(13111, "teleport", WildernessSword::teleport);
 		// Wildfang blade (Wilderness Forge upgrade of the wilderness sword 4)
-		ItemAction.registerInventory(31642, "teleport", WildernessSword::teleport);
-		ItemAction.registerEquipment(31642, "teleport", WildernessSword::teleport);
+		ItemAction.registerInventory(42442, "teleport", WildernessSword::teleport);
+		ItemAction.registerEquipment(42442, "teleport", WildernessSword::teleport);
 	}
 
 }

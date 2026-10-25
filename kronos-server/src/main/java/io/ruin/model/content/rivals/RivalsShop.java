@@ -33,10 +33,10 @@ public final class RivalsShop {
 	private static final int MODEL = 4, NAME = 5, COST = 6, BUTTON = 7;
 	private static final double MODEL_ZOOM_SCALE = 0.95;
 
-	public static final int CHALLENGER_CAPE = 31780, CHAMPION_CAPE = 31782, ORNAMENT_KIT = 31790, MYSTERY_BOX = 31792;
+	public static final int CHALLENGER_CAPE = 42580, CHAMPION_CAPE = 42582, ORNAMENT_KIT = 42590, MYSTERY_BOX = 42592;
 	public static final int TITLE_RIVAL = 30221, TITLE_UNDEFEATED = 30222;
 	private static final int SCROLL_ITEM = 2396, LAMP = 30470, LOOTING_BAG = 11941, BLIGHTED_RESTORE = 24598;
-	private static final int ASSASSIN_HOOD = 31878, ASSASSIN_GARB = 31880, ASSASSIN_LEGS = 31882, ASSASSIN_GREATSWORD = 31884;
+	private static final int ASSASSIN_HOOD = 42678, ASSASSIN_GARB = 42680, ASSASSIN_LEGS = 42682, ASSASSIN_GREATSWORD = 42684;
 
 	private enum Kind { ITEM, TITLE, BLIGHTED }
 

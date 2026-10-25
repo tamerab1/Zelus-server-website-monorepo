@@ -17,13 +17,13 @@ import java.util.Map;
  * textures 262 / 263 (soulblade_*.txt).
  */
 public final class AzureFang {
-	public static final int ITEM = 31848;
-	private static final int GFX_SPARKLE = 4423, GFX_HEIGHT = 60;
+	public static final int ITEM = 42648;
+	private static final int GFX_SPARKLE = 6830, GFX_HEIGHT = 60;
 	private static final Map<Integer, Integer> SPARKLES = Map.of(
 			ITEM, GFX_SPARKLE,
-			31824, 4426, // Soulbound blade (base)
-			31826, 4427, // Empowered soulbound blade
-			31828, GFX_SPARKLE); // Ascended soulbound blade (the Fang's mesh)
+			42624, 6833, // Soulbound blade (base)
+			42626, 6834, // Empowered soulbound blade
+			42628, GFX_SPARKLE); // Ascended soulbound blade (the Fang's mesh)
 
 	private AzureFang() {
 	}

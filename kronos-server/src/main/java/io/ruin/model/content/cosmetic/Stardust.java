@@ -14,8 +14,8 @@ import io.ruin.model.entity.player.Player;
  */
 public final class Stardust {
 
-	public static final int GOLD = 4293, CRIMSON = 4294;
-	public static final int CELESTIAL_TWISTED_BOW = 31778;
+	public static final int GOLD = 6700, CRIMSON = 6701;
+	public static final int CELESTIAL_TWISTED_BOW = 42578;
 
 	private Stardust() {
 	}

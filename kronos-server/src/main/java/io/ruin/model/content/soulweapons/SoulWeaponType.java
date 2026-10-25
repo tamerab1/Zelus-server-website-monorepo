@@ -6,9 +6,9 @@ package io.ruin.model.content.soulweapons;
  * its own attack style (item_info weapon_type; the Spire's spell in PlayerCombat). Cache: build_soulbound.sh.
  */
 public enum SoulWeaponType {
-	MELEE("Soulbound blade", 31824, 31826, 31828),
-	RANGED("Soulbound recurve", 31830, 31832, 31834),
-	MAGIC("Soulbound spire", 31836, 31838, 31840);
+	MELEE("Soulbound blade", 42624, 42626, 42628),
+	RANGED("Soulbound recurve", 42630, 42632, 42634),
+	MAGIC("Soulbound spire", 42636, 42638, 42640);
 
 	public final String name;
 	/** Item ids: [0] base, [1] Empowered, [2] Ascended. */

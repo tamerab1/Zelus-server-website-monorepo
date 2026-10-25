@@ -15,18 +15,18 @@ public final class TierEffects {
 	private static final Map<Integer, int[]> TINTED = new HashMap<>();
 
 	static {
-		tint(380, 4239, 4240, 4241);   // shadow blitz projectile
-		tint(381, 4242, 4243, 4244);   // shadow blitz impact
-		tint(383, 4245, 4246, 4247);   // shadow barrage burst
-		tint(2010, 4248, 4249, 4250);  // maledictus spectral projectile
-		tint(2002, 4251, 4252, 4253);  // maledictus blood projectile
-		tint(2005, 4254, 4255, 4256);  // maledictus impact
-		tint(1028, 4257, 4258, 4259);  // earthquake tremor
-		tint(1377, 4260, 4261, 4262);  // jal-xil spear
-		tint(1907, 4263, 4264, 4265);  // xamphur orb
-		tint(1908, 4266, 4267, 4268);  // xamphur orb impact
-		tint(1914, 4269, 4270, 4271);  // xamphur claws
-		tint(1919, 4272, 4273, 4274);  // xamphur summon burst
+		tint(380, 6646, 6647, 6648);   // shadow blitz projectile
+		tint(381, 6649, 6650, 6651);   // shadow blitz impact
+		tint(383, 6652, 6653, 6654);   // shadow barrage burst
+		tint(2010, 6655, 6656, 6657);  // maledictus spectral projectile
+		tint(2002, 6658, 6659, 6660);  // maledictus blood projectile
+		tint(2005, 6661, 6662, 6663);  // maledictus impact
+		tint(1028, 6664, 6665, 6666);  // earthquake tremor
+		tint(1377, 6667, 6668, 6669);  // jal-xil spear
+		tint(1907, 6670, 6671, 6672);  // xamphur orb
+		tint(1908, 6673, 6674, 6675);  // xamphur orb impact
+		tint(1914, 6676, 6677, 6678);  // xamphur claws
+		tint(1919, 6679, 6680, 6681);  // xamphur summon burst
 	}
 
 	private TierEffects() {

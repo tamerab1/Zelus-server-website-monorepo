@@ -30,9 +30,9 @@ public class MiningMinigameInstance {
 	private static final Position PRISMATIC_CHEST_POSITION = new Position(3349, 3335, 0);
 	private static final Position DRACO_BOSS_POSITION = new Position(3361, 3336, 0);
 	private static final Position REAL_WORLD_EXIT_POSITION = new Position(3337, 3348, 0);
-	private static final int DRACO_ROCK_ID = 62390;
+	private static final int DRACO_ROCK_ID = 65470;
 	private static final int EXIT_PORTAL_ID = 27096;
-	private static final int PRISMATIC_CHEST_ID = 62389;
+	private static final int PRISMATIC_CHEST_ID = 65469;
 	private static final int DRACO_BOSS_ID = 30560; // see Draco.java's DRACO_IDLE comment -- moved off the >65535 id range
 	private static final int DIRECTION_EAST = 3;
 	private static final int DRACODUST_ID = 60389;

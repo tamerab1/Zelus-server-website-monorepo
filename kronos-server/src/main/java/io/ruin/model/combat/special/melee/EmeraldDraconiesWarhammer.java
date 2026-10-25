@@ -16,7 +16,7 @@ import io.ruin.model.stat.StatType;
 // emerald_warhammer_spec_enums.txt.
 public class EmeraldDraconiesWarhammer implements Special {
 
-	private static final int WARHAMMER = 31774;
+	private static final int WARHAMMER = 42574;
 	private static final int ANIM_SMASH = 1378, GFX_SMASH = 1292, GFX_TOXIC_IMPACT = 752, SOUND_SMASH = 2541;
 	private static final int VENOM_DAMAGE = 6;
 

@@ -47,7 +47,7 @@ public class VoteBossHandler {
 	}
 
 	/** The vote bosses, alternating so every spawn is a different one (2026-10-19: + Volcanus 16216, VoteVolcanus). */
-	private static final int[] BOSSES = {8262, 16216};
+	private static final int[] BOSSES = {8262, 21937};
 	private static int nextBoss = 0;
 
 	private static void spawnBoss() {

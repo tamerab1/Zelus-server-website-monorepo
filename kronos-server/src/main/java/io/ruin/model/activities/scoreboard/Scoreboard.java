@@ -99,7 +99,7 @@ public final class Scoreboard {
 
 	public static final int INTERFACE = 1163;
 	/** The Zelus Scoreboard board in the world (.dev/cache-restore-tool BuildChampionshipBoard, variant "scoreboard"). */
-	public static final int BOARD_OBJECT_ID = 62391;
+	public static final int BOARD_OBJECT_ID = 65471;
 	private static final int CLOSE = 2, TITLE = 3;
 	/** Tabs, toggles and stat entries are OSRS bezel buttons: button (click), active parts +1..+2, label +3. */
 	private static final int FIRST_TAB = 4, TAB_STRIDE = 4, ACTIVE = 1, ACTIVE_PARTS = 2, LABEL = 3;

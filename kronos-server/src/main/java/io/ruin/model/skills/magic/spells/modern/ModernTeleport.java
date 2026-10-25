@@ -83,8 +83,8 @@ public class ModernTeleport extends Spell {
 	 * The server's main teleport effect: the Arceuus teleport (anim 8805 / 8807, gfx 1822 / 1823) recoloured cyan in
 	 * the cache as spotanims 4291 / 4292 (.dev/cache-restore-tool/teleport_cyan.txt).
 	 */
-	public static final int CYAN_TELEPORT_ANIM = 8805, CYAN_TELEPORT_GFX = 4291;
-	public static final int CYAN_ARRIVE_ANIM = 8807, CYAN_ARRIVE_GFX = 4292;
+	public static final int CYAN_TELEPORT_ANIM = 8805, CYAN_TELEPORT_GFX = 6698;
+	public static final int CYAN_ARRIVE_ANIM = 8807, CYAN_ARRIVE_GFX = 6699;
 
 	/**
 	 * The full Arceuus teleport, same timing as the original spell: the casting animation (5 ticks), then the

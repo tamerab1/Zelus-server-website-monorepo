@@ -300,7 +300,7 @@ public class Equipment extends ItemContainer {
 						+ Achievements.ALL_THIS_FROM_A_SEED.getAchievementName());
 
 		}
-		if (selectedItem.getId() == 25975 || selectedItem.getId() == 31588) // Lightbearer / Sunbearer
+		if (selectedItem.getId() == 25975 || selectedItem.getId() == 42388) // Lightbearer / Sunbearer
 			player.specialRestoreTicks = 0;
 		if(selectedItem.getId() == 7927) {
 			if (player.isLocked()) {
@@ -381,7 +381,7 @@ public class Equipment extends ItemContainer {
 			}
 			equipped.remove();
 			inventory.set(freeSlot, equipped);
-			if (equipped.getId() == 25975 || equipped.getId() == 31588) // Lightbearer / Sunbearer
+			if (equipped.getId() == 25975 || equipped.getId() == 42388) // Lightbearer / Sunbearer
 				player.specialRestoreTicks = 0;
 		}
 		if(equipped.getId() == 7927) {
@@ -462,7 +462,7 @@ public class Equipment extends ItemContainer {
 		}
 		if (wep != null) {
 			io.ruin.model.content.soulweapons.SoulWeapons.addTierBonuses(player, wep, bonuses); // tier scaling, shown on the stats screen
-			if (wep.getId() == 27275 || wep.getId() == 33000) {
+			if (wep.getId() == 27275 || wep.getId() == 43800) {
 				if (player.getCurrentToARaid() != null) {
 					bonuses[EquipmentStats.MAGIC_DAMAGE] *= 4;
 					bonuses[EquipmentStats.MAGIC_ATTACK] *= 4;
@@ -504,13 +504,13 @@ public class Equipment extends ItemContainer {
 	public boolean wearsAmuletOfTheDamned() {
 		return getItemIdForSlot(SLOT_AMULET) == 12851 ||
 			getItemIdForSlot(SLOT_AMULET) == 12853 ||
-			getItemIdForSlot(SLOT_AMULET) == 31644 || // Amulet of the forsaken
+			getItemIdForSlot(SLOT_AMULET) == 42444 || // Amulet of the forsaken
 			getItemIdForSlot(SLOT_HANDS) == 30380; // Gloves of the damned
 	}
 
 	public boolean wearsTormentedBracelet() {
 		return getItemIdForSlot(SLOT_HANDS) == 19544 || getItemIdForSlot(SLOT_HANDS) == 23444
-				|| getItemIdForSlot(SLOT_HANDS) == 31590; // Wraithbound bracelet
+				|| getItemIdForSlot(SLOT_HANDS) == 42390; // Wraithbound bracelet
 	}
 
 	public boolean wearsStaffOfTheDead() {
@@ -560,7 +560,7 @@ public class Equipment extends ItemContainer {
 
 	public boolean wearsOcculNecklace() {
 		return getItemIdForSlot(SLOT_AMULET) == 12002 || getItemIdForSlot(SLOT_AMULET) == 19720
-				|| getItemIdForSlot(SLOT_AMULET) == 31544; // Eldritch necklace
+				|| getItemIdForSlot(SLOT_AMULET) == 42344; // Eldritch necklace
 	}
 
 	public boolean wearsSmokeBattleStaff() {
@@ -578,7 +578,7 @@ public class Equipment extends ItemContainer {
 	public boolean wearsAhrimStaff() {
 		int weaponId = getItemIdForSlot(SLOT_WEAPON);
 		return weaponId == 4710 || weaponId == 4862 || weaponId == 4863 || weaponId == 4864 || weaponId == 4865
-				|| weaponId == 31518; // Arcanist Ahrim's staff
+				|| weaponId == 42318; // Arcanist Ahrim's staff
 	}
 
 	public boolean wearsEliteVoid() {
@@ -592,7 +592,7 @@ public class Equipment extends ItemContainer {
 		int capeId = getItemIdForSlot(SLOT_CAPE);
 		return capeId == 21776 || capeId == 21780 || capeId == 21784
 				|| capeId == 21791 || capeId == 21793 || capeId == 21795
-				|| capeId == 31558; // Cape of chaos
+				|| capeId == 42358; // Cape of chaos
 	}
 
 	public boolean wearsNightmareStaff() {
@@ -605,9 +605,9 @@ public class Equipment extends ItemContainer {
 		int hatId = getItemIdForSlot(SLOT_HAT);
 		int bodyId = getItemIdForSlot(SLOT_CHEST);
 		int legsId = getItemIdForSlot(SLOT_LEGS);
-		return (hatId == 4708 || hatId == 4856 || hatId == 4857 || hatId == 4858 || hatId == 4859 || hatId == 31516) &&
-				(bodyId == 4712 || bodyId == 4868 || bodyId == 4869 || bodyId == 4870 || bodyId == 4871 || bodyId == 31520) &&
-				(legsId == 4714 || legsId == 4874 || legsId == 4875 || legsId == 4876 || legsId == 4877 || legsId == 31522);
+		return (hatId == 4708 || hatId == 4856 || hatId == 4857 || hatId == 4858 || hatId == 4859 || hatId == 42316) &&
+				(bodyId == 4712 || bodyId == 4868 || bodyId == 4869 || bodyId == 4870 || bodyId == 4871 || bodyId == 42320) &&
+				(legsId == 4714 || legsId == 4874 || legsId == 4875 || legsId == 4876 || legsId == 4877 || legsId == 42322);
 	}
 
 	private boolean prospectorEquipped() {

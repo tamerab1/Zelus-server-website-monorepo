@@ -876,7 +876,7 @@ public class Duel extends ItemContainer {
 			return;
 		}
 
-		targetDuel.player.getPacketSender().sendClientScript(10060, "iii", 46137372, item.getSlot(), 46137417);
+		targetDuel.player.getPacketSender().sendClientScript(14643, "iii", 46137372, item.getSlot(), 46137417);
 		targetDuel.player.acceptDelay.delaySeconds(3);
 
 		targetDuel.player.sendMessage("Duel Stake removal: " + amount + "x " + item.getDef().name + " removed!");

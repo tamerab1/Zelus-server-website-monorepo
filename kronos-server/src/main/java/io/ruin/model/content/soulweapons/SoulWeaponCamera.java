@@ -22,27 +22,27 @@ final class SoulWeaponCamera {
 	private static final Map<Box, Map<Integer, int[]>> CAMERAS = new HashMap<>();
 
 	static {
-		put(Box.CHECK, 31824, 400, 176, 1184);
-		put(Box.CHECK, 31826, 622, 176, 1472);
-		put(Box.CHECK, 31828, 1537, 176, 1600);
-		put(Box.CHECK, 31830, 505, 176, 672);
-		put(Box.CHECK, 31832, 941, 176, 384);
-		put(Box.CHECK, 31834, 786, 176, 640);
-		put(Box.CHECK, 31836, 1169, 176, 736);
-		put(Box.CHECK, 31838, 892, 176, 672);
-		put(Box.CHECK, 31840, 1141, 144, 384);
-		put(Box.SELECT, 31824, 444, 176, 1184);
-		put(Box.SELECT, 31830, 559, 176, 1664);
-		put(Box.SELECT, 31836, 1286, 176, 800);
-		put(Box.TREE, 31824, 501, 176, 1184);
-		put(Box.TREE, 31826, 764, 176, 1376);
-		put(Box.TREE, 31828, 1881, 176, 1632);
-		put(Box.TREE, 31830, 633, 176, 1600);
-		put(Box.TREE, 31832, 1158, 176, 352);
-		put(Box.TREE, 31834, 969, 160, 768);
-		put(Box.TREE, 31836, 1436, 160, 800);
-		put(Box.TREE, 31838, 1101, 176, 768);
-		put(Box.TREE, 31840, 1775, 144, 384);
+		put(Box.CHECK, 42624, 400, 176, 1184);
+		put(Box.CHECK, 42626, 622, 176, 1472);
+		put(Box.CHECK, 42628, 1537, 176, 1600);
+		put(Box.CHECK, 42630, 505, 176, 672);
+		put(Box.CHECK, 42632, 941, 176, 384);
+		put(Box.CHECK, 42634, 786, 176, 640);
+		put(Box.CHECK, 42636, 1169, 176, 736);
+		put(Box.CHECK, 42638, 892, 176, 672);
+		put(Box.CHECK, 42640, 1141, 144, 384);
+		put(Box.SELECT, 42624, 444, 176, 1184);
+		put(Box.SELECT, 42630, 559, 176, 1664);
+		put(Box.SELECT, 42636, 1286, 176, 800);
+		put(Box.TREE, 42624, 501, 176, 1184);
+		put(Box.TREE, 42626, 764, 176, 1376);
+		put(Box.TREE, 42628, 1881, 176, 1632);
+		put(Box.TREE, 42630, 633, 176, 1600);
+		put(Box.TREE, 42632, 1158, 176, 352);
+		put(Box.TREE, 42634, 969, 160, 768);
+		put(Box.TREE, 42636, 1436, 160, 800);
+		put(Box.TREE, 42638, 1101, 176, 768);
+		put(Box.TREE, 42640, 1775, 144, 384);
 	}
 
 	private SoulWeaponCamera() {

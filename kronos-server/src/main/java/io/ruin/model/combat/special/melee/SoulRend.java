@@ -17,13 +17,13 @@ import io.ruin.model.entity.player.Player;
 //PvM only, like every Soulbound power; spec bar: soulbound_spec_enums.txt.
 public class SoulRend implements Special {
 
-	private static final int ANIM_CLEAVE = 1058, GFX_AZURE_ARC = 4424, GFX_PHANTOM_SLASH = 4425, GFX_FROST = 4423,
+	private static final int ANIM_CLEAVE = 1058, GFX_AZURE_ARC = 6831, GFX_PHANTOM_SLASH = 6832, GFX_FROST = 6830,
 			SOUND_SWOOSH = 2529, SOUND_IMPACT = 2537, COLD_BURN_DELAY = 2;
 	private static final double COLD_BURN = 0.15;
 
 	@Override
 	public boolean accept(ObjType def, String name) {
-		return def.id == 31828;
+		return def.id == 42628;
 	}
 
 	@Override

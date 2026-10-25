@@ -67,10 +67,10 @@ public class MaxCape {
 		ARDOUGNE(13124, 20764, 20760),
 		INFERNAL(21295, 21282, 21285),
 		// Custom themed Infernal cape recolours (cache textures 154-156), each with its own recoloured max hood.
-		GLACIAL(31400, 31412, 31406),
-		COSMIC(31402, 31414, 31408),
-		VOID(31404, 31416, 31410),
-		MERLIN(30595, 33022, 33021)
+		GLACIAL(42200, 42212, 42206),
+		COSMIC(42202, 42214, 42208),
+		VOID(42204, 42216, 42210),
+		MERLIN(30595, 43822, 43821)
 		;
 
 		public final int secondaryId, newHoodId, newCapeId;

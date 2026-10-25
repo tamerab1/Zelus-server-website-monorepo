@@ -22,11 +22,11 @@ import static io.ruin.model.entity.player.PlayerCombat.getChebyshevDistance;
  */
 public class StarfallVolley implements Special {
 
-	public static final int CELESTIAL_NIGHTFALL_BOW = 31818;
+	public static final int CELESTIAL_NIGHTFALL_BOW = 42618;
 
 	/** The Venator bow's quick draw (the celestial bow's own attack animation, weapon type CELESTIAL_NIGHTFALL_BOW). */
 	public static final int ATTACK_ANIM = 9858;
-	private static final int STAR_DRAWBACK = 4416, STAR_HEAD = 4418, STAR_IMPACT = 4419, STARDUST = 4293;
+	private static final int STAR_DRAWBACK = 6823, STAR_HEAD = 6825, STAR_IMPACT = 6826, STARDUST = 6700;
 	private static final Projectile[] VOLLEY = {
 		new Projectile(STAR_HEAD, 40, 36, 41, 52, 6, 5, 11),
 		new Projectile(STAR_HEAD, 40, 36, 41, 65, 10, 25, 11),
