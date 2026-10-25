@@ -97,6 +97,13 @@ public class BuildRemapManifest {
 		return cfgCache.get(k);
 	}
 
+	/**
+	 * Older copies of Jagex content Zelus imported before 231 caught up: not byte-identical to 241 (Jagex
+	 * kept editing them) but superseded by 241's version at the same id. Checked by hand.
+	 */
+	static final Map<String, Map<Integer, String>> SUPERSEDED_IMPORTS = Map.of(
+		"clientscript", Map.of(2628, "imported vanilla (older version): all 24 instructions are in 241's 34, same args; only caller is Jagex's script 2103"));
+
 	/** Same content as vanilla 241 at the same id (configs semantically, scripts after format conversion, rest by bytes). */
 	static boolean sameAsVanilla241(Type t, int id, Store local, Store v241) throws Exception {
 		// varp definitions are 1-3 bytes: equal bytes prove nothing, and our custom varps hold Zelus state.
@@ -179,6 +186,10 @@ public class BuildRemapManifest {
 			Set<Integer> imported = new TreeSet<>();
 			for (int id : colliding) if (sameAsVanilla241(t, id, local, v241)) imported.add(id);
 			for (int id : imported) { map.put(id, id); reuse.put(id, "imported vanilla: identical to rev 241 at the same id"); toPlace.remove(id); }
+			for (var e : SUPERSEDED_IMPORTS.getOrDefault(t.key, Map.of()).entrySet()) {
+				if (!colliding.contains(e.getKey())) throw new IllegalStateException(t.key + " " + e.getKey() + " is not a colliding custom id");
+				imported.add(e.getKey()); map.put(e.getKey(), e.getKey()); reuse.put(e.getKey(), e.getValue()); toPlace.remove(e.getKey());
+			}
 			if (t.key.equals("model") && !colliding.isEmpty()) {
 				// identical bytes to a vanilla 241 model -> point at that model, no slot needed
 				Map<String, Integer> vanillaByHash = new HashMap<>();
