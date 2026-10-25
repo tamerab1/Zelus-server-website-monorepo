@@ -47,13 +47,14 @@ public class BuildConfigs241 {
 			var theirs = RoundTripDefs.files(out, group);
 			TreeMap<Integer, byte[]> result = new TreeMap<>(theirs);
 			Map<Integer, byte[]> expected = new HashMap<>();
-			int customs = 0, emptySkipped = 0, merged = 0, conflicts = 0, artifactOnly = 0;
+			int customs = 0, emptySkipped = 0, merged = 0, conflicts = 0, artifactOnly = 0, importedKept = 0;
 			for (var e : ours.entrySet()) {
 				int id = e.getKey();
 				byte[] def = e.getValue();
 				if (!base.containsKey(id)) {
 					if (def.length == 1 && def[0] == 0) { emptySkipped++; continue; }
 					int newId = manifest.map(type, id);
+					if (newId == id && theirs.containsKey(id) && manifest.isImported(type, id)) { importedKept++; continue; } // Jagex content imported early: keep 241's
 					if (theirs.containsKey(newId)) throw new IllegalStateException(type + " " + id + " -> " + newId + " is a vanilla 241 id");
 					byte[] bytes = DefRewriter.rewrite(type, def, manifest, pk);
 					if (type.equals("seq")) {
@@ -78,8 +79,8 @@ public class BuildConfigs241 {
 			}
 			newGroups.put(group, result);
 			expectedCustom.put(group, expected);
-			report.append(String.format("    \"%s\": {\"group\": %d, \"vanilla241\": %d, \"customsAdded\": %d, \"emptyCustomsSkipped\": %d, \"vanillaEditsMerged\": %d, \"conflictsOursKept\": %d, \"packerArtifactOnlySkipped\": %d, \"total\": %d}%s%n",
-				type, group, theirs.size(), customs, emptySkipped, merged, conflicts, artifactOnly, result.size(), ++ti < TYPES.size() ? "," : ","));
+			report.append(String.format("    \"%s\": {\"group\": %d, \"vanilla241\": %d, \"customsAdded\": %d, \"importedVanillaKept\": %d, \"emptyCustomsSkipped\": %d, \"vanillaEditsMerged\": %d, \"conflictsOursKept\": %d, \"packerArtifactOnlySkipped\": %d, \"total\": %d}%s%n",
+				type, group, theirs.size(), customs, importedKept, emptySkipped, merged, conflicts, artifactOnly, result.size(), ++ti < TYPES.size() ? "," : ","));
 		}
 
 		// varps: our custom varp(s) at their new ids + empty definitions up to the highest varp in use

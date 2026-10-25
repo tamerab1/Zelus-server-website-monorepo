@@ -28,6 +28,10 @@ import java.util.*;
  *  2. if no shift fits under the limit (models, objects): pack the colliding ids against the
  *     limit, top-down, keeping their order, so future vanilla growth uses the gap first.
  * Models whose bytes equal a vanilla 241 model map onto that model instead of taking a slot.
+ * IMPORTED VANILLA: a colliding "custom" id whose content equals vanilla 241 at the same id is
+ * Jagex content Zelus imported early from a newer cache (e.g. inv 935, 108 objects, 61 items).
+ * It keeps its id (identity, listed under "imported"): moving it would duplicate it and split our
+ * server/saves from Jagex's own scripts and content that use the original id.
  * Varps also include "phantom" varps: ids that only exist as the base varp of a varbit (no varp
  * definition in our cache). Our custom varbits 17796-17803 store their bits in varps 4829-4836.
  *
@@ -82,6 +86,60 @@ public class BuildRemapManifest {
 		return r;
 	}
 
+	static final Map<String, Integer> CONFIG_GROUP = Map.of("item", 10, "obj", 6, "npc", 9, "seq", 12, "spotanim", 13,
+		"varbit", 14, "varp", 16, "overlay", 4, "inv", 5, "config18", 18);
+	static final Map<String, Map<Integer, byte[]>> cfgCache = new HashMap<>();
+	static DefRewriter.ParamKinds paramKinds;
+
+	static Map<Integer, byte[]> cfg(Store s, String tag, int group) throws Exception {
+		String k = tag + ":" + group;
+		if (!cfgCache.containsKey(k)) cfgCache.put(k, RoundTripDefs.files(s, group));
+		return cfgCache.get(k);
+	}
+
+	/** Same content as vanilla 241 at the same id (configs semantically, scripts after format conversion, rest by bytes). */
+	static boolean sameAsVanilla241(Type t, int id, Store local, Store v241) throws Exception {
+		// varp definitions are 1-3 bytes: equal bytes prove nothing, and our custom varps hold Zelus state.
+		// (inv 935 stays: besides equal bytes, Jagex's own script 7932 -- imported verbatim -- uses it.)
+		if (t.key.equals("varp")) return false;
+		if (t.index == 2) {
+			byte[] o = cfg(local, "l", t.group).get(id), v = cfg(v241, "v", t.group).get(id);
+			if (o == null || v == null) return false;
+			if (Arrays.equals(o, v)) return true;
+			if (!RoundTripDefs.GROUPS.containsKey(t.key)) return false;
+			if (paramKinds == null) {
+				Map<Integer, byte[]> p = new HashMap<>(cfg(v241, "v", 11));
+				cfg(local, "l", 11).forEach(p::putIfAbsent);
+				paramKinds = DefRewriter.paramKinds(p);
+			}
+			return ConfigMerge.sameFields(t.key, o, v, paramKinds);
+		}
+		if (t.index == 9) {
+			byte[] o = textureFiles(local).get(id), v = textureFiles(v241).get(id);
+			return o != null && Arrays.equals(o, v);
+		}
+		Archive la = local.findIndex(t.index).getArchive(id), va = v241.findIndex(t.index).getArchive(id);
+		if (la == null || va == null) return false;
+		byte[] o = la.decompress(local.getStorage().loadArchive(la)), v = va.decompress(v241.getStorage().loadArchive(va));
+		if (t.index == 12) {
+			try { o = ScriptRewriter.run(o, DefRewriter.IDENTITY, false, true, (i, x) -> x).bytes(); } catch (Exception e) { return false; }
+		}
+		return Arrays.equals(o, v);
+	}
+
+	static final Map<Store, Map<Integer, byte[]>> texCache = new HashMap<>();
+	static Map<Integer, byte[]> textureFiles(Store s) throws Exception {
+		if (!texCache.containsKey(s)) {
+			Archive ar = s.findIndex(9).getArchive(0);
+			FileData[] fd = ar.getFileData();
+			List<byte[]> c = SpliceItemOption.splitChunks(ar.decompress(s.getStorage().loadArchive(ar)), fd.length);
+			Map<Integer, byte[]> m = new HashMap<>();
+			for (int i = 0; i < fd.length; i++) m.put(fd[i].getId(), c.get(i));
+			texCache.put(s, m);
+		}
+		return texCache.get(s);
+	}
+
 	static String sha(Store s, int index, int group) throws Exception {
 		Archive a = s.findIndex(index).getArchive(group);
 		byte[] b = a.decompress(s.getStorage().loadArchive(a));
@@ -118,6 +176,9 @@ public class BuildRemapManifest {
 			Integer delta = null;
 
 			TreeSet<Integer> toPlace = new TreeSet<>(colliding);
+			Set<Integer> imported = new TreeSet<>();
+			for (int id : colliding) if (sameAsVanilla241(t, id, local, v241)) imported.add(id);
+			for (int id : imported) { map.put(id, id); reuse.put(id, "imported vanilla: identical to rev 241 at the same id"); toPlace.remove(id); }
 			if (t.key.equals("model") && !colliding.isEmpty()) {
 				// identical bytes to a vanilla 241 model -> point at that model, no slot needed
 				Map<String, Integer> vanillaByHash = new HashMap<>();
@@ -175,7 +236,7 @@ public class BuildRemapManifest {
 			Set<Integer> newIds = new HashSet<>();
 			for (var e : map.entrySet()) {
 				int n = e.getValue();
-				boolean reused = reuse.containsKey(e.getKey());
+				boolean reused = reuse.containsKey(e.getKey()); // reuse of a vanilla model, duplicate, or imported identity
 				if (n > t.limit) throw new IllegalStateException(t.key + " " + e.getKey() + " -> " + n + " over limit");
 				if (!reused && occupied.contains(n)) throw new IllegalStateException(t.key + " " + n + " occupied");
 				if (!reused && !newIds.add(n)) throw new IllegalStateException(t.key + " " + n + " assigned twice");
@@ -183,8 +244,9 @@ public class BuildRemapManifest {
 			int lowestNew = map.values().stream().filter(v -> v > max241).min(Integer::compare).orElse(-1);
 			int gap = lowestNew < 0 ? -1 : lowestNew - max241 - 1;
 
-			summary.add(String.format("%-28s custom=%-5d collide=%-5d strategy=%-16s %s gapAbove241=%s (~%s revs) limit=%d",
-				t.label, custom.size(), colliding.size(), strategy,
+			long importedCount = reuse.values().stream().filter(v -> v.startsWith("imported")).count();
+			summary.add(String.format("%-28s custom=%-5d collide=%-5d importedVanilla=%-4d strategy=%-16s %s gapAbove241=%s (~%s revs) limit=%d",
+				t.label, custom.size(), colliding.size(), importedCount, strategy,
 				delta != null ? "delta=" + delta : (map.isEmpty() ? "" : "newRange=" + Collections.min(map.values()) + ".." + Collections.max(map.values())),
 				gap < 0 ? "-" : gap, growth == 0 || gap < 0 ? "-" : String.format("%.1f", gap * 10.0 / growth), t.limit));
 

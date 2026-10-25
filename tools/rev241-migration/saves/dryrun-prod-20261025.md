@@ -7,7 +7,7 @@ Full per-path reports (`saves_dryrun.md`, `db_dryrun.md`) are in that folder.
 ## Saves -- READY
 - 3,069 JSON files (372 player saves, 2,697 attribute / friend-list / global files); 0 unreadable.
 - Every path holding a colliding id is classified (31 paths; rules in `rules.json`). 0 invariant violations.
-- 721 item id fields change, plus 690 item-id map keys (`uniqueDrops`, `weaponAutocastIds`).
+- 715 item id fields change, plus 235 item-id map keys (`uniqueDrops`, `weaponAutocastIds`). (Rerun 2026-10-25 after the manifest stopped moving imported vanilla ids.)
 - **183 of 372 accounts change**; 189 hold no colliding id.
 - Custom varp slots 4828-4836 and custom-varbit savedConfigs keys: 0 values on prod (checked directly as well).
 - Collection logs: all 372 `collected` maps are empty (progress lives in `uniqueDrops`).

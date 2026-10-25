@@ -3,7 +3,7 @@
 Read-only. Data: `osrs server/data zelus rev241/data`. Manifest: `remap-241.json`.
 
 - JSON files scanned: **1108** (0 unreadable; 6 empty files passed through unchanged)
-- Remap tables used: item (791 ids), npc (43 ids), obj (599 ids), varbit (8 ids), varp (9 ids), seq (33 ids), spotanim (107 ids)
+- Remap tables used: item (730 ids), npc (39 ids), obj (491 ids), varbit (8 ids), varp (9 ids), seq (11 ids), spotanim (100 ids)
 - Simulation: 1108 files; 532 item fields, 0 varp slots and 0 packed var keys would change; **0 invariant violations**
 
 ## Verdict

@@ -182,6 +182,7 @@ public class BuildBinary241 {
 			byte[] data = read(local, la);
 			if (!base.contains(id)) {
 				int target = manifest.map(kind, id);
+				if (target == id && theirs.contains(id) && manifest.isImported(kind, id)) continue; // imported vanilla: keep 241's
 				if (theirs.contains(target)) throw new IllegalStateException(kind + " " + id + " -> " + target + " is vanilla 241");
 				store(idx, target, data, la.getFileData());
 				customs++;
@@ -212,6 +213,7 @@ public class BuildBinary241 {
 				continue;
 			}
 			int target = manifest.map("frames", id);
+			if (target == id && theirs.contains(id) && manifest.isImported("frames", id)) continue; // imported vanilla: keep 241's
 			if (theirs.contains(target)) throw new IllegalStateException("frames " + id + " -> " + target + " is vanilla 241");
 			FileData[] fd = la.getFileData();
 			List<byte[]> files = SpliceItemOption.splitChunks(read(local, la), fd.length);
@@ -276,6 +278,7 @@ public class BuildBinary241 {
 		for (var e : l.entrySet()) {
 			if (!b.containsKey(e.getKey())) {
 				int target = manifest.map("texture", e.getKey());
+				if (target == e.getKey() && t.containsKey(target) && manifest.isImported("texture", target)) continue;
 				if (t.containsKey(target)) throw new IllegalStateException("texture " + e.getKey() + " -> " + target + " is vanilla 241");
 				result.put(target, e.getValue());
 				customs++;

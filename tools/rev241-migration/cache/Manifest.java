@@ -29,8 +29,16 @@ public final class Manifest implements DefRewriter.Ids {
 		return m == null ? id : m.getOrDefault(id, id);
 	}
 
+	/** colliding id the manifest keeps because it is identical to vanilla 241 (Jagex content imported early) */
+	public boolean isImported(String kind, int id) {
+		var t = json.getAsJsonObject("types").getAsJsonObject(kind);
+		if (t == null) return false;
+		var r = t.getAsJsonObject("reuse").get(String.valueOf(id));
+		return r != null && (r.getAsString().startsWith("imported") || r.getAsString().equals("same bytes as vanilla 241 model " + id));
+	}
+
 	public boolean moves(String kind, int id) {
 		Map<Integer, Integer> m = maps.get(kind);
-		return m != null && m.containsKey(id) && m.get(id) != id;
+		return m != null && m.containsKey(id) && m.get(id).intValue() != id;
 	}
 }
