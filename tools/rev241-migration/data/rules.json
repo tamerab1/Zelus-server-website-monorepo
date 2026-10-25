@@ -1,0 +1,40 @@
+{
+  "_comment": "Which numbers in the server's static data (everything under <data> except runtime/, saves/, cache*/ and gear_loadouts/, which the save migration owns) are ids of which type. json rules: file glob (relative to <data>, ** = any depth) + regex over the lenjson path ('[]' = array element, '{KEY}' = a numeric object key, '(str)' = a number inside a string). Every rule was checked against the loader that reads the field. Types are the manifest's.",
+  "json": [
+    {"glob": "items/item_info.json",                  "path": "^\\[\\]\\.id$",                                  "type": "item"},
+    {"glob": "items/presets.json",                    "path": "\\.item\\[\\]$",                                 "type": "item"},
+    {"glob": "items/spawns/**.json",                  "path": "^\\[\\]\\.id$",                                  "type": "item"},
+    {"glob": "items/weapon_types.json",               "path": "(\\.attackAnimation|\\.defendAnimation|\\.renderAnimations\\[\\])$", "type": "seq"},
+    {"glob": "items/weapon_types.json",               "path": "(\\.attackSound|\\.equipSound)$",               "type": "sound"},
+    {"glob": "items/shield_types.json",               "path": "\\.animationId$",                                "type": "seq"},
+    {"glob": "npcs/combat/**.json",                   "path": "^\\[\\]\\.ids\\[\\]$",                           "type": "npc"},
+    {"glob": "npcs/combat/**.json",                   "path": "^\\[\\]\\.[a-z]+_animation$",                    "type": "seq"},
+    {"glob": "npcs/drops/eco/**.json",                "path": "^\\[\\]\\.ids\\[\\]$",                           "type": "npc"},
+    {"glob": "npcs/drops/pvp/**.json",                "path": "^\\[\\]\\.ids\\[\\]$",                           "type": "npc"},
+    {"glob": "npcs/drops/eco/**.json",                "path": "^\\[\\]\\.[a-z]+_animation$",                    "type": "seq"},
+    {"glob": "npcs/drops/eco/**.json",                "path": "(\\.tables\\[\\]\\.items\\[\\]\\.id|\\.guaranteed\\[\\]\\.id)$", "type": "item"},
+    {"glob": "npcs/drops/pvp/**.json",                "path": "(\\.tables\\[\\]\\.items\\[\\]\\.id|\\.guaranteed\\[\\]\\.id)$", "type": "item"},
+    {"glob": "npcs/drops/newDrops/*.json",            "path": "^\\[\\]\\.itemid$",                              "type": "item"},
+    {"glob": "npcs/spawns/**.json",                   "path": "^\\[\\]\\.id(\\(str\\))?$",                      "type": "npc"},
+    {"glob": "objects/spawns/**.json",                "path": "^\\[\\]\\.id$",                                  "type": "obj"},
+    {"glob": "pets/pet_recolor_exchange.json",        "path": "(\\.baseItemId|\\.variants\\[\\]\\.itemId)$",    "type": "item"},
+    {"glob": "pets/pet_recolor_exchange.json",        "path": "\\.variants\\[\\]\\.npcId$",                     "type": "npc"},
+    {"glob": "cfg/donator_deals.json",                "path": "\\.deals\\[\\]\\.itemIds\\[\\]$",                "type": "item"},
+    {"glob": "cfg/referral_promo.json",               "path": "\\.prizeItems\\[\\]\\.id$",                      "type": "item"},
+    {"glob": "donation_deals/*.json",                 "path": "\\.deals\\[\\]\\.item\\.id$",                    "type": "item"},
+    {"glob": "economy/item_classification/*.json",    "path": "^\\[\\]\\.id$",                                  "type": "item"},
+    {"glob": "brimstone_chest.json",                  "path": "^\\.items\\[\\]\\.id$",                          "type": "item"},
+    {"glob": "teleport_previews.json",                "path": "^\\.[^.]+\\.model$",                             "type": "model"},
+    {"glob": "teleport_previews.json",                "path": "^\\.[^.]+\\.anim$",                              "type": "seq"}
+  ],
+  "yaml": [
+    {"glob": "shops/*.yaml", "key": "id", "under": "defaultStock", "type": "item"}
+  ],
+  "filenames": [
+    {"glob": "npcs/drops/newDrops/*.json", "type": "npc"},
+    {"glob": "item_icons/*.png",           "type": "item"}
+  ],
+  "skip": ["runtime", "saves", "cache", "cache241", "gear_loadouts",
+           "items.json", "items-complete.json", "monsters-complete.json", "npcs-summary.json",
+           "xteas.json", "region_keys.json"]
+}

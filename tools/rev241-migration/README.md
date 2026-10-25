@@ -18,3 +18,10 @@ Inputs live outside the repo in `osrs server/archive/rev241/` (OpenRS2 caches 27
 - `save_migration_dryrun.py <manifest> <data> <report.md> [rules.json] [dumpDir]`: read-only census + simulated remap; writes only the report (and optional copies to dumpDir).
 - `rules.json`: path classification, each rule checked against the server code. Special kinds: `varp-index-array` (Player.varps is indexed by varp id: values move slots, the old slot is cleared, the destination must be empty) and `packed-var-key` (savedConfigs keys = id << 16 | isVarbit).
 - `dryrun-local-20261025.md`: local dev data verdict READY (1108 files, 532 item fields, 0 violations, 6 NUL-filled orphan files passed through). Synthetic tests of the varp / packed-key / item-key transforms all pass, and the "destination not empty" violation is caught.
+
+## Static data remap (`data/`)
+- `remap_data.py <manifest> rules.json <data> <report.md> [--apply]`: remaps ids in the server's static data (drops, spawns, combat, shops, item_info, pets, deals, weapon/shield types, teleport previews) and renames id-named files (`npcs/drops/newDrops/<npc>.json`, `item_icons/<item>.png`). It leaves `runtime/`, `saves/` and `gear_loadouts/` to the save migration, and skips caches, vanilla dumps and `*backup*` dirs. Dry run by default.
+- The files are lenient Gson JSON (`#`, `//` and `/* */` comments, unquoted keys), so strict parsers fail. `lenjson.py` tokenizes them and numbers are patched in place by byte span, which leaves comments, spacing and CRLF untouched. Shop YAML is patched line by line under `defaultStock:`.
+- `--apply` writes the marker `.rev241-data-remapped` and refuses to run twice. The model map has a chain, so a second pass would not be a no-op.
+- The report lists "unruled" numbers: a moving old id at an id-looking key with no rule. Every one must be explained before cutover.
+- Verified 2026-10-25 on a copy of the local data: 658 replacements in 39 files, 468 renames, 0 unruled. Every change is a mapped number (non-numeric bytes identical), and a second dry run finds nothing left to move.
