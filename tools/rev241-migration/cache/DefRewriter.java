@@ -108,6 +108,23 @@ public final class DefRewriter {
 		out.i32(ids.map("model", in.i32()));
 	}
 
+	/**
+	 * Rev 241 re-encoded every model reference as an int under new opcodes (objects 1/5 -> 6/7, npcs 1/60 ->
+	 * 61/62, items 1/23-26/78/79/90-93 -> 44-54), and the 241 client no longer reads the old object opcodes:
+	 * it skips their models without consuming them, so the rest of the definition misparses (a custom object
+	 * with model 0xf91c read 0xf9 as opcode 249 and crashed the client at login). Rewrites the opcode just
+	 * written to its 241 form; the caller then emits the models with {@link #legacyModel()}.
+	 */
+	private void upgradeOp(int newOp) {
+		out.set(opStarts.get(opStarts.size() - 1), newOp);
+	}
+
+	/** an old u16 model id written as the 241 int; 0xFFFF (= none) becomes -1 */
+	private void legacyModel() {
+		int v = in.u16();
+		out.i32(v == 0xFFFF ? -1 : ids.map("model", v));
+	}
+
 	private static int check16(String kind, int v) {
 		if (v < 0 || v > 0xFFFE) throw new IllegalStateException(kind + " id " + v + " does not fit u16");
 		return v;
@@ -174,11 +191,16 @@ public final class DefRewriter {
 
 	// ---------------------------------------------------------------- types
 
+	/** rev 231 item model opcode -> the rev 241 int opcode for the same field */
+	private static final Map<Integer, Integer> ITEM_MODEL_OPS = Map.ofEntries(
+		Map.entry(1, 44), Map.entry(23, 45), Map.entry(24, 46), Map.entry(78, 47), Map.entry(25, 48), Map.entry(26, 49),
+		Map.entry(79, 50), Map.entry(90, 51), Map.entry(92, 52), Map.entry(91, 53), Map.entry(93, 54));
+
 	private void item() {
 		for (int op; (op = op()) != 0; ) {
 			switch (op) {
-				case 1, 24, 26, 78, 79, 90, 91, 92, 93 -> id16("model");
-				case 23, 25 -> { id16("model"); copy(1); }
+				case 1, 24, 26, 78, 79, 90, 91, 92, 93 -> { upgradeOp(ITEM_MODEL_OPS.get(op)); legacyModel(); }
+				case 23, 25 -> { upgradeOp(ITEM_MODEL_OPS.get(op)); legacyModel(); copy(1); }
 				case 2, 3 -> string();
 				case 4, 5, 6, 7, 8, 94, 95, 99, 110, 111, 112 -> copy(2);
 				case 75 -> copy(2);
@@ -218,9 +240,10 @@ public final class DefRewriter {
 		for (int op; (op = op()) != 0; ) {
 			switch (op) {
 				case 1, 60 -> {
+					upgradeOp(op == 1 ? 61 : 62);
 					int n = in.u8();
 					out.u8(n);
-					for (int i = 0; i < n; i++) id16("model");
+					for (int i = 0; i < n; i++) legacyModel();
 				}
 				case 61, 62 -> {
 					int n = in.u8();
@@ -261,10 +284,11 @@ public final class DefRewriter {
 		for (int op; (op = op()) != 0; ) {
 			switch (op) {
 				case 1, 5 -> {
+					upgradeOp(op == 1 ? 6 : 7);
 					int n = in.u8();
 					out.u8(n);
 					for (int i = 0; i < n; i++) {
-						id16("model");
+						legacyModel();
 						if (op == 1) copy(1);
 					}
 				}
@@ -539,6 +563,7 @@ public final class DefRewriter {
 		void u16(int v) { write(v >> 8); write(v); }
 		void u24(int v) { write(v >> 16); write(v >> 8); write(v); }
 		void i32(int v) { write(v >> 24); write(v >> 16); write(v >> 8); write(v); }
+		void set(int at, int v) { buf[at] = (byte) v; }
 	}
 
 	/** Builds param id -> remap kind from param definitions (opcode 1 type char / opcode 8 type id). */
