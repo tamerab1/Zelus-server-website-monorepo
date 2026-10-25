@@ -12,14 +12,16 @@ import java.util.*;
  *  custom scripts (absent from vanilla 231): converted to the rev 237+ layout (16-byte footer) and
  *    written at their manifest id. Typed operands are remapped (varp, varbit, invoked script).
  *    ICONST values are remapped only when they equal a moving script id (scripts pass script ids
- *    for dynamic hooks) or a moved interface component (stage 4 componentRemap). Other constants
- *    that happen to equal a moving id were checked to be sizes/positions/colours, not ids.
+ *    for dynamic hooks) or a renumbered interface component (our moves, the alignment to vanilla
+ *    231 and Jagex's 231 -> 241 renumbering: BuildInterfaces241.loadRefs). Other constants that
+ *    happen to equal a moving id were checked to be sizes/positions/colours, not ids.
  *  vanilla scripts Zelus really edited (instructions differ, not just re-encoding):
  *    - identical to vanilla 241 -> 241 (Zelus had imported Jagex's newer version)
  *    - single-operand tweaks are ported onto 241 when the surrounding instructions match exactly
  *      once; anything else keeps 241 and is listed with its diff for manual porting.
  *
  * args: localCache v231Cache pristineV241Cache outDir manifest interfacesReport.json report.json
+ *       ours-alignment-231.json component-map-241.json
  */
 public class BuildScripts241 {
 	public static void main(String[] a) throws Exception {
@@ -33,6 +35,8 @@ public class BuildScripts241 {
 		var ifr = com.google.gson.JsonParser.parseString(Files.readString(Path.of(a[5]))).getAsJsonObject();
 		for (var e : ifr.getAsJsonArray("componentRemap")) componentMoves.put(e.getAsJsonObject().get("from").getAsInt(), e.getAsJsonObject().get("to").getAsInt());
 		Map<Integer, Integer> scriptMap = manifest.maps.get("clientscript");
+		java.util.function.IntUnaryOperator componentRefs = BuildInterfaces241.loadRefs(Path.of(a[7]), Path.of(a[8]),
+			RoundTripInterfaces.components(local), RoundTripInterfaces.components(v231), RoundTripInterfaces.components(v241));
 
 		var L = RoundTripScripts.scripts(local);
 		var B = RoundTripScripts.scripts(v231);
@@ -61,6 +65,7 @@ public class BuildScripts241 {
 					Integer n = null;
 					if (scriptMap.containsKey(v) && scriptMap.get(v).intValue() != v) n = scriptMap.get(v);
 					else if (componentMoves.containsKey(v)) n = componentMoves.get(v);
+					else if (v > 0xFFFF && componentRefs.applyAsInt(v) != v) n = componentRefs.applyAsInt(v);
 					if (n == null) return v;
 					iconstRemaps.add("    \"script " + sid + " instr " + index + ": iconst " + v + " -> " + n + "\"");
 					return n;

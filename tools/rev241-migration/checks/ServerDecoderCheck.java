@@ -9,7 +9,8 @@ import java.util.*;
  * cache and checks each opcode's byte length against DefRewriter's segments. The server decoders
  * skip unknown opcodes silently, so a wrong length means the rest of that def is read out of step.
  * (NPCType System.exit()s on an unknown opcode: if this run stops after "CHECK item", that's why.)
- * Needs the kronos-server + kronos-api classes on the classpath. args: cache
+ * Needs the kronos-server + kronos-api classes on the classpath, plus the cache/ tools (DefRewriter,
+ * RoundTripDefs); kept out of cache/ so build_cache241.sh compiles without the server. args: cache
  */
 public class ServerDecoderCheck {
 	record Target(String type, String cls, String method, int arity) {}

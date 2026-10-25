@@ -1,3 +1,4 @@
+import com.google.gson.*;
 import net.runelite.cache.fs.*;
 import net.runelite.cache.index.FileData;
 import net.runelite.cache.index.IndexData;
@@ -12,15 +13,17 @@ import java.util.function.IntUnaryOperator;
  *
  *  custom interfaces (absent from vanilla 231): components converted to the rev 241 format
  *    (i32 model ids) and every id inside remapped.
- *  vanilla interfaces Zelus edited: component-level three-way merge (231 / ours / 241).
- *    - a component only one side changed takes that side
- *    - components we added whose id Jagex also used in 241 are renumbered to free ids; parents
- *      and hook arguments inside the interface follow; the move is listed in componentRemap
- *    - both sides changed: explicit resolutions below, otherwise ours (listed)
- *    - 119 and 873 were rebuilt by Zelus and take our version outright
+ *  vanilla interfaces Zelus edited (AlignOurs231 says how our ids line up with vanilla 231):
+ *    - "overwritten" (Zelus's own interface under a vanilla id, incl. 119/873): ours
+ *    - "aligned": 241's components; each component we edited goes to the 241 position of the vanilla
+ *      component it edits (Jagex renumbered many groups); if Jagex changed it too, the explicit
+ *      resolutions below apply, otherwise ours (listed)
+ *    - components we added whose id 241 uses are renumbered to free ids (listed in componentRemap)
  *    - components whose only difference is the 2 trailing bytes our packer dropped take 241
+ *  every component reference inside our components (parents, hook args, in any group) follows
+ *  our moves, the alignment and Jagex's renumbering.
  *
- * args: localCache v231Cache pristineV241Cache outDir manifest report.json
+ * args: localCache v231Cache pristineV241Cache outDir manifest report.json ours-alignment-231.json component-map-241.json
  */
 public class BuildInterfaces241 {
 	static final Set<Integer> OURS_OUTRIGHT = Set.of(119, 873);
@@ -35,19 +38,97 @@ public class BuildInterfaces241 {
 		RESOLUTIONS.put("160:49", "theirs+hidden");
 		// fixed-mode frame icon: both replaced the sprite (cosmetic); keep 241's
 		RESOLUTIONS.put("548:55", "theirs");
-		// spellbook: our edit is the "Previous" option (slot 8); Jagex reworked the spellbook
-		RESOLUTIONS.put("218:7", "theirs+action:8:Previous");
-		RESOLUTIONS.put("218:103", "theirs+action:8:Previous");
-		// our other spellbook "changes" are index shifts from one removed component
-		for (int c : new int[]{0, 148, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203}) RESOLUTIONS.put("218:" + c, "theirs");
+		// spellbook: our edit is the "Previous" option (slot 8) on the four home teleports (ours 7/103/104/148
+		// = standard/Zaros/Lunar/Arceuus); Jagex reworked the spellbook. Our edits to 0/193/202 are only the
+		// references shifted by the component our cache lacks (vanilla 193), so 241's own stand.
+		for (int c : new int[]{7, 103, 104, 148}) RESOLUTIONS.put("218:" + c, "theirs+action:8:Previous");
+		for (int c : new int[]{0, 193, 202}) RESOLUTIONS.put("218:" + c, "theirs");
+	}
+
+	/** AlignOurs231 output for one group: ours -> vanilla 231 component ids */
+	static final class Align {
+		boolean overwritten;
+		final Set<Integer> edited = new HashSet<>(), custom = new HashSet<>();
+		final Map<Integer, Integer> align = new HashMap<>();
+	}
+
+	static final Map<Integer, Align> aligns = new HashMap<>();
+	static final Map<Integer, Map<Integer, Integer>> vanillaMoved = new HashMap<>(), customMoves = new HashMap<>();
+	static final Map<Integer, Set<Integer>> vanillaRemoved = new HashMap<>();
+	static final int[] refChanges = {0};
+
+	/** where vanilla 231 component group:c is in 241; null when Jagex removed it */
+	static Integer vanillaTo(int group, int c) {
+		if (vanillaRemoved.getOrDefault(group, Set.of()).contains(c)) return null;
+		return vanillaMoved.getOrDefault(group, Map.of()).getOrDefault(c, c);
 	}
 
 	/**
-	 * Components whose parent container was renumbered by Jagex: "group:newComponent" -> parent child index.
-	 * The bank's Presets button lived in 231 container 12:79; the 241 equivalent is 12:61 (same shape
-	 * and parent, hidden, the third of three identical containers, and exactly the same 23 children).
+	 * Loads AlignOurs231's alignment and Jagex's renumbering, works out where our own components in aligned
+	 * groups go, and returns the operator every component reference made from our layout goes through (stage 4
+	 * for parents and hook args, stage 5 for ICONSTs in our scripts).
 	 */
-	static final Map<String, Integer> REPARENT = Map.of("12:158", 61);
+	static IntUnaryOperator loadRefs(Path alignPath, Path vmapPath, Map<Integer, Map<Integer, byte[]>> L,
+			Map<Integer, Map<Integer, byte[]>> B, Map<Integer, Map<Integer, byte[]>> T) throws java.io.IOException {
+		aligns.clear(); vanillaMoved.clear(); vanillaRemoved.clear(); customMoves.clear();
+		// ours -> vanilla 231 alignment (AlignOurs231) and Jagex's 231 -> 241 renumbering (gameval names)
+		JsonObject alignJson = JsonParser.parseString(Files.readString(alignPath)).getAsJsonObject();
+		JsonObject vmapJson = JsonParser.parseString(Files.readString(vmapPath)).getAsJsonObject();
+		for (var e : alignJson.entrySet()) {
+			JsonObject o = e.getValue().getAsJsonObject();
+			Align al = new Align();
+			al.overwritten = o.get("mode").getAsString().equals("overwritten");
+			if (!al.overwritten) {
+				o.getAsJsonArray("edited").forEach(x -> al.edited.add(x.getAsInt()));
+				o.getAsJsonArray("custom").forEach(x -> al.custom.add(x.getAsInt()));
+				o.getAsJsonObject("align").entrySet().forEach(x -> al.align.put(Integer.parseInt(x.getKey()), x.getValue().getAsInt()));
+			}
+			aligns.put(Integer.parseInt(e.getKey()), al);
+		}
+		for (var e : vmapJson.entrySet()) {
+			JsonObject o = e.getValue().getAsJsonObject();
+			if (o.has("groupRemoved")) continue;
+			int gid = Integer.parseInt(e.getKey());
+			Map<Integer, Integer> mv = new HashMap<>();
+			o.getAsJsonObject("moved").entrySet().forEach(x -> mv.put(Integer.parseInt(x.getKey()), x.getValue().getAsInt()));
+			Set<Integer> rm = new HashSet<>();
+			o.getAsJsonObject("removed").keySet().forEach(x -> rm.add(Integer.parseInt(x)));
+			vanillaMoved.put(gid, mv);
+			vanillaRemoved.put(gid, rm);
+		}
+		// our own components in aligned vanilla groups: moved to fresh ids where 241 uses the id, plus explicit moves
+		for (var e : aligns.entrySet()) {
+			int gid = e.getKey();
+			if (e.getValue().overwritten || !T.containsKey(gid)) continue;
+			var tb = T.get(gid);
+			int next = Math.max(Collections.max(tb.keySet()), Collections.max(L.get(gid).keySet())) + 1;
+			Map<Integer, Integer> moved = new TreeMap<>();
+			for (int k : new TreeSet<>(e.getValue().custom)) if (tb.containsKey(k)) moved.put(k, next++);
+			for (var r : RESOLUTIONS.entrySet())
+				if (r.getKey().startsWith(gid + ":") && r.getValue().endsWith("moveOurs")) moved.put(Integer.parseInt(r.getKey().split(":")[1]), next++);
+			customMoves.put(gid, moved);
+		}
+		// every component reference inside our components (parents, hook args) follows: our own moves, then the
+		// alignment to vanilla 231, then Jagex's renumbering. Hook args below 0x10000 are plain ints, never ids.
+		return full -> {
+			int g = full >>> 16, c = full & 0xFFFF;
+			if (g == 0) return full;
+			Align al = aligns.get(g);
+			int to;
+			if (al != null) {
+				if (al.overwritten) return full;
+				Map<Integer, Integer> mv = customMoves.getOrDefault(g, Map.of());
+				if (mv.containsKey(c)) to = mv.get(c);
+				else if (al.custom.contains(c)) to = c;
+				else { Integer t = vanillaTo(g, al.align.getOrDefault(c, c)); to = t == null ? c : t; }
+			} else if (B.containsKey(g) && T.containsKey(g)) {
+				Integer t = vanillaTo(g, c);
+				to = t == null ? c : t;
+			} else return full;
+			if (to != c) refChanges[0]++;
+			return g << 16 | to;
+		};
+	}
 
 	public static void main(String[] a) throws Exception {
 		Store local = new Store(new File(a[0])); local.load();
@@ -64,6 +145,8 @@ public class BuildInterfaces241 {
 		var B = RoundTripInterfaces.components(v231);
 		var T = RoundTripInterfaces.components(v241);
 
+		IntUnaryOperator refs = loadRefs(Path.of(a[6]), Path.of(a[7]), L, B, T);
+
 		Map<Integer, TreeMap<Integer, byte[]>> outGroups = new TreeMap<>();
 		List<String> remapLines = new ArrayList<>(), decisions = new ArrayList<>(), suspicious = new ArrayList<>();
 		int customGroups = 0, customComps = 0;
@@ -74,7 +157,7 @@ public class BuildInterfaces241 {
 			if (T.containsKey(gid)) throw new IllegalStateException("custom interface " + gid + " exists in vanilla 241");
 			TreeMap<Integer, byte[]> res = new TreeMap<>();
 			for (var c : g.getValue().entrySet()) {
-				InterfaceRewriter r = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains);
+				InterfaceRewriter r = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains, gid, refs);
 				res.put(c.getKey(), r.bytes());
 				for (String s : r.suspicious) suspicious.add("      \"" + gid + ":" + c.getKey() + " " + s + "\"");
 				customComps++;
@@ -88,22 +171,17 @@ public class BuildInterfaces241 {
 			int gid = g.getKey();
 			if (!B.containsKey(gid)) continue;
 			var lb = g.getValue();
-			var bb = B.get(gid);
 			var tb = T.get(gid);
-			// convert base to 241 format for comparison
-			Map<Integer, byte[]> base = new TreeMap<>();
-			for (var c : bb.entrySet()) base.put(c.getKey(), InterfaceRewriter.run(c.getValue(), DefRewriter.IDENTITY, false, true, v -> false).bytes());
-			Map<Integer, byte[]> oursPlain = new TreeMap<>();
-			for (var c : lb.entrySet()) oursPlain.put(c.getKey(), InterfaceRewriter.run(c.getValue(), manifest, false, true, v -> false).bytes());
-			boolean edited = !oursPlain.keySet().equals(base.keySet());
-			if (!edited) for (var e : base.entrySet()) if (!sameIgnoringDroppedTail(e.getValue(), oursPlain.get(e.getKey()))) { edited = true; break; }
-			if (!edited) continue;
+			Align al = aligns.get(gid);
+			if (al == null) continue; // ours identical to vanilla 231: 241 as-is
 			mergedGroups++;
 
-			if (OURS_OUTRIGHT.contains(gid)) {
+			if (al.overwritten) {
+				// Zelus's own interface under a vanilla id (or rebuilt outright): ours, with references into other
+				// renumbered groups following the renumbering
 				TreeMap<Integer, byte[]> res = new TreeMap<>();
 				for (var c : lb.entrySet()) {
-					InterfaceRewriter r = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains);
+					InterfaceRewriter r = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains, gid, refs);
 					res.put(c.getKey(), r.bytes());
 					for (String s : r.suspicious) suspicious.add("      \"" + gid + ":" + c.getKey() + " " + s + "\"");
 				}
@@ -112,66 +190,46 @@ public class BuildInterfaces241 {
 				continue;
 			}
 
-			// renumbering: our added components whose id Jagex also uses, plus explicit moves
-			int next = Math.max(Collections.max(tb.keySet()), Collections.max(lb.keySet())) + 1;
-			Map<Integer, Integer> moved = new TreeMap<>();
-			for (int k : lb.keySet()) if (!base.containsKey(k) && tb.containsKey(k)) moved.put(k, next++);
-			for (var res : RESOLUTIONS.entrySet())
-				if (res.getKey().startsWith(gid + ":") && res.getValue().endsWith("moveOurs")) moved.put(Integer.parseInt(res.getKey().split(":")[1]), next++);
-			IntUnaryOperator compMap = full -> {
-				if ((full >>> 16) != gid) return full;
-				Integer n = moved.get(full & 0xFFFF);
-				return n == null ? full : (gid << 16) | n;
-			};
-			Map<Integer, byte[]> ours = new TreeMap<>();
+			// aligned: 241's components, plus our edits at the 241 position of the vanilla component each one edits,
+			// plus our own components (moved where 241 uses the id)
+			Map<Integer, Integer> moved = customMoves.get(gid);
+			TreeMap<Integer, byte[]> res = new TreeMap<>(tb);
+			List<String> both = new ArrayList<>(), placed = new ArrayList<>();
 			for (var c : lb.entrySet()) {
-				InterfaceRewriter r = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains, gid, compMap);
-				ours.put(c.getKey(), r.bytes());
-				for (String s : r.suspicious) suspicious.add("      \"" + gid + ":" + c.getKey() + " " + s + "\"");
-			}
-
-			TreeMap<Integer, byte[]> res = new TreeMap<>();
-			Set<Integer> keys = new TreeSet<>(base.keySet());
-			keys.addAll(ours.keySet());
-			keys.addAll(tb.keySet());
-			List<String> both = new ArrayList<>();
-			for (int k : keys) {
-				byte[] b = base.get(k), o = ours.get(k), t = tb.get(k);
-				if (moved.containsKey(k) && o != null) {
-					res.put(moved.get(k), o);
-					remapLines.add("    {\"from\": " + ((gid << 16) | k) + ", \"to\": " + ((gid << 16) | moved.get(k)) + ", \"name\": \"" + gid + ":" + k + " -> " + gid + ":" + moved.get(k) + "\"}");
-					if (!base.containsKey(k)) { if (t != null) res.put(k, t); continue; } // our addition moved; keep 241's at k
+				int k = c.getKey();
+				byte[] o = InterfaceRewriter.run(c.getValue(), manifest, false, true, movingIds::contains, gid, refs).bytes();
+				if (al.custom.contains(k)) {
+					int to = moved.getOrDefault(k, k);
+					res.put(to, o);
+					if (to != k) remapLines.add("    {\"from\": " + ((gid << 16) | k) + ", \"to\": " + ((gid << 16) | to) + ", \"name\": \"" + gid + ":" + k + " -> " + gid + ":" + to + "\"}");
+					continue;
 				}
-				boolean oc = b == null ? o != null : !sameIgnoringDroppedTail(b, o);
-				boolean tc = !Arrays.equals(b, t);
-				byte[] pick;
-				if (!oc) pick = t;
-				else if (!tc) pick = moved.containsKey(k) ? t : o;
-				else {
-					String rule = RESOLUTIONS.getOrDefault(gid + ":" + k, "ours");
-					both.add(k + "=" + rule);
-					if (rule.startsWith("theirs+action:")) {
-						String[] p = rule.split(":");
-						pick = InterfaceRewriter.withAction(t, Integer.parseInt(p[1]), p[2]);
-					} else if (rule.equals("theirs+hidden")) pick = InterfaceRewriter.withHidden(t, true);
-					else if (rule.startsWith("theirs")) pick = t;
-					else pick = o;
-				}
-				if (pick != null && !res.containsKey(k)) res.put(k, pick);
-			}
-			for (var rp : REPARENT.entrySet()) {
-				String[] p = rp.getKey().split(":");
-				if (Integer.parseInt(p[0]) != gid || !res.containsKey(Integer.parseInt(p[1]))) continue;
-				byte[] comp = res.get(Integer.parseInt(p[1])).clone();
-				InterfaceRewriter r = InterfaceRewriter.run(comp, DefRewriter.IDENTITY, true, true, v -> false);
-				comp[r.parentPos] = (byte) (rp.getValue() >> 8);
-				comp[r.parentPos + 1] = (byte) (int) rp.getValue();
-				res.put(Integer.parseInt(p[1]), comp);
+				int b = al.align.getOrDefault(k, k);
+				if (!al.edited.contains(k)) continue; // same as vanilla 231 b: 241's component stands
+				Integer t = vanillaTo(gid, b);
+				if (t == null) { both.add(k + "=lost(removed in 241)"); continue; }
+				boolean theirsChanged = !Arrays.equals(InterfaceShift.sig(B.get(gid).get(b), false), InterfaceShift.sig(tb.get(t), true));
+				String rule = RESOLUTIONS.get(gid + ":" + k);
+				if (rule == null || !theirsChanged && !rule.endsWith("moveOurs")) rule = theirsChanged ? "ours" : null;
+				if (theirsChanged) both.add(k + "@" + t + "=" + rule);
+				if (rule == null) res.put(t, o);
+				else if (rule.startsWith("theirs+action:")) {
+					String[] p = rule.split(":");
+					res.put(t, InterfaceRewriter.withAction(tb.get(t), Integer.parseInt(p[1]), p[2]));
+				} else if (rule.equals("theirs+hidden")) res.put(t, InterfaceRewriter.withHidden(tb.get(t), true));
+				else if (rule.equals("theirs+moveOurs")) {
+					int to = moved.get(k);
+					res.put(to, o);
+					remapLines.add("    {\"from\": " + ((gid << 16) | k) + ", \"to\": " + ((gid << 16) | to) + ", \"name\": \"" + gid + ":" + k + " -> " + gid + ":" + to + "\"}");
+					continue;
+				} else if (!rule.startsWith("theirs")) res.put(t, o);
+				if (t != k) placed.add(k + "->" + t);
 			}
 			outGroups.put(gid, res);
-			decisions.add("    \"" + gid + "\": \"merged: " + res.size() + " components (base " + base.size() + ", ours " + lb.size() + ", 241 " + tb.size()
-				+ "); moved " + moved + "; both-changed " + both + "\"");
+			decisions.add("    \"" + gid + "\": \"merged: " + res.size() + " components (base " + B.get(gid).size() + ", ours " + lb.size() + ", 241 " + tb.size()
+				+ "); moved " + moved + "; edits placed " + placed + "; both-changed " + both + "\"");
 		}
+		decisions.add("    \"hookOrParentRefsRenumbered\": " + refChanges[0]);
 
 		// ---- write
 		Index index = out.findIndex(3);

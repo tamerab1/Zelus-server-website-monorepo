@@ -31,6 +31,8 @@
     "script 10069 instr 186: iconst 10073 -> 14656",
     "script 10069 instr 268: iconst 10071 -> 14654",
     "script 10106 instr 4: iconst 10107 -> 14690",
+    "script 10194 instr 34: iconst 10616874 -> 10616875",
+    "script 10194 instr 50: iconst 10616874 -> 10616875",
     "script 10196 instr 0: iconst 10195 -> 14778"
   ],
   "callsToScriptsMissingInLive231": {
