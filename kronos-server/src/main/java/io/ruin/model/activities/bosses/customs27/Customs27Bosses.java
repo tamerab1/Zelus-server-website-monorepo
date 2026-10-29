@@ -34,6 +34,9 @@ public final class Customs27Bosses {
 	}
 
 	private static HooksV2.Result command(CommandHandler.Hook.Handle cmd) {
+		// staff only: the bosses have no drops yet (and command hooks run before any rank check)
+		if (!cmd.player().isAdmin())
+			return HooksV2.Result.Pass;
 		switch (cmd.command()) {
 			case "vorgath" -> enter(cmd.player(), VORGATH);
 			case "baelgor" -> enter(cmd.player(), BAELGOR);
