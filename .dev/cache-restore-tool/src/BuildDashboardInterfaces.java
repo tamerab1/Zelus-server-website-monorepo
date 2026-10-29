@@ -23,7 +23,12 @@ import java.util.*;
 public class BuildDashboardInterfaces {
 
     /** barColour != 0 adds a progress bar (track + fill + gloss) under the rows; the fill width is set at runtime. */
-    record Section(String title, int rows, int buttons, int barColour) {}
+    /** inert: plain read-out rows (no "Select" op, nothing to click). */
+    record Section(String title, int rows, int buttons, int barColour, boolean inert) {
+        Section(String title, int rows, int buttons, int barColour) {
+            this(title, rows, buttons, barColour, false);
+        }
+    }
     /** icon = sprite shown left of the title. */
     record Group(int id, String name, String title, int icon, Section... sections) {}
 
@@ -32,11 +37,11 @@ public class BuildDashboardInterfaces {
                     new Section("Profile", 6, 0, 0),
                     new Section("Points", 9, 0, 0),
                     new Section("Progress", 5, 0, 0),
-                    new Section("Active boosts", 7, 0, 0),
-                    new Section("World bosses", 3, 0, 0)),
+                    new Section("Active boosts", 7, 0, 0)),
             new Group(1144, "SERVER", "Server Info", 908,
                     new Section("Server", 5, 0, 0),
                     new Section("Events", 4, 0, 0),
+                    new Section("World bosses", 3, 0, 0, true),
                     new Section("Quick tools", 0, 10, 0)),
             new Group(1145, "WILDERNESS", "Wilderness", 168,
                     new Section("Hotspot", 2, 0, 0),
@@ -136,8 +141,10 @@ public class BuildDashboardInterfaces {
                     for (int r = 0; r < s.rows; r++) {
                         int ry = y + HEADER_H + 2 + r * ROW_H;
                         InterfaceDefinition lab = text(4, 8, ry, W - 16, ROW_H, 494, LABEL, "", 0);
-                        lab.clickMask = 2;
-                        lab.actions = new String[]{"Select"};
+                        if (!s.inert) {
+                            lab.clickMask = 2;
+                            lab.actions = new String[]{"Select"};
+                        }
                         l[r] = comps.size();
                         comps.add(lab);
                         v[r] = comps.size();

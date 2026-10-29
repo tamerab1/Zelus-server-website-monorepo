@@ -118,10 +118,7 @@ public final class QuestDashboards {
 					row("Damage reduction", p -> minutes(p.getDamageReductionBoostRemaining() / 100)),
 					row("Brew immunity", p -> minutes(p.getBrewImmunityRemaining() / 100)),
 					row("Prayer drain -", p -> minutes(p.getPrayerBoostBonusRemaining() / 100)),
-					row("5% drop rate", p -> minutes(p.getDropRateBoostRemaining() / 100))),
-			List.of(row("Vote boss", p -> io.ruin.model.activities.VoteBossHandler.status()),
-					row("Global boss", p -> io.ruin.model.activities.bosses.globalboss.GlobalBossHandler.status()),
-					row("Donation boss", p -> io.ruin.model.activities.DonationBossHandler.status())));
+					row("5% drop rate", p -> minutes(p.getDropRateBoostRemaining() / 100))));
 
 	private static final List<List<Row>> SERVER_ROWS = List.of(
 			List.of(row("Players online", p -> GREEN + World.playerCount() + END),
@@ -133,6 +130,10 @@ public final class QuestDashboards {
 					row("Double PK points", p -> onOff(World.doublePkp)),
 					row("Double slayer pts", p -> onOff(World.doubleSlayer)),
 					row("Double pest pts", p -> onOff(World.doublePest))),
+			// World bosses (inert rows: no click, BuildDashboardInterfaces Section.inert)
+			List.of(row("Vote boss", p -> io.ruin.model.activities.VoteBossHandler.status()),
+					row("Global boss", p -> io.ruin.model.activities.bosses.globalboss.GlobalBossHandler.status()),
+					row("Donation boss", p -> io.ruin.model.activities.DonationBossHandler.status())),
 			List.of());
 
 	private static final String[] SERVER_BUTTONS = {"Drop viewer", "Collection log", "Daily tasks", "Chest loot",
