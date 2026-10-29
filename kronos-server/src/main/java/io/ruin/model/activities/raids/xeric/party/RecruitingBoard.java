@@ -30,50 +30,8 @@ public class RecruitingBoard {
 	public static List<Player> ADVERTISED_PARTIES = new ArrayList<>(50);
 
 	public static void register() {
-		// ObjectAction.register(29776, "read", (player, obj) -> displayRecruitingBoard(player));
-		InterfaceHandler.register(Interface.RAIDING_RECRUITING_BOARD, h -> {
-			h.actions[3] = (DefaultAction) (player, option, slot, itemId) -> {
-				if (slot == 0)
-					displayRecruitingBoard(player);
-				if (slot == 1)
-					if (VarPlayerRepository.RAIDS_PARTY.get(player) == -1)
-						createParty(player, true);
-					else
-						displayParty(player, player.raidsParty);
-			};
-			h.actions[14] = (DefaultAction) (player, option, slot, itemId) -> {
-				if (slot < ADVERTISED_PARTIES.size() && ADVERTISED_PARTIES.get(slot) != null) {
-					Player partyLeader = ADVERTISED_PARTIES.get(slot);
-					displayParty(player, partyLeader.raidsParty);
-				}
-			};
-		});
-		InterfaceHandler.register(Interface.RAIDING_PARTY, h -> {
-			h.actions[3] = (DefaultAction) (player, option, slot, itemId) -> {
-				if (slot == 0)
-					if (player.raidsParty == null)
-						joinParty(player, player.viewingParty);
-					else
-						leaveParty(player);
-				if (slot == 1)
-					advertiseParty(player, player.advertisingParty);
-				if (slot == 2)
-					disbandParty(player);
-				if (slot == 3) {
-					displayParty(player, player.raidsParty);
-				}
-				if (slot == 4)
-					displayRecruitingBoard(player);
-				if (slot == 5)
-					setPreferredSetting(player, "party size", VarPlayerRepository.RAIDS_PREFERRED_PARTY_SIZE, 1, 100);
-				if (slot == 6)
-					setPreferredSetting(player, "combat level", VarPlayerRepository.RAIDS_PREFERRED_COMBAT_LEVEL, 4, 126);
-				if (slot == 7)
-					setPreferredSetting(player, "skill total", VarPlayerRepository.RAIDS_PREFERRED_SKILL_TOTAL, 33, 2277);
-				if (slot == 8)
-					player.sendMessage("Challenge mode is not currently available.");
-			};
-		});
+		// the board (29776) and its interfaces 499 / 507 run on the entrance's party: XericRecruitingBoard
+		XericRecruitingBoard.register();
 
 		MapListener.registerBounds(BOUNDS)
 			.onEnter(player -> player.setAction(1, PlayerAction.INVITE))

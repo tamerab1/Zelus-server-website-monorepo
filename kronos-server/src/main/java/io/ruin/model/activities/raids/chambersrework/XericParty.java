@@ -37,6 +37,11 @@ public class XericParty {
 	@Getter
 	boolean started = false;
 
+	/** The recruiting board (499 / 507): listed or not, since when (ticks), and the leader's preferences (0 = none). */
+	public boolean advertised;
+	public long advertisedAt;
+	public int preferredSize, preferredCombat, preferredSkillTotal;
+
 	ActivityTimer timer;
 
 	public XericParty(String leaderName) {
