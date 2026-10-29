@@ -13,6 +13,7 @@ export const NEWS_AUTHOR = { name: 'Zelus Team', role: 'Developer' };
 export const NEWS = [
   {
     id: 'rev-241-fractured-archive',
+    image: '/assets/news/fractured-archive-ocellus.webp',
     title: 'Revision 241 & Raid 4: The Fractured Archive',
     tag: 'Major Update',
     date: '2026-10-29',
@@ -24,6 +25,7 @@ export const NEWS = [
       { heading: 'Before you play' },
       'Close your client and open it again through the launcher: it updates itself to the new client. On your first login the game cache downloads once, which can take a few minutes. Your account, bank, items and progress all come with you; a handful of in-game settings may be back at their defaults.',
       { heading: 'Raid 4: The Fractured Archive' },
+      { image: '/assets/news/fractured-archive-ocellus.webp', alt: 'A party fighting Ocellus in the vault', caption: 'Ocellus waits at the end of the Archive.' },
       'Defeat the Archive Guardian in the Nexus, then choose your path at each set of doors: Ezekiel or Bork, Moia or Dreadnoth, the Dagon\'hai or Xarth. The road ends in the vault with Ocellus, and his fall opens the reward chests.',
       'Form a party at the grouping board in the lobby, follow your team on the party HUD, and track your clears, times and MVPs in the Alliance Log. Learning the raid? The Quartermaster outside the lobby rents full best-in-slot setups for PvM points, and the gear leaves you when the raid ends.',
       'Find it under Teleports, Minigames: The Fractured Archive.',
