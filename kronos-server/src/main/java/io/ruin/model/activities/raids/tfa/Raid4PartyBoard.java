@@ -184,7 +184,8 @@ public final class Raid4PartyBoard {
 					break;
 				}
 		log.info("Raid 4 board: {} resume {} sub {} -> button {}", player.getName(), inter, sub, button);
-		if (button == null || button == RESUME)
+		// the action button also sends its own IF_BUTTON: running it here too would apply and withdraw in one click
+		if (button == null || button == RESUME || (inter == DETAILS && button == DETAILS_ACTION))
 			return;
 		var action = io.ruin.model.inter.InterfaceHandler.getAction(player, inter, button);
 		if (action != null)
