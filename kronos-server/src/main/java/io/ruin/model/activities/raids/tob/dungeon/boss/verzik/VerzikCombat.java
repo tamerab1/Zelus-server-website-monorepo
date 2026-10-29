@@ -171,7 +171,7 @@ public class VerzikCombat extends NPCCombat {
 					player.getCombat().reset();
 					player.resetActions(true, true, true);
 					player.face(npc);
-					player.stepAbs(player.getPosition().getRegion().baseX + 28, player.getPosition().getY(), VarPlayerRepository.RUNNING.toggle(player) == 1 ? StepType.RUN : StepType.WALK);
+					player.stepAbs(player.getPosition().getRegion().baseX + 28, player.getPosition().getY(), VarPlayerRepository.RUNNING.get(player) == 1 ? StepType.RUN : StepType.WALK);
 					e.waitForTile(player, new Position(player.getPosition().getRegion().baseX + 28, player.getPosition().getY(), player.getPosition().getZ()));
 					player.getCombat().setTarget(npc);
 					player.face(npc);
@@ -181,7 +181,7 @@ public class VerzikCombat extends NPCCombat {
 			} else if (behindRightPillar) {
 				World.startEvent(e -> {
 					player.face(npc);
-					player.stepAbs(player.getPosition().getRegion().baseX + 36, player.getPosition().getY(), VarPlayerRepository.RUNNING.toggle(player) == 1 ? StepType.RUN : StepType.WALK);
+					player.stepAbs(player.getPosition().getRegion().baseX + 36, player.getPosition().getY(), VarPlayerRepository.RUNNING.get(player) == 1 ? StepType.RUN : StepType.WALK);
 					e.waitForTile(player, new Position(player.getPosition().getRegion().baseX + 36, player.getPosition().getY(), player.getPosition().getZ()));
 					player.getCombat().setTarget(npc);
 					player.face(npc);

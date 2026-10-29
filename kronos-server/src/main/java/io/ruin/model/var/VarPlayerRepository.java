@@ -403,7 +403,6 @@ public class VarPlayerRepository {
 	public static final VarPlayerRepository KALPHITE_QUEEN_VETERAN = varpbit(12616, true);
 	public static final VarPlayerRepository INSECT_DEFLECTION = varpbit(12618, true);
 	public static final VarPlayerRepository PRAYER_SMASHER = varpbit(12619, true);
-	public static final VarPlayerRepository TEN_TACLES = varpbit(12629, true);
 	public static final VarPlayerRepository MIMIC_ADEPT = varpbit(12634, true);
 	public static final VarPlayerRepository HARD_HITTER = varpbit(12638, true);
 	public static final VarPlayerRepository NIGHTMARE_ADEPT = varpbit(12642, true);
@@ -1039,9 +1038,11 @@ public class VarPlayerRepository {
 	 * Skill guide
 	 */
 
-	public static final VarPlayerRepository SKILL_GUIDE_STAT = varpbit(4371, false);
-
-	public static final VarPlayerRepository SKILL_GUIDE_CAT = varpbit(4372, false);
+	/**
+	 * rev 241 dropped the skill guide varbits (4371 is now OPTION_LEVEL_UP_POPUP_LIST): the guide reads varp 965
+	 * (SKILL_GUIDE_V2) itself, laid out as 231's varbits were: the skill in bits 0..9, the section in bits 10..14.
+	 */
+	public static final VarPlayerRepository SKILL_GUIDE = varp(965, false);
 
 	/**
 	 * Bank
@@ -1259,14 +1260,15 @@ public class VarPlayerRepository {
 	public static final VarPlayerRepository EYE_SEE_YOU_VARP = varp(11023, true);
 	public static final VarPlayerRepository SLAYER_LONGER_ARAXYTES = varp(11022, true);
 
+	/** rev 241 renumbered these (SLAYER_BLOCKED_1..6 / _DIARY _OLD, the same varps and bits as 231's 3209..15366). */
 	public static final VarPlayerRepository[] BLOCKED_TASKS = {
-			varpbit(3209, true),
-			varpbit(3210, true),
-			varpbit(3211, true),
-			varpbit(3212, true),
-			varpbit(4441, true),
-			varpbit(5023, true),
-			varpbit(15366, true)
+			varpbit(17807, true),
+			varpbit(17808, true),
+			varpbit(17809, true),
+			varpbit(17810, true),
+			varpbit(17806, true),
+			varpbit(17805, true),
+			varpbit(17811, true)
 	};
 	/**
 	 * Quest points
@@ -1474,6 +1476,11 @@ public class VarPlayerRepository {
 	public static final VarPlayerRepository RAIDS_PREFERRED_SKILL_TOTAL = varpbit(5427, false);
 
 	public static final VarPlayerRepository RAIDS_PARTY = varp(1427, false).defaultValue(-1);
+
+	/** rev 241 alternate prayer unlocks: the Royal Titans scrolls and the Horn of Bran (Zeal). */
+	public static final VarPlayerRepository DEADEYE_UNLOCK = varpbit(16097, true);
+	public static final VarPlayerRepository MYSTIC_VIGOUR_UNLOCK = varpbit(16098, true);
+	public static final VarPlayerRepository ZEAL_UNLOCK = varpbit(16578, true);
 	public static final VarPlayerRepository RAIDS_TAB_ICON = varpbit(5432, false).defaultValue(-1);
 
 	public static final VarPlayerRepository RAIDS_STAGE = varp(1430, false).defaultValue(-1);
@@ -1488,8 +1495,6 @@ public class VarPlayerRepository {
 	 */
 	public static final VarPlayerRepository CHAT_ICONS = varpbit(15024, true);
 
-	public static final VarPlayerRepository SECONDARY_CHAT_ICONS = varpbit(16001, true);
-	public static final VarPlayerRepository TITLE = varpbit(16000, true);
 	public static final VarPlayerRepository IRONMAN_MODE = varpbit(1777, true);
 
 	/**

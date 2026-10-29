@@ -74,13 +74,13 @@ public class TabStats {
 	}
 
 	public static void openGuide(Player player, StatType statType, int category) {
-		VarPlayerRepository.SKILL_GUIDE_STAT.set(player, statType.clientId);
-		VarPlayerRepository.SKILL_GUIDE_CAT.set(player, category);
+		VarPlayerRepository.SKILL_GUIDE.set(player, (statType.clientId & 0x3FF) | (category & 0x1F) << 10);
 		player.openInterface(ToplevelComponent.WORLD_MAP, Interface.SKILL_GUIDE);
 	}
 
 	private static void selectCategory(Player player, int category) {
-		VarPlayerRepository.SKILL_GUIDE_CAT.set(player, category);
+		int skill = VarPlayerRepository.SKILL_GUIDE.get(player) & 0x3FF;
+		VarPlayerRepository.SKILL_GUIDE.set(player, skill | (category & 0x1F) << 10);
 	}
 
 	public static void setLevel(Player player, StatType statType) {
