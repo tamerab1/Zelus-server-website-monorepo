@@ -44,7 +44,20 @@ public class PlayerPrayer {
 		}
 	}
 
+	/**
+	 * The client lights a prayer the moment it's clicked; when the server turns it down (no points, prayers disabled,
+	 * a requirement, locked) its varbit was often already 0, so set(0) changed nothing and sent nothing, and the prayer
+	 * stayed lit. Every toggle now resends the prayer's varp, whatever the outcome.
+	 */
 	public void toggle(Prayer prayer) {
+		try {
+			toggleChecked(prayer);
+		} finally {
+			prayer.config.update(player);
+		}
+	}
+
+	private void toggleChecked(Prayer prayer) {
 		if (delayRequired()) {
 			// So on rs it delays but Idk a good way to do that... Idk if people will even
 			// notice...
@@ -141,6 +154,7 @@ public class PlayerPrayer {
 
 		if (!checkPoints() || !allowPrayers()) {
 			VarPlayerRepository.QUICK_PRAYING.set(player, 0); // orb needs to be refreshed
+			VarPlayerRepository.QUICK_PRAYING.update(player); // set(0) sends nothing if it was already 0
 			return;
 		}
 

@@ -25,6 +25,11 @@ public class OccultAltar {
 	}
 
 	public static void switchBook(Player player, SpellBook book, boolean altar) {
+		if (altar) {
+			// the home altar's switch counts towards the "Oh cul" achievement (only HomeHandler's version did)
+			io.ruin.model.content.HomeHandler.switchBook(player, book, true);
+			return;
+		}
 		if (book.isActive(player) && altar) {
 			player.dialogue(new MessageDialogue("You're already using this spellbook."));
 			return;

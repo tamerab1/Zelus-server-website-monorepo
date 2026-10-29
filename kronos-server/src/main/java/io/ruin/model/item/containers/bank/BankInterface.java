@@ -38,7 +38,7 @@ public class BankInterface {
 				@Override
 				public void handleDrag(Player player, int fromSlot, int fromItemId, int toInterfaceId, int toChildId,
 						int toSlot, int toItemId) {
-					if (toChildId == 11)
+					if (toChildId == 10) // rev 241 BANKMAIN_TABS (231's was 11)
 						player.getBank().swapTabs(fromSlot, toSlot);
 				}
 			};
@@ -78,11 +78,12 @@ public class BankInterface {
 				@Override
 				public void handleDrag(Player player, int fromSlot, int fromItemId, int toInterfaceId, int toChildId,
 						int toSlot, int toItemId) {
-					if (toChildId == 11) {
+					// rev 241 BANKMAIN_TABS / ITEMS are 10 / 12 (231's were 11 / 13)
+					if (toChildId == 10) {
 						player.getBank().changeTab(fromSlot, fromItemId, toSlot);
 						return;
 					}
-					if (toChildId == 13) {
+					if (toChildId == 12) {
 						if (toSlot >= 818) {
 							player.getBank().changeTab(fromSlot, fromItemId, toSlot - 808);
 						} else {
