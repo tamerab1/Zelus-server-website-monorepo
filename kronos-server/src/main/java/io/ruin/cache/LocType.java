@@ -312,8 +312,9 @@ public class LocType {
 			render0x4 = in.readUnsignedShort();
 		else if (opcode == 68)
 			anInt1578 = in.readUnsignedShort();
-		else if (opcode == 69)
-			someDirection = in.readUnsignedByte();
+		else if (opcode == 69) // the access mask is the low 4 bits: rev 241 sets bit 16 too (29777, the CoX
+			// entrance, is 30 = 16 | 14), which the rotation in RouteFinder turned into 15, every side blocked
+			someDirection = in.readUnsignedByte() & 0xF;
 		else if (opcode == 70)
 			anInt1584 = in.readShort();
 		else if (opcode == 71)
