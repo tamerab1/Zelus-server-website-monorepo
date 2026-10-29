@@ -224,6 +224,33 @@ public enum Prayer {
 			}
 			return true;
 		};
+	}),
+	/*
+	 * rev 241's alternate prayers (db table 270): once unlocked each replaces its base prayer in the prayer book, on
+	 * the base's slot (Deadeye <- Eagle Eye, Mystic Vigour <- Mystic Might, Zeal <- Piety); see alternate().
+	 */
+	DEADEYE(16090, 2665, p -> {
+		p.level = 62;
+		p.drain = 12;
+		p.rangedAttackBoost = 0.18;
+		p.rangedStrengthBoost = 0.18;
+		p.defenceBoost = 0.05;
+	}),
+	MYSTIC_VIGOUR(16091, 2669, p -> {
+		p.level = 63;
+		p.drain = 12;
+		p.magicAttackBoost = 0.18;
+		p.magicDamageBoost = 0.03;
+		p.defenceBoost = 0.05;
+	}),
+	ZEAL(16577, 3825, p -> {
+		p.level = 84;
+		p.drain = 24;
+		p.attackBoost = 0.25;
+		p.defenceBoost = 0.25;
+		p.strengthBoost = 0.28;
+		p.activationCheck = player -> player.getStats().checkFixed(StatType.Attack, 75, "use this prayer")
+				&& player.getStats().checkFixed(StatType.Strength, 75, "use this prayer");
 	});
 
 	public final String name;
@@ -276,9 +303,9 @@ public enum Prayer {
 		Prayer[] defencePrayers = new Prayer[]{THICK_SKIN, ROCK_SKIN, STEEL_SKIN};
 		Prayer[] strengthPrayers = new Prayer[]{BURST_OF_STRENGTH, SUPERHUMAN_STRENGTH, ULTIMATE_STRENGTH};
 		Prayer[] attackPrayers = new Prayer[]{CLARITY_OF_THOUGHT, IMPROVED_REFLEXES, INCREDIBLE_REFLEXES};
-		Prayer[] rangedPrayers = new Prayer[]{SHARP_EYE, HAWK_EYE, EAGLE_EYE};
-		Prayer[] magicPrayers = new Prayer[]{MYSTIC_WILL, MYSTIC_LORE, MYSTIC_MIGHT};
-		Prayer[] mixedPrayers = new Prayer[]{CHIVALRY, PIETY, RIGOUR, AUGURY};
+		Prayer[] rangedPrayers = new Prayer[]{SHARP_EYE, HAWK_EYE, EAGLE_EYE, DEADEYE};
+		Prayer[] magicPrayers = new Prayer[]{MYSTIC_WILL, MYSTIC_LORE, MYSTIC_MIGHT, MYSTIC_VIGOUR};
+		Prayer[] mixedPrayers = new Prayer[]{CHIVALRY, PIETY, RIGOUR, AUGURY, ZEAL};
 		Prayer[] overheadPrayers = new Prayer[]{PROTECT_FROM_MAGIC, PROTECT_FROM_MISSILES, PROTECT_FROM_MELEE,
 			RETRIBUTION, REDEMPTION, SMITE};
 
@@ -325,13 +352,23 @@ public enum Prayer {
 		}
 
 		Prayer[] prayers = VALUES;
-		QUICK_PRAYER_ORDER = new Prayer[prayers.length];
+		QUICK_PRAYER_ORDER = new Prayer[29]; // the book's slots: the alternates share their base's slot
 		System.arraycopy(prayers, 0, QUICK_PRAYER_ORDER, 0, 24);
 		QUICK_PRAYER_ORDER[25] = CHIVALRY;
 		QUICK_PRAYER_ORDER[26] = PIETY;
 		QUICK_PRAYER_ORDER[24] = RIGOUR;
 		QUICK_PRAYER_ORDER[27] = AUGURY;
 		QUICK_PRAYER_ORDER[28] = PRESERVE;
+	}
+
+	/** The prayer a book slot stands for: an unlocked alternate (Deadeye, Mystic Vigour, Zeal) replaces its base. */
+	public Prayer alternate(io.ruin.model.entity.player.Player player) {
+		return switch (this) {
+			case EAGLE_EYE -> VarPlayerRepository.DEADEYE_UNLOCK.get(player) == 1 ? DEADEYE : this;
+			case MYSTIC_MIGHT -> VarPlayerRepository.MYSTIC_VIGOUR_UNLOCK.get(player) == 1 ? MYSTIC_VIGOUR : this;
+			case PIETY -> VarPlayerRepository.ZEAL_UNLOCK.get(player) == 1 ? ZEAL : this;
+			default -> this;
+		};
 	}
 
 	public static Prayer getQuickPrayer(int slot) {

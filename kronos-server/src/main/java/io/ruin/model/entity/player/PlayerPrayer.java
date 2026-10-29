@@ -146,7 +146,7 @@ public class PlayerPrayer {
 
 		for (int i = 0; i < quickPrayers.length; i++) {
 			if (quickPrayers[i]) {
-				Prayer prayer = Prayer.VALUES[i];
+				Prayer prayer = Prayer.VALUES[i].alternate(player);
 				if (!isActive(prayer)) {
 					activate(prayer);
 				}
@@ -166,7 +166,8 @@ public class PlayerPrayer {
 		}
 		if (prayer.disallowed != null) {
 			for (Prayer p : prayer.disallowed) {
-				if (quickPrayers[p.ordinal()])
+				// saves hold the 29 book slots; the alternates (Deadeye, Mystic Vigour, Zeal) are past them
+				if (p.ordinal() < quickPrayers.length && quickPrayers[p.ordinal()])
 					quickPrayers[p.ordinal()] = false;
 			}
 		}

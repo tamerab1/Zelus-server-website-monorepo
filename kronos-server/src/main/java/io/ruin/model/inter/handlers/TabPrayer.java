@@ -22,6 +22,7 @@ public class TabPrayer {
 			VarPlayerRepository.varpbit(6577, false), VarPlayerRepository.varpbit(6578, false), VarPlayerRepository.varpbit(6579, false) };
 
 	public static void register() {
+		io.ruin.model.skills.prayer.AlternatePrayers.register();
 		// every prayer is shown on login: no filter hides the protection prayers (or any other)
 		io.ruin.model.entity.shared.listeners.LoginListener.register(p -> {
 			for (VarPlayerRepository f : PRAYER_FILTERS)
@@ -29,6 +30,8 @@ public class TabPrayer {
 		});
 		InterfaceHandler.register(Interface.PRAYER, h -> {
 			for (Prayer prayer : Prayer.VALUES) {
+				if (prayer.component() == -1)
+					continue; // an alternate prayer: it sits on its base's slot (Prayer.alternate)
 				if (prayer == Prayer.RIGOUR) {
 					h.actions[prayer.component()] = (DefaultAction) (p, option, slot, itemId) -> {
 						if (option == 1)
@@ -44,7 +47,7 @@ public class TabPrayer {
 							refundPrayer(p, prayer);
 					};
 				} else {
-					h.actions[prayer.component()] = (SimpleAction) p -> p.getPrayer().toggle(prayer);
+					h.actions[prayer.component()] = (SimpleAction) p -> p.getPrayer().toggle(prayer.alternate(p));
 				}
 			}
 		});

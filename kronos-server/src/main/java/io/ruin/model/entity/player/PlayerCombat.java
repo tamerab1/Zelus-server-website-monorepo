@@ -5153,6 +5153,11 @@ public class PlayerCombat extends Combat {
 				hit.boostAttack(0.15).boostDamage(0.02);
 			}
 		}
+		if (player.getPrayer().isActive(Prayer.MYSTIC_VIGOUR)) {
+			if (hit.attackStyle == AttackStyle.MAGIC) {
+				hit.boostAttack(0.18).boostDamage(0.03);
+			}
+		}
 		if (player.getPrayer().isActive(Prayer.MYSTIC_LORE)) {
 			if (hit.attackStyle == AttackStyle.MAGIC) {
 				hit.boostAttack(0.1).boostDamage(0.01);
