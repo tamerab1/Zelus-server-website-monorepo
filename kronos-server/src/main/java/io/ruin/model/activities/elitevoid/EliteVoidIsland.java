@@ -52,9 +52,9 @@ public final class EliteVoidIsland {
 	}
 
 	private static HooksV2.Result command(CommandHandler.Hook.Handle cmd) {
-		if (!cmd.command().equals("elitevoid") || !cmd.player().isAdmin())
+		if (!cmd.command().equals("elitevoid"))
 			return HooksV2.Result.Pass;
-		ModernTeleport.teleport(cmd.player(), teleport());
+		ModernTeleport.teleport(cmd.player(), teleport()); // everyone; the usual teleport rules (wilderness, combat) apply
 		return HooksV2.Result.Return;
 	}
 
