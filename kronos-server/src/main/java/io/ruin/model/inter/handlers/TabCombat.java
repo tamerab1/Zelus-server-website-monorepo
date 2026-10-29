@@ -78,6 +78,22 @@ public class TabCombat {
 		}
 	}
 
+	/** The spellbook's "Autocast" option: the same as picking the spell on the staff's autocast screen. */
+	public static void autocastFromSpellbook(Player player, TargetSpell spell) {
+		int slot = -1;
+		for (int i = 1; i < TargetSpell.AUTOCASTS.length; i++)
+			if (TargetSpell.AUTOCASTS[i] == spell)
+				slot = i;
+		if (slot <= 0)
+			return;
+		if (player.getEquipment().get(Equipment.SLOT_WEAPON) == null || getAutocastId(player) == null) {
+			player.sendMessage("You need a staff that can autocast from this spellbook.");
+			return;
+		}
+		selectAutocast(player, slot);
+		player.sendMessage("You will now autocast " + spell.getClass().getSimpleName().replaceAll("([a-z])([A-Z])", "$1 $2") + ".");
+	}
+
 	public static void selectAutocast(Player player, int slot) {
 		if (slot < 0 || slot >= TargetSpell.AUTOCASTS.length)
 			return;
@@ -165,6 +181,17 @@ public class TabCombat {
 			return SpellBook.MODERN.isActive(player) ? 4170 : null;
 		if (staffId == 22296) //staff of light
 			return SpellBook.MODERN.isActive(player) ? 22296 : null;
+		// the god staves have no autocast set of their own in the cache (script 243): each borrows the set that lists its
+		// god spell. Guthix staff / void knight mace -> 8841 (Claws of Guthix), Zamorak staff -> 27785 (the sceptre set,
+		// Flames of Zamorak), Saradomin staff -> 22296 (the Staff of light set, Saradomin Strike), Staff of balance -> 24144
+		if (staffId == 2416 || staffId == 8841)
+			return SpellBook.MODERN.isActive(player) ? 8841 : null;
+		if (staffId == 2417)
+			return SpellBook.MODERN.isActive(player) ? 27785 : null;
+		if (staffId == 2415)
+			return SpellBook.MODERN.isActive(player) ? 22296 : null;
+		if (staffId == 24144)
+			return SpellBook.MODERN.isActive(player) ? 24144 : null;
 		return SpellBook.MODERN.isActive(player) ? -1 : null;
 	}
 

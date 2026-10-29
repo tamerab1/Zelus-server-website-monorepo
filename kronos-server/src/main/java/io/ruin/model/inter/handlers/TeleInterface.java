@@ -1769,6 +1769,12 @@ public class TeleInterface extends ItemContainer {
 		}
 		if (currentTeleport == ServerTeleports.MALAKAR)
 			currentTeleport.teleportPos = DonationBossHandler.malakarTeleportPosition;
+		if (currentTeleport == ServerTeleports.ELITE_VOID_ISLAND) {
+			player.lastServerTeleport = currentTeleport;
+			ModernTeleport.teleport(player, io.ruin.model.activities.elitevoid.EliteVoidIsland.teleport());
+			player.closeInterfaces();
+			return;
+		}
 		if (currentTeleport == ServerTeleports.PURO_PURO) {
 			player.puropuroTravelledCounter++;
 			if (player.puropuroTravelledCounter == Achievements.MIGHT_NEED_A_JAR_OR_TWO.getCompletionAmount())

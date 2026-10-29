@@ -30,6 +30,13 @@ public class VoteBossHandler {
 		NPCType.registerCombat(VoteBoss.class, 8262);
 	}
 
+	/** The journal's World bosses row: votes towards the next vote boss, or "Alive". */
+	public static String status() {
+		if (boss != null && !boss.isRemoved() && boss.getHp() > 0)
+			return "<col=50e050>Alive</col> (::vb)";
+		return currentVotes + "/15 votes";
+	}
+
 	public static void addVote(int amount) {
 		currentVotes += amount;
 		if (currentVotes % 5 == 0 && currentVotes < 15) {

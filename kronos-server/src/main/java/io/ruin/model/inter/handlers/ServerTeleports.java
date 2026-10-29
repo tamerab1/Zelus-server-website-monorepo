@@ -401,6 +401,12 @@ public enum ServerTeleports {
 	CATALYSTS("Catalysts", new Position(1168, 4125, 0), new Item[]{new Item(30315), new Item(30312), new Item(30309), new Item(ItemID.PERK_POINT_SCROLL), new Item(25590), new Item(ItemID.SMALL_EXP_LAMP), new Item(ItemID.DULL_MINERALS), new Item(ItemID.SHINY_MINERALS)}, "Mid-high level training location.", "", "", 35027, 7922),
 	VYREWATCH_SENTINELS("Vyrewatch Sentinels", new Position(3605, 3362, 0), new Item[]{new Item(24777, 1)}, "High level training location.", "", "", 17952, 4689),
 	BASILISK_KNIGHTS("Basilisk Knights", new Position(2461, 10415, 0), new Item[]{new Item(24268, 1)}, "An area riddled with basilisks.", "", "", 38864, 8497),
+	// the Elite Void island (EliteVoidIsland): a persistent copy of the Pest Control battle island; the real position is
+	// set when the teleport starts (TeleInterface.startTeleport), this one is only its source tile
+	ELITE_VOID_ISLAND("Elite Void Island", new Position(2657, 2610, 0), new Item[]{new Item(13072), new Item(13073),
+		new Item(8842), new Item(11663), new Item(11664), new Item(11665)},
+		"Elite Void Knights hold a copy of the<br>Pest Control island. They drop the<br>Elite Void pieces.",
+		"Hard", "No requirements, combat 100+ recommended.", 0, 0),
 	ARMOURED_ZOMBIES("Armoured Zombies", new Position(3558, 9778, 0), new Item[]{new Item(28810, 1)}, "Aggressive armoured zombies inside.", "", "", 0, 0),
 	SHAMANS("Lizardman shamans", new Position(1293, 10063, 0), new Item[]{new Item(13576)}, "Fight shamans in a single way <br>combat location.", "Medium", "No requirements.", 36345, 7191),
 	CHAMBERS_OF_XERIC("Chambers of Xeric", new Position(1254, 3567, 0), new Item[]{new Item(20997),

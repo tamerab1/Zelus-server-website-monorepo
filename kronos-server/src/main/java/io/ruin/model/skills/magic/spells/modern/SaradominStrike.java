@@ -19,7 +19,7 @@ public class SaradominStrike extends TargetSpell {
 		setHitSound(1659);
 		setProjectile(new Projectile(64, 0));
 		setRunes(Rune.BLOOD.toItem(2), Rune.FIRE.toItem(2), Rune.AIR.toItem(4));
-		setCastCheck(new EquipmentCheck("This spell requires a Zamorak staff equipped to cast.", 2415, 22296)); // require staff
+		setCastCheck(new EquipmentCheck("This spell requires a Saradomin staff equipped to cast.", 2415, 22296)); // require staff
 	}
 
 	@Override

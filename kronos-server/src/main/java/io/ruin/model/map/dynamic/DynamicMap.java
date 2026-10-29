@@ -365,7 +365,14 @@ public class DynamicMap {
 				}
 			}
 		}
-		return build(chunks);
+		build(chunks);
+		// build(List) doesn't record the source base that convertX/convertY subtract: without it every converted tile
+		// lands outside the copy (the Elite Void island and the vote/donation boss caverns came up as black void)
+		if (swRegion != null) {
+			swRegion.dynamicRegionBaseX = (bounds.swX >> 3) << 3;
+			swRegion.dynamicRegionBaseY = (bounds.swY >> 3) << 3;
+		}
+		return this;
 	}
 
 	/**

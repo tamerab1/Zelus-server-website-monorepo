@@ -495,6 +495,12 @@ public class PlayerPerkHandler {
 		int difficulty = tier.ordinal() + 1;
 		int reward =
 				(int) (230 * Math.pow(difficulty, 2) + 2 * difficulty + Math.sqrt(difficulty)) + Random.get((difficulty * 75));
+		// 2026-10-29: the fixed reward fell far behind the level curve (an elite skilling task ~4k against ~300k a level
+		// at 120). A task now pays at least a share of the current level's cost (easy 0.5%, medium 1%, hard 2%,
+		// elite 4%), so low levels are unchanged and an elite skilling task is ~25 a level at 120 instead of ~75.
+		int levelCost = calculateExperienceForLevel(player.perkTreeLevel) - calculateExperienceForLevel(player.perkTreeLevel - 1);
+		double share = new double[] { 0.005, 0.01, 0.02, 0.04 }[tier.ordinal()];
+		reward = Math.max(reward, (int) (levelCost * share) + Random.get(difficulty * 75));
 		if (type == PerkTasks.TaskType.PVM) {
 			reward *= 2;
 			switch (CombatAchievementSystem.getTier(player.combatAchievementPoints)) {
@@ -508,6 +514,21 @@ public class PlayerPerkHandler {
 		return reward;
 	}
 
+
+	/** ::perktask: the current task, what's left of it, and the perk level's progress. */
+	public void sendTaskStatus(Player player) {
+		if (player.currentPerkTask == null) {
+			player.sendMessage("You don't have a perk task. Talk to the Perk Master to get one.");
+			return;
+		}
+		PerkTasks task = player.currentPerkTask;
+		String tier = task.tier.name().charAt(0) + task.tier.name().substring(1).toLowerCase();
+		player.sendMessage("<col=800000>Perk task (" + tier + "):</col> " + task.description.toLowerCase()
+				+ player.perkTaskCurrentAmount + task.description_2 + " to go.");
+		int toNext = getExperienceToNextLevel(player) - player.perkTreeExperience;
+		player.sendMessage("Perk level " + player.perkTreeLevel + ": " + NumberUtils.formatNumber(Math.max(0, toNext))
+				+ " experience to the next level.");
+	}
 
 	public void addPerkExperience(Player player, int experienceToAdd) {
 		player.perkTreeExperience += experienceToAdd;

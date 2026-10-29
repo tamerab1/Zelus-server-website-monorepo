@@ -752,6 +752,17 @@ public enum CollectionLogData {
 					new Item(30579, 1),
 					new Item(7968, 3),
 			}),
+	ELITE_VOID_KNIGHTS(CollectionLogUpdated.Categories.OTHER, "Elite Void Knights",
+			new Item[] { (new Item(13072)/* Elite void top */), (new Item(13073)/* Elite void robe */),
+					(new Item(8842)/* Void knight gloves */), (new Item(11663)/* Void mage helm */),
+					(new Item(11664)/* Void ranger helm */), (new Item(11665)/* Void melee helm */) },
+			// completion rewards
+			new Item[] {
+					new Item(7478, 4),
+					new Item(30579, 2),
+					new Item(7968, 3),
+					new Item(30460, 1),
+			}),
 	CYCLOPES(CollectionLogUpdated.Categories.OTHER, "Cyclopes",
 			new Item[] { (new Item(8844)/* Bronze def */), (new Item(8845)/* Iron def */),
 					(new Item(8846)/* Steel def */), (new Item(8847)/* Black def */), (new Item(8848)/* Mith def */),

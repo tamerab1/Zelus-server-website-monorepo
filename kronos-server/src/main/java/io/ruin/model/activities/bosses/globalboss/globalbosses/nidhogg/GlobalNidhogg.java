@@ -97,8 +97,7 @@ public class GlobalNidhogg extends NPCCombat {
 			}
 		};
 		npc.hitListener = new HitListener().preDefend(hit -> {
-			if (hit.damage > 50)
-				hit.damage = 50;
+			io.ruin.model.activities.bosses.globalboss.GlobalBossHandler.scaleHit(npc, hit); // cap 50 + few-players scaling
 		}).postDamage(hit -> {
 			if (hit.damage > 0 && hit.attacker != null && hit.attacker.player != null)
 				damagingPlayers.add(hit.attacker.player.getUserId());

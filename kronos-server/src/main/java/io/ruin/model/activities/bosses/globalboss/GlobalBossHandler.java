@@ -47,13 +47,55 @@ public class GlobalBossHandler {
 		GlobalBroadcastHook.sendEventSpawnAnnouncement(npc.getName(), null);
 	}
 
+	/* Damage on a global boss (2026-10-29): every hit is capped at 50 (a crowd can't melt it), then scaled up while few
+	 * players are fighting it, so a lone grinder isn't stuck on 22k HP for half an hour. Players fighting = distinct
+	 * attackers in the last 25 ticks, counted per hit, so people arriving or leaving can't skew it. */
+	public static final int HIT_CAP = 50;
+	private static final int RECENT_TICKS = 25;
+	private static final java.util.Map<Integer, Long> recentAttackers = new java.util.HashMap<>();
+	private static NPC scaledFor;
+
+	/** For each global boss's preDefend: the 50 cap, then the few-players multiplier. */
+	public static void scaleHit(NPC boss, io.ruin.model.combat.Hit hit) {
+		if (hit.damage > HIT_CAP)
+			hit.damage = HIT_CAP;
+		if (hit.attacker == null || hit.attacker.player == null || hit.damage <= 0)
+			return;
+		long now = io.ruin.Server.currentTick();
+		synchronized (recentAttackers) {
+			if (scaledFor != boss) { // a new boss: forget the last one's fighters
+				recentAttackers.clear();
+				scaledFor = boss;
+			}
+			recentAttackers.put(hit.attacker.player.getUserId(), now);
+			recentAttackers.values().removeIf(t -> now - t > RECENT_TICKS);
+			int fighters = recentAttackers.size();
+			double multiplier = fighters <= 1 ? 4 : fighters == 2 ? 2.5 : fighters <= 4 ? 1.5 : 1;
+			hit.damage = (int) Math.round(hit.damage * multiplier);
+		}
+	}
+
+	/** Ticks between spawn cycles; the tick the next cycle runs on (the journal's World bosses row). */
+	private static final int SPAWN_EVERY = 4900;
+	private static long nextCycleTick;
+
 	public static void register() {
 		World.startEvent(e -> {
 			while (true) {
-				e.delay(4900);
+				nextCycleTick = io.ruin.Server.currentTick() + SPAWN_EVERY;
+				e.delay(SPAWN_EVERY);
 				spawnBoss();
 			}
 		});
+	}
+
+	/** "Alive" while a global boss stands, else the time until the next spawn cycle (it spawns 60 seconds after). */
+	public static String status() {
+		if (currentBoss != null && !currentBoss.isRemoved() && currentBoss.getHp() > 0)
+			return "<col=50e050>Alive</col> (::gb)";
+		long ticks = Math.max(0, nextCycleTick - io.ruin.Server.currentTick()) + 100;
+		long secs = ticks * 600 / 1000;
+		return (secs / 60) + ":" + String.format("%02d", secs % 60) + " left";
 	}
 
 	private static void broadcastEvent(String eventMessage) {

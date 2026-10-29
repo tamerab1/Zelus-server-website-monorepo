@@ -1955,6 +1955,11 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "perktask": {
+				player.getPlayerPerkHandler().sendTaskStatus(player);
+				return true;
+			}
+
 			case "players":
 			case "online": {
 				List<String> text = new LinkedList<>();

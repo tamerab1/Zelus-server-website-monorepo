@@ -370,6 +370,12 @@ public class TabMagic {
 		return new InterfaceAction() {
 			@Override
 			public void handleClick(Player player, int option, int slot, int itemId) {
+				// "Autocast" (op 9, cache stage 9 PatchSpellbookAutocast) on a combat spell
+				if (option == 9 && spell instanceof io.ruin.model.skills.magic.spells.TargetSpell target) {
+					if (book.isActive(player))
+						TabCombat.autocastFromSpellbook(player, target);
+					return;
+				}
 				if (spell.clickAction == null || !book.isActive(player) && !DuelArena.allowMagic(player))
 					return;
 				spell.clickAction.accept(player, option - 1);

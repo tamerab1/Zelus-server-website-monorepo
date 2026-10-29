@@ -157,6 +157,8 @@ public class ItemUpgradeInterface {
 	}
 
 	List<Item> itemsInPerkAttachment = new ArrayList<>();
+	/** The perk a full item gives up for the one being attached (picked at confirm). */
+	private ItemBreakPerks replacing;
 	boolean perkAttachmentActive = false;
 
 	void sendPerkAttachment(Player player) {
@@ -165,10 +167,9 @@ public class ItemUpgradeInterface {
 			return;
 		}
 		if (getTotalAttachments(selectedItem) >= getMaxAttachments(selectedItem)
-				&& !AttributeExtensions.hasAttribute(selectedItem, perk.perk)) {
-			player.sendMessage("This item already has the maximum amount of attachments.");
-			return;
-		}
+				&& !AttributeExtensions.hasAttribute(selectedItem, perk.perk))
+			player.sendMessage("This item's perk slots are full: you'll choose which perk to replace when you confirm.");
+		replacing = null;
 		perkAttachmentActive = true;
 		minimumIngredientsAdded = false;
 		itemsInPerkAttachment.clear();
@@ -420,9 +421,20 @@ public class ItemUpgradeInterface {
 			return;
 		}
 
+		// every slot taken by other perks: the player picks one to overwrite (2026-10-29), its slot goes to the new perk
 		if (getTotalAttachments(selectedItem) >= getMaxAttachments(selectedItem)
-				&& !AttributeExtensions.hasAttribute(selectedItem, perk.perk)) {
-			player.sendMessage("This item already has the maximum amount of attachments.");
+				&& !AttributeExtensions.hasAttribute(selectedItem, perk.perk)
+				&& (replacing == null || !AttributeExtensions.hasAttribute(selectedItem, replacing.perk))) {
+			List<Option> choices = new ArrayList<>();
+			for (ItemBreakPerks current : ItemBreakPerks.VALUES)
+				if (AttributeExtensions.hasAttribute(selectedItem, current.perk))
+					choices.add(new Option("Replace " + current.name + " (level "
+							+ AttributeExtensions.getCharges(current.perk, selectedItem) + ")", () -> {
+						replacing = current;
+						confirmUpgrade(player);
+					}));
+			choices.add(new Option("Nevermind."));
+			player.dialogue(new OptionsDialogue("Which perk should " + perk.name + " replace?", choices.toArray(new Option[0])));
 			return;
 		}
 
@@ -446,7 +458,7 @@ public class ItemUpgradeInterface {
 			}
 		}
 		player.dialogue(new OptionsDialogue("Are you sure you want to upgrade this item?",
-				new Option("Yes, upgrade it.", () -> {
+				new Option(replacing == null ? "Yes, upgrade it." : "Yes, replace " + replacing.name + ".", () -> {
 					// Delete the items
 					for (Item item : itemsInPerkAttachment) {
 						if (savedMaterial(player)) continue;
@@ -465,6 +477,12 @@ public class ItemUpgradeInterface {
 						}
 						player.getInventory().remove(item.getId(), toRemove);
 					}
+					// the overwritten perk goes first, so its slot is free for the new one
+					if (replacing != null && AttributeExtensions.hasAttribute(selectedItem, replacing.perk)) {
+						AttributeExtensions.clearCharges(replacing.perk, selectedItem);
+						player.sendMessage("Your " + selectedItem.getDef().name + " loses its " + replacing.name + " perk.");
+					}
+					replacing = null;
 					// Upgrade the item
 					ItemBreakPerks.upgradeItem(player, selectedItem, perk,
 						ItemBreakPerks.getChance(player, perk.level5Chance, perk.cost, itemsInPerkAttachment),

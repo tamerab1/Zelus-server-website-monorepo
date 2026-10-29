@@ -63,6 +63,13 @@ public class DonationBossHandler {
 		spawnPosition = io.ruin.model.activities.bosses.EventBossArea.Arena.DONATION.spawnFor(1787);
 	}
 
+	/** The journal's World bosses row: donations towards the next donation boss, or "Alive". */
+	public static String status() {
+		if (boss != null && !boss.isRemoved() && boss.getHp() > 0)
+			return "<col=50e050>Alive</col> (::db)";
+		return "$" + currentDonationAmount + "/$" + DONATION_FOR_BOSS;
+	}
+
 	public static synchronized void addDonationAmount(int amount) {
 		currentDonationAmount += amount;
 

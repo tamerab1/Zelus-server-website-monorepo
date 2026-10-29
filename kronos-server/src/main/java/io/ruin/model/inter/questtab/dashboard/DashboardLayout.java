@@ -15,14 +15,14 @@ public final class DashboardLayout {
 			int[] buttonTexts, int[] buttonIcons, int[] bars) {
 	}
 
-	public static final Layout CHARACTER = new Layout(1143, 571,
-			new int[]{8, 25, 48, 63},
-			new int[][]{{11, 13, 15, 17, 19, 21}, {28, 30, 32, 34, 36, 38, 40, 42, 44}, {51, 53, 55, 57, 59}, {66, 68, 70, 72, 74, 76, 78}},
-			new int[][]{{12, 14, 16, 18, 20, 22}, {29, 31, 33, 35, 37, 39, 41, 43, 45}, {52, 54, 56, 58, 60}, {67, 69, 71, 73, 75, 77, 79}},
+	public static final Layout CHARACTER = new Layout(1143, 649,
+			new int[]{8, 25, 48, 63, 82},
+			new int[][]{{11, 13, 15, 17, 19, 21}, {28, 30, 32, 34, 36, 38, 40, 42, 44}, {51, 53, 55, 57, 59}, {66, 68, 70, 72, 74, 76, 78}, {85, 87, 89}},
+			new int[][]{{12, 14, 16, 18, 20, 22}, {29, 31, 33, 35, 37, 39, 41, 43, 45}, {52, 54, 56, 58, 60}, {67, 69, 71, 73, 75, 77, 79}, {86, 88, 90}},
 			new int[]{},
 			new int[]{},
 			new int[]{},
-			new int[]{-1, -1, -1, -1});
+			new int[]{-1, -1, -1, -1, -1});
 
 	public static final Layout SERVER = new Layout(1144, 392,
 			new int[]{8, 23, 36},

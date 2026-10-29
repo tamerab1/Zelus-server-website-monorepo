@@ -94,8 +94,7 @@ public class StonePoltegeist extends NPCCombat {
 	}
 
 	private void preHitDefend(Hit hit) {
-		if (hit.damage > 50)
-			hit.damage = 50;
+		io.ruin.model.activities.bosses.globalboss.GlobalBossHandler.scaleHit(npc, hit); // cap 50 + few-players scaling
 	}
 
 	private void postDamage(Hit hit) {
