@@ -132,10 +132,11 @@ public class GauntletRewards {
 			}
 			SummerEvent.handleKill(player, "The Gauntlet");
 			for (int i = 0; corrupted ? i < 3 : i < 2; i++) {
-				float randomRoll = Random.get(0, corrupted ? 11 : 24);
-				randomRoll *= (1 - (player.calculateDropRate() / 100.0));
+				// drop rate shrinks the range (a rare is a roll of 0), down to half of it at most
+				int range = corrupted ? 11 : 24;
+				range = Math.max(range / 2, (int) Math.round(range * (1 - player.calculateDropRate() / 100.0)));
 				Item reward;
-				if (randomRoll == 0) {
+				if (Random.get(0, range) == 0) {
 					reward = COMPLETED_RARE_REWARDS.rollDrop(player);
 
 					if (reward.getId() == 23759 || reward.getId() == 23757 || reward.getId() == 25859
