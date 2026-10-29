@@ -55,7 +55,7 @@ public class SoulStarterInterface {
 	private static void pick(Player player, SoulWeaponType type) {
 		if (picked.containsKey(player.getUserId()))
 			return; // the modal is up: the cards underneath don't react
-		if (player.soulWeapon != null) {
+		if (player.soulWeapon != null && !player.soulWeapon.rechoose) {
 			player.closeInterfaces();
 			SoulWeapons.claim(player); // already bound: recover instead
 			return;
@@ -69,6 +69,10 @@ public class SoulStarterInterface {
 		if (type == null || !player.isVisibleInterface(INTERFACE))
 			return;
 		player.closeInterfaces();
+		if (player.soulWeapon != null && player.soulWeapon.rechoose) {
+			SoulWeapons.rebind(player, type); // staff reset a wrong pick: the progress moves to this line
+			return;
+		}
 		if (player.soulWeapon != null)
 			return; // already bound (another window, a replayed click): never a second weapon
 		player.soulWeapon = new SoulWeaponData(type);

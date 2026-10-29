@@ -26,6 +26,8 @@ public class SoulWeaponData {
 	public String activeCosmeticAura;
 	/** Monsters slain while wielding the weapon. */
 	public long soulsHarvested;
+	/** Set by staff (::resetsoul): the next ::soulweapon picks the line again, keeping tier, Soul XP and souls. */
+	public boolean rechoose;
 
 	public SoulWeaponData() {
 	}

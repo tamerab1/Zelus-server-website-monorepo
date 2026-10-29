@@ -42,6 +42,7 @@ import io.ruin.api.utils.NumberUtils;
  * Only the player's own line gathers souls: wielding another line (e.g. a spawned one) says so, once a minute.
  * New players pick their line in the tutorial (SoulStarterInterface); others through the Zelus Guide or ::soulweapon.
  */
+@lombok.extern.slf4j.Slf4j
 public final class SoulWeapons {
 
 	/** Cumulative Soul XP needed to REACH each tier (index = tier). */
@@ -135,6 +136,12 @@ public final class SoulWeapons {
 			SoulTreeCommand.teleport(cmd.player());
 			return HooksV2.Result.Return;
 		}
+		if (cmd.command().equals("resetsoul")) {
+			if (!cmd.player().isAdmin())
+				return HooksV2.Result.Pass;
+			resetChoice(cmd.player(), String.join(" ", cmd.args()));
+			return HooksV2.Result.Return;
+		}
 		if (!cmd.command().equals("soulweapon"))
 			return HooksV2.Result.Pass;
 		Player player = cmd.player();
@@ -160,6 +167,10 @@ public final class SoulWeapons {
 	/** The one-time choice, or recovery of a lost weapon with all progress kept. */
 	public static void claim(Player player) {
 		SoulWeaponData data = player.soulWeapon;
+		if (data != null && data.rechoose) {
+			SoulStarterInterface.open(player);
+			return;
+		}
 		if (data != null) {
 			if (owns(player, data.weaponType)) {
 				player.sendMessage(TAG + "You already have your " + data.weaponType.name + ". Type ::soulweapon info for its progress.");
@@ -169,6 +180,52 @@ public final class SoulWeapons {
 			return;
 		}
 		SoulStarterInterface.open(player);
+	}
+
+	/**
+	 * Staff: ::resetsoul <player> for a wrong pick. The weapon (every look, worn, carried or banked) is taken, the
+	 * spent Soul Points are refunded (talents belong to a line), and the next ::soulweapon chooses again: tier, Soul XP
+	 * and souls harvested carry over to the new line.
+	 */
+	static void resetChoice(Player staff, String name) {
+		Player target = name.isBlank() ? null : io.ruin.model.World.getPlayer(name);
+		if (target == null) {
+			staff.sendMessage("Usage: ::resetsoul <online player name>");
+			return;
+		}
+		SoulWeaponData data = target.soulWeapon;
+		if (data == null) {
+			staff.sendMessage(target.getName() + " hasn't chosen a Soulbound weapon.");
+			return;
+		}
+		int taken = 0;
+		for (int id : data.weaponType.looks()) {
+			taken += target.getInventory().remove(id, Integer.MAX_VALUE);
+			taken += target.getEquipment().remove(id, Integer.MAX_VALUE);
+			taken += target.getBank().remove(id, Integer.MAX_VALUE);
+		}
+		int refunded = data.allocatedTalents.values().stream().mapToInt(Integer::intValue).sum();
+		data.availableSoulPoints += refunded;
+		data.allocatedTalents.clear();
+		data.rechoose = true;
+		target.getAppearance().update();
+		log.info("Soul weapon reset: {} reset {} ({} at tier {}, {} item(s) taken, {} point(s) refunded)", staff.getName(),
+				target.getName(), data.weaponType, data.tier, taken, refunded);
+		staff.sendMessage("Reset " + target.getName() + "'s " + data.weaponType.name + " (tier " + data.tier + "): " + taken
+				+ " item(s) taken, " + refunded + " Soul Point(s) refunded.");
+		target.sendMessage(TAG + "Staff have reset your Soulbound choice. Type ::soulweapon to choose again: your tier and "
+				+ "Soul XP carry over, and your Soul Points were refunded.");
+	}
+
+	/** After ::resetsoul: the new line, at the tier the old one had reached. */
+	static void rebind(Player player, SoulWeaponType type) {
+		SoulWeaponData data = player.soulWeapon;
+		data.weaponType = type;
+		data.rechoose = false;
+		give(player, type.itemFor(data.tier), "Your souls flow into the " + HIGHLIGHT + type.name + "</col>, at tier "
+				+ data.tier + ".");
+		player.privateSound(SOUND_TIER_UP);
+		player.graphics(GFX_TIER_UP);
 	}
 
 	/** The selector's Bind (SoulStarterInterface, which has already set player.soulWeapon): the tier-1 weapon + welcome. */
