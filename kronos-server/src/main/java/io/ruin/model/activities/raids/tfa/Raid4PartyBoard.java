@@ -28,7 +28,10 @@ import java.util.Map;
  * Roles: 0 may apply, 1 member (Leave), 2 leader (Disband; Kick = op 10 on child 14 * row of component 35), 3
  * applicant (Withdraw), 4 can't apply. Applicants: Accept op 1 / Reject op 10 on child 22 * row of component 52.
  * Back 4, Refresh 55, the action button 56. Tabs: Members 14 / Applicants 15; 10063 gives the tab that isn't shown a
- * "View" op that comes back to the server, which reopens the details with 10060's tab arg (0 members, 1 applicants).</li>
+ * "View" op; the server reopens the details with 10060's tab arg (0 members, 1 applicants).</li>
+ * <li>Both boards' scripted buttons (the tabs, Back, Refresh, ...: 10065 / 1558) don't send IF_BUTTON: they answer
+ * with RESUME_PAUSEBUTTON on component 1, sub = enum 6057[button component], so {@link #resume} maps the sub back to
+ * its button and runs that button's action.</li>
  * </ul>
  */
 @Slf4j
@@ -39,6 +42,7 @@ public final class Raid4PartyBoard {
 	private static final int DETAILS_BACK = 4, DETAILS_TAB_MEMBERS = 14, DETAILS_TAB_APPLICANTS = 15, DETAILS_MEMBERS = 35,
 			DETAILS_APPLICANTS = 52, DETAILS_REFRESH = 55, DETAILS_ACTION = 56;
 	private static final int TAB_MEMBERS = 0, TAB_APPLICANTS = 1, OP_ACCEPT = 1, OP_KICK_REJECT = 10;
+	private static final int RESUME = 1, ENUM_RESUME_SUBS = 6057;
 	private static final int SCRIPT_LIST_ROW = 10094, SCRIPT_MEMBER = 10053, SCRIPT_APPLICANT = 10058, SCRIPT_HEADER = 10060;
 	private static final int ROLE_APPLY = 0, ROLE_MEMBER = 1, ROLE_LEADER = 2, ROLE_APPLICANT = 3, ROLE_BLOCKED = 4;
 	private static final int MEMBER_ROW_CHILDREN = 14, APPLICANT_ROW_CHILDREN = 22, OPS = 0x7FE;
@@ -75,6 +79,7 @@ public final class Raid4PartyBoard {
 				openDetails(p, party);
 			};
 			h.actions[LIST_FILTER] = (DefaultAction) (p, option, slot, item) -> log.info("Raid 4 board: {} filter op {}", p.getName(), option);
+			h.actions[RESUME] = (DefaultAction) (p, option, slot, item) -> resume(p, LIST, slot);
 			h.closedAction = (p, i) -> listed.remove(p);
 		});
 		InterfaceHandler.register(DETAILS, h -> {
@@ -82,6 +87,7 @@ public final class Raid4PartyBoard {
 			h.actions[DETAILS_REFRESH] = (DefaultAction) (p, option, slot, item) -> refresh(p);
 			h.actions[DETAILS_TAB_MEMBERS] = (DefaultAction) (p, option, slot, item) -> showTab(p, TAB_MEMBERS);
 			h.actions[DETAILS_TAB_APPLICANTS] = (DefaultAction) (p, option, slot, item) -> showTab(p, TAB_APPLICANTS);
+			h.actions[RESUME] = (DefaultAction) (p, option, slot, item) -> resume(p, DETAILS, slot);
 			h.actions[DETAILS_ACTION] = (DefaultAction) (p, option, slot, item) -> {
 				log.info("Raid 4 board: {} action op {}", p.getName(), option);
 				action(p);
@@ -165,6 +171,24 @@ public final class Raid4PartyBoard {
 		ps.sendIfEvents(DETAILS, DETAILS_APPLICANTS, 0, APPLICANT_ROW_CHILDREN * 32, OPS);
 		for (int c : new int[] { DETAILS_BACK, DETAILS_TAB_MEMBERS, DETAILS_TAB_APPLICANTS, DETAILS_REFRESH, DETAILS_ACTION })
 			ps.sendIfEvents(DETAILS, c, -1, -1, OPS);
+	}
+
+	/** A scripted button's RESUME_PAUSEBUTTON: finds the button whose enum 6057 sub this is and runs its action. */
+	private static void resume(Player player, int inter, int sub) {
+		Integer button = null;
+		Map<Integer, Integer> subs = io.ruin.cache.EnumType.gi(ENUM_RESUME_SUBS);
+		if (subs != null)
+			for (var e : subs.entrySet())
+				if (e.getValue() == sub && e.getKey() >> 16 == inter) {
+					button = e.getKey() & 0xFFFF;
+					break;
+				}
+		log.info("Raid 4 board: {} resume {} sub {} -> button {}", player.getName(), inter, sub, button);
+		if (button == null || button == RESUME)
+			return;
+		var action = io.ruin.model.inter.InterfaceHandler.getAction(player, inter, button);
+		if (action != null)
+			action.handleClick(player, 1, -1, -1);
 	}
 
 	private static void showTab(Player player, int tab) {

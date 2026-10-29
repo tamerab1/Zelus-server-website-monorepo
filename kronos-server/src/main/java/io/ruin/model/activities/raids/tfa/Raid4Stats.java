@@ -135,6 +135,7 @@ public final class Raid4Stats {
 		ps.sendIfEvents(INTERFACE, CLOSE, -1, -1, 0x3FE);
 		Raid4Controller raid = Raid4.controllerOf(player);
 		boolean party = raid != null && raid.isInside(player);
+		log.info("Raid 4 stats: {} opens the Alliance Log (party mode {})", player.getName(), party);
 		ps.sendClientScript(SCRIPT_OPEN, "i", party ? 1 : 0);
 		ps.sendClientScript(SCRIPT_SELECT, "i", OVERALL); // also builds Overall's table
 		for (int section : SECTIONS)
