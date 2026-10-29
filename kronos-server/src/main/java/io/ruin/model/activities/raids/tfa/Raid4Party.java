@@ -25,6 +25,11 @@ public class Raid4Party {
 	private final Set<String> invites = new LinkedHashSet<>();
 	/** Players who applied on the party board (976), waiting for the leader's Accept / Reject. */
 	public final Set<String> applicants = new LinkedHashSet<>();
+	/** Players the leader rejected: they can't apply again until the leader unblocks (the board's Unblock). */
+	public final Set<String> blocked = new LinkedHashSet<>();
+	/** The leader's board settings: preferred size (1..8) and completions (0 = any), and whether others may spectate. */
+	public int preferredSize = MAX_SIZE, preferredCompletions;
+	public boolean spectating;
 	/** When the party was made: the board's Age column. */
 	public final long createdAt = System.currentTimeMillis();
 	/** Members who died in the current room. They spectate until the room is cleared. */
@@ -84,6 +89,20 @@ public class Raid4Party {
 		if (!invites.remove(name) || isFull() || hasStarted() || members.contains(name))
 			return false;
 		members.add(name);
+		return true;
+	}
+
+	/** The board's Move up / Move down: moves a member (never the leader, who stays first) one place. */
+	public boolean move(String name, int delta) {
+		List<String> order = new ArrayList<>(members);
+		order.remove(leader);
+		int from = order.indexOf(name), to = from + delta;
+		if (from < 0 || to < 0 || to >= order.size())
+			return false;
+		order.add(to, order.remove(from));
+		members.clear();
+		members.add(leader);
+		members.addAll(order);
 		return true;
 	}
 
