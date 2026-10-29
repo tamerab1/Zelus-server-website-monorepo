@@ -153,10 +153,11 @@ public final class Raid4PartyBoard {
 	/* ---------------------------------------------------------------- the details */
 
 	public static void openDetails(Player player, Raid4Party party) {
-		if (viewing.get(player) != party)
-			tabs.remove(player);
-		viewing.put(player, party);
+		// reopening closes the shown copy first, and its closedAction forgets the viewer: read the tab before
+		int tab = viewing.get(player) == party ? tabs.getOrDefault(player, TAB_MEMBERS) : TAB_MEMBERS;
 		player.openInterface(ToplevelComponent.MAINMODAL, DETAILS);
+		viewing.put(player, party);
+		tabs.put(player, tab);
 		var ps = player.getPacketSender();
 		int role = role(player, party);
 		List<String> members = new ArrayList<>(party.getMembers());
