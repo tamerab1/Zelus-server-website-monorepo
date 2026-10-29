@@ -998,7 +998,8 @@ public enum CustomShop2 {
 			new ShopItem(23951, 1500),    // Enhanced crystal key
 			new ShopItem(59960, 10000),  // Z Golden key
 			new ShopItem(59975, 50000),  // Ragnarok pet
-			new ShopItem(59976, 75000)   // Toxic pet
+			new ShopItem(59976, 75000),  // Toxic pet
+			new ShopItem(42765, 1)       // PvM ticket (cache stage 10), like the PK shop's PKP ticket
 		},
 		true
 	),

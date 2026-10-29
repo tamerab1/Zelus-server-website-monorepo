@@ -68,6 +68,7 @@ public class DonatorClaimScroll {
 		// the item's actual name (and the shop entry that uses this same item id as its ticket).
 		registerClaimTicket(59601, "BH point", (player, amount) -> player.UpdateBountyPoints(amount));
 		registerClaimTicket(59602, "Vote Point", (player, amount) -> player.updateVotePoints(amount));
+		registerClaimTicket(42765, "PvM point", (player, amount) -> player.PvmPoints += amount); // PvM Ticket
 
 		ItemAction.registerInventory(59599, "check", (player, item) ->
 			player.sendMessage("You currently have " + player.getPKPoints() + " PK points."));
@@ -77,6 +78,8 @@ public class DonatorClaimScroll {
 			player.sendMessage("You currently have " + player.GetBountyPoints() + " BH points."));
 		ItemAction.registerInventory(59602, "check", (player, item) ->
 			player.sendMessage("You currently have " + player.getVotePoints() + " vote points."));
+		ItemAction.registerInventory(42765, "check", (player, item) ->
+			player.sendMessage("You currently have " + player.PvmPoints + " PvM points."));
 		ItemAction.registerInventory(30575, "read", (player, item) -> {
 			player.dialogue(new MessageDialogue("This will redeem $10 donated on your account"));
 			player.dialogue(new OptionsDialogue("Are you sure you want to claim this?",
