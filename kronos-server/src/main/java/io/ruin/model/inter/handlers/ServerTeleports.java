@@ -429,6 +429,10 @@ public enum ServerTeleports {
 		// npc recolors (same as Cindermaw 60346 / Sylvaroth 60345). anim 7480 = Draco's stand.
 		"Hard", "82 Mining to mine the Draco Rock.", 65134, 7480
 	),
+	FRACTURED_ARCHIVE("The Fractured Archive", new Position(4127, 5559, 0), new Item[]{new Item(34646),
+		new Item(34719), new Item(34727), new Item(34679), new Item(34681), new Item(34717), new Item(34722), new Item(34669)},
+		"Raid 4: the Archive Guardian, three paths of<br>two bosses each, and Ocellus.<br>",
+		"Grand Master", "No requirements, high stats recommended.", -1, -1),
 	TOMBS_OF_AMASCUT("Tombs of Amascut", new Position(3355, 9119, 0), new Item[]{new Item(27386),
 		new Item(27277), new Item(27226), new Item(27229), new Item(27232), new Item(25985), new Item(26219),
 		new Item(25975)},

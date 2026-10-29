@@ -640,7 +640,8 @@ public abstract class NPCCombat extends Combat {
 			});
 		}
 
-		if (def.combatLevel >= 100) {
+		// Raid 4's Dreadnoth jellies (16666) and Dagon'hai imps (16650) are fight mechanics, spawned by the dozen: no Zelus points
+		if (def.combatLevel >= 100 && npc.getId() != 16666 && npc.getId() != 16650) {
 			int combatLevel = def.combatLevel;
 			int hpLevel = npc.getMaxHp();
 			int percentageBoost = player.getDifficulty().GetPercentagePointBoost();

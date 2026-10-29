@@ -1,0 +1,78 @@
+# Baelgor the Felreaver (model 62777, customs27 97431), rebuilt 2026-10-29 on its OWN skeleton, the way Vorgath is
+# rigged (rig_vorgath.txt). The earlier rig extended the player skeleton (extend 0) and layered wing bones over player
+# base anims (808 / 819 / 393 / 1167 / 836); in the rev 241 client those player-label transforms tore the ripped,
+# decimated demon mesh into long spars at every attack (Desktop/baelgor.png), with or without the wing bones. Now every
+# pose is our own keyed bones: the body, the head, the two wings (both on the torso label 8 of the source), and (round
+# 10) hips and shoulders. Keep the limb swings small: the decimated mesh's shoulder/hip faces are large, and an arm
+# rotated 50-60 degrees stretched them into the long spars again (client-maths emulation, scratchpad AnimEmu: claw /
+# cast edges grew 94-96); measure any new pose with AnimEmu before shipping it.
+model 62777
+ids 19001 19010
+part 1 all                                       # body
+part 3 box -50 -2 -95 * * *                      # leg (x-), hip down
+part 4 box 2 50 -95 * * *                        # leg (x+)
+part 5 box * -40 -205 -80 * *                    # arm (x-), shoulder to claw
+part 6 box 40 * -205 -80 * *                     # arm (x+)
+part 2 box * * * -175 * *                        # head and horns (above the shoulders)
+part 101 box * -10 * -110 28 * and labels 8      # wing (x-): membrane behind the shoulders
+part 101 box * -48 * -95 * * and labels 8        #   the spread beyond the body
+part 102 box 10 * * -110 28 * and labels 8       # wing (x+)
+part 102 box 48 * * -95 * * and labels 8
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -110 0
+bone 2 parent 1 pivot 0 -185 -10
+bone 3 parent 1 pivot -20 -95 0
+bone 4 parent 1 pivot 20 -95 0
+bone 5 parent 1 pivot -44 -192 0
+bone 6 parent 1 pivot 44 -192 0
+bone 101 parent 1 pivot -16 -205 24
+bone 102 parent 1 pivot 16 -205 24
+
+anim 0 idle frames 24 len 6                     # hovering tall, wings breathing in a slow beat
+  1 ty sin 3 1 0
+  2 rx sin 3 1 0.3
+  101 rz sin 8 1 0.5
+  102 rz sin -8 1 0.5
+end
+anim 1 walk frames 16 len 3                     # striding: legs step in turn, arms swing against them, wings beating
+  3 rx sin 18 1 0
+  4 rx sin 18 1 0.5
+  5 rx sin 7 1 0.5
+  6 rx sin 7 1 0
+  1 ty sin 4 2 0.25
+  1 rx sin 3 2 0.1
+  101 rz sin 12 2 0.5
+  102 rz sin -12 2 0.5
+end
+anim 2 claw frames 12 len 3 hold 2              # claw swipe: he lunges in and rakes, wings snapping forward
+  6 rx keys 0:0 0.4:8 0.65:-16 1:0
+  1 rx keys 0:0 0.4:-14 0.65:12 1:0
+  1 tz keys 0:0 0.4:-10 0.65:16 1:0
+  2 rx keys 0:0 0.4:-8 0.65:10 1:0
+  101 rz keys 0:0 0.4:-14 0.65:12 1:0
+  102 rz keys 0:0 0.4:14 0.65:-12 1:0
+end
+anim 3 cast frames 12 len 3 hold 2              # fel-fire: he rears up as the spell leaves him, wings flaring
+  5 rx keys 0:0 0.4:6 0.7:-14 1:0
+  6 rx keys 0:0 0.4:6 0.7:-14 1:0
+  1 ty keys 0:0 0.4:-10 0.7:0 1:0
+  1 rx keys 0:0 0.4:8 0.7:-6 1:0
+  2 rx keys 0:0 0.4:10 0.7:-8 1:0
+  101 rz keys 0:0 0.4:-24 0.7:12 1:0
+  102 rz keys 0:0 0.4:24 0.7:-12 1:0
+end
+anim 4 gust frames 15 len 3 hold 3              # Hellfire Gust: wings drawn high, then one heavy downbeat
+  1 ty keys 0:0 0.35:-14 0.6:-16 0.75:4 1:0
+  2 rx keys 0:0 0.35:12 0.75:-10 1:0
+  101 rz keys 0:0 0.35:-30 0.6:-32 0.75:20 1:0
+  102 rz keys 0:0 0.35:30 0.6:32 0.75:-20 1:0
+end
+anim 5 death frames 20 len 4 hold 200           # he topples: sinks and tips forward, wings folding in
+  3 rx keys 0:0 0.7:-14 1:-16
+  4 rx keys 0:0 0.7:-14 1:-16
+  1 ty keys 0:0 0.25:-8 0.7:40 1:46
+  1 rx keys 0:0 0.7:-30 1:-34
+  2 rx keys 0:0 0.3:-12 1:26
+  101 rz keys 0:0 0.3:-18 1:22
+  102 rz keys 0:0 0.3:18 1:-22
+end

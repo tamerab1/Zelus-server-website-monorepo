@@ -1320,6 +1320,11 @@ public class PlayerCombat extends Combat {
 			updateLastAttack(baseAttackSpeed + attackTicks);
 			return;
 		}
+		if (weaponDef.id == io.ruin.model.activities.raids.tfa.Raid4Items.TOME_UNCHARGED) {
+			player.sendMessage("Zorya's tome has no charges left!");
+			updateLastAttack(baseAttackSpeed + attackTicks);
+			return;
+		}
 		if (weaponDef.id == TumekensShadow.UNCHARGED) {
 			player.sendMessage("Your Tumekens shadow has no charges left!");
 			updateLastAttack(baseAttackSpeed + attackTicks);
@@ -1340,13 +1345,14 @@ public class PlayerCombat extends Combat {
 			int band = io.ruin.model.content.soulweapons.SoulWeaponType.MAGIC.bandOf(weaponDef.id);
 			// every look casts with 1167 (staff held): 711 hides the hand item (rightHandItem=0) and 9493 is Tumeken's
 			// front-held pose, wrong for the v2 meshes (2026-10-18)
-			int[] cast = band == 2 ? new int[]{1167, 2125, 2126, 2127} : band == 1 ? new int[]{1167, 1540, 1539, 1541}
-					: new int[]{1167, 1251, 1252, 1253}; // anim, cast gfx, projectile, impact
+			// Radiant (tier 15): a void-violet bolt (rev 241 Ocellus magic: cast 4294, projectile 4297, impact 4293)
+			int[] cast = band == 3 ? new int[]{1167, 4294, 4297, 4293} : band == 2 ? new int[]{1167, 2125, 2126, 2127}
+					: band == 1 ? new int[]{1167, 1540, 1539, 1541} : new int[]{1167, 1251, 1252, 1253}; // anim, cast gfx, projectile, impact
 			player.animate(cast[0]);
 			player.graphics(cast[1], 92, 0);
 			// the projectile homes on the target (staff head -> chest, a low arc); the hit lands on the standard OSRS
 			// magic delay for the distance, and the impact is a spot-anim ON the NPC, timed to the projectile's arrival
-			int duration = band == 2 ? new Projectile(cast[2], 62, 31, 56, 56, 10, 32, 11).send(player, target)
+			int duration = band >= 2 ? new Projectile(cast[2], 62, 31, 56, 56, 10, 32, 11).send(player, target)
 					: new Projectile(cast[2], 43, 31, 51, 56, 10, 16, 11).send(player, target);
 			Hit hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost).randDamage(spireMax)
 					.delay(getMagicHitDelay(getChebyshevDistance(player, target))).setAttackWeapon(weaponDef);
@@ -1882,6 +1888,28 @@ public class PlayerCombat extends Combat {
 					target.graphics(85, 92, duration);
 			}
 			updateLastAttack(doubleAttackEffect ? 1 : baseAttackSpeed + attackTicks);
+		}
+		// Zorya's tome (The Fractured Archive): its built-in spell, base max hit 18, every 3 ticks
+		if (weaponDef.id == io.ruin.model.activities.raids.tfa.Raid4Items.TOME) {
+			if (target.player != null) {
+				player.sendMessage(Color.RED.wrap("The tome's spell cannot be used against other players."));
+				return;
+			}
+			player.animate(io.ruin.model.activities.raids.tfa.Raid4Items.SEQ_TOME_ATTACK);
+			player.graphics(io.ruin.model.activities.raids.tfa.Raid4Items.SPOT_TOME_CAST, 0, 0);
+			int duration = new Projectile(io.ruin.model.activities.raids.tfa.Raid4Items.SPOT_TOME_PROJ, 40, 31, 46, 56, 10, 16, 11)
+					.send(player, target);
+			double weakness = target.isNpc() && !target.npc.getDef().name.contains("dummy")
+					? 1 + target.npc.getDamageBoostFromWeakness() : 1;
+			Hit hit = new Hit(player, AttackStyle.MAGIC, getAttackType()).boostAttack(attackBoost)
+					.randDamage((int) (io.ruin.model.activities.raids.tfa.Raid4Items.tomeMaxHit(player) * weakness * damageBoost))
+					.clientDelay(duration).setAttackWeapon(weaponDef);
+			int damage = target.hit(hit);
+			if (target != null)
+				target.graphics(damage > 0 ? io.ruin.model.activities.raids.tfa.Raid4Items.SPOT_TOME_IMPACT : 85, damage > 0 ? 0 : 92,
+						duration);
+			updateLastAttack(baseAttackSpeed + attackTicks);
+			return;
 		}
 		if (weaponDef.id == TumekensShadow.CHARGED || weaponDef.id == 43800) {// 9544 = fang special anim --- 9471 = fang
 																																					// normal hit anim

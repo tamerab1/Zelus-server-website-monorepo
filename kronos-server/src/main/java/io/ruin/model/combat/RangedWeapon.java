@@ -115,8 +115,11 @@ public enum RangedWeapon {
 		RangedAmmo.DRAGON_JAVELIN
 	),
 	CROSSBOW(
-		Arrays.stream(RangedAmmo.values()).filter(a -> a.name().toLowerCase().contains("bolt")).toArray(RangedAmmo[]::new)
+		Arrays.stream(RangedAmmo.values()).filter(a -> a.name().toLowerCase().contains("bolt") && !a.name().startsWith("ASCENSION"))
+				.toArray(RangedAmmo[]::new)
 	),
+	ASCENSION_CROSSBOWS(RangedAmmo.ASCENSION_BOLTS, RangedAmmo.ASCENSION_DIAMOND_BOLTS, RangedAmmo.ASCENSION_DIAMOND_BOLTS_E,
+		RangedAmmo.ASCENSION_ONYX_BOLTS, RangedAmmo.ASCENSION_ONYX_BOLTS_E),
 	TWISTED_BOW(
 		RangedAmmo.BRONZE_ARROW,
 		RangedAmmo.IRON_ARROW,

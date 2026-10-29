@@ -16,22 +16,25 @@ import io.ruin.api.utils.NumberUtils;
 
 /**
  * Soulbound Living Weapons (2026-10-18): one untradeable weapon per player (Blade / Recurve / Spire) that grows from
- * tier 1 to 10 on Soul XP from NPC kills made while wielding it. Each tier grants a Soul Point for the Soul Tree
+ * tier 1 to 15 (10 until customs27, 2026-10-27) on Soul XP from NPC kills made while wielding it. Each tier grants a Soul Point for the Soul Tree
  * ({@link SoulTalent}, {@link SoulTalents}, {@link SoulTreeInterface}); tiers 5, 8 and 10 unlock the cosmetic
  * {@link SoulAura}s. Everything is kept in {@link SoulWeaponData}.
  * <ul>
  * <li>Soul XP per kill: max(1, combat level / 4); NPCs with 400+ hitpoints count as bosses and add max hp / 10, clamped
  * to 50..250 (works for custom bosses too). Combat dummies give nothing.</li>
- * <li>Tiers: the XP to go from tier t to t+1 is 150 x 1.75^(t-1); about 30,600 Soul XP in all to reach tier 10. Each new
- * tier grants a Soul Point. Tiers 4 and 8 swap the weapon to its next look -- a new mesh and attack style -- in place
- * (equipment, inventory or bank); the Ascended look (8-10) has a special attack (SoulRend / SoulVolley / SoulNova).</li>
+ * <li>Tiers: the XP to go from tier t to t+1 is 150 x 1.75^(t-1) up to tier 10 (about 30,600 Soul XP in all), then
+ * each step 1.35x the last (tier 15 at about 207,000). Each new tier grants a Soul Point (14 by tier 15). Tiers 4, 8 and
+ * 15 swap the weapon to its next look -- a new mesh and attack style -- in place (equipment, inventory or bank); the
+ * Ascended look (8-14) has a special attack (SoulRend / SoulVolley / SoulNova), the Radiant look (15) a stronger one
+ * (RadiantSever / CrimsonEclipse / ArcaneCataclysm).</li>
  * <li>Check (inventory or worn) opens the weapon's details, redrawn live on every kill while open. Every Soul XP gain
  * and every login sends a "[Soulbound] ... tier N, a / b (P%)" line that the client's zelussoulweapon plugin turns into
  * an on-screen progress box.</li>
- * <li>Stats: the item_info entries hold the tier-1 values (the same for all three looks of a line); every tier above
- * adds a ninth of the gap to the tier-10 target (about 90% of best-in-slot), via Equipment's bonus calculation, so the
- * equipment stats screen shows the real numbers. The Spire's built-in spell hits up to (Magic / 3 - 1) x 0.40 at
- * tier 1, rising to x 1.15 at tier 10 (about 36 at 99 Magic).</li>
+ * <li>Stats: the item_info entries hold the tier-1 values (the same for every look of a line); tiers 2-10 each add a
+ * ninth of the gap to the tier-10 target (about 90% of best-in-slot), tiers 11-15 each a fifth of the further gap to
+ * the tier-15 target (a little past best-in-slot), via Equipment's bonus calculation, so the equipment stats screen shows
+ * the real numbers. The Spire's built-in spell hits up to (Magic / 3 - 1) x 0.40 at tier 1, x 1.15 at tier 10 and
+ * x 1.45 at tier 15 (about 45 at 99 Magic).</li>
  * </ul>
  * ::soulweapon claims the weapon once (or recovers a lost one, progress intact); ::soulweapon info shows progress;
  * ::soultree opens the Soul Tree (also the Check window's Soul Tree button).
@@ -42,8 +45,10 @@ import io.ruin.api.utils.NumberUtils;
 public final class SoulWeapons {
 
 	/** Cumulative Soul XP needed to REACH each tier (index = tier). */
-	static final long[] TIER_XP = new long[11];
-	public static final int MAX_TIER = 10;
+	static final long[] TIER_XP = new long[16];
+	public static final int MAX_TIER = 15;
+	/** The old cap: tiers above it follow the gentler curve and the tier-15 stat targets. */
+	static final int ASCENDED_CAP = 10;
 	private static final int BOSS_HP = 400, BOSS_MIN = 50, BOSS_MAX = 250;
 	private static final int SOUND_TIER_UP = 101, GFX_TIER_UP = 199;
 	static final String TAG = "<col=1fa7b5><shad=000000>[Soulbound]</shad></col> ";
@@ -51,9 +56,10 @@ public final class SoulWeapons {
 	static final String HIGHLIGHT = "<col=7d1fd1>";
 
 	static {
-		long total = 0;
+		long total = 0, step = 0;
 		for (int t = 2; t <= MAX_TIER; t++) {
-			total += Math.round(150 * Math.pow(1.75, t - 2));
+			step = t <= ASCENDED_CAP ? Math.round(150 * Math.pow(1.75, t - 2)) : Math.round(step * 1.35);
+			total += step;
 			TIER_XP[t] = total;
 		}
 	}
@@ -75,6 +81,30 @@ public final class SoulWeapons {
 				b[EquipmentStats.RANGED_STRENGTH] = 85;  // 10 -> 95
 			}
 			case MAGIC -> b[EquipmentStats.MAGIC_ATTACK] = 35; // 5 -> 40
+		}
+		return b;
+	}
+
+	/** The bonus a tier adds at one bonus index: ninths of the tier-10 target to tier 10, then fifths of the tier-15 extra. */
+	static int bonusAt(SoulWeaponType type, int tier, int index) {
+		int upTo10 = Math.min(tier, ASCENDED_CAP) - 1, past10 = Math.max(0, tier - ASCENDED_CAP);
+		return tierTenBonus(type)[index] * upTo10 / 9 + tierFifteenExtra(type)[index] * past10 / 5;
+	}
+
+	/** Bonuses added on top of the tier-10 values by tier 15 (a fifth per tier 11-15): a little past best-in-slot. */
+	static int[] tierFifteenExtra(SoulWeaponType type) {
+		int[] b = new int[EquipmentStats.SLAYER + 1];
+		switch (type) {
+			case MELEE -> {
+				b[EquipmentStats.STAB_ATTACK] = 25;   // 50 -> 75
+				b[EquipmentStats.SLASH_ATTACK] = 40;  // 85 -> 125
+				b[EquipmentStats.MELEE_STRENGTH] = 30; // 80 -> 110
+			}
+			case RANGED -> {
+				b[EquipmentStats.RANGE_ATTACK] = 30;    // 115 -> 145
+				b[EquipmentStats.RANGED_STRENGTH] = 25; // 95 -> 120
+			}
+			case MAGIC -> b[EquipmentStats.MAGIC_ATTACK] = 20; // 40 -> 60
 		}
 		return b;
 	}
@@ -218,7 +248,9 @@ public final class SoulWeapons {
 				evolve(player, data.weaponType.itemFor(before), data.weaponType.itemFor(data.tier));
 			player.getEquipment().sendAll = true; // the tier bonuses changed: re-total the stats
 		}
-		player.sendFilteredMessage(TAG + "<col=0b6f78>+" + xp + " Soul XP</col> | " + progressText(data));
+		// at the max tier every kill would repeat "Tier 15 (max)": the XP is still counted, silently
+		if (data.tier < MAX_TIER || data.tier > before)
+			player.sendFilteredMessage(TAG + "<col=0b6f78>+" + xp + " Soul XP</col> | " + progressText(data));
 		if (SoulWeaponInterface.isOpen(player))
 			SoulWeaponInterface.draw(player);
 		else if (SoulTreeInterface.isOpen(player) && data.tier > before)
@@ -279,6 +311,17 @@ public final class SoulWeapons {
 	}
 
 	static String specialName(SoulWeaponType type) {
+		return specialName(type, 2);
+	}
+
+	/** The special of a look: the Ascended one (band 2) or the Radiant one (band 3). */
+	static String specialName(SoulWeaponType type, int band) {
+		if (band >= 3)
+			return switch (type) {
+				case MELEE -> "Radiant Sever";
+				case RANGED -> "Crimson Eclipse";
+				case MAGIC -> "Arcane Cataclysm";
+			};
 		return switch (type) {
 			case MELEE -> "Soul Rend";
 			case RANGED -> "Soul Volley";
@@ -339,19 +382,19 @@ public final class SoulWeapons {
 			return;
 		int[] ten = tierTenBonus(d.weaponType);
 		for (int i = 0; i < ten.length && i < bonuses.length; i++)
-			bonuses[i] += ten[i] * (d.tier - 1) / 9;
+			bonuses[i] += bonusAt(d.weaponType, d.tier, i);
 	}
 
 	public static boolean isSpire(int itemId) {
 		return SoulWeaponType.MAGIC.isLook(itemId);
 	}
 
-	/** The Spire's built-in spell max hit: (Magic / 3 - 1) x 0.40 at tier 1 .. x 1.15 at tier 10. */
+	/** The Spire's built-in spell max hit: (Magic / 3 - 1) x 0.40 at tier 1 .. x 1.15 at tier 10 .. x 1.45 at tier 15. */
 	public static int spireMaxHit(Player player) {
 		SoulWeaponData d = player.soulWeapon;
 		int tier = d == null || d.weaponType != SoulWeaponType.MAGIC ? 1 : d.tier;
 		int base = Math.max(1, player.getStats().get(StatType.Magic).currentLevel / 3 - 1);
-		double mult = 0.40 + (1.15 - 0.40) * (tier - 1) / 9.0;
+		double mult = tier <= ASCENDED_CAP ? 0.40 + (1.15 - 0.40) * (tier - 1) / 9.0 : 1.15 + 0.06 * (tier - ASCENDED_CAP);
 		return Math.max(1, (int) Math.round(base * mult));
 	}
 }

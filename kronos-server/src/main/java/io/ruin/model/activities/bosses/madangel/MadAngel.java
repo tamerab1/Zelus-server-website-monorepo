@@ -774,10 +774,10 @@ public class MadAngel extends NPCCombat {
     // our 231-era import of model 60632 under the 231 client; cache241 holds Jagex's native 241 model and
     // spotanim 4015 is byte-identical to Jagex's, so the placeholder ball (160) is retired.
     private static final Projectile PROJ_BOMB_OUT =
-            new Projectile(GFX_BOMB_TRAVEL, 220, 30, 0, 150, 0, 40, 0);
+            new Projectile(GFX_BOMB_TRAVEL, 220, 30, 0, 150, 0, 40, 0).rawHeights(); // capture values: raw units
     /** The 1-tick return leg. Same id/history as {@link #PROJ_BOMB_OUT} above -- see its javadoc. */
     private static final Projectile PROJ_BOMB_BACK =
-            new Projectile(GFX_BOMB_TRAVEL, 30, 220, 0, 30, 0, 17, 0);
+            new Projectile(GFX_BOMB_TRAVEL, 30, 220, 0, 30, 0, 17, 0).rawHeights();
 
     private void startBomb(Player t) {
         bombThrowsLeft = BOMB_BOUNCES;

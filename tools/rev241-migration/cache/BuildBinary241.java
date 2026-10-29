@@ -304,6 +304,19 @@ public class BuildBinary241 {
 			try {
 				String s0 = spriteSig(id, b), s1 = spriteSig(id, data);
 				if (s0.equals(s1)) continue; // re-encoded only
+				// an empty 231 placeholder (<= 32 bytes) that Zelus drew on and Jagex filled in 241 (the Raid 4 HUD's
+				// 4548 ring fill, 4527/4528, 4541-4544, 5800-5802, 5808-5810): Jagex's art stays, ours moves to a free id
+				// and stages 4/5 repoint our interfaces and scripts at it
+				Archive va = out.findIndex(8).getArchive(id);
+				if (b.length <= 32 && va != null) {
+					byte[] jagex = read(out, va);
+					if (jagex.length > 32 && !Arrays.equals(jagex, b)) {
+						if (nextFree > 0xFFFF) throw new IllegalStateException("no free sprite id under 65536 for " + id);
+						store(8, nextFree, data, la.getFileData());
+						spriteMoves.put(id, nextFree++);
+						continue;
+					}
+				}
 				// a real texture reskin (e.g. 5604, texture 124) is a single 128x128 / 64x64 frame and stays
 				if (textureSprites.contains(id) && !validTextureSprite(id, data)) {
 					if (nextFree > 0xFFFF) throw new IllegalStateException("no free sprite id under 65536 for " + id);

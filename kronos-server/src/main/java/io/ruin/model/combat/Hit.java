@@ -229,6 +229,9 @@ public class Hit {
 
 	private double damageBoost;
 
+	/** Damage rolls made, the best kept (the Obligator rolls 2..4 times). */
+	public int damageRolls = 1;
+
 	public Hit boostDamage(double damageBoost) {
 		this.damageBoost += damageBoost;
 		return this;
@@ -396,6 +399,8 @@ public class Hit {
 			target.hitListener.preDefend.accept(this);
 		if (!fromPet && attacker != null && attacker.hitListener != null && attacker.hitListener.preTargetDefend != null)
 			attacker.hitListener.preTargetDefend.accept(this, target);
+		if (attacker != null && attacker.player != null && target.npc != null) // Soul Precision / Soul Resonance
+			io.ruin.model.content.soulweapons.SoulTalents.preDefend(this, attacker.player, target.npc);
 
 		if (isNullified()) {
 			return false;
@@ -553,7 +558,11 @@ public class Hit {
 				return false;
 			}
 
-			if (target.isInvincible()) {
+			// An invincible target takes no damage: the hit is dropped, not parked. Parked hits never finished, so an
+			// invincible player (::god, Raid 4's fades) collected their own Soulsplit heals until the 250-hit cap and
+			// every later hit was refused (2026-10-29). Heals still land.
+			if (target.isInvincible() && type != HitType.HEAL) {
+				this.removed = true;
 				return false;
 			}
 
@@ -658,6 +667,8 @@ public class Hit {
 			double totalBoost = damageBoost + PetPerkHandler.getDamageBoost(attacker, attackStyle);
 			maxDamage *= 1D + totalBoost;
 			damage = Random.get(minDamage, maxDamage);
+			for (int r = 1; r < damageRolls; r++)
+				damage = Math.max(damage, Random.get(minDamage, maxDamage));
 		}
 		if (damageCap >= 0 && damage > damageCap) {
 			damage = damageCap;

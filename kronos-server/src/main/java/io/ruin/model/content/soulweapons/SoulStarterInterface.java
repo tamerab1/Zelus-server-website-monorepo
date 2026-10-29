@@ -79,7 +79,7 @@ public class SoulStarterInterface {
 		PacketSender ps = player.getPacketSender();
 		SoulWeaponType sel = picked.get(player.getUserId());
 		ps.sendString(INTERFACE, TITLE, "Choose Your Soulbound Weapon");
-		ps.sendString(INTERFACE, SUBTITLE, "A living weapon that grows with you from Tier 1 to Tier 10.<br>"
+		ps.sendString(INTERFACE, SUBTITLE, "A living weapon that grows with you from Tier 1 to Tier 15.<br>"
 				+ "Choose wisely - this choice is permanent!");
 		for (int c = 0; c < ORDER.length; c++) {
 			SoulWeaponType type = ORDER[c];

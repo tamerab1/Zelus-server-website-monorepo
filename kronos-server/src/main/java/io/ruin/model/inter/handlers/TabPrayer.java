@@ -16,7 +16,17 @@ import static io.ruin.cache.ItemID.COINS_995;
 
 public class TabPrayer {
 
+	/** The rev 241 prayer filters (prayer_filter_blocklowtier .. blocklocked, prayer_hidefilterbutton): all off. */
+	private static final VarPlayerRepository[] PRAYER_FILTERS = {
+			VarPlayerRepository.varpbit(6574, false), VarPlayerRepository.varpbit(6575, false), VarPlayerRepository.varpbit(6576, false),
+			VarPlayerRepository.varpbit(6577, false), VarPlayerRepository.varpbit(6578, false), VarPlayerRepository.varpbit(6579, false) };
+
 	public static void register() {
+		// every prayer is shown on login: no filter hides the protection prayers (or any other)
+		io.ruin.model.entity.shared.listeners.LoginListener.register(p -> {
+			for (VarPlayerRepository f : PRAYER_FILTERS)
+				f.set(p, 0);
+		});
 		InterfaceHandler.register(Interface.PRAYER, h -> {
 			for (Prayer prayer : Prayer.VALUES) {
 				if (prayer == Prayer.RIGOUR) {

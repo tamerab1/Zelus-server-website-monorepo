@@ -553,6 +553,16 @@ public enum Pet {
 	AGGY(44842, 22038, false), // Mad Angel pet
 	SYLVAROTH_SPROUT(60330, 30558, false), // Sylvaroth pet
 	BABY_DRACO(60391, 30566, false, 870), // Draco pet (David npc mining minigame), 1/870 from Draco kills
+	// The Fractured Archive: Orion (and its robed form) and the raid's boss pets, cache followers 16631-16639
+	ORION(34646, 16631, false),
+	ORION_ROBED(34648, 16632, false),
+	XARI(34649, 16633, false),
+	ARCHIE(34650, 16634, false),
+	CHUBBLES(34651, 16635, false),
+	COLE(34652, 16636, false),
+	ZEKE(34653, 16637, false),
+	MIMI(34654, 16638, false),
+	DORK(34655, 16639, false),
 	// Textured pet versions (textured_r4_pets.txt): npc copies 30573-30575 with animated textures
 	SERAPHIC_AGGY(42504, 30573, false),
 	BLOOMFIRE_SPROUT(42506, 30574, false),

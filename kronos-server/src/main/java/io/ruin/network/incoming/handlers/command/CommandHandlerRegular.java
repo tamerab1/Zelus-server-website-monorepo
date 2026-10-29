@@ -285,6 +285,27 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			// The Fractured Archive (Raid 4): the lobby, just south of the raid entry barrier
+			case "leaveraid":
+			case "forfeit": {
+				io.ruin.model.activities.raids.tfa.Raid4.confirmForfeit(player);
+				return true;
+			}
+
+			case "alliancelog":
+			case "tfalog": {
+				io.ruin.model.activities.raids.tfa.Raid4Stats.open(player);
+				return true;
+			}
+
+			case "r4":
+			case "tfa":
+			case "archive": { // (::raid4 is the admin test command)
+				teleport(player, io.ruin.model.activities.raids.tfa.Raid4Ids.LOBBY_RETURN_X,
+						io.ruin.model.activities.raids.tfa.Raid4Ids.LOBBY_RETURN_Y, 0);
+				return true;
+			}
+
 			case "giants": {
 				teleport(player, 1417, 3590, 0);
 				return true;

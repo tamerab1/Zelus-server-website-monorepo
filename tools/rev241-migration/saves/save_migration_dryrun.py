@@ -18,6 +18,14 @@ Special kinds (rules.json):
   slots move to the new slot; the old slot is cleared (it belongs to a vanilla 241 varp now).
   The destination slot must have been empty.
 - "packed-var-key": savedConfigs keys, packed as id << 16 | (1 if varbit else 0).
+
+4. Varp relayout (optional 6th arg, varbit-moves-231-241.json from cache/VarbitMoves.java): ~1200 vanilla
+   varbits changed varp/bits between 231 and 241, so a raw varp value saved in the 231 layout means
+   something else in 241. After the id remap, each player's varps[] (with the raw-varp savedConfigs
+   entries overlaid, as login applies them last) is re-packed: every moved varbit's value is read from its
+   231 bits, all those bits are cleared, and the values are written to their 241 bits. A value that
+   doesn't fit the new width is dropped to 0 (what VarPlayerRepository.set does). Varbit savedConfigs
+   entries (key | 1) need nothing: login re-applies them through the 241 definitions.
 """
 import json
 import os
@@ -28,7 +36,8 @@ from collections import Counter, defaultdict
 manifest_path, data_dir, report_path = sys.argv[1], sys.argv[2], sys.argv[3]
 rules_path = sys.argv[4] if len(sys.argv) > 4 else None
 # optional: write the would-be migrated copies here for review (must not be inside data_dir)
-dump_dir = sys.argv[5] if len(sys.argv) > 5 else None
+dump_dir = sys.argv[5] if len(sys.argv) > 5 and sys.argv[5] != '-' else None
+moves_path = sys.argv[6] if len(sys.argv) > 6 else None
 if dump_dir and os.path.abspath(dump_dir).startswith(os.path.abspath(data_dir)):
 	sys.exit('dump dir must be outside the data dir')
 
@@ -163,7 +172,75 @@ def classify(group, path, is_key):
 # ---- simulate the item remap per file and check invariants
 item_map = maps.get('item', {})
 old_item_ids = set(item_map)
-sim = {'files': 0, 'itemFieldsChanged': 0, 'varpSlotsMoved': 0, 'packedKeysChanged': 0, 'violations': []}
+sim = {'files': 0, 'itemFieldsChanged': 0, 'varpSlotsMoved': 0, 'packedKeysChanged': 0, 'violations': [],
+	'relayoutFiles': 0, 'relayoutValues': 0, 'relayoutDropped': 0}
+
+# vanilla varbits that moved 231 -> 241; our remapped custom varbits are excluded (the id remap handles them)
+moves = []
+if moves_path:
+	for k, v in json.load(open(moves_path, encoding='utf-8')).items():
+		if int(k) not in maps.get('varbit', {}):
+			moves.append((int(k),) + tuple(v))
+
+
+def bits(lsb, msb):
+	return (1 << (msb - lsb + 1)) - 1
+
+
+def to_int32(v):
+	v &= 0xFFFFFFFF
+	return v - (1 << 32) if v & 0x80000000 else v
+
+
+def relayout_player(doc):
+	"""Re-packs moved vanilla varbits in doc['varps'] and the raw-varp savedConfigs entries (see 4. above)."""
+	arr = doc.get('varps')
+	if not moves or not isinstance(arr, list):
+		return doc
+	configs = doc.get('savedConfigs') if isinstance(doc.get('savedConfigs'), dict) else {}
+	raw = {int(k) >> 16: k for k in configs if re.fullmatch(r'\d+', k) and int(k) & 0xFFFF == 0}
+	view = defaultdict(int)
+	for i, v in enumerate(arr):
+		if v:
+			view[i] = v
+	for varp, k in raw.items():
+		view[varp] = configs[k]
+	before = dict(view)
+	values = []
+	for vb, ov, ol, om, nv, nl, nm in moves:
+		values.append((view[ov] >> ol) & bits(ol, om) if ov in view else 0)
+	for vb, ov, ol, om, nv, nl, nm in moves:
+		if ov in view:
+			view[ov] &= ~(bits(ol, om) << ol)
+	moved = 0
+	for (vb, ov, ol, om, nv, nl, nm), val in zip(moves, values):
+		if not val:
+			continue
+		if val > bits(nl, nm):
+			sim['relayoutDropped'] += 1
+			continue
+		view[nv] = (view[nv] & ~(bits(nl, nm) << nl)) | val << nl
+		moved += 1
+	# only varps whose bits the relayout changed are written back; every other varp keeps its saved value
+	touched = {i: to_int32(v) for i, v in view.items() if to_int32(v) != to_int32(before.get(i, 0))}
+	if not touched:
+		return doc
+	sim['relayoutFiles'] += 1
+	sim['relayoutValues'] += moved
+	new_arr = list(arr)
+	for i, v in touched.items():
+		if i >= len(new_arr):
+			new_arr.extend([0] * (i + 1 - len(new_arr)))
+		new_arr[i] = v
+	out = dict(doc)
+	out['varps'] = new_arr
+	if any(i in raw for i in touched):
+		new_configs = dict(configs)
+		for i, v in touched.items():
+			if i in raw:
+				new_configs[raw[i]] = v
+		out['savedConfigs'] = new_configs
+	return out
 current_file = [None]
 
 
@@ -232,6 +309,8 @@ for f in files:
 	current_file[0] = os.path.relpath(f, data_dir)
 	before, after = Counter(), Counter()
 	new_doc = remap(doc, '$', group, before, after)
+	if group == 'players' and isinstance(new_doc, dict):
+		new_doc = relayout_player(new_doc)
 	if dump_dir:
 		target = os.path.join(dump_dir, current_file[0])
 		os.makedirs(os.path.dirname(target), exist_ok=True)
@@ -255,6 +334,11 @@ w('- JSON files scanned: **%d** (%d unreadable; %d empty files passed through un
 w('- Remap tables used: ' + ', '.join('%s (%d ids)' % (t, len(maps[t])) for t in SAVE_TYPES if t in maps))
 w('- Simulation: %d files; %d item fields, %d varp slots and %d packed var keys would change; **%d invariant violations**\n' % (
 	sim['files'], sim['itemFieldsChanged'], sim['varpSlotsMoved'], sim['packedKeysChanged'], len(sim['violations'])))
+if moves_path:
+	w('- Varp relayout (%d moved vanilla varbits): %d player files re-packed, %d varbit values moved, %d dropped (value too wide for the 241 bits)\n' % (
+		len(moves), sim['relayoutFiles'], sim['relayoutValues'], sim['relayoutDropped']))
+else:
+	w('- Varp relayout: **not run** (no varbit-moves file given)\n')
 
 rows = []
 for (group, path), h in list(hits.items()):

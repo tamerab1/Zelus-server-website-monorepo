@@ -197,6 +197,10 @@ public class VarPlayerRepository {
 
 	public static final VarPlayerRepository HEALTH_HUD_MAX = varpbit(6100, false);
 	public static final VarPlayerRepository HEALTH_HUD_BAR = varpbit(12401, false);
+	/** Raid 4 (Bork and the Smorks): the HUD's second bar (hpbar_hud_show_extra_bar / extra_current / extra_base). */
+	public static final VarPlayerRepository HEALTH_HUD_SHOW_EXTRA = varp(5991, false);
+	public static final VarPlayerRepository HEALTH_HUD_EXTRA_CURRENT = varpbit(16570, false);
+	public static final VarPlayerRepository HEALTH_HUD_EXTRA_MAX = varpbit(16571, false);
 	public static final VarPlayerRepository GIM_SIDE_PANEL = varp(3172, true);
 
 	public static final VarPlayerRepository FRIEND_NOTIFICATION_TIMEOUT = varpbit(1627, true);

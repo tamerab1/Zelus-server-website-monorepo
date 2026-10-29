@@ -130,6 +130,17 @@ public class BuildMaps241 {
 			if (lt == null) continue;
 			byte[] ll = readNamed(local, "l" + rx + "_" + ry, r, localKeys, true);
 			MapCodec.Terrain ours = terrainAny(lt);
+			// our custom floor overlays moved by the manifest (e.g. 436 -> 1105, the Soul altar's floor, 2026-10-28):
+			// a map stores overlay id + 1. Without this the tiles kept pointing at 241's vanilla overlay of the old id
+			// (436 = Jagex's invisible magenta: a black square around the Reliquary of Souls).
+			for (MapCodec.Tile[][] plane : ours.planes)
+				for (MapCodec.Tile[] col : plane)
+					for (MapCodec.Tile t : col)
+						if (t != null && t.overlay > 0) {
+							int mapped = manifest.map("overlay", t.overlay - 1);
+							if (mapped != t.overlay - 1)
+								t.overlay = mapped + 1;
+						}
 			List<MapCodec.Loc> oursLocs = ll == null ? new ArrayList<>() : MapCodec.decodeLocs(ll);
 
 			byte[] bt = readNamed(v231, "m" + rx + "_" + ry, r, baseKeys, false);

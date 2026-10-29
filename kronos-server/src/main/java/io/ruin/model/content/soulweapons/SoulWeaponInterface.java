@@ -29,7 +29,18 @@ public class SoulWeaponInterface {
 	private static final int PIP_DONE = 0x1fa7b5, PIP_CURRENT = 0xffc35a;
 	private static final String GOLD = "<col=ffc35a>", TEAL = "<col=2fd2d8>", GREEN = "<col=3ddc5a>",
 			MUTED = "<col=8f8573>", WHITE = "<col=ffffff>", END = "</col>";
-	private static final String[] LOOKS = {"Base", "Empowered", "Ascended"}, RANGES = {"T1-3", "T4-7", "T8-10"};
+	private static final String[] LOOKS = {"Base", "Empowered", "Ascended", "Radiant"},
+			RANGES = {"T1-3", "T4-7", "T8-14", "T15"};
+	/** The window has three look slots and ten tier pips: from Ascended on they show looks 1-3 and tiers 6-15. */
+	private static final int LOOK_SLOTS = 3, PIPS = 10;
+
+	private static int firstLook(SoulWeaponData d) {
+		return SoulWeaponType.band(d.tier) >= 2 ? 1 : 0;
+	}
+
+	private static int firstPip(SoulWeaponData d) {
+		return d.tier > PIPS ? SoulWeapons.MAX_TIER - PIPS + 1 : 1;
+	}
 
 	/** The look being previewed in the open window (Preview on an evolution slot), per player; none = the active look. */
 	private static final Map<Integer, Integer> preview = new HashMap<>();
@@ -41,12 +52,13 @@ public class SoulWeaponInterface {
 		InterfaceHandler.register(INTERFACE, h -> {
 			h.actions[CLOSE] = (SimpleAction) Player::closeInterfaces;
 			h.actions[TREE_BUTTON] = (SimpleAction) SoulTreeInterface::open;
-			for (int l = 0; l < 3; l++) {
-				int look = l;
+			for (int l = 0; l < LOOK_SLOTS; l++) {
+				int slot = l;
 				h.actions[FIRST_LOOK + l * LOOK_STRIDE + LOOK_ITEM] = (SimpleAction) p -> {
 					SoulWeaponData d = p.soulWeapon;
 					if (d == null)
 						return;
+					int look = slot + firstLook(d);
 					// clicking the active look (or the one already previewed) goes back to the equipped look
 					if (look == SoulWeaponType.band(d.tier) || Integer.valueOf(look).equals(preview.get(p.getUserId())))
 						preview.remove(p.getUserId());
@@ -83,7 +95,7 @@ public class SoulWeaponInterface {
 
 		ps.sendString(INTERFACE, TITLE, "Soulbound Weapon");
 		ps.sendString(INTERFACE, HEADER_TIER, "Tier " + d.tier + " / " + SoulWeapons.MAX_TIER + "  " + MUTED + "-" + END + "  "
-				+ (band == 2 ? GOLD : TEAL) + LOOKS[band] + " look" + END);
+				+ (band >= 2 ? GOLD : TEAL) + LOOKS[band] + " look" + END);
 		ps.sendString(INTERFACE, HEADER_SOULS, "Souls harvested: " + GOLD + NumberUtils.formatNumber(d.soulsHarvested) + END);
 
 		// left: the weapon (or the look being previewed) and its evolution path
@@ -93,10 +105,11 @@ public class SoulWeaponInterface {
 		ps.sendString(INTERFACE, NAME, twoLines(def.name));
 		SoulWeaponCamera.show(ps, INTERFACE, MODEL, SoulWeaponCamera.Box.CHECK, shownId);
 		ps.sendString(INTERFACE, LOOK, shown == band ? GREEN + "Currently active" + END
-				: (shown == 2 ? GOLD : TEAL) + "Previewing: " + LOOKS[shown] + END + MUTED + " (T" + (shown == 1 ? 4 : 8) + ")" + END);
+				: (shown >= 2 ? GOLD : TEAL) + "Previewing: " + LOOKS[shown] + END + MUTED + " (T" + SoulWeaponType.firstTier(shown) + ")" + END);
 		int[] looks = d.weaponType.looks();
-		for (int l = 0; l < looks.length; l++) {
-			int c = FIRST_LOOK + l * LOOK_STRIDE;
+		for (int slot = 0; slot < LOOK_SLOTS; slot++) {
+			int l = slot + firstLook(d);
+			int c = FIRST_LOOK + slot * LOOK_STRIDE;
 			ps.setHidden(INTERFACE, c + LOOK_HIGHLIGHT, l != shown);
 			ps.sendItem(INTERFACE, c + LOOK_ITEM, looks[l], 1);
 			ps.sendString(INTERFACE, c + LOOK_LABEL, (l == band ? GOLD : l < band ? GREEN : MUTED) + RANGES[l] + END);
@@ -105,12 +118,13 @@ public class SoulWeaponInterface {
 		ps.sendString(INTERFACE, TREE_BUTTON + 1, d.availableSoulPoints > 0 ? GREEN + "Soul Tree" + END : "Soul Tree");
 
 		// right: tier track
-		for (int t = 1; t <= SoulWeapons.MAX_TIER; t++) {
-			int c = FIRST_PIP + (t - 1) * PIP_STRIDE;
+		int pip0 = firstPip(d);
+		for (int t = pip0; t < pip0 + PIPS; t++) {
+			int c = FIRST_PIP + (t - pip0) * PIP_STRIDE;
 			ps.setHidden(INTERFACE, c + PIP_FILL, t > d.tier);
 			if (t <= d.tier)
 				ps.sendClientScript(SET_COLOUR, "Ii", INTERFACE << 16 | (c + PIP_FILL), t == d.tier ? PIP_CURRENT : PIP_DONE);
-			String colour = t == d.tier ? GOLD : t < d.tier ? WHITE : t == 4 || t == 8 ? TEAL : MUTED;
+			String colour = t == d.tier ? GOLD : t < d.tier ? WHITE : t == 4 || t == 8 || t == SoulWeaponType.RADIANT_TIER ? TEAL : MUTED;
 			ps.sendString(INTERFACE, c + PIP_NUMBER, colour + t + END);
 		}
 
@@ -126,7 +140,7 @@ public class SoulWeaponInterface {
 			fill = Math.min(1, (d.soulXp - from) / (double) Math.max(1, to - from));
 			int next = d.tier + 1;
 			ps.sendString(INTERFACE, PROGRESS_LEFT, "Progress to tier " + next
-					+ (next == 4 || next == 8 ? "  " + TEAL + "(evolves)" + END : ""));
+					+ (next == 4 || next == 8 || next == SoulWeaponType.RADIANT_TIER ? "  " + TEAL + "(evolves)" + END : ""));
 			ps.sendString(INTERFACE, PROGRESS_RIGHT, (int) Math.floor(fill * 100) + "%");
 			ps.sendString(INTERFACE, BAR_LABEL, NumberUtils.formatNumber(d.soulXp - from) + " / "
 					+ NumberUtils.formatNumber(to - from) + " Soul XP");
@@ -141,10 +155,10 @@ public class SoulWeaponInterface {
 		String[][] rows = {
 				{"Attack style", attackStyle(d.weaponType, band)},
 				{"Tier bonus", tierBonus(player, d)},
-				{"Special attack", band == 2 ? GOLD + SoulWeapons.specialName(d.weaponType) + END + GREEN + "  unlocked" + END
+				{"Special attack", band >= 2 ? GOLD + SoulWeapons.specialName(d.weaponType, band) + END + GREEN + "  unlocked" + END
 						: SoulWeapons.specialName(d.weaponType) + MUTED + "  - unlocks at tier 8" + END},
-				{"Next evolution", d.tier >= 8 ? GOLD + "Fully evolved" + END
-						: LOOKS[band + 1] + " look" + MUTED + " at tier " + (band == 0 ? 4 : 8) + END},
+				{"Next evolution", band >= 3 ? GOLD + "Fully evolved" + END
+						: LOOKS[band + 1] + " look" + MUTED + " at tier " + SoulWeaponType.firstTier(band + 1) + END},
 				{"Soul Tree", talentSummary(d)},
 		};
 		for (int r = 0; r < rows.length; r++) {
@@ -189,22 +203,22 @@ public class SoulWeaponInterface {
 
 	private static String attackStyle(SoulWeaponType type, int band) {
 		return switch (type) {
-			case MELEE -> new String[]{"Sword stab", "Scimitar slash", "Azure cleave"}[band];
-			case RANGED -> new String[]{"Quick draw", "Scorching draw", "Heavy draw"}[band];
-			case MAGIC -> new String[]{"Soul bolt", "Blood-bound bolt", "Shadow orb"}[band];
+			case MELEE -> new String[]{"Sword stab", "Scimitar slash", "Azure cleave", "Radiant greatsword"}[band];
+			case RANGED -> new String[]{"Quick draw", "Scorching draw", "Heavy draw", "Crimson draw"}[band];
+			case MAGIC -> new String[]{"Soul bolt", "Blood-bound bolt", "Shadow orb", "Void bolt"}[band];
 		};
 	}
 
 	private static String tierBonus(Player player, SoulWeaponData d) {
 		if (d.weaponType == SoulWeaponType.MAGIC)
 			return "Spell max hit " + GOLD + SoulWeapons.spireMaxHit(player) + END
-					+ (d.tier > 1 ? MUTED + ", +" + SoulWeapons.tierTenBonus(d.weaponType)[3] * (d.tier - 1) / 9 + " magic" + END : "");
+					+ (d.tier > 1 ? MUTED + ", +" + SoulWeapons.bonusAt(d.weaponType, d.tier, 3) + " magic" + END : "");
 		int[] ten = SoulWeapons.tierTenBonus(d.weaponType);
 		String[] labels = {"stab", "slash", "crush", "magic", "ranged", "", "", "", "", "", "str", "ranged str"};
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < labels.length; i++)
 			if (ten[i] != 0)
-				sb.append(sb.length() == 0 ? "" : ", ").append("+").append(ten[i] * (d.tier - 1) / 9).append(" ").append(labels[i]);
+				sb.append(sb.length() == 0 ? "" : ", ").append("+").append(SoulWeapons.bonusAt(d.weaponType, d.tier, i)).append(" ").append(labels[i]);
 		return d.tier == 1 ? MUTED + "none yet (tier 1)" + END : sb.toString();
 	}
 }

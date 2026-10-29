@@ -256,6 +256,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public long referralLinkedAtPlayTime;
 	/** True once the milestone reward for being referred has been paid out (prevents re-claiming). */
 	public boolean referralRewardClaimed;
+	/** The Fractured Archive fragments broken: bit 0 earth, 1 water, 2 wind, 3 fire (+2 to that element's max hits). */
+	public int tfaFragments;
 	/** Number of referrals this account has completed (referred players who reached their milestone). */
 	public int totalReferredPlayers;
 	// ─────────────────────────────────────────────────────────────────────────
@@ -843,6 +845,9 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int[][] rivalsSavedStats;
 	public int rivalsSavedSpellbook = -1, rivalsSavedSpecial = -1;
 	public int[] rivalsReturnPosition;
+	/** The real loadout while Raid 4 rental gear is on (Raid4Rental); persisted so a server stop returns it at login. */
+	public Item[] raid4RentalInventory, raid4RentalEquipment, raid4RentalRunePouch;
+	public String raid4RentalSetup;
 	/** The player's Soulbound weapon and all its progression (SoulWeapons, 2026-10-18); null until chosen. */
 	public io.ruin.model.content.soulweapons.SoulWeaponData soulWeapon;
 	/** True while a Rivals match kit is on (set and cleared by RivalsSnapshot): every account buff is off (RivalsFairPlay). */
@@ -1437,6 +1442,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public HashMap<String, Integer> DiaryRecorder = new HashMap<>();
 	/** Zelus Codex (2026-10-20): ZelusTask progress by name, and "claimed.<name>" = 1 once its reward is taken. */
 	public HashMap<String, Integer> zelusCodex = new HashMap<>();
+	/** The Fractured Archive's Alliance Log (Raid4Stats, 2026-10-29): "category:stat[:party size]" -> count or best ticks. */
+	public HashMap<String, Integer> tfaStats = new HashMap<>();
 	public HashMap<Integer, Integer> savedConfigs = new HashMap<>();
 	public Map<Integer, List<Integer>> toaInvocationFavourites = new HashMap<>();
 	public Map<Integer, Integer> weaponAutocastIds = new HashMap<>();
@@ -1557,6 +1564,9 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter moonsOfPerilKills = new KillCounter();
 	public KillCounter tombsOfAmascutKills = new KillCounter();
 	public KillCounter dominionOfEchoesKills = new KillCounter();
+	public KillCounter fracturedArchiveKills = new KillCounter();
+	public KillCounter vorgathKills = new KillCounter();
+	public KillCounter baelgorKills = new KillCounter();
 	public KillCounter crawlingHandKills = new KillCounter();
 	public KillCounter caveBugKills = new KillCounter();
 	public KillCounter caveCrawlerKills = new KillCounter();

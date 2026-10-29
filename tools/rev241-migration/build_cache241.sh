@@ -40,5 +40,7 @@ echo "== stage 3: maps";         run BuildMaps241       "$data/cache" "$v231" "$
 echo "== stage 4: interfaces";   run AlignOurs231 "$data/cache" "$v231" "$here/remap/ours-alignment-231.json"
                                 run BuildInterfaces241 "$data/cache" "$v231" "$v241" "$out" "$m" "$here/cache/build-interfaces-report.json" "$here/remap/ours-alignment-231.json" "$here/remap/component-map-241.json"
 echo "== stage 5: clientscripts"; run BuildScripts241   "$data/cache" "$v231" "$v241" "$out" "$m" "$here/cache/build-interfaces-report.json" "$here/cache/build-scripts-report.json" "$here/remap/ours-alignment-231.json" "$here/remap/component-map-241.json" "$here/cache/build-binary-report.json"
+echo "== stage 6: raid 4 spotanims"; run PatchRaid4Spotanims "$out"
+echo "== stage 7: customs27 (soul T15 weapons, Vorgath, Baelgor)"; run PatchCustoms27 apply "$here/assets/customs27" "$out"
 echo "== integrity"; run IntegrityCheck241 "$out" "$v241" "$here/cache/integrity-report.json" "$data/cache" "$v231"
 echo "== done: $out"

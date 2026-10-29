@@ -192,8 +192,6 @@ public class ActionButtonHandler {
 			slot = -1;
 		if (itemId == 65535)
 			itemId = -1;
-		// TEMP rev241 audit: remove once inventory clicks are confirmed working
-		System.out.println("[rev241 button] op " + option + " if " + interfaceId + ":" + childId + " slot " + slot + " obj " + itemId + (dialogue ? " (resume)" : ""));
 		if (player.debug) {
 			DebugMessage debug = new DebugMessage()
 					.add("option", option)

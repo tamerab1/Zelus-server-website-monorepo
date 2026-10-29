@@ -1,0 +1,76 @@
+# Vorgath the Shadowrider (model 62776, customs27 49027): a winged shadow-wolf with a horned rider. Foreign rig (45 small
+# labels on the wolf; wings + rider all on label 8), so split by position. Front = -z.
+model 62776
+ids 19000 19000
+part 1 all                                       # body
+part 2 box * * * * * -66                         # head
+part 3 box 0 * -35 * -92 -8                      # front leg (x+)
+part 4 box * 0 -35 * -92 -8                      # front leg (x-)
+part 5 box 0 * -50 * 5 92                        # hind leg (x+)
+part 6 box * 0 -50 * 5 92                        # hind leg (x-)
+part 7 box 32 * * * * * and labels 8             # wing (x+)
+part 8 box * -32 * * * * and labels 8            # wing (x-)
+part 9 box -32 32 * -122 * * and labels 8        # rider
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -80 0
+bone 2 parent 1 pivot 0 -78 -66
+bone 3 parent 1 pivot 18 -38 -45
+bone 4 parent 1 pivot -18 -38 -45
+bone 5 parent 1 pivot 18 -45 30
+bone 6 parent 1 pivot -18 -45 30
+bone 7 parent 1 pivot 30 -140 8
+bone 8 parent 1 pivot -30 -140 8
+bone 9 parent 1 pivot 0 -122 4
+
+anim 0 idle frames 24 len 6            # breathing, slow wing beats, the rider swaying in the saddle
+  1 ty sin 2.5 1 0
+  2 rx sin 3 1 0.3
+  2 ry sin 4 0.5 0
+  7 rz sin 9 1 0 3
+  8 rz sin -9 1 0 -3
+  9 rx sin 3 1 0.15
+  9 ry sin 4 0.5 0.4
+end
+anim 1 walk frames 16 len 3            # loping diagonal-pair gait, wings half-spread, rider braced
+  3 rx sin 24 1 0
+  6 rx sin 24 1 0
+  4 rx sin 24 1 0.5
+  5 rx sin 24 1 0.5
+  1 ty sin 4 2 0.25
+  1 rx sin 2 2 0.1
+  2 rx sin 4 2 0.2
+  7 rz sin 14 2 0 6
+  8 rz sin -14 2 0 -6
+  9 rx sin 4 2 0.35 -3
+end
+anim 2 ranged frames 14 len 3 hold 3   # the rider draws back hard, holds, and looses: the wolf braces and the wings flare
+  9 rx keys 0:0 0.35:-16 0.55:-18 0.62:10 0.8:4 1:0
+  9 ry keys 0:0 0.35:-14 0.55:-14 0.62:4 1:0
+  1 tz keys 0:0 0.35:6 0.62:-6 1:0
+  3 rx keys 0:0 0.35:-8 0.62:6 1:0
+  4 rx keys 0:0 0.35:-8 0.62:6 1:0
+  7 rz keys 0:3 0.35:26 0.62:-6 1:3
+  8 rz keys 0:-3 0.35:-26 0.62:6 1:-3
+end
+anim 3 bite frames 12 len 3 hold 2     # pounce: the wolf rears and snaps its jaws forward
+  1 rx keys 0:0 0.3:-12 0.55:10 1:0
+  1 tz keys 0:0 0.3:12 0.55:-24 1:0
+  1 ty keys 0:0 0.3:-12 0.55:2 1:0
+  2 rx keys 0:0 0.3:-24 0.5:22 0.7:14 1:0
+  3 rx keys 0:0 0.3:-30 0.55:14 1:0
+  4 rx keys 0:0 0.3:-30 0.55:14 1:0
+  7 rz keys 0:3 0.3:30 0.55:4 1:3
+  8 rz keys 0:-3 0.3:-30 0.55:-4 1:-3
+  9 rx keys 0:0 0.3:8 0.55:-8 1:0
+end
+anim 4 death frames 20 len 4 hold 200  # legs buckle, the wolf crashes down, wings fold, the rider slumps
+  1 ty keys 0:0 0.25:-8 0.7:40 1:44
+  3 rx keys 0:0 0.7:-38 1:-40
+  4 rx keys 0:0 0.7:-38 1:-40
+  5 rx keys 0:0 0.7:34 1:36
+  6 rx keys 0:0 0.7:34 1:36
+  2 rx keys 0:0 0.3:-16 0.8:30 1:32
+  7 rz keys 0:3 0.3:28 1:-24
+  8 rz keys 0:-3 0.3:-28 1:24
+  9 rx keys 0:0 0.4:-12 1:34
+end

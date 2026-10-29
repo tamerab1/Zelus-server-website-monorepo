@@ -40,6 +40,9 @@ public final class RivalsSnapshot {
 	 * banked). Called by every preset system's load entry point and Bank.open().
 	 */
 	public static boolean refuse(Player player) {
+		// Raid 4 rental gear is the same kind of swap (every preset loader already calls this)
+		if (io.ruin.model.activities.raids.tfa.Raid4Rental.refuse(player))
+			return true;
 		if (!active(player))
 			return false;
 		player.sendMessage("You can't do that during a Rivals match.");

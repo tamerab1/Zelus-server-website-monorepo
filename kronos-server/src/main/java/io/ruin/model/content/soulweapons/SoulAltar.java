@@ -70,12 +70,12 @@ public final class SoulAltar {
 		player.dialogue(
 				new ItemDialogue().one(icon, "<col=7d1fd1>Living Weapons</col> (1/4)<br>A Soulbound weapon grows with you. Slay "
 						+ "monsters while wielding it to harvest Soul XP: a quarter of their combat level, and bosses add 50 to 250."),
-				new ItemDialogue().one(SoulWeaponType.MELEE.itemFor(8), "<col=7d1fd1>Tiers & Evolutions</col> (2/4)<br>Soul XP "
-						+ "raises your weapon from Tier 1 to Tier 10, stronger at every tier. It evolves into a new form at "
-						+ "Tier 4 and Tier 8; the Ascended form (Tier 8) unlocks a special attack."),
+				new ItemDialogue().one(SoulWeaponType.MELEE.itemFor(SoulWeaponType.RADIANT_TIER), "<col=7d1fd1>Tiers & Evolutions</col> (2/4)<br>Soul XP "
+						+ "raises your weapon from Tier 1 to Tier 15, stronger at every tier. It evolves at Tier 4, Tier 8 "
+						+ "(Ascended: a special attack) and Tier 15 (Radiant: a new form and a stronger special)."),
 				new ItemDialogue().one(SoulWeaponType.MAGIC.itemFor(8), "<col=7d1fd1>Soul Tree & Auras</col> (3/4)<br>Every new "
-						+ "tier grants a Soul Point. Spend them on three talents in the Soul Tree (5 ranks each). Tiers 5, 8 "
-						+ "and 10 awaken cosmetic auras that glow around you."),
+						+ "tier grants a Soul Point. Spend them on three talents in the Soul Tree (5 ranks each); at Tier 15 "
+						+ "every talent works half again as strong. Tiers 5, 8 and 10 awaken cosmetic auras."),
 				new ItemDialogue().one(SoulWeaponType.RANGED.itemFor(8), "<col=7d1fd1>Resets & Safety</col> (4/4)<br>Talents work "
 						+ "only against monsters and never in Rivals. Your first Soul Tree reset is completely free. A lost "
 						+ "weapon returns from this altar with its souls intact."),

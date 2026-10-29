@@ -796,6 +796,10 @@ public class CommandHandlerAdmin {
 				return true;
 			}
 
+			case "raid4": {
+				return io.ruin.model.activities.raids.tfa.Raid4Commands.handle(player, args);
+			}
+
 			case "madangel": {
 				// CHANGED 2026-09-13: used to build the instance directly (createAndEnter), landing
 				// the player next to the dormant angel with no barrier step at all. Now matches

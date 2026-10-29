@@ -678,6 +678,26 @@ public enum CollectionLogData {
 					new Item(30572, 1),
 					new Item(30570, 6),
 			}),
+	THE_FRACTURED_ARCHIVE(CollectionLogUpdated.Categories.RAIDS, "The Fractured Archive",
+		// the OSRS log's 17 entries, in its order
+		new Item[] {
+			new Item(34646), // Orion
+			new Item(34659), new Item(34661), new Item(34663), new Item(34665), new Item(34667), // Living record (tier 1-5)
+			new Item(34669), // Ascension shards
+			new Item(34671), new Item(34673), new Item(34675), new Item(34677), // fragments: earth, water, wind, fire
+			new Item(34679), // Horn of Bran
+			new Item(34681), // Ascension crossbows
+			new Item(34717), // Obligator (uncharged)
+			new Item(34719), // Rondache
+			new Item(34722), // Archivist's folio (inert)
+			new Item(34727), // Zorya's tome (uncharged)
+		},
+		// completion rewards
+		new Item[] {
+			new Item(30529, 1),
+			new Item(30572, 1),
+			new Item(30570, 9),
+		}),
 	DOMINION_OF_ECHOS(CollectionLogUpdated.Categories.RAIDS, "Dominion of Echoes",
 		new Item[] {
 			new Item(ItemID.KEEPER_OF_ECHO_PET),

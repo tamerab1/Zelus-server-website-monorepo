@@ -69,7 +69,9 @@ public final class StaticInit {
 		io.ruin.model.activities.bosses.slayer.sire.FontOfConsumption.register();
 		io.ruin.model.activities.bosses.vorkath.Vorkath.register();
 		io.ruin.model.activities.bosses.madangel.MadAngel.register();
+		io.ruin.model.activities.bosses.customs27.Customs27Bosses.register(); // Vorgath + Baelgor (::vorgath / ::baelgor), 2026-10-27
 		io.ruin.model.activities.bosses.madangel.MadAngelItems.register();
+		io.ruin.model.activities.raids.tfa.Raid4.register();
 		io.ruin.model.activities.bosses.zulrah.Zulrah.register();
 		io.ruin.model.activities.brimstonechest.BrimstoneChest.register();
 		io.ruin.model.activities.clanwars.FFAClanWars.register();
@@ -539,6 +541,7 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.chargable.TridentOfTheSeas.register();
 		io.ruin.model.item.actions.impl.chargable.TridentOfTheSwamp.register();
 		io.ruin.model.item.actions.impl.chargable.TumekensShadow.register();
+		io.ruin.model.activities.raids.tfa.Raid4Items.register();
 		io.ruin.model.item.actions.impl.chargable.UrsineChainmace.register();
 		io.ruin.model.item.actions.impl.chargable.VenatorBow.register();
 		io.ruin.model.item.actions.impl.chargable.ViggorasChainmace.register();

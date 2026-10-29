@@ -1,0 +1,6 @@
+# Tier 15 Soulbound weapons (2026-10-27): three new animated textures, the lava swirl 59 remapped like the Soulbound set.
+texture 59 474 24100 - - 0:1a1206,0.35:4a3510,0.58:9a7020,0.74:e0b040,0.86:ffe080,0.95:fff4c8,1:ffffff
+texture 59 475 24101 - - 0:0a0414,0.35:1e0a3c,0.58:4a1a8c,0.74:7a3cd0,0.86:b080ff,0.95:e8d0ff,1:ffffff
+texture 59 476 24102 - - 0:140404,0.35:3c0a0a,0.58:8c1a1a,0.74:d04030,0.86:f0a040,0.95:ffe0a0,1:ffffff
+# 2026-10-28 Radiant Soulblade rework: the soul runes along the fuller flow radiant cyan (the gold lava swirl is gone)
+texture 59 477 24103 - - 0:020c10,0.35:063040,0.58:0c7088,0.74:20b8d0,0.86:70e8f8,0.95:c8faff,1:ffffff

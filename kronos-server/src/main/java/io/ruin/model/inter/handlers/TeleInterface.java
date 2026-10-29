@@ -756,6 +756,9 @@ public class TeleInterface extends ItemContainer {
 				else if (currentCategory == Categories.BOSSES && pageNumber == 4) {
 					currentTeleport = ServerTeleports.TORMENTED_DEMON;
 				}
+				else if (currentCategory == Categories.MINIGAMES && pageNumber == 2) {
+					currentTeleport = ServerTeleports.FRACTURED_ARCHIVE;
+				}
 				else if (currentCategory == Categories.SKILLING
 					&& currentSkillingSection == SkillingSubSections.WOODCUTTING) {
 					currentTeleport = ServerTeleports.SEERS;
@@ -1650,13 +1653,14 @@ public class TeleInterface extends ItemContainer {
 		pageNumber = 1;
 	}
 
-	// Minigames page 2 -- page 1's 12 slots (22-33) are full. Slots: 22 Draco, 23 Chamber of Ascension.
+	// Minigames page 2 -- page 1's 12 slots (22-33) are full. Slots: 22 Draco, 23 Chamber of Ascension, 24 Fractured Archive.
 	public void sendMinigamesTeleportsPageTwo(Player player) {
 		currentTeleport = null;
 		activateHiddenTeleportNames(player);
 		player.getPacketSender().sendString(851, 22, ServerTeleports.DRACO.name);
 		player.getPacketSender().sendString(851, 23, ServerTeleports.CHAMBER_OF_ASCENSION.name);
-		for (int i = 24; i <= 33; i++)
+		player.getPacketSender().sendString(851, 24, ServerTeleports.FRACTURED_ARCHIVE.name);
+		for (int i = 25; i <= 33; i++)
 			player.getPacketSender().setHidden(851, i, true);
 		pageNumber = 2;
 	}

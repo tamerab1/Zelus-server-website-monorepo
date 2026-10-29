@@ -458,6 +458,23 @@ public enum Currency {
 			return amount;
 		}
 	}),
+	/** Raid 4: the party's mid-raid supply points (OMNISHOP_CURRENCY_TFA_SUPPLY_POINTS), per raider per raid. */
+	TFA_SUPPLY_POINTS(new CurrencyHandler("supply point", "supply points") {
+		@Override
+		public int getCurrencyCount(Player player) {
+			return io.ruin.model.activities.raids.tfa.Raid4Quartermaster.pointsLeft(player);
+		}
+
+		@Override
+		public int removeCurrency(Player player, int amount) {
+			return io.ruin.model.activities.raids.tfa.Raid4Quartermaster.spend(player, amount) ? amount : 0;
+		}
+
+		@Override
+		public int addCurrency(Player player, int amount) {
+			return 0;
+		}
+	}),
 	SNOWBALL_POINTS(new CurrencyHandler("snowball", "snowballs") {
 		@Override
 		public int getCurrencyCount(Player player) {

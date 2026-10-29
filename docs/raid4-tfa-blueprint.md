@@ -128,3 +128,28 @@ model/activities/raids/tfa/
 
 The data names every asset but none of the rules. Each boss needs a mechanics write-up (wiki pages, videos)
 before its controller is coded; otherwise "1:1 with OSRS" isn't checkable.
+
+## 6. Confirmed layout and status (2026-10-26)
+
+The raid is **The Fractured Archive** (released 20 Oct 2026). Rooms were matched by decoding each region's loc
+list with gameval names (scratch tool `DumpTfaLocs`); this replaces the "likely use" guesses in section 1.
+
+| Region | Room | Evidence |
+|---|---|---|
+| 16470 | Lobby (real world, not instanced) | `tfa_lobby_raid_entry` 62768 @ local 27,58; grouping board, bank chest, rewards chest |
+| 16471 | Nexus: Archive Guardian arena + path doors | 4 `battery01_base` @ 18,23 / 18,36 / 43,23 / 43,36; centre marker 31,31; section 1-3 doors at x 17/45, y 16/29/42 |
+| 16214 / 16727 | Slot 2: Ezekiel (west) / Bork (east) | ezekiel floorkit + weapon racks / bork locs |
+| 16216 / 16728 | Slot 3: Moia (west) / Dreadnoth (east) | moia locs / `tfa_teleporter_jelly` |
+| 16215 / 16726 | Slot 4: Dagon'hai (west) / Xarth (east) | dagonhai book / xarth locs |
+| 16474 | Ocellus | star field |
+| 16472 | Vault | `tfa_the_blade1`, plinths |
+
+The Nexus holds two states in one region: **planes 0-1 = live Guardian arena, planes 2-3 = the hall after the
+kill** (`tfa_corpse_guardian01` 5x5 at the boss's 29,29, supply chest, wheelbarrow). `Raid4Instance` copies a
+room's source planes to instance planes 0.. (`Raid4RoomType.sourcePlane`), and the controller swaps the party
+into the cleared copy when the Guardian dies. Mushrooms are locs 62578 (spawn) / 62579 (active) / 62580
+(despawn). NPC combat levels in the cache match the wiki.
+
+Implemented in `model/activities/raids/tfa`: party, controller, per-room instance builder, scaling, tick
+scheduler, contribution counters, `::raid4` commands, and the Archive Guardian. Not yet: rooms 2-5, the vault,
+interfaces 973-979, supplies/Quartermaster.

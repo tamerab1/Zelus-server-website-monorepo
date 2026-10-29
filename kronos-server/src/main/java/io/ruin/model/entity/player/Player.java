@@ -1351,6 +1351,10 @@ public class Player extends PlayerAttributes {
 
 	public void closeInterfaces(boolean skipDialogues) {
 		for (var type : ToplevelComponent.VALUES) {
+			// POH_LOADING shares component 1 with OVERLAY: closing it unconditionally wiped every overlay there (the raid
+			// HUDs, the ToB party list, ...) on each walk click. Only close it when the house loading screen is up.
+			if (type == ToplevelComponent.POH_LOADING && !isVisibleInterface(io.ruin.model.inter.Interface.CONSTRUCTION_LOADING))
+				continue;
 			if (type.getInterfaceType() != ClientInterfaceType.OVERLAY) {
 				closeInterface(type);
 			}
@@ -2213,7 +2217,8 @@ public class Player extends PlayerAttributes {
 		CS2Script.ACCOUNT_INFO_UPDATE.sendScript(player, daysOfMembership > 0 ? 1 : 0, 0, 0);
 		CS2Script.MOWT_SETMODEL.sendScript(player, 24772664, 44185, 0, 115, 2041, 1870, 0, 550, 808);
 		CS2Script.MOWT_SETMODEL.sendScript(player, 24772665, 44754, 0, 6, 0, 108, 0, 650, 614);
-		CS2Script.WELCOME_MEMBERS_GRAPHIC.sendScript(player, 2243, daysOfMembership > 0 ? "Blow me!" : "Subscribe now!");
+		// script 3092 was the welcome-screen members graphic ("is") up to rev 231; rev 241 reuses the id for an
+		// unrelated 4-int + string script, so the old call is gone
 
 		CS2Script.PVP_ICONS_LAYOUT.sendScript(player, 1);
 		CS2Script.PVP_ICONS_COMLEVELRANGE.sendScript(player, player.getCombat().getLevel());

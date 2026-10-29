@@ -38,8 +38,11 @@ public class BuildSoulWeaponInterface {
             k.add(name);
             k.inset(left, 8, 32, 152, 92);
             // slate backdrop (lighter at the top) so the dark soul-steel reads; a clipping layer keeps the mesh in the box
-            k.add(k.solid(left, 9, 33, 150, 90, 0x33383e));
-            k.add(k.solid(left, 9, 33, 150, 30, 0x3d434a));
+            k.add(k.solid(left, 9, 33, 150, 90, 0x2c3136));
+            // the pedestal: a soft dark plate under the turning weapon (2026-10-28, was a lighter top band)
+            InterfaceDefinition plate = k.solid(left, 39, 108, 90, 9, 0x101315);
+            plate.opacity = 90;
+            k.add(plate);
             k.add(k.outline(left, 9, 33, 150, 90, 0x0d0b09, false));
             int modelClip = k.add(k.layer(left, 10, 34, 148, 88));
             k.mark("MODEL");
@@ -102,23 +105,23 @@ public class BuildSoulWeaponInterface {
             k.mark("BAR_LABEL");
             k.add(IfKit.centred(k.text(right, bx, by + 1, bw, bh - 1, IfKit.TEXT_FONT, IfKit.WHITE, "")));
             k.mark("TOTAL");
-            k.add(k.text(right, 10, 83, 150, 13, IfKit.TEXT_FONT, MUTED, ""));
+            k.add(k.text(right, 10, 83, 272, 13, IfKit.TEXT_FONT, MUTED, ""));
             k.mark("LAST_KILL");
-            k.add(IfKit.right(k.text(right, 130, 83, 152, 13, IfKit.TEXT_FONT, IfKit.GREEN, "")));
-            k.add(k.solid(right, 10, 100, 272, 1, IfKit.BORDER));
+            k.add(k.text(right, 10, 97, 272, 13, IfKit.TEXT_FONT, IfKit.GREEN, ""));
+            k.add(k.solid(right, 10, 112, 272, 1, IfKit.BORDER));
             // stat rows: label + value on alternating strips
             k.mark("FIRST_ROW");
             for (int r = 0; r < ROWS; r++) {
-                int y = 104 + r * 16;
+                int y = 115 + r * 15;
                 if (r == 1)
                     System.out.println("CONST ROW_STRIDE = " + (k.next() - k.ids.get("FIRST_ROW")));
-                k.add(k.solid(right, 6, y, 280, 15, r % 2 == 0 ? IfKit.ROW_A : IfKit.ROW_B));
-                k.add(k.text(right, 12, y + 1, 92, 13, IfKit.TEXT_FONT, MUTED, ""));
-                k.add(k.text(right, 106, y + 1, 176, 13, IfKit.TEXT_FONT, IfKit.TEXT, ""));
+                k.add(k.solid(right, 6, y, 280, 14, r % 2 == 0 ? IfKit.ROW_A : IfKit.ROW_B));
+                k.add(k.text(right, 12, y, 92, 13, IfKit.TEXT_FONT, MUTED, ""));
+                k.add(k.text(right, 106, y, 176, 13, IfKit.TEXT_FONT, IfKit.TEXT, ""));
             }
-            k.add(k.solid(right, 10, 187, 272, 1, IfKit.BORDER));
+            k.add(k.solid(right, 10, 192, 272, 1, IfKit.BORDER));
             k.mark("FOOTER");
-            k.add(k.block(right, 8, 191, 276, 28, MUTED, 13, true)); // ends 21px above the panel's bottom
+            k.add(k.block(right, 8, 196, 276, 28, MUTED, 13, true)); // ends 16px above the panel's bottom
 
             // added last (2026-10-18, Soul Tree) so every id above stays put: opens interface 1176
             k.mark("TREE_BUTTON");

@@ -16,7 +16,13 @@ import io.ruin.model.item.containers.Equipment;
 public enum SoulAura {
 	SOUL_WISPS("Soul Wisps", 5, 6827),
 	ASCENDANT_RADIANCE("Ascendant Radiance", 8, 6828),
-	ETERNAL_SOULFIRE("Eternal Soulfire", 10, 6829);
+	// 2026-10-29 round 3: in the Wisps / Radiance family but its own (cache stage 6, PatchRaid4Spotanims): 6839, a larger
+	// halo of the sparkle rings alternating violet and cyan, crowned by 6840, a small white-cyan ring at head height;
+	// both on a silent sequence. Was the purple sparkle burst 6829, then 78 / 2125 / the Tumeken flare copy.
+	ETERNAL_SOULFIRE("Eternal Soulfire", 10, 6839);
+
+	/** Eternal Soulfire's crown ring: its own spot slot, head height, a beat after the halo. */
+	private static final int CROWN_GFX = 6840, CROWN_SLOT = 3, CROWN_HEIGHT = 110, CROWN_DELAY = 15;
 
 	private static final int PULSE_TICKS = 8, CALM_TICKS = 10;
 
@@ -76,6 +82,13 @@ public enum SoulAura {
 			return;
 		if (player.getCombat().isAttacking(CALM_TICKS) || player.getCombat().isDefending(CALM_TICKS))
 			return;
+		play(player, aura);
+	}
+
+	/** One pulse of an aura on the player (also the taste shown when it is switched on). */
+	static void play(Player player, SoulAura aura) {
 		player.graphics(aura.gfx, 0, 0);
+		if (aura == ETERNAL_SOULFIRE && player.avatarExtended() != null)
+			player.avatarExtended().setSpotAnim(CROWN_SLOT, CROWN_GFX, CROWN_DELAY, CROWN_HEIGHT, false);
 	}
 }

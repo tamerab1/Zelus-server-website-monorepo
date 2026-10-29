@@ -33,7 +33,7 @@ public enum CS2Script {
 	PLAYERMEMBER(828, "i"),
 	WELCOME_CLICK(1080, "s"),
 	MOWT_SETMODEL(233, "iiiiiiiii"),
-	WELCOME_MEMBERS_GRAPHIC(3092, "is"),
+	// WELCOME_MEMBERS_GRAPHIC(3092, "is") is rev 231 only: rev 241 reuses 3092 with a different signature
 	PVP_ICONS_LAYOUT(385, "i"),
 	PVP_ICONS_COMLEVELRANGE(5224, "i"),
 	HEALTH_REGEN_TIMER(4716, "ii"),

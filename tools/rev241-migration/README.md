@@ -15,7 +15,7 @@ Inputs live outside the repo in `osrs server/archive/rev241/` (OpenRS2 caches 27
 - The cache build must ADD varp definitions up to the new varp ids: the 241 client sizes its varp arrays from the defined varps.
 
 ## Save migration (`saves/`)
-- `save_migration_dryrun.py <manifest> <data> <report.md> [rules.json] [dumpDir]`: read-only census + simulated remap; writes only the report (and optional copies to dumpDir).
+- `save_migration_dryrun.py <manifest> <data> <report.md> [rules.json] [dumpDir|-] [varbit-moves-231-241.json]`: read-only census + simulated remap; writes only the report (and optional copies to dumpDir). With the moves file it also re-packs raw saved varps for the ~1206 vanilla varbits that moved between 231 and 241 (regenerate with `cache/VarbitMoves.java <our231 cache> <cache241> <out.json>`). **Always pass it for real 231 saves**; never run it on saves already played on 241. Local 231 data (2026-10-27): 34 files re-packed, 37 values moved, 4 dropped (varbits 4371/4372 shrank to 1 bit), 0 slots changed outside the moved varps. Dump to a short path (e.g. `C:/z241relay`): the scratchpad overruns MAX_PATH.
 - `rules.json`: path classification, each rule checked against the server code. Special kinds: `varp-index-array` (Player.varps is indexed by varp id: values move slots, the old slot is cleared, the destination must be empty) and `packed-var-key` (savedConfigs keys = id << 16 | isVarbit).
 - `dryrun-local-20261025.md`: local dev data verdict READY (1108 files, 532 item fields, 0 violations, 6 NUL-filled orphan files passed through). Synthetic tests of the varp / packed-key / item-key transforms all pass, and the "destination not empty" violation is caught.
 

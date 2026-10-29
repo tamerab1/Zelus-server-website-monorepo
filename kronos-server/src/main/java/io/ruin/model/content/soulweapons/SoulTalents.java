@@ -33,6 +33,8 @@ public final class SoulTalents {
 	private static final int CLEAVE_RANGE = 1, CLEAVE_TARGETS = 3, CHAIN_RANGE = 3, SURGE_RANGE = 2, SURGE_TARGETS = 4;
 	private static final double CRIT_MULTIPLIER = 1.30, EXECUTE_BELOW = 0.35, CHAIN_DAMAGE = 0.50;
 	private static final int GFX_CRIT = 6828, GFX_WARD = 6829, GFX_SURGE = 2127;
+	/** Executioner: the cyan phantom slash marks. */
+	private static final int GFX_EXECUTE_SLASH = 6832;
 	private static final Projectile CHAIN_ARROW = new Projectile(1924, 30, 31, 0, 30, 6, 16, 11);
 
 	private SoulTalents() {
@@ -80,18 +82,48 @@ public final class SoulTalents {
 		return 11 - rank;
 	}
 
+	/** Soul Precision at tier 15; a lower tier gets tier / 15 of it (at least half). */
+	static int precisionPercent(int rank) {
+		return 2 * rank;
+	}
+
+	static int harvestPercent(int rank) {
+		return rank;
+	}
+
+	static final int RESONANCE_STACKS = 5;
+
+	/** Soul Resonance: damage per stack, in tenths of a percent shown rounded (rank 5: +3% a stack, +15% at 5). */
+	static int resonancePercent(int rank) {
+		return (int) Math.round(rank * 0.6);
+	}
+
+	/** Per player: {target npc index, stacks} for Soul Resonance. */
+	private static final java.util.Map<Integer, int[]> resonance = new java.util.HashMap<>();
+
 	// ---- gating ----
 
 	/** The talent's rank, if it may act right now: own line wielded, no Rivals match. 0 otherwise. */
 	static int rank(Player player, SoulTalent talent) {
 		SoulWeaponData d = player.soulWeapon;
-		if (d == null || d.weaponType != talent.line || RivalsFairPlay.active(player))
+		if (d == null || (!talent.universal() && d.weaponType != talent.line) || RivalsFairPlay.active(player))
 			return 0;
 		Item weapon = player.getEquipment().get(Equipment.SLOT_WEAPON);
-		if (weapon == null || !talent.line.isLook(weapon.getId()))
+		if (weapon == null || !d.weaponType.isLook(weapon.getId()))
 			return 0;
 		Integer r = d.allocatedTalents.get(talent.name());
-		return r == null ? 0 : Math.min(SoulTalent.MAX_RANK, r);
+		int rank = r == null ? 0 : Math.min(SoulTalent.MAX_RANK, r);
+		return empowered(d) ? (int) Math.floor(rank * RADIANT_EMPOWERMENT) : rank;
+	}
+
+	/**
+	 * Radiant Empowerment (customs27, 2026-10-27): at tier 15 every learned talent acts as half again its rank
+	 * (rank 5 works like rank 7), on top of the tree's 15 ranks per line. Every per-rank effect is linear in the rank.
+	 */
+	static final double RADIANT_EMPOWERMENT = 1.5;
+
+	static boolean empowered(SoulWeaponData d) {
+		return d != null && d.tier >= SoulWeaponType.RADIANT_TIER;
 	}
 
 	/** The style a line's talents answer to: a Blade swing, a Recurve shot, a Spire spell. */
@@ -122,6 +154,44 @@ public final class SoulTalents {
 
 	// ---- hooks ----
 
+	/**
+	 * Hit.defend, before the accuracy roll: Soul Precision raises the accuracy (scaled by the weapon's tier), Soul
+	 * Resonance's stacks on this monster raise the damage.
+	 */
+	public static void preDefend(Hit hit, Player player, NPC target) {
+		if (!eligible(hit, player))
+			return;
+		int precision = rank(player, SoulTalent.SOUL_PRECISION);
+		if (precision > 0) {
+			double tierScale = Math.max(0.5, Math.min(1.0, player.soulWeapon.tier / (double) SoulWeaponType.RADIANT_TIER));
+			hit.boostAttack(precisionPercent(precision) / 100.0 * tierScale);
+		}
+		int res = rank(player, SoulTalent.SOUL_RESONANCE);
+		if (res > 0) {
+			int[] state = resonance.get(player.getUserId());
+			if (state != null && state[0] == target.getIndex() && state[1] > 0)
+				hit.boostDamage(state[1] * res * 0.006);
+		}
+	}
+
+	/** Soul Resonance: a landed hit on the same monster adds a stack (to the cap), anything else starts over. */
+	private static void resonate(Hit hit, Player player, NPC target) {
+		if (rank(player, SoulTalent.SOUL_RESONANCE) <= 0) {
+			resonance.remove(player.getUserId());
+			return;
+		}
+		int[] state = resonance.computeIfAbsent(player.getUserId(), k -> new int[]{-1, 0});
+		if (hit.damage <= 0) {
+			state[1] = 0;
+			return;
+		}
+		if (state[0] != target.getIndex()) {
+			state[0] = target.getIndex();
+			state[1] = 0;
+		}
+		state[1] = Math.min(RESONANCE_STACKS, state[1] + 1);
+	}
+
 	/** Hit.defend, after the accuracy roll: Devastation crits and Executioner raise a landed hit's damage. */
 	public static void onDefend(Hit hit, Player player, NPC target) {
 		if (hit.damage <= 0 || !eligible(hit, player))
@@ -132,13 +202,20 @@ public final class SoulTalents {
 			target.graphics(GFX_CRIT, 60, 0);
 		}
 		int exec = rank(player, SoulTalent.EXECUTIONER);
-		if (exec > 0 && target.getHp() < target.getMaxHp() * EXECUTE_BELOW)
+		if (exec > 0 && target.getHp() < target.getMaxHp() * EXECUTE_BELOW) {
 			hit.damage = (int) Math.ceil(hit.damage * (1 + executionerPercent(exec) / 100.0));
+			// the execution (2026-10-28): one sharp phantom blade striking down through the target as the shot lands;
+			// nothing on the archer and no sparkle (6827-6830 are all the bubbly Redemption-sparkle model 9249)
+			target.graphics(GFX_EXECUTE_SLASH, 90, 0);
+		}
 	}
 
 	/** Hit.finish, once the damage has landed: the on-hit talents. */
 	public static void afterDamage(Hit hit, Player player, NPC target) {
-		if (hit.damage <= 0 || !eligible(hit, player))
+		if (!eligible(hit, player))
+			return;
+		resonate(hit, player, target);
+		if (hit.damage <= 0)
 			return;
 		int damage = hit.damage;
 		int steal = rank(player, SoulTalent.LIFESTEAL);
@@ -182,6 +259,12 @@ public final class SoulTalents {
 
 	/** SoulWeapons.onNpcKill: Arcane Surge, a soul blast around the fallen monster. */
 	static void onKill(Player player, NPC npc) {
+		int harvest = rank(player, SoulTalent.SOUL_HARVEST);
+		if (harvest > 0) { // Soul Harvest: a share of hitpoints and prayer back from every kill
+			player.incrementHp(Math.max(1, player.getMaxHp() * harvestPercent(harvest) / 100));
+			var prayer = player.getStats().get(StatType.Prayer);
+			prayer.restore(Math.max(1, prayer.fixedLevel * harvestPercent(harvest) / 100));
+		}
 		int surge = rank(player, SoulTalent.ARCANE_SURGE);
 		if (surge <= 0 || !npc.inMulti() || !roll(surgeChance(surge)))
 			return;
@@ -222,7 +305,7 @@ public final class SoulTalents {
 	// ---- helpers ----
 
 	/** Monsters within range of the struck one that the player may hit (nearest first is not needed: up to a cap). */
-	private static java.util.List<NPC> nearby(Player player, NPC around, int range) {
+	public static java.util.List<NPC> nearby(Player player, NPC around, int range) {
 		java.util.List<NPC> found = new java.util.ArrayList<>();
 		for (NPC npc : around.localNpcs()) {
 			if (npc == null || npc == around || npc.getDef().ignoreMultiCheck || npc.getHp() <= 0 || npc.dead())

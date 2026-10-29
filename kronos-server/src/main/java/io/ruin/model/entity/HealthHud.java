@@ -79,6 +79,8 @@ public class HealthHud {
 	}
 
 	public void close() {
+		if (VarPlayerRepository.HEALTH_HUD_SHOW_EXTRA.get(player) != 0)
+			extraBar(0, 0);
 		player.getPacketSender().sendClientScript(2889, CLOSE_CS2_ARGS);
 		// after the fad out effect, close the interface
 		World.startEvent(2, e -> player.closeInterface(ToplevelComponent.HP_HUD));
@@ -90,5 +92,12 @@ public class HealthHud {
 
 	public void updateMaxValue(int newValue) {
 		VarPlayerRepository.HEALTH_HUD_MAX.set(player, newValue);
+	}
+
+	/** The second bar under the boss's (Bork and the Smorks); {@code max} 0 hides it. */
+	public void extraBar(int current, int max) {
+		VarPlayerRepository.HEALTH_HUD_EXTRA_MAX.set(player, Math.max(0, max));
+		VarPlayerRepository.HEALTH_HUD_EXTRA_CURRENT.set(player, Math.max(0, current));
+		VarPlayerRepository.HEALTH_HUD_SHOW_EXTRA.set(player, max > 0 ? 1 : 0);
 	}
 }

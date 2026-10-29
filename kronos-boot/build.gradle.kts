@@ -105,11 +105,14 @@ val jrebelAgentPath: String = when {
 	else -> throw GradleException("Unsupported OS for JRebel agent")
 }
 
-// Local `run` only (prod's start scripts keep -Xmx6g above): the rev 241 map is loaded whole at boot and its live set
-// is ~4.8 GB after a full GC, so 6 GB left too little headroom and the server hit OutOfMemoryError in play.
-// The later -Xmx wins. Prod's heap has to be sized for this before rev 241 ships.
+// Local `run` only. Prod doesn't use these args: it runs in Docker with KRONOS_BOOT_OPTS / GAME_SERVER_MEM_LIMIT from
+// the DOCKER_COMPOSE_ENV secret (docker-compose-prod.yml). Rev 241 loads the whole map at boot (live set 2.16 GB
+// right after boot, 2026-10-27) and grew past 6 GB in play, so local runs get 10 GB; prod needs the same before
+// rev 241 ships (box: 22 GB, 16 GB available): -Xms10g -Xmx10g with GAME_SERVER_MEM_LIMIT=12g. The later -Xmx wins.
+// Set the whole list: jvmArgs("-Xmx10g") alone replaced the application defaults (the --add-opens included) and boot
+// died with IllegalAccessError on jdk.internal.vm.Continuation.
 tasks.named<JavaExec>("run") {
-	jvmArgs("-Xmx10g")
+	jvmArgs = defaultJvmArgs + "-Xmx10g"
 }
 
 tasks.register<JavaExec>("run_hotswap") {

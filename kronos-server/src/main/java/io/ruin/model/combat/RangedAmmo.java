@@ -80,6 +80,13 @@ public enum RangedAmmo {
 	 * Dragon bolts
 	 */
 	DRAGON_BOLTS(ItemID.DRAGON_BOLTS, new RangedData(Projectile.DRAGON_BOLT)),
+
+	/* The Fractured Archive: only the ascension crossbows fire these (RSProx raid_weapons: from 30, heights 167/146, angle 5) */
+	ASCENSION_BOLTS(34684, new RangedData(new Projectile(4437, 42, 36, 30, 51, 5, 5, 11))),
+	ASCENSION_DIAMOND_BOLTS(34690, new RangedData(new Projectile(4439, 42, 36, 30, 51, 5, 5, 11))),
+	ASCENSION_DIAMOND_BOLTS_E(34696, new RangedData(new Projectile(4439, 42, 36, 30, 51, 5, 5, 11)), new DiamondBoltEffect()),
+	ASCENSION_ONYX_BOLTS(34702, new RangedData(new Projectile(4438, 42, 36, 30, 51, 5, 5, 11))),
+	ASCENSION_ONYX_BOLTS_E(34708, new RangedData(new Projectile(4438, 42, 36, 30, 51, 5, 5, 11)), new OnyxBoltEffect()),
 	DRAGON_OPAL_BOLTS(ItemID.OPAL_DRAGON_BOLTS, new RangedData(Projectile.DRAGON_BOLT), new OpalDragonBoltEffect()),
 	DRAGON_JADE_BOLTS(ItemID.JADE_DRAGON_BOLTS, new RangedData(Projectile.DRAGON_BOLT)),
 	DRAGON_PEARL_BOLTS(ItemID.PEARL_DRAGON_BOLTS, new RangedData(Projectile.DRAGON_BOLT)),

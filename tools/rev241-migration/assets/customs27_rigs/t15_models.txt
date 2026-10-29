@@ -1,0 +1,9 @@
+# Radiant Soulblade (2026-10-28 rework): only the soul runes (the blue-violet fuller marks) and the guard's gems flow
+# radiant cyan; the guard / hilt and blade get flat radiant gold / platinum from the item's recolours (PatchCustoms27)
+model 62778 62783 477 -20788,-21069,-21062,-20925,-21177,-20908,-20511,693,703,681,968
+# Arcane spire (worn, inventory): the glowing head flows arcane violet
+model 62779 62784 475 43443,43445,43447,43448,43449,43454,43456,43461,43589,46516
+model 62780 62785 475 43443,43445,43447,43448,43449,43454,43456,43461,43589,46516
+# Crimson recurve (worn, inventory): the red runes flow crimson-gold
+model 62781 62786 476 778,785,786,788,804,811,816,819,830,839
+model 62782 62787 476 778,785,786,788,804,811,816,819,830,839

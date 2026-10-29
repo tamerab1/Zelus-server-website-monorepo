@@ -93,6 +93,8 @@ public class KillCounter {
 		set(p -> p.galvekKills, "galvek");
 		set(p -> p.vyrewatchSentinelKills, "vyrewatch sentinel");
 		set(p -> p.argentavisKills, "argentavis");
+		set(p -> p.vorgathKills, 20000); // customs27
+		set(p -> p.baelgorKills, 20001);
 		set(p -> p.solHereditKills, "sol heredit");
 		set(p -> p.malakarKills, "malakar");
 		set(p -> p.voteBossKills, "vote boss");
@@ -226,6 +228,9 @@ public class KillCounter {
 			p.moonsOfPerilKills.setName("Moons of Peril").messageOnKill();
 			p.tombsOfAmascutKills.setName("Tombs of Amascut").messageOnKill();
 			p.dominionOfEchoesKills.setName("Dominion of Echoes").messageOnKill();
+			p.fracturedArchiveKills.setName("The Fractured Archive").messageOnKill();
+			p.vorgathKills.setName("Vorgath the Shadowrider").messageOnKill();
+			p.baelgorKills.setName("Baelgor the Felreaver").messageOnKill();
 			p.derangedArchaeologistKills.setName("Deranged Archaeologist").messageOnKill();
 			p.barrowsChestsLooted.setName("Barrows Chests").messageOnKill();
 			p.elvargKills.setName("Elvarg").messageOnKill();
@@ -326,6 +331,8 @@ public class KillCounter {
 //                p -> p.derangedArchaeologistKills
 			p -> p.vorkathKills,
 			p -> p.argentavisKills,
+			p -> p.vorgathKills,
+			p -> p.baelgorKills,
 			p -> p.solHereditKills,
 			p -> p.galvekKills,
 			p -> p.cindermawKills,

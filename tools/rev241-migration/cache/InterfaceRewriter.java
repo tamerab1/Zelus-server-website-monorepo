@@ -14,6 +14,9 @@ import java.util.List;
  * so they are only reported when they equal an id that moves (see {@link #suspicious}).
  */
 public final class InterfaceRewriter {
+
+	/** Our sprites stage 2 moved off Jagex's (build-binary-report "textureSpriteOverwritesMovedOursTo"): old -> new. */
+	public static final java.util.Map<Integer, Integer> SPRITE_MOVES = new java.util.HashMap<>();
 	private final DefRewriter.In in;
 	private final DefRewriter.Out out = new DefRewriter.Out();
 	private final DefRewriter.Ids ids;
@@ -135,7 +138,8 @@ public final class InterfaceRewriter {
 		copy(1);             // hidden
 		if (type == 0) copy(5);
 		if (type == 5) {
-			copy(4);         // sprite (custom sprites don't collide)
+			int sprite = in.i32(); // our sprites stage 2 moved off Jagex's new art follow it
+			out.i32(SPRITE_MOVES.getOrDefault(sprite, sprite));
 			id16("texture");
 			copy(1 + 1 + 1 + 4 + 1 + 1);
 		}

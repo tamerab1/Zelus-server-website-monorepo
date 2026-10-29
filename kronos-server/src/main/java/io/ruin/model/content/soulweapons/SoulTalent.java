@@ -15,9 +15,16 @@ public enum SoulTalent {
 	EXECUTIONER(SoulWeaponType.RANGED, "Executioner", "Finisher"),
 	SOUL_SIPHON(SoulWeaponType.MAGIC, "Soul Siphon", "HP + Prayer leech"),
 	ARCANE_SURGE(SoulWeaponType.MAGIC, "Arcane Surge", "Kill blasts (multi)"),
-	DEATH_WARD(SoulWeaponType.MAGIC, "Death Ward", "Cheat death");
+	DEATH_WARD(SoulWeaponType.MAGIC, "Death Ward", "Cheat death"),
+	// round 7 (2026-10-28): every line's second column, one per row
+	SOUL_PRECISION(null, "Soul Precision", "Accuracy (tier-scaled)"),
+	SOUL_HARVEST(null, "Soul Harvest", "HP + Prayer on kill"),
+	SOUL_RESONANCE(null, "Soul Resonance", "Stacking damage");
 
 	public static final int MAX_RANK = 5;
+	/** Ranks spent in a row before the next row opens. */
+	public static final int ROW_UNLOCK = 3;
+	public static final int ROWS = 3, COLS = 2;
 
 	public final SoulWeaponType line;
 	public final String name, tagline;
@@ -28,13 +35,21 @@ public enum SoulTalent {
 		this.tagline = tagline;
 	}
 
-	/** The line's three talents, in column order. */
+	/**
+	 * The line's six talents, row by row (row I fundamentals, row II multi-target and sustain, row III keystones): the
+	 * line's own talent in the left column, the shared soul talent in the right.
+	 */
 	public static SoulTalent[] of(SoulWeaponType line) {
 		return switch (line) {
-			case MELEE -> new SoulTalent[]{DEVASTATION, CLEAVE, LIFESTEAL};
-			case RANGED -> new SoulTalent[]{TEMPEST, RICOCHET, EXECUTIONER};
-			case MAGIC -> new SoulTalent[]{SOUL_SIPHON, ARCANE_SURGE, DEATH_WARD};
+			case MELEE -> new SoulTalent[]{DEVASTATION, SOUL_PRECISION, CLEAVE, SOUL_HARVEST, LIFESTEAL, SOUL_RESONANCE};
+			case RANGED -> new SoulTalent[]{TEMPEST, SOUL_PRECISION, RICOCHET, SOUL_HARVEST, EXECUTIONER, SOUL_RESONANCE};
+			case MAGIC -> new SoulTalent[]{SOUL_SIPHON, SOUL_PRECISION, ARCANE_SURGE, SOUL_HARVEST, DEATH_WARD, SOUL_RESONANCE};
 		};
+	}
+
+	/** Shared by every line (the right column). */
+	public boolean universal() {
+		return line == null;
 	}
 
 	/** What a rank does in a few words, for the single line under a Soul Tree node ("Rank 3: ..." / "Next Rank: ..."). */
@@ -49,6 +64,9 @@ public enum SoulTalent {
 			case SOUL_SIPHON -> "Heal " + SoulTalents.siphonHpPercent(rank) + "%, +" + rank + "% Prayer";
 			case ARCANE_SURGE -> SoulTalents.surgeChance(rank) + "% kill blast";
 			case DEATH_WARD -> SoulTalents.wardHpPercent(rank) + "% HP, " + SoulTalents.wardCooldownMinutes(rank) + "m cd";
+			case SOUL_PRECISION -> "+" + SoulTalents.precisionPercent(rank) + "% acc (at T15)";
+			case SOUL_HARVEST -> "+" + SoulTalents.harvestPercent(rank) + "% HP & Prayer / kill";
+			case SOUL_RESONANCE -> "+" + SoulTalents.resonancePercent(rank) + "% / hit, x" + SoulTalents.RESONANCE_STACKS;
 		};
 	}
 
@@ -64,6 +82,9 @@ public enum SoulTalent {
 			case SOUL_SIPHON -> "Every spell that lands on a monster.";
 			case ARCANE_SURGE -> "Blasts up to 4 monsters around your kill. Multi-combat only.";
 			case DEATH_WARD -> "A monster's killing blow leaves you alive instead.";
+			case SOUL_PRECISION -> "Every hit on a monster; grows with your weapon's tier.";
+			case SOUL_HARVEST -> "Each monster your weapon slays.";
+			case SOUL_RESONANCE -> "Landed hits on the same monster stack; a miss or a new target resets.";
 		};
 	}
 
@@ -80,6 +101,10 @@ public enum SoulTalent {
 			case ARCANE_SURGE -> SoulTalents.surgeChance(rank) + "% chance a kill blasts nearby foes";
 			case DEATH_WARD -> "Survive a fatal hit at " + SoulTalents.wardHpPercent(rank) + "% HP; "
 					+ SoulTalents.wardCooldownMinutes(rank) + "m cooldown";
+			case SOUL_PRECISION -> "+" + SoulTalents.precisionPercent(rank) + "% accuracy at tier 15 (less at lower tiers)";
+			case SOUL_HARVEST -> "Restore " + SoulTalents.harvestPercent(rank) + "% of your HP and Prayer per kill";
+			case SOUL_RESONANCE -> "+" + SoulTalents.resonancePercent(rank) + "% damage per consecutive hit, up to "
+					+ SoulTalents.RESONANCE_STACKS + " stacks";
 		};
 	}
 }

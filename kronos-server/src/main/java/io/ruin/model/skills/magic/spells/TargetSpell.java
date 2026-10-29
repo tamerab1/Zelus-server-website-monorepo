@@ -204,6 +204,9 @@ public class TargetSpell extends Spell {
 				|| this instanceof WindBolt || this instanceof WindStrike;
 
 		double accuracyBoost = 0.0;
+		if (source.player != null) // Fractured Archive fragments: +2 to that element's base max hit
+			maxDamage += io.ruin.model.activities.raids.tfa.Raid4Items.fragmentBonus(source.player,
+					earthSpell ? 0 : waterSpell ? 1 : windSpell ? 2 : fireSpell ? 3 : 31);
 		if (source.player != null && target.player != null) {
 			if (!source.player.getCombat().canAttack(target.player, true))
 				return false;

@@ -42,9 +42,25 @@ public class RSProtHandlers {
 		builder.addListener(If3Button.class, new ActionButtonHandler.If3());
 		builder.addListener(IfSubOp.class, new ActionButtonHandler.IfSub());
 		builder.addListener(If1Button.class, new ActionButtonHandler.If1());
-		// TEMP rev241 audit: rev 241 adds IF_SCRIPT_TRIGGER; log what arrives before deciding how to handle it
-		builder.addListener(net.rsprot.protocol.game.incoming.buttons.IfScriptTrigger.class, (player, msg) ->
-			System.out.println("[rev241 ifscripttrigger] if " + msg.getInterfaceId() + ":" + msg.getComponentId() + " sub " + msg.getSub() + " obj " + msg.getObj() + " crc " + msg.getCrc()));
+		// rev 241 IF_SCRIPT_TRIGGER: an interface script's if_runscript (the omnishop's buy / examine)
+		builder.addListener(net.rsprot.protocol.game.incoming.buttons.IfScriptTrigger.class, (player, msg) -> {
+			try {
+				if (msg.getInterfaceId() != io.ruin.model.activities.raids.tfa.Raid4Quartermaster.OMNISHOP_MAIN)
+					return;
+				var types = net.rsprot.protocol.game.incoming.buttons.IfScriptTrigger.ParameterTypes.Companion;
+				char i = net.rsprot.protocol.game.incoming.buttons.IfScriptTrigger.ParameterTypes.INT;
+				if (msg.getComponentId() == io.ruin.model.activities.raids.tfa.Raid4Quartermaster.TRIGGER_BUY) {
+					var args = msg.decode(types.of(i, i, i));
+					io.ruin.model.activities.raids.tfa.Raid4Quartermaster.buy(player, ((Number) args.get(0)).intValue(),
+							((Number) args.get(1)).intValue(), ((Number) args.get(2)).intValue());
+				} else if (msg.getComponentId() == io.ruin.model.activities.raids.tfa.Raid4Quartermaster.TRIGGER_EXAMINE) {
+					var args = msg.decode(types.of(i));
+					io.ruin.model.activities.raids.tfa.Raid4Quartermaster.examine(player, ((Number) args.get(0)).intValue());
+				}
+			} catch (Exception e) {
+				org.slf4j.LoggerFactory.getLogger(RSProtHandlers.class).warn("IF_SCRIPT_TRIGGER {}: {}", msg, e.toString());
+			}
+		});
 		builder.addListener(IfButtonD.class, new InterfaceDragHandler());
 		builder.addListener(IfButtonT.class, new InterfaceOnInterfaceHandler.OnItem());
 		builder.addListener(CloseModal.class, new CloseInterfaceHandler());

@@ -73,6 +73,7 @@ import net.rsprot.protocol.game.outgoing.misc.player.UpdateStatV2;
 import net.rsprot.protocol.game.outgoing.social.MessagePrivate;
 import net.rsprot.protocol.game.outgoing.social.MessagePrivateEcho;
 import net.rsprot.protocol.game.outgoing.sound.MidiSongV2;
+import net.rsprot.protocol.game.outgoing.sound.MidiJingle;
 import net.rsprot.protocol.game.outgoing.sound.SynthSound;
 import net.rsprot.protocol.game.outgoing.varp.VarpLarge;
 import net.rsprot.protocol.game.outgoing.varp.VarpSmall;
@@ -968,7 +969,8 @@ public final class PacketSender {
 						targetIndex = target.getIndex() + 1;
 					}
 
-					// V2 takes the absolute end tile instead of a delta from the start.
+					// V2 takes the absolute end tile instead of a delta from the start. Heights are raw world units
+					// here; Projectile scales the old 1/4-scale values (see Projectile#rawHeights).
 					return new MapProjAnimV2(
 							projectileId,
 							startHeight, endHeight,
@@ -999,6 +1001,10 @@ public final class PacketSender {
 	public void sendMusic(int id) {
 		var msg = new MidiSongV2(id, 0, 0, 0, 0);
 		write(msg);
+	}
+
+	public void sendJingle(int id) {
+		write(new MidiJingle(id));
 	}
 
 	// TODO: 184 Revision Fix Custom Packet

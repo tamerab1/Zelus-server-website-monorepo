@@ -75,6 +75,8 @@ public class Bank extends ItemContainerG<BankItem> {
 			player.sendMessage("You can't use your bank during a Rivals match.");
 			return;
 		}
+		if (io.ruin.model.activities.raids.tfa.Raid4Rental.refuse(player))
+			return;
 		asNote = false;
 		VarPlayerRepository.BANK_WITHDRAW_NOTES.set(player, 0);
 		/* rev 241: 12:61 (231's 79) is Jagex's worn-items panel ("Equip your character...") and showing it put our
@@ -163,6 +165,8 @@ public class Bank extends ItemContainerG<BankItem> {
 	}
 
 	public void openDepositBox() {
+		if (io.ruin.model.content.rivals.RivalsSnapshot.refuse(player))
+			return;
 		if (player.getGameMode().isUltimateIronman()) {
 			player.sendMessage("Ultimate ironmen cannot access the bank.");
 			return;

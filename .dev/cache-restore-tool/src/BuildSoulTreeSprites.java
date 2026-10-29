@@ -28,9 +28,14 @@ import java.util.zip.CRC32;
 //   24609-24611 aura orbs 28x28 (teal/gold/violet)   24612 orb silhouette   24613 lock 10x12
 //   24614-24616 aura buttons 62x14 activate/active/locked   24617 dim disc 34x34 (unlearned talent)
 //   round 3: 24618 selected-node ring 60x60 (cyan)   24619-24621 wide Rank Up rune 62x18 lit/hover/dim
-// Usage: verify|apply <cachePath> [previewPng]
+//   round 7 (2026-10-28, the 3-row tree; "verify2|apply2", from 24700): 24700-24711 talent icons 24x24 (SoulTalent order,
+//   incl. Soul Precision / Soul Harvest / Soul Resonance), 24712 compact track 39, 24713-24717 arcs, 24718 halo 45,
+//   24719 select ring 45, 24720-24725 sockets 33 (bronze/lit/gold + hover), 24726 dim disc 26, 24727 pedestal 92x22,
+//   24728-24731 stage arrows 18x20 (left, left hover, right, right hover)
+// Usage: verify|apply|verify2|apply2 <cachePath> [previewPng]
 public class BuildSoulTreeSprites {
-    static final int BASE = 24582;
+    static final int BASE = 24582, BASE2 = 24700;
+    static int base = BASE;
     /** What each sprite sits on: the tree area's void, a socket's well, an aura card, the stone panel. */
     static final int BG_TREE = 0x14120f, WELL = 0x0e1214, CARD = 0x1d1913, STONE = 0x36302a;
 
@@ -39,12 +44,16 @@ public class BuildSoulTreeSprites {
     static final List<Sprite> SPRITES = new ArrayList<>();
 
     static void add(String name, int w, int h, int bg, double minCover, Consumer<Graphics2D> paint) {
-        SPRITES.add(new Sprite(BASE + SPRITES.size(), name, w, h, bg, minCover, render(w, h, bg, minCover, paint)));
+        SPRITES.add(new Sprite(base + SPRITES.size(), name, w, h, bg, minCover, render(w, h, bg, minCover, paint)));
     }
 
     public static void main(String[] args) throws Exception {
-        boolean apply = args[0].equals("apply");
-        defineAll();
+        boolean apply = args[0].startsWith("apply");
+        if (args[0].endsWith("2")) {
+            base = BASE2;
+            defineRound7();
+        } else
+            defineAll();
         if (args.length > 2)
             preview(new File(args[2]));
         try (Store store = new Store(new File(args[1]))) {
@@ -159,6 +168,148 @@ public class BuildSoulTreeSprites {
         add("rankup_wide_lit", 62, 18, BG_TREE, 0.5, g -> rune(g, 62, new Color(0xffc35a), new Color(0x7a5212), new Color(0xfff0b0), false));
         add("rankup_wide_hover", 62, 18, BG_TREE, 0.5, g -> rune(g, 62, new Color(0xffd98a), new Color(0x9a6a1a), new Color(0xffffff), true));
         add("rankup_wide_dim", 62, 18, BG_TREE, 0.5, g -> rune(g, 62, new Color(0x3a332b), new Color(0x1d1913), new Color(0x4a4238), false));
+    }
+
+    /** Paints at a fraction of the original size (the compact 3-row tree's nodes). */
+    static Consumer<Graphics2D> scaled(double f, Consumer<Graphics2D> paint) {
+        return g -> {
+            g.scale(f, f);
+            paint.accept(g);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    static void defineRound7() {
+        double f = 0.75;
+        Consumer<Graphics2D>[] icons = new Consumer[]{(Consumer<Graphics2D>) BuildSoulTreeSprites::devastation,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::cleave, (Consumer<Graphics2D>) BuildSoulTreeSprites::lifesteal,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::tempest, (Consumer<Graphics2D>) BuildSoulTreeSprites::ricochet,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::executioner, (Consumer<Graphics2D>) BuildSoulTreeSprites::siphon,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::surge, (Consumer<Graphics2D>) BuildSoulTreeSprites::ward,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::precision, (Consumer<Graphics2D>) BuildSoulTreeSprites::harvest,
+                (Consumer<Graphics2D>) BuildSoulTreeSprites::resonance};
+        String[] names = {"devastation", "cleave", "lifesteal", "tempest", "ricochet", "executioner", "siphon", "surge", "ward",
+                "precision", "harvest", "resonance"};
+        for (int i = 0; i < icons.length; i++)
+            add(names[i] + "_24", 24, 24, WELL, 0.5, scaled(f, icons[i]));
+        add("rank_track_39", 39, 39, BG_TREE, 0.5, scaled(f, g -> arc(g, 0, 360, new Color(0x2a2620), new Color(0x0a0908), false)));
+        for (int r = 0; r < 5; r++) {
+            int seg = r;
+            add("rank_arc_39_" + (r + 1), 39, 39, BG_TREE, 0.5,
+                    scaled(f, g -> arc(g, 90 - seg * 72 - 4, -64, new Color(0x2fe8f0), new Color(0x0c5a60), true)));
+        }
+        add("max_halo_45", 45, 45, BG_TREE, 0.04, scaled(f, BuildSoulTreeSprites::maxHalo));
+        add("select_ring_45", 45, 45, BG_TREE, 0.04, scaled(f, g -> {
+            g.setPaint(new RadialGradientPaint(new Point2D.Double(30, 30), 30, new float[]{0.70f, 0.82f, 0.9f, 1f},
+                    new Color[]{new Color(47, 232, 240, 0), new Color(120, 245, 250, 230), new Color(47, 210, 216, 110),
+                            new Color(47, 210, 216, 0)}));
+            g.fill(new Ellipse2D.Double(0, 0, 60, 60));
+        }));
+        int[][] metals = {{0x5c3a1c, 0x9a6634, 0xd29a5c}, {0x0d4f55, 0x1fa7b5, 0x8ff6fa}, {0x7a5212, 0xd9a521, 0xfff0b0}};
+        String[] metalNames = {"bronze", "lit", "gold"};
+        for (int m = 0; m < 3; m++) {
+            int[] metal = metals[m];
+            add("socket_33_" + metalNames[m], 33, 33, BG_TREE, 0.5, scaled(f, g -> socket(g, metal, false)));
+            add("socket_33_" + metalNames[m] + "_hover", 33, 33, BG_TREE, 0.5, scaled(f, g -> socket(g, metal, true)));
+        }
+        add("dim_disc_26", 26, 26, WELL, 0.5, g -> {
+            g.setColor(new Color(0x050505));
+            g.fill(new Ellipse2D.Double(0, 0, 26, 26));
+        });
+        add("pedestal", 92, 22, BG_TREE, 0.04, BuildSoulTreeSprites::pedestal);
+        add("arrow_left", 18, 20, BG_TREE, 0.5, g -> stageArrow(g, true, false));
+        add("arrow_left_hover", 18, 20, BG_TREE, 0.5, g -> stageArrow(g, true, true));
+        add("arrow_right", 18, 20, BG_TREE, 0.5, g -> stageArrow(g, false, false));
+        add("arrow_right_hover", 18, 20, BG_TREE, 0.5, g -> stageArrow(g, false, true));
+    }
+
+    /** Soul Precision: a gold crosshair over a soul-cyan ring. */
+    static void precision(Graphics2D g) {
+        g.setStroke(new BasicStroke(2.2f));
+        g.setColor(new Color(0x1fa7b5));
+        g.draw(new Ellipse2D.Double(4, 4, 24, 24));
+        g.setStroke(new BasicStroke(1.2f));
+        g.setColor(new Color(0x8ff6fa));
+        g.draw(new Ellipse2D.Double(9, 9, 14, 14));
+        g.setColor(new Color(0xffc35a));
+        g.fill(new Rectangle2D.Double(15, 1, 2, 9));
+        g.fill(new Rectangle2D.Double(15, 22, 2, 9));
+        g.fill(new Rectangle2D.Double(1, 15, 9, 2));
+        g.fill(new Rectangle2D.Double(22, 15, 9, 2));
+        Path2D d = new Path2D.Double();
+        d.moveTo(16, 12.5);
+        d.lineTo(19.5, 16);
+        d.lineTo(16, 19.5);
+        d.lineTo(12.5, 16);
+        d.closePath();
+        g.setColor(new Color(0xfff0b0));
+        g.fill(d);
+    }
+
+    /** Soul Harvest: a reaping crescent with a freed soul rising from it. */
+    static void harvest(Graphics2D g) {
+        Area crescent = new Area(new Ellipse2D.Double(3, 5, 26, 26));
+        crescent.subtract(new Area(new Ellipse2D.Double(8, 1, 26, 26)));
+        g.setPaint(new GradientPaint(3, 30, new Color(0x3a0f6a), 20, 6, new Color(0xd8b8ff)));
+        g.fill(crescent);
+        g.setStroke(new BasicStroke(0.9f));
+        g.setColor(new Color(0x14062a));
+        g.draw(crescent);
+        g.setPaint(new RadialGradientPaint(new Point2D.Double(21, 12), 7, new float[]{0f, 1f},
+                new Color[]{new Color(0xffffff), new Color(0x2fd2d8)}));
+        g.fill(new Ellipse2D.Double(16, 7, 10, 10));
+        g.setStroke(new BasicStroke(1.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setColor(new Color(0x8ff6fa));
+        g.draw(new Arc2D.Double(18, 1, 8, 8, 200, 140, Arc2D.OPEN));
+    }
+
+    /** Soul Resonance: a gold core sending out three widening soul waves. */
+    static void resonance(Graphics2D g) {
+        g.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        Color[] waves = {new Color(0x8ff6fa), new Color(0x2fd2d8), new Color(0x1f8a95)};
+        for (int i = 0; i < 3; i++) {
+            double rr = 7 + i * 4.5;
+            g.setColor(waves[i]);
+            g.draw(new Arc2D.Double(16 - rr, 16 - rr, 2 * rr, 2 * rr, -50, 100, Arc2D.OPEN));
+            g.draw(new Arc2D.Double(16 - rr, 16 - rr, 2 * rr, 2 * rr, 130, 100, Arc2D.OPEN));
+        }
+        g.setPaint(new RadialGradientPaint(new Point2D.Double(16, 16), 6, new float[]{0f, 1f},
+                new Color[]{new Color(0xfff6d0), new Color(0xd9a521)}));
+        g.fill(new Ellipse2D.Double(11, 11, 10, 10));
+    }
+
+    /** The weapon dais: a dark stone disc seen from above with a soft soul-teal rim light and a shadow under it. */
+    static void pedestal(Graphics2D g) {
+        g.setPaint(new RadialGradientPaint(new Point2D.Double(46, 14), 46, new float[]{0f, 1f},
+                new Color[]{new Color(0, 0, 0, 150), new Color(0, 0, 0, 0)}));
+        g.fill(new Ellipse2D.Double(0, 6, 92, 16));
+        g.setPaint(new GradientPaint(0, 8, new Color(0x2a2f34), 0, 18, new Color(0x121518)));
+        g.fill(new Ellipse2D.Double(8, 6, 76, 12));
+        g.setPaint(new GradientPaint(0, 3, new Color(0x3a4148), 0, 13, new Color(0x1e2328)));
+        g.fill(new Ellipse2D.Double(8, 3, 76, 11));
+        g.setStroke(new BasicStroke(0.9f));
+        g.setColor(new Color(47, 210, 216, 200));
+        g.draw(new Arc2D.Double(8.5, 3.5, 75, 10, 15, 150, Arc2D.OPEN));
+        g.setColor(new Color(47, 210, 216, 90));
+        g.draw(new Arc2D.Double(8.5, 3.5, 75, 10, 180, 180, Arc2D.OPEN));
+    }
+
+    /** A stage arrow: a gold chevron on a dark round stud, brighter on hover. */
+    static void stageArrow(Graphics2D g, boolean left, boolean hover) {
+        g.setPaint(new RadialGradientPaint(new Point2D.Double(9, 9), 10, new float[]{0f, 1f},
+                new Color[]{new Color(hover ? 0x3a3428 : 0x2a251d), new Color(0x0d0b09)}));
+        g.fill(new Ellipse2D.Double(0.5, 1.5, 17, 17));
+        g.setStroke(new BasicStroke(1f));
+        g.setColor(new Color(hover ? 0xd9a521 : 0x7a5212));
+        g.draw(new Ellipse2D.Double(0.5, 1.5, 17, 17));
+        Path2D c = new Path2D.Double();
+        double sg = left ? -1 : 1;
+        c.moveTo(9 - sg * 2.5, 5.5);
+        c.lineTo(9 + sg * 3, 10);
+        c.lineTo(9 - sg * 2.5, 14.5);
+        g.setStroke(new BasicStroke(2.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setColor(new Color(hover ? 0xfff0b0 : 0xffc35a));
+        g.draw(c);
     }
 
     // ---- talent icons (32x32) ----

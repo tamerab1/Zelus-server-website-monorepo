@@ -74,8 +74,6 @@ public class TabInventory {
 	private static void click(Player player, int ifbutton, int slot, int itemId) {
 		// System.err.println(ifbutton + " s" + slot + " itm" + itemId);
 		Item item = player.getInventory().get(slot, itemId);
-		// TEMP rev241 audit: remove once inventory clicks are confirmed working
-		System.out.println("[rev241 inv] button " + ifbutton + " slot " + slot + " obj " + itemId + " -> " + (item == null ? "NO ITEM (server has " + player.getInventory().get(slot) + ")" : item.getId() + " locked=" + player.isLockedExclude(LockType.FULL_ALLOW_EAT)));
 		if (item == null)
 			return;
 
@@ -112,6 +110,8 @@ public class TabInventory {
 		if (actions != null) {
 			ItemAction action = actions[i];
 			if (action != null) {
+				if (refusePhantomBreakdown(player, item, def, i))
+					return;
 				action.handle(player, item);
 				return;
 			}
@@ -246,6 +246,24 @@ public class TabInventory {
 			drop(player, item, def);
 		};
 		player.dialogue(dialogue, onDialogueContinued);
+	}
+
+	/** Inventory options that turn an item back into its parts / runes / scales; never allowed on phantom items. */
+	private static final java.util.Set<String> BREAKDOWN_OPTIONS = java.util.Set.of("uncharge", "dismantle", "unload",
+			"empty", "revert", "break-down", "break down", "unstring", "unfortify", "disassemble", "split", "uncharge-all");
+
+	/**
+	 * Phantom items (Free PvP kits, Rivals kits, Raid 4 rental gear) carry real charges, but whatever they break down
+	 * into would be real: a rented Tumeken's shadow's "Uncharge" paid out real soul and chaos runes.
+	 */
+	private static boolean refusePhantomBreakdown(Player player, Item item, ObjType def, int optionIndex) {
+		if (!io.ruin.model.content.pvppreset.PvpPresetManager.isPhantomItem(item) || def.inventoryOptions == null
+				|| optionIndex >= def.inventoryOptions.length || def.inventoryOptions[optionIndex] == null)
+			return false;
+		if (!BREAKDOWN_OPTIONS.contains(def.inventoryOptions[optionIndex].toLowerCase()))
+			return false;
+		player.sendMessage("You can't do that with temporary items.");
+		return true;
 	}
 
 	private static void destroyItem(Player player, Item item) {

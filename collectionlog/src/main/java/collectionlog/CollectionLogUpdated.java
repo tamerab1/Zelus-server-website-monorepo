@@ -198,6 +198,7 @@ public class CollectionLogUpdated {
 					case THEATRE_OF_BLOOD -> killCount = player.theatreOfBloodKills.getKills();
 					case TOMBS_OF_AMASCUT -> killCount = player.tombsOfAmascutKills.getKills();
 					case DOMINION_OF_ECHOS -> killCount = player.dominionOfEchoesKills.getKills();
+					case THE_FRACTURED_ARCHIVE -> killCount = player.fracturedArchiveKills.getKills();
 				}
 				break;
 			case MINIGAMES:

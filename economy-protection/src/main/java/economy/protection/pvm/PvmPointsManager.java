@@ -47,10 +47,14 @@ public final class PvmPointsManager {
 	 * Computes the points a kill would award without applying them. Package-visible so tests
 	 * can exercise the tiering/wilderness/gating math directly.
 	 */
+	/** NPCs that never pay: Raid 4's Dreadnoth jellies (TFA_JELLY_MINION 16666) and Dagon'hai imps (16650), spawned and killed by the dozen. */
+	private static final java.util.Set<Integer> NO_POINTS = java.util.Set.of(16666, 16650);
+
 	static int pointsForKill(Player player, NPC npc) {
 		if (player == null || npc == null || npc.getDef() == null) return 0;
 		if (!player.isPvmMode()) return 0; // PVP Mode accounts never earn PVM Points
 		if (PvmPoints.hasNamedPoints(npc)) return 0; // already covered by the legacy boss table
+		if (NO_POINTS.contains(npc.getId())) return 0; // fight mechanics, not kills (Dreadnoth's jellies, Dagon'hai's imps)
 
 		int base = pointsForTier(npc.getDef().combatLevel);
 		if (base <= 0) return 0;

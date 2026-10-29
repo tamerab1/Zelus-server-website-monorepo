@@ -147,6 +147,12 @@ public class BuildInterfaces241 {
 		Store v241 = new Store(new File(a[2])); v241.load();
 		Store out = new Store(new File(a[3])); out.load();
 		Manifest manifest = new Manifest(Path.of(a[4]));
+		// stage 2's sprite moves (its report sits beside ours)
+		Path binReport = Path.of(a[5]).toAbsolutePath().getParent().resolve("build-binary-report.json");
+		if (Files.exists(binReport))
+			com.google.gson.JsonParser.parseString(Files.readString(binReport)).getAsJsonObject().getAsJsonObject("sprites")
+				.getAsJsonObject("textureSpriteOverwritesMovedOursTo").entrySet()
+				.forEach(e -> InterfaceRewriter.SPRITE_MOVES.put(Integer.parseInt(e.getKey()), e.getValue().getAsInt()));
 
 		Set<Integer> movingIds = new HashSet<>();
 		for (String k : List.of("item", "npc", "obj", "varbit", "seq", "spotanim"))

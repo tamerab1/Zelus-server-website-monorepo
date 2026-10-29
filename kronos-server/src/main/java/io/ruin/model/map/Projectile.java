@@ -53,6 +53,22 @@ public class Projectile {
 		this.idk = idk;
 	}
 
+	/**
+	 * Rev 241's MAP_PROJANIM_V2 takes raw world-unit heights; the old packet's client multiplied by 4. Every
+	 * pre-241 value here is in the old 1/4 scale and is scaled on the way out, unless the projectile was built
+	 * from a rev 241 capture ({@link #rawHeights()}).
+	 */
+	private boolean rawHeights;
+
+	public Projectile rawHeights() {
+		this.rawHeights = true;
+		return this;
+	}
+
+	private int wireHeight(int height) {
+		return rawHeights ? height : height * 4;
+	}
+
 	public Projectile skipTravel() {
 		this.skipTravel = true;
 		return this;
@@ -187,11 +203,11 @@ public class Projectile {
 		Iterable<Player> players = regionBased ? entity.getPosition().getRegion().players : entity.localPlayers();
 		for (Player p : players) {
 			if (skipTravel) {
-				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			} else {
-				p.getPacketSender().sendProjectile(entity, target, gfxId, entityX, entityY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, target, gfxId, entityX, entityY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			}
 		}
 		return duration;
@@ -237,11 +253,11 @@ public class Projectile {
 		Iterable<Player> players = regionBased ? entity.getPosition().getRegion().players : entity.localPlayers();
 		for (Player p : players) {
 			if (skipTravel) {
-				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			} else {
-				p.getPacketSender().sendProjectile(entity, target, gfxId, entityX, entityY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, target, gfxId, entityX, entityY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			}
 		}
 		return duration;
@@ -326,11 +342,11 @@ public class Projectile {
 		Iterable<Player> players = regionBased ? npc.getPosition().getRegion().players : npc.localPlayers();
 		for (Player p : players) {
 			if (skipTravel)
-				p.getPacketSender().sendProjectile(npc, target, gfxId, targetX, targetY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(npc, target, gfxId, targetX, targetY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			else
-				p.getPacketSender().sendProjectile(npc, target, gfxId, entityX, entityY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(npc, target, gfxId, entityX, entityY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 		}
 		return duration;
 	}
@@ -367,10 +383,10 @@ public class Projectile {
 		Iterable<Player> players = regionBased ? entity.getPosition().getRegion().players : entity.localPlayers();
 		for (Player p : players) {
 			if (skipTravel)
-				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, target, gfxId, targetX, targetY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			else
-				p.getPacketSender().sendProjectile(entity, target, gfxId, srcX, srcY, targetX, targetY, startHeight, endHeight,
+				p.getPacketSender().sendProjectile(entity, target, gfxId, srcX, srcY, targetX, targetY, wireHeight(startHeight), wireHeight(endHeight),
 						delay, duration, curve, idk);
 		}
 		return duration;
@@ -411,11 +427,11 @@ public class Projectile {
 		Iterable<Player> players = regionBased ? entity.getPosition().getRegion().players : entity.localPlayers();
 		for (Player p : players) {
 			if (skipTravel)
-				p.getPacketSender().sendProjectile(entity, null, gfxId, targetX, targetY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, null, gfxId, targetX, targetY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 			else
-				p.getPacketSender().sendProjectile(entity, null, gfxId, entityX, entityY, targetX, targetY, startHeight,
-						endHeight, delay, duration, curve, idk);
+				p.getPacketSender().sendProjectile(entity, null, gfxId, entityX, entityY, targetX, targetY, wireHeight(startHeight),
+						wireHeight(endHeight), delay, duration, curve, idk);
 		}
 		return /* delay + */duration;
 	}
@@ -436,7 +452,7 @@ public class Projectile {
 		}
 
 		for (Player p : Region.get(startX, startY).players)
-			p.getPacketSender().sendProjectile(null, null, gfxId, startX, startY, destX, destY, startHeight, endHeight, delay,
+			p.getPacketSender().sendProjectile(null, null, gfxId, startX, startY, destX, destY, wireHeight(startHeight), wireHeight(endHeight), delay,
 					duration, curve, idk);
 		return /* delay + */duration;
 	}
@@ -473,10 +489,10 @@ public class Projectile {
 		for (Player p : players) {
 			if (skipTravel)
 				p.getPacketSender().sendProjectile(null, target, gfxId, target.getAbsX(), target.getAbsY(), target.getAbsX(),
-						target.getAbsY(), startHeight, endHeight, delay, duration, curve, idk);
+						target.getAbsY(), wireHeight(startHeight), wireHeight(endHeight), delay, duration, curve, idk);
 			else
 				p.getPacketSender().sendProjectile(null, target, gfxId, entityX, entityY, target.getAbsX(), target.getAbsY(),
-						startHeight, endHeight, delay, duration, curve, idk);
+						wireHeight(startHeight), wireHeight(endHeight), delay, duration, curve, idk);
 		}
 		return /* delay + */duration;
 	}
