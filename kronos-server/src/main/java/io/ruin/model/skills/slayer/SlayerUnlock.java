@@ -1,9 +1,7 @@
 package io.ruin.model.skills.slayer;
 
-import io.ruin.cache.EnumMap;
 
 import io.ruin.cache.ObjType;
-import io.ruin.cache.StructType;
 import io.ruin.model.World;
 
 import io.ruin.model.entity.player.Player;
@@ -640,10 +638,7 @@ public enum SlayerUnlock {
 
 	public static String taskName(Player player, int id) {
 		if (VarPlayerRepository.BOSS_TASK.get(player) != 0) {
-			var metaStructId =
-					EnumMap.get(5008).ints().get(VarPlayerRepository.BOSS_TASK.get(player) + 1);
-			var bossName = StructType.get(metaStructId).stringParam(1801);
-			return bossName;
+			return SlayerTaskNames.boss(VarPlayerRepository.BOSS_TASK.get(player));
 		}
 		if (id == TuraelTask.SOURHOG.getTaskId()) {
 			return TuraelTask.SOURHOG.getTaskName();
@@ -653,7 +648,7 @@ public enum SlayerUnlock {
 		if (id == TuraelTask.CHICKEN.getTaskId()) {
 			return "Birds (chickens count)";
 		}
-		return EnumMap.get(693).strings().get(id);
+		return SlayerTaskNames.get(id);
 	}
 
 	public static final List<Pair<Integer, VarPlayerRepository>> multipliable = Arrays.asList(

@@ -438,11 +438,7 @@ public final class SlayerCodex {
 	}
 
 	private static String blockedName(Player player, int id) {
-		try {
-			return io.ruin.cache.EnumMap.get(693).strings().get(id);
-		} catch (Exception e) {
-			return "Task " + id;
-		}
+		return SlayerTaskNames.get(id);
 	}
 
 	private static String masterName(int id) {
