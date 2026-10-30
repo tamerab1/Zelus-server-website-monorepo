@@ -27,6 +27,17 @@ public class VarPlayerRepository {
 	// read by the client's DevTools plugin (OWNER_CLIENT_FLAG_VARP); must be below PacketSender.CLIENT_VARP_COUNT
 	/** Tutorial progress; 1000 = finished. Set at login: rev 241 gates the bank Presets button on it. */
 	public static final VarPlayerRepository TUTORIAL_PROGRESS = varp(281, false);
+	/**
+	 * pvptut_active_tutorial: -1 outside the PvP tutorial. Left at 0, rev 241's script 10157 counts every instance
+	 * (x >= 6400) as the tutorial, and 10194 then shows Deadeye / Mystic Vigour / Zeal in the prayer book unlocked.
+	 */
+	public static final VarPlayerRepository PVPTUT_ACTIVE_TUTORIAL = varp(5850, false);
+	/**
+	 * date_minutes: real-time minutes. Rev 241's spellbook (script 2614) fades the Home Teleport icons while
+	 * date_minutes - aide_tele_timer (892) &lt; 30, and the minigame teleport while date_minutes - varp 888 &lt; 20; left at
+	 * 0 every icon looked on cooldown. Zelus has no home teleport cooldown, so 892/888 are never set.
+	 */
+	public static final VarPlayerRepository DATE_MINUTES = varp(3078, false);
 	public static final VarPlayerRepository OWNER_CLIENT_FLAG = varp(8000, false);
 
 	public static final VarPlayerRepository TEMPOROSS_REWARDS = varpbit(11936, false);

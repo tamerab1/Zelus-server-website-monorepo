@@ -2148,6 +2148,8 @@ public class Player extends PlayerAttributes {
 		// rev 241: the bank's Presets button (12:4, script 3369) only shows once tutorial progress (varp 281) is
 		// 1000, as on a finished account; Zelus has no tutorial island, so every player counts as done
 		VarPlayerRepository.TUTORIAL_PROGRESS.set(player, 1000);
+		VarPlayerRepository.PVPTUT_ACTIVE_TUTORIAL.set(player, -1);
+		VarPlayerRepository.DATE_MINUTES.set(player, (int) (System.currentTimeMillis() / 60_000L));
 
 		VarPlayerRepository.save(this);
 	}
