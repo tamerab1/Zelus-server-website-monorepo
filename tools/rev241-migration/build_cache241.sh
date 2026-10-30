@@ -45,5 +45,10 @@ echo "== stage 7: customs27 (soul T15 weapons, Vorgath, Baelgor)"; run PatchCust
 echo "== stage 8: elite void knights"; run PatchEliteVoid apply "$out" "$here/assets/elitevoid"
 echo "== stage 9: spellbook autocast option"; run PatchSpellbookAutocast apply "$out"
 echo "== stage 10: pvm ticket"; run PatchPvmTicket apply "$out"
+# stage 11 decodes rev 241 npc/obj definitions, so the rev 241 cache library goes ahead of the old one
+lib241="$root/client zelus/client rev241/cache/build/libs/cache-1.13.4.jar"
+if command -v cygpath >/dev/null; then lib241="$(cygpath -w "$lib241")"; fi
+echo "== stage 11: pet recolour broker + shadow pets"
+java -Xmx10g -cp "$cls$sep$lib241$sep$CP" PatchPetShadow apply "$out" "$data/pets/pet_recolor_exchange.json"
 echo "== integrity"; run IntegrityCheck241 "$out" "$v241" "$here/cache/integrity-report.json" "$data/cache" "$v231"
 echo "== done: $out"
