@@ -27,6 +27,7 @@ export const NEWS = [
       { heading: 'Raid 4: The Fractured Archive' },
       { image: '/assets/news/fractured-archive-ocellus.webp', alt: 'A party fighting Ocellus in the vault', caption: 'Ocellus waits at the end of the Archive.' },
       'Defeat the Archive Guardian in the Nexus, then choose your path at each set of doors: Ezekiel or Bork, Moia or Dreadnoth, the Dagon\'hai or Xarth. The road ends in the vault with Ocellus, and his fall opens the reward chests.',
+      { image: '/assets/news/fractured-archive-nexus.webp', alt: 'The overgrown Nexus at the start of the raid', caption: 'The Nexus, where the Archive Guardian waits.' },
       'Form a party at the grouping board in the lobby, follow your team on the party HUD, and track your clears, times and MVPs in the Alliance Log. Learning the raid? The Quartermaster outside the lobby rents full best-in-slot setups for PvM points, and the gear leaves you when the raid ends.',
       'Find it under Teleports, Minigames: The Fractured Archive.',
       { heading: 'Also in this update' },
@@ -35,6 +36,7 @@ export const NEWS = [
   },
   {
     id: 'radiant-soul-weapons-elite-void',
+    image: '/assets/news/elite-void-island.webp',
     title: 'Radiant Soul Weapons & the Elite Void Island',
     tag: 'Content',
     date: '2026-10-29',
@@ -44,8 +46,11 @@ export const NEWS = [
     body: [
       { heading: 'Soulbound weapons: Tier 15' },
       'Soulbound weapons now grow past Tier 10 all the way to Tier 15, where they take their Radiant form: the Radiant Soulblade, Radiant Soulbow and Radiant Soulspire, each with a new special attack. Your weapon keeps its tier, Soul XP and talents, so players at Tier 10 can keep climbing straight away.',
+      { image: '/assets/news/radiant-soulbow-preview.webp', alt: 'The Soul Tree Weapon tab previewing the Radiant Soulbow', caption: 'Preview every Radiant form from the Weapon tab.' },
       'The Soul Tree has a new look with Weapon and Talents tabs and three new talents: Soul Precision, Soul Harvest and Soul Resonance. Your first reset is still free; after that a reset costs 500 PvM points instead of 5M coins.',
+      { image: '/assets/news/radiant-soul-tree.webp', alt: 'The Soul Tree Talents tab of a Tier 15 Radiant Soulspire', caption: 'The new Talents tab, with Soul Harvest at rank 4.' },
       { heading: 'The Elite Void Island' },
+      { image: '/assets/news/elite-void-island.webp', alt: 'The walled Elite Void Island seen from its jetty', caption: 'The island, seen from the jetty.' },
       'Elite Void Knights (melee, ranged and magic) have taken over an island of their own. Every knight can drop the Elite Void top and robe, Void knight gloves and all three Void helms, and the island has its own collection log page.',
       'Teleport there from Teleports, Monsters: Elite Void Island, or type ::elitevoid. Pest Control and its Elite Void exchange are unchanged.',
     ],
