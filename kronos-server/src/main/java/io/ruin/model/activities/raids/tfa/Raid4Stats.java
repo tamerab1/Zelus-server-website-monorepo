@@ -38,6 +38,8 @@ public final class Raid4Stats {
 	public static final int INTERFACE = 979, CLOSE = 29;
 	private static final int SCRIPT_OPEN = 10102, SCRIPT_SELECT = 10109, SCRIPT_INIT_TABLE = 10123,
 			SCRIPT_SHOW_TABLE = 10121, SCRIPT_ROW = 10125;
+	/** 10123 ends by starting the loading spinner (10120, on 979:33); only this hides it, and no cache script calls it. */
+	private static final int SCRIPT_LOADED = 10124;
 	/**
 	 * Party Stats (mode 1, the vault's Merit scroll): 10131(members) builds the table (name, Damage Done, Damage Taken,
 	 * Deaths, Number of Bosses as MVP, Total), 10136(slot, done, taken, deaths, mvps, name) a member, 10137(done,
@@ -155,6 +157,7 @@ public final class Raid4Stats {
 							store.today.getOrDefault(key, 0));
 				}
 			}
+		ps.sendClientScript(SCRIPT_LOADED, "");
 		partyIfInside(player);
 	}
 

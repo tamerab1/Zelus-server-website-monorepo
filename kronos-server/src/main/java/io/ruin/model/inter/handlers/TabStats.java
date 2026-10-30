@@ -76,6 +76,9 @@ public class TabStats {
 	public static void openGuide(Player player, StatType statType, int category) {
 		VarPlayerRepository.SKILL_GUIDE.set(player, (statType.clientId & 0x3FF) | (category & 0x1F) << 10);
 		player.openInterface(ToplevelComponent.WORLD_MAP, Interface.SKILL_GUIDE);
+		// rev 241: nothing in the cache fills the guide; the server runs 9340 (skill, section, 0, 0) and the client's
+		// own section buttons (script 9341) take it from there. Without it both scrolls stay empty.
+		player.getPacketSender().sendClientScript(9340, "iiii", statType.clientId, category, 0, 0);
 	}
 
 	private static void selectCategory(Player player, int category) {
