@@ -23,10 +23,11 @@ import java.util.List;
  */
 public class PetRecolorExchange {
 
+	// wears the Zoo keeper (3302) look since 2026-10-30 (cache stage PatchPetShadow); it was a Zelus Point Store clone
 	public static final int BROKER_NPC_ID = 30068;
 
 	public static void register() {
-		NPCAction.register(BROKER_NPC_ID, "talk-to", (player, npc) -> player.dialogue(
+		NPCAction.register(BROKER_NPC_ID, 1, (player, npc) -> player.dialogue(
 			new NPCDialogue(npc, "Bring me one of your boss pets and I can recolor it into a Shadow, " +
 				"Golden, or Blood variant -- for a price in donator points or vote points."),
 			new NPCDialogue(npc, "Just use the pet on me to get started. Fair warning: the original pet " +

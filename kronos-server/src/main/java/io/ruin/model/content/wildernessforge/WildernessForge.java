@@ -117,28 +117,11 @@ public class WildernessForge {
 		new Recipe(Category.ARMOUR, 24291, 42428, 70, TIER_A), // Dagon'hai robe top -> Nightweaver
 		new Recipe(Category.ARMOUR, 24294, 42430, 70, TIER_A), // Dagon'hai robe bottom -> Nightweaver
 		rowBreak(Category.ARMOUR),
-		// Armour: Kingsguard (Shayzien 5)
-		new Recipe(Category.ARMOUR, 13379, 42432, 70, TIER_A), // Shayzien helm (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13381, 42434, 70, TIER_A), // Shayzien body (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13380, 42436, 70, TIER_A), // Shayzien greaves (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13378, 42438, 70, TIER_A), // Shayzien boots (5) -> Kingsguard
-		new Recipe(Category.ARMOUR, 13377, 42440, 70, TIER_A), // Shayzien gloves (5) -> Kingsguard
-		rowBreak(Category.ARMOUR),
 		// Armour: Glacius (Virtus)
 		new Recipe(Category.ARMOUR, 30521, 42452, 40, TIER_D), // Virtus mask -> Glacius
 		new Recipe(Category.ARMOUR, 30522, 42454, 40, TIER_D), // Virtus robe top -> Glacius
 		new Recipe(Category.ARMOUR, 30523, 42456, 40, TIER_D), // Virtus robe bottom -> Glacius
 		rowBreak(Category.ARMOUR),
-		// Armour: Solarflare (Sunfire fanatic)
-		new Recipe(Category.ARMOUR, 28933, 42458, 40, TIER_D), // Sunfire fanatic helm -> Solarflare
-		new Recipe(Category.ARMOUR, 28936, 42460, 40, TIER_D), // Sunfire fanatic cuirass -> Solarflare
-		new Recipe(Category.ARMOUR, 28939, 42462, 40, TIER_D), // Sunfire fanatic chausses -> Solarflare
-		rowBreak(Category.ARMOUR),
-		// Armour: Wildstalker (Trailblazer t3)
-		new Recipe(Category.ARMOUR, 25001, 42464, 70, TIER_A), // Trailblazer hood (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25004, 42466, 70, TIER_A), // Trailblazer top (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25007, 42468, 70, TIER_A), // Trailblazer trousers (t3) -> Wildstalker
-		new Recipe(Category.ARMOUR, 25010, 42470, 70, TIER_A), // Trailblazer boots (t3) -> Wildstalker
 		// Armour: Magmacore (Obsidian)
 		new Recipe(Category.ARMOUR, 21298, 42472, 70, TIER_A), // Obsidian helmet -> Magmacore
 		new Recipe(Category.ARMOUR, 21301, 42474, 70, TIER_A), // Obsidian platebody -> Magmacore

@@ -1,7 +1,9 @@
 package io.ruin.model.entity.npc.actions.edgeville;
 
+import io.ruin.data.impl.pets.pet_recolor_exchange;
 import io.ruin.model.content.combatachievements.CombatAchievementSystem;
 import io.ruin.model.entity.npc.NPCAction;
+import io.ruin.model.entity.npc.combatpet.CombatPets;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.shared.listeners.LoginListener;
 import io.ruin.model.inter.dialogue.NPCDialogue;
@@ -12,8 +14,12 @@ import io.ruin.model.item.actions.ItemNPCAction;
 import io.ruin.model.item.actions.impl.pet.Pet;
 import io.ruin.model.var.VarPlayerRepository;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Probita {
 
@@ -24,9 +30,44 @@ public class Probita {
 				continue;
 			if (player.getInventory().contains(petItemId) || player.getBank().contains(petItemId) || (player.pet != null && player.pet.itemId == petItemId))
 				continue;
+			if (consumed(player, petItemId))
+				continue;
 			pets.add(petItemId);
 		}
 		return pets;
+	}
+
+	/**
+	 * A pet that was traded in for a recolour (Pet Recolour Broker) or ascended to its next combat tier is gone for good:
+	 * both stay in petItemIdsObtained (and login re-adds dropped pets from uniqueDrops), so without this Probita handed
+	 * the old pet back for free next to the new one. Anything ever obtained from it counts, even if that is lost too --
+	 * Probita returns that one instead.
+	 */
+	private static boolean consumed(Player player, int petItemId) {
+		Deque<Integer> todo = new ArrayDeque<>(successors(petItemId));
+		Set<Integer> seen = new HashSet<>();
+		while (!todo.isEmpty()) {
+			int id = todo.pop();
+			if (!seen.add(id))
+				continue;
+			if (player.petItemIdsObtained.contains(id))
+				return true;
+			todo.addAll(successors(id));
+		}
+		return false;
+	}
+
+	private static List<Integer> successors(int petItemId) {
+		List<Integer> next = new ArrayList<>();
+		List<pet_recolor_exchange.Variant> variants = pet_recolor_exchange.BY_BASE_ITEM_ID.get(petItemId);
+		if (variants != null)
+			for (pet_recolor_exchange.Variant v : variants)
+				next.add(v.itemId);
+		Pet pet = Pet.getByItemId(petItemId);
+		Pet higher = pet == null ? null : CombatPets.nextTier(pet);
+		if (higher != null)
+			next.add(higher.itemId);
+		return next;
 	}
 
 	public static void register() {
