@@ -130,6 +130,36 @@ public final class Raid4Commands {
 					best.hit(new io.ruin.model.combat.Hit(player).fixedDamage(damage).ignoreDefence().ignorePrayer());
 				player.sendMessage(best.getDef().name + " -> " + pct + "%");
 			}
+			case "rescue" -> {
+				// staff: send a party stuck after Ocellus on to the vault, as The Blade's Travel does (2026-10-31: a
+				// party couldn't reach The Blade); refused unless Ocellus is dead, so it never skips any of the raid
+				io.ruin.model.entity.player.Player target = name == null ? null : io.ruin.model.World.getPlayer(name.trim());
+				Raid4Controller raid = target == null ? null : Raid4.controllerOf(target);
+				if (raid == null || raid.getRoom() == null || raid.getRoom().type() != Raid4RoomType.OCELLUS || !raid.getRoom().isComplete()) {
+					player.sendMessage("::raid4 rescue <player> - they must be online, in a raid, with Ocellus dead.");
+				} else {
+					raid.travelToVault(target);
+					player.sendMessage("Sent " + target.getName() + "'s party on to the vault.");
+				}
+			}
+			case "compensate" -> {
+				// staff: one Fractured Archive chest, rolled as a solo vault chest and banked as the vault does, for a
+				// raider whose run was lost to a bug (2026-10-31: a party couldn't reach The Blade after Ocellus).
+				// Logged: it's a reward grant.
+				Player target = name == null ? null : World.getPlayer(name.trim());
+				if (target == null) {
+					player.sendMessage("::raid4 compensate <player> - they must be online.");
+					return true;
+				}
+				Raid4Points points = new Raid4Points();
+				points.damageDealt(target, 1); // any points: a plain chest, never the no-points cabbage
+				Raid4Loot.Reward reward = Raid4Loot.roll(java.util.List.of(target), points).get(target);
+				Raid4VaultRoom.claim(target, reward);
+				target.sendMessage("<col=ef1020>Staff have given you a Fractured Archive chest for your lost run.</col>");
+				player.sendMessage("Gave " + target.getName() + " one Fractured Archive chest (" + reward.items.size() + " item(s)).");
+				org.slf4j.LoggerFactory.getLogger(Raid4Commands.class).info("Raid 4: {} compensated {} with a chest: {}",
+						player.getName(), target.getName(), reward.items);
+			}
 			case "stop" -> Raid4Lobby.stopSpectating(player);
 			case "claim" -> {
 				Raid4Loot.Reward reward = Raid4.unclaimed.remove(Raid4Party.key(player));

@@ -1557,6 +1557,9 @@ public class Player extends PlayerAttributes {
 		if (updatedVarpCount == 0) {
 			return;
 		}
+		if (updatedVarps[16002] || updatedVarps[16003] || updatedVarps[16004]) {
+			io.ruin.model.skills.slayer.Slayer.syncClientVarps(this);
+		}
 		for (int i = 0; i < updatedVarpCount; i++) {
 			int id = updatedVarpIds[i];
 			int value = varps[id];

@@ -71,13 +71,15 @@ public class Raid4VaultRoom implements Raid4Room {
 			player.fracturedArchiveKills.messageOnKill();
 		}
 		Map<Player, Raid4Loot.Reward> rolled = Raid4Loot.roll(players, controller.getPoints());
-		// all eight chests every run, facing the middle; chest N is the raider in party slot N (5..8 stay shut unused)
-		for (int i = 0; i < VAULT_CHESTS.length; i++) {
+		// chest N is the raider in party slot N, facing the middle. OSRS lays out all eight every run and marks yours only
+		// by a brighter light (TFA_VAULT_OWN_CHEST: ambient 50 vs 20), which raiders missed (2026-10-31: a solo raider
+		// tried five chests). Only the party's chests are put out, and onEnter points a hint arrow at yours.
+		List<String> members = controller.getParty().getMembers();
+		for (int i = 0; i < Math.min(VAULT_CHESTS.length, members.size()); i++) {
 			NPC chest = spawn(NPC_VAULT_CHEST_FIRST + 2 * i, local(VAULT_CHESTS[i][0], VAULT_CHESTS[i][1]), Direction.SOUTH);
 			Raid4Fx.faceTile(chest, local(VAULT_CHEST_FACE_X, VAULT_CHEST_FACE_Y));
 			chests.add(chest);
 		}
-		List<String> members = controller.getParty().getMembers();
 		for (Map.Entry<Player, Raid4Loot.Reward> e : rolled.entrySet()) {
 			String key = Raid4Party.key(e.getKey());
 			rewards.put(key, e.getValue());
@@ -112,6 +114,23 @@ public class Raid4VaultRoom implements Raid4Room {
 
 	@Override
 	public void onEnter(Player player) {
+		// two ticks in, once the client has the island and its chests (the arrow names the chest's npc index)
+		player.addEvent(e -> {
+			e.delay(2);
+			NPC own = ownChest(Raid4Party.key(player));
+			if (own != null && rewards.containsKey(Raid4Party.key(player)))
+				player.sendHintArrow(own);
+		});
+	}
+
+	/** The chest holding this raider's reward: the special chest for the unique's owner, else their own. */
+	private NPC ownChest(String key) {
+		if (key.equals(uniqueOwner) && bigChest != null)
+			return bigChest;
+		for (Map.Entry<NPC, String> e : owners.entrySet())
+			if (e.getValue().equals(key))
+				return e.getKey();
+		return null;
 	}
 
 	/** A member's chest, or the special chest. */
@@ -138,6 +157,7 @@ public class Raid4VaultRoom implements Raid4Room {
 			return;
 		}
 		rewards.remove(key);
+		player.clearHintArrow();
 		player.face(chest);
 		player.animate(SEQ_SMALL_CHEST_OPEN);
 		if (chest == bigChest)

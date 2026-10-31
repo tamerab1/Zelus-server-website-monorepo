@@ -1819,7 +1819,50 @@ public class OcellusRoom extends Raid4BossRoom {
 			boss.avatarExtended().setAllOpsInvisible();
 		controller.getParty().message("The Fractured Archive: Total completion time: <col=ef1020>" + clock(controller.ticks()) + "</col>");
 		Position tile = boss.getPosition().copy();
-		schedule.after(14, () -> spawn(NPC_BLADE_VAULT_ENTRY, tile, Direction.SOUTH));
+		// 2026-10-31 (a party stuck on prod): phase 4's block3x3 under him was never lifted, so The Blade appeared on
+		// blocked tiles beside the void and "I can't reach that!" kept the raiders from the vault. Lift his footprint
+		// (the fallen quadrants stay blocked), and bring everyone beside The Blade when it appears.
+		unblockAll();
+		for (int q = 0; q < 4; q++)
+			if (fallen[q])
+				for (int x = 2; x <= 12; x++)
+					for (int y = 2; y <= 12; y++)
+						block(o(qsx(q) * x, qsy(q) * y));
+		schedule.after(14, () -> gatherAt(spawn(NPC_BLADE_VAULT_ENTRY, tile, Direction.SOUTH)));
+	}
+
+	/** Every raider not already beside The Blade is brought onto open ground next to it, so its Travel can be used. */
+	private void gatherAt(NPC blade) {
+		int size = blade.getSize();
+		for (Player p : fighters()) {
+			if (distance(blade.getPosition(), size, p.getPosition()) == 1
+					&& Tile.get(p.getAbsX(), p.getAbsY(), p.getHeight(), true).clipping == 0)
+				continue;
+			Position spot = openBeside(blade.getPosition(), size);
+			if (spot == null)
+				continue;
+			p.getMovement().reset();
+			Raid4Fx.teleportNow(p, spot);
+			p.graphics(409);
+			p.sendMessage("The Blade draws you to it. Use its Travel option to reach the vault.");
+		}
+	}
+
+	/** The nearest unblocked tile around a footprint (rings 1-4), never on a fallen quadrant; null if there's none. */
+	private Position openBeside(Position sw, int size) {
+		for (int ring = 1; ring <= 4; ring++)
+			for (int x = sw.getX() - ring; x < sw.getX() + size + ring; x++)
+				for (int y = sw.getY() - ring; y < sw.getY() + size + ring; y++) {
+					Position p = new Position(x, y, sw.getZ());
+					if (distance(sw, size, p) != ring)
+						continue;
+					int q = quadrantOf(p);
+					if (q >= 0 && fallen[q])
+						continue;
+					if (Tile.get(x, y, sw.getZ(), true).clipping == 0)
+						return p;
+				}
+		return null;
 	}
 
 	private static String clock(long ticks) {

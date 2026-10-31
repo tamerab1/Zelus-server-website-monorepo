@@ -553,6 +553,7 @@ public enum Pet {
 	AGGY(44842, 22038, false), // Mad Angel pet
 	SYLVAROTH_SPROUT(60330, 30558, false), // Sylvaroth pet
 	BABY_DRACO(60391, 30566, false, 870), // Draco pet (David npc mining minigame), 1/870 from Draco kills
+	SOLARMANE_CUB(60407, 30612, false, 500), // Solarmane pet (cache stage 12), rolled by Solarmane on each kill
 	// The Fractured Archive: Orion (and its robed form) and the raid's boss pets, cache followers 16631-16639
 	ORION(34646, 16631, false),
 	ORION_ROBED(34648, 16632, false),

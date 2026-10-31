@@ -989,6 +989,8 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public boolean restored;
 	public boolean beforeFuckup;
 	public boolean edgeHome;
+	/** ModernTeleport.TeleportStyle ordinal, picked from the home teleport's "Animation" option */
+	public int teleportStyle;
 	public boolean tobreward = false;
 	public boolean acceptedTheatreRisk;
 	public boolean acceptedTheatreCrystals;
@@ -1492,6 +1494,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter tormentedDemonKills = new KillCounter();
 	public KillCounter cindermawKills = new KillCounter();
 	public KillCounter madAngelKills = new KillCounter();
+	public KillCounter solarmaneKills = new KillCounter();
 	public KillCounter sylvarothKills = new KillCounter();
 	/* the Sanctum's main bosses (io.ruin.model.activities.bosses.sanctum) */
 	public KillCounter harrowlordKills = new KillCounter();

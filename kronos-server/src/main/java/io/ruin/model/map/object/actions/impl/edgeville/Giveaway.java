@@ -103,7 +103,7 @@ public class Giveaway {
         }
 
         player.openInterface(ToplevelComponent.MAINMODAL, 709);
-        player.getPacketSender().sendClientScript(10069,
+        player.getPacketSender().sendClientScript(14652, // custom 10069, moved +4583 in the rev 241 cache (Jagex took 10069)
             "ssssssiiiiiiiiiii",
             CURRENT_GIVEAWAY.title, "Welcome to the first ever " + World.type.getWorldName() + " community giveaway! Each player has the opportunity to buy themselves 20 individual entries for the chance at winning free stuff. Throughout the duration of this competition, collective member entries will increase the giveaway tiers which will in turn increase the amount of draws; more draws means more winners! Enter now for your chance, or chances, to win!",
             CURRENT_GIVEAWAY.rewardDetails1,
@@ -168,7 +168,7 @@ public class Giveaway {
             player.giveawayEntries += amount;
             ENTRIES.put(player.getIp(), player.getUserId());
 
-            player.getPacketSender().sendClientScript(10076,
+            player.getPacketSender().sendClientScript(14659, // custom 10076, moved +4583 in the rev 241 cache
                 "iiii",
                 player.giveawayEntries, CURRENT_GIVEAWAY.entriesPerPerson,
                 totalAmount, CURRENT_GIVEAWAY.costPerEntry * CURRENT_GIVEAWAY.totalEntries
@@ -181,7 +181,7 @@ public class Giveaway {
                         continue;
                     }
 
-                    other.getPacketSender().sendClientScript(10076,
+                    other.getPacketSender().sendClientScript(14659, // custom 10076, moved +4583 in the rev 241 cache
                         "iiii",
                         other.giveawayEntries, CURRENT_GIVEAWAY.entriesPerPerson,
                         totalAmount, CURRENT_GIVEAWAY.costPerEntry * CURRENT_GIVEAWAY.totalEntries

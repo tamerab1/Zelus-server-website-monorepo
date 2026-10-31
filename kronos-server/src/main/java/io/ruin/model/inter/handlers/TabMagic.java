@@ -39,6 +39,8 @@ public class TabMagic {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								ModernTeleport.teleport(player, World.HOME);
+							} else if (option == 2) {
+								ModernTeleport.chooseStyle(player);
 							} else if (option == 9) {
 								if (player.teleportListener != null && !player.teleportListener.allow(player)) {
 									return;
@@ -114,6 +116,8 @@ public class TabMagic {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								AncientTeleport.teleport(player, World.HOME);
+							} else if (option == 2) {
+								ModernTeleport.chooseStyle(player);
 							} else if (option == 9) {
 								if (player.teleportListener != null && !player.teleportListener.allow(player)) {
 									return;
@@ -189,6 +193,8 @@ public class TabMagic {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								LunarTeleport.teleport(player, World.HOME);
+							} else if (option == 2) {
+								ModernTeleport.chooseStyle(player);
 							} else if (option == 9) {
 								if (player.teleportListener != null && !player.teleportListener.allow(player)) {
 									return;
@@ -264,6 +270,8 @@ public class TabMagic {
 						h.actions[component] = (DefaultAction) (player, option, slot, itemId) -> {
 							if (option == 1) {
 								ArceuusTeleport.teleport(player, World.HOME);
+							} else if (option == 2) {
+								ModernTeleport.chooseStyle(player);
 							} else if (option == 9) {
 								if (player.teleportListener != null && !player.teleportListener.allow(player)) {
 									return;

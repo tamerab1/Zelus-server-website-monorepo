@@ -70,6 +70,7 @@ public final class StaticInit {
 		io.ruin.model.activities.bosses.vorkath.Vorkath.register();
 		io.ruin.model.activities.bosses.madangel.MadAngel.register();
 		io.ruin.model.activities.bosses.customs27.Customs27Bosses.register(); // Vorgath + Baelgor (::vorgath / ::baelgor), 2026-10-27
+		io.ruin.model.activities.bosses.solarmane.Solarmane.register(); // Solarmane, the sun-lion (::solarmane), 2026-10-31
 		io.ruin.model.activities.bosses.madangel.MadAngelItems.register();
 		io.ruin.model.activities.raids.tfa.Raid4.register();
 		io.ruin.model.activities.elitevoid.EliteVoidIsland.register(); // Elite Void island (knights 20002-20004), 2026-10-29

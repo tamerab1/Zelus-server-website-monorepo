@@ -1268,6 +1268,15 @@ public class VarPlayerRepository {
 	public static final VarPlayerRepository SLAYER_TASK_AMOUNT = varp(16002, true);
 	public static final VarPlayerRepository SLAYER_TASK = varp(16003, true);
 	public static final VarPlayerRepository BOSS_TASK = varp(16004, true);
+	/**
+	 * The vanilla slayer varps the client's Slayer plugin reads (task infobox, kills left on slayer items); mirrored
+	 * from the three above by Slayer.syncClientVarps. Target + original count are saved so the progress survives
+	 * a relog.
+	 */
+	public static final VarPlayerRepository SLAYER_CLIENT_COUNT = varp(394, false);
+	public static final VarPlayerRepository SLAYER_CLIENT_TARGET = varp(395, true);
+	public static final VarPlayerRepository SLAYER_CLIENT_COUNT_ORIGINAL = varp(4258, true);
+	public static final VarPlayerRepository SLAYER_CLIENT_BOSS = varpbit(4723, false);
 	public static final VarPlayerRepository EYE_SEE_YOU_VARP = varp(11023, true);
 	public static final VarPlayerRepository SLAYER_LONGER_ARAXYTES = varp(11022, true);
 

@@ -15,6 +15,8 @@ import java.util.function.BiConsumer;
 public class SkillDialogue implements Dialogue {
 
 	private static final SkillItem EMPTY = new SkillItem(-1).name("");
+	/** rev 241's make dialogue (270) has 18 item slots, components 15..32 (231 had 10) */
+	private static final int SLOTS = 18;
 
 	/**
 	 * Handling
@@ -22,7 +24,7 @@ public class SkillDialogue implements Dialogue {
 
 	public static void register() {
 		InterfaceHandler.register(Interface.MAKE_DIALOGUE, h -> {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < SLOTS; i++) {
 				int index = i;
 				h.actions[15 + i] = (DefaultAction) (player, option, slot, itemId) -> {
 					select(player, index, slot);
@@ -113,16 +115,20 @@ public class SkillDialogue implements Dialogue {
 		player.getPacketSender().sendToplevelSubInterface(Interface.MAKE_DIALOGUE, Subcomponent.DIALOGUE, ToplevelComponent.CHATBOX);
 		StringBuilder sb = new StringBuilder(title);
 		sb.append("|");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < SLOTS; i++) {
 			sb.append(getItem(i).name)
 				.append("|");
 		}
-		player.getPacketSender().sendClientScript(2046, "isiooooooooooi", allowMakeX ? 0 : 3,
-			sb.toString(),
-			maxAmount,
-			getItem(0).id, getItem(1).id, getItem(2).id, getItem(3).id, getItem(4).id,
-			getItem(5).id, getItem(6).id, getItem(7).id, getItem(8).id, getItem(9).id,
-			player.lastMakeXAmount);
+		// rev 241 script 2046: mode, "title|names", max amount, the 18 slot items, last Make-X amount (21 ints, 1 string);
+		// with 231's 10 items the last amount landed in slot 11 and the real one was missing
+		Object[] args = new Object[3 + SLOTS + 1];
+		args[0] = allowMakeX ? 0 : 3;
+		args[1] = sb.toString();
+		args[2] = maxAmount;
+		for (int i = 0; i < SLOTS; i++)
+			args[3 + i] = getItem(i).id;
+		args[3 + SLOTS] = player.lastMakeXAmount;
+		player.getPacketSender().sendClientScript(2046, "isi" + "o".repeat(SLOTS) + "i", args);
 		for (int i = 0; i < items.length; i++) {
 			player.getPacketSender().sendIfEvents(Interface.MAKE_DIALOGUE, 15 + i, 1, 8, 1);
 		}

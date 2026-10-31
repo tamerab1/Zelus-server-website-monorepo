@@ -495,6 +495,7 @@ public class Raid4Controller {
 
 	private void clearPlayer(Player player) {
 		Raid4Hud.closeRaidHud(player);
+		player.clearHintArrow(); // the vault's own-chest arrow names an npc index that means nothing outside
 		player.teleportListener = null;
 		player.deathEndListener = null;
 		player.setInvincible(false);

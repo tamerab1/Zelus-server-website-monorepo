@@ -69,9 +69,9 @@ public final class Scoreboard {
 		PVM_LOOT(Category.PVM, "PvM Loot Value", true, 995, "Loot (gp)"),
 		COX(Category.PVM, "Chambers of Xeric", true, 20851, "Runs"),
 		TOB(Category.PVM, "Theatre of Blood", true, 22473, "Runs"),
-		ZULRAH(Category.PVM, "Zulrah", true, 12921, "Kills"),
-		CORP(Category.PVM, "Corporeal Beast", true, 12816, "Kills"),
-		NEX(Category.PVM, "Nex", true, 26348, "Kills"),
+		TOA(Category.PVM, "Tombs of Amascut", true, 27352, "Runs"),
+		RAID4(Category.PVM, "Fractured Archive", true, 34646, "Runs"),
+		OBSIDIAN_RELIQUARY(Category.PVM, "Obsidian Reliquary", true, 42532, "Kills"),
 		REVENANTS(Category.PVM, "Revenants", true, 21820, "Kills"),
 		SKILL_XP(Category.SKILLING, "Skilling XP", true, 13280, "XP"),
 		RESOURCES(Category.SKILLING, "Resources Gathered", true, 1511, "Gathered"),
@@ -244,9 +244,11 @@ public final class Scoreboard {
 		String n = name.toLowerCase(Locale.ROOT);
 		Stat stat = n.startsWith("chambers of xeric") ? Stat.COX
 			: n.startsWith("theatre of blood") ? Stat.TOB
-			: n.equals("zulrah") ? Stat.ZULRAH
-			: n.equals("corporeal beast") ? Stat.CORP
-			: n.equals("nex") ? Stat.NEX
+			: n.startsWith("tombs of amascut") ? Stat.TOA
+			: n.equals("the fractured archive") ? Stat.RAID4
+			// the Obsidian Reliquary (Sanctum) wings' three bosses share one entry
+			: n.equals("sanguine harrowlord") || n.equals("gloomfang devourer") || n.equals("venomtongue abomination")
+				? Stat.OBSIDIAN_RELIQUARY
 			: n.contains("revenant") ? Stat.REVENANTS : null;
 		if (stat != null)
 			record(player, stat, 1);

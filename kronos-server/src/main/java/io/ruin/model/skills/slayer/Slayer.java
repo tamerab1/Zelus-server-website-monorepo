@@ -5,6 +5,7 @@ import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.containers.Equipment;
 import io.ruin.model.skills.slayer.master.*;
+import io.ruin.model.var.VarPlayerRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,25 @@ public class Slayer {
 			return false;
 		boolean isBossTask = player1.bossSlayerName != null && player1.bossSlayerName.equalsIgnoreCase(npc.getDef().name);
 		return SlayerMaster.isTask(player1, npc) || isBossTask;
+	}
+
+	/**
+	 * Copies the server's slayer task (custom varps 16002-16004) into the vanilla varps the client's Slayer plugin
+	 * reads. Task ids are the OSRS ones (match the 241 slayer_task db table); boss ids there are 1-based, ours 0-based.
+	 * Called from Player.sendVarps when any of the three changed, so it also runs after login loads them.
+	 */
+	public static void syncClientVarps(Player player) {
+		int amount = VarPlayerRepository.SLAYER_TASK_AMOUNT.get(player);
+		int task = VarPlayerRepository.SLAYER_TASK.get(player);
+		int original = VarPlayerRepository.SLAYER_CLIENT_COUNT_ORIGINAL.get(player);
+		if (amount <= 0)
+			original = 0;
+		else if (task != VarPlayerRepository.SLAYER_CLIENT_TARGET.get(player) || amount > original)
+			original = amount;
+		VarPlayerRepository.SLAYER_CLIENT_COUNT_ORIGINAL.set(player, original);
+		VarPlayerRepository.SLAYER_CLIENT_TARGET.set(player, task);
+		VarPlayerRepository.SLAYER_CLIENT_BOSS.set(player, task == 98 ? VarPlayerRepository.BOSS_TASK.get(player) + 1 : 0);
+		VarPlayerRepository.SLAYER_CLIENT_COUNT.set(player, Math.max(amount, 0));
 	}
 
 	public static boolean hasSlayerHelmEquipped(Player player) {

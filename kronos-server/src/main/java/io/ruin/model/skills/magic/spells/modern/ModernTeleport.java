@@ -87,15 +87,77 @@ public class ModernTeleport extends Spell {
 	public static final int CYAN_ARRIVE_ANIM = 8807, CYAN_ARRIVE_GFX = 6699;
 
 	/**
-	 * The full Arceuus teleport, same timing as the original spell: the casting animation (5 ticks), then the
-	 * vanishing animation (3 ticks). Call from inside a teleport event, then move the player.
+	 * The teleport animations a player can pick from the home teleport's "Animation" option (saved as
+	 * {@code player.teleportStyle}, so never reorder). ZELUS is the default; GRANDMASTER is the Combat Achievements
+	 * tier 6 teleport and LAST_RECALL the Trailblazer league one.
+	 */
+	public enum TeleportStyle {
+		ZELUS("Zelus (cyan)"),
+		STANDARD("Standard"),
+		GRANDMASTER("Grandmaster"),
+		LAST_RECALL("Last Recall");
+
+		public final String name;
+
+		TeleportStyle(String name) {
+			this.name = name;
+		}
+
+		public static final TeleportStyle[] VALUES = values();
+
+		public static TeleportStyle of(Player player) {
+			int i = player.teleportStyle;
+			return i >= 0 && i < VALUES.length ? VALUES[i] : ZELUS;
+		}
+	}
+
+	public static void chooseStyle(Player player) {
+		TeleportStyle current = TeleportStyle.of(player);
+		io.ruin.model.inter.utils.Option[] options = new io.ruin.model.inter.utils.Option[TeleportStyle.VALUES.length];
+		for (TeleportStyle style : TeleportStyle.VALUES) {
+			options[style.ordinal()] = new io.ruin.model.inter.utils.Option(style == current ? style.name + " (current)" : style.name, () -> {
+				player.teleportStyle = style.ordinal();
+				player.sendMessage("Your teleport animation is now: " + style.name + ".");
+			});
+		}
+		player.dialogue(new io.ruin.model.inter.dialogue.OptionsDialogue("Choose your teleport animation", options));
+	}
+
+	/**
+	 * The player's chosen teleport animation. ZELUS is the full Arceuus teleport, same timing as the original spell:
+	 * the casting animation (5 ticks), then the vanishing animation (3 ticks). Call from inside a teleport event,
+	 * then move the player. The move is only queued (applied on the next update), so a reappear animation started on
+	 * the last tick here plays at the destination.
 	 */
 	public static void playEffect(io.ruin.process.event.Event e, Player player) {
-		player.animate(CYAN_TELEPORT_ANIM);
-		player.graphics(CYAN_TELEPORT_GFX, 92, 0);
-		e.delay(5);
-		player.animate(CYAN_ARRIVE_ANIM);
-		player.graphics(CYAN_ARRIVE_GFX, 92, 0);
-		e.delay(3);
+		switch (TeleportStyle.of(player)) {
+			case STANDARD -> {
+				player.animate(714);
+				player.graphics(111, 92, 0);
+				e.delay(3);
+			}
+			case GRANDMASTER -> {
+				player.animate(9131);
+				player.graphics(1945);
+				e.delay(5);
+				player.animate(9133);
+				player.graphics(1951);
+			}
+			case LAST_RECALL -> {
+				player.animate(8794);
+				player.graphics(1824);
+				e.delay(3);
+				player.animate(8796);
+				player.graphics(1825);
+			}
+			default -> {
+				player.animate(CYAN_TELEPORT_ANIM);
+				player.graphics(CYAN_TELEPORT_GFX, 92, 0);
+				e.delay(5);
+				player.animate(CYAN_ARRIVE_ANIM);
+				player.graphics(CYAN_ARRIVE_GFX, 92, 0);
+				e.delay(3);
+			}
+		}
 	}
 }

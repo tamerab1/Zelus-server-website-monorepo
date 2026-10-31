@@ -52,6 +52,7 @@ public class KillCounter {
 		// as her real combat form -- matched by npc id (16305) instead of name to avoid assigning
 		// this counter to forms that never actually die in combat (harmless either way, but precise).
 		set(p -> p.madAngelKills, 22026);
+		set(p -> p.solarmaneKills, 30611);
 		// Draco by id (all 6 forms 30560-30565) -- the name overload is a substring match and would
 		// also pick up "Draco Whelp" / "Baby Draco".
 		set(p -> p.dracoKills, 30560, 30561, 30562, 30563, 30564, 30565);
@@ -204,6 +205,7 @@ public class KillCounter {
 			p.tormentedDemonKills.setName("Tormented Demon").messageOnKill();
 			p.cindermawKills.setName("Cindermaw").messageOnKill();
 			p.madAngelKills.setName("Mad Angel").messageOnKill();
+			p.solarmaneKills.setName("Solarmane").messageOnKill();
 			p.sylvarothKills.setName("Sylvaroth").messageOnKill();
 			p.harrowlordKills.setName("Sanguine Harrowlord").messageOnKill();
 			p.gloomfangKills.setName("Gloomfang Devourer").messageOnKill();
@@ -338,6 +340,7 @@ public class KillCounter {
 			p -> p.cindermawKills,
 			p -> p.tormentedDemonKills,
 			p -> p.madAngelKills,
+			p -> p.solarmaneKills,
 			p -> p.sylvarothKills,
 			p -> p.harrowlordKills,
 			p -> p.gloomfangKills,
@@ -471,13 +474,15 @@ public class KillCounter {
 			streaks.append("|");
 		}
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.KILL_COUNTER);
-		player.getPacketSender().sendClientScript(1584,
-			"sssis",
+		// rev 241: the builder moved from 1584 (now a 2-int helper) to 9525: the three "|" lists, the title, and 1 when
+		// the rows get the Reset Streak option (your own log). The interface layout and 1587 / 1588 are unchanged.
+		player.getPacketSender().sendClientScript(9525,
+			"ssssi",
 			names.toString(),
 			totalCounts.toString(),
 			streaks.toString(),
-			list.size(),
-			title
+			title,
+			player == killer ? 1 : 0
 		);
 		if (player == killer) {
 			player.getPacketSender().sendIfEvents(Interface.KILL_COUNTER, 16, 0, list.size(), 2);
