@@ -85,13 +85,19 @@ public final class Raid4Hud {
 		Raid4Party party = Raid4.partyOf(p);
 		int status = party == null ? 0 : party.getController() != null ? 2 : 1;
 		PARTY_STATUS.set(p, status);
+		// as live (2026-11-01 screenshot): eight rows from the top, the members then "-" for each free seat, one colour
 		StringBuilder names = new StringBuilder();
-		if (party != null)
-			for (String m : party.getMembers()) {
-				Player member = World.getPlayer(m);
-				String shown = member != null ? member.getName() : m;
-				names.append(names.length() == 0 ? "" : "<br>").append(party.getLeader().equals(m) ? "<col=ffc35a>" + shown + "</col>" : shown);
+		if (party != null) {
+			List<String> members = party.getMembers();
+			for (int i = 0; i < 8; i++) {
+				String row = "-";
+				if (i < members.size()) {
+					Player member = World.getPlayer(members.get(i));
+					row = member != null ? member.getName() : members.get(i);
+				}
+				names.append(i == 0 ? "" : "<br>").append(row);
 			}
+		}
 		p.getPacketSender().sendString(TFA_LOBBY, LOBBY_NAMES, names.toString());
 	}
 

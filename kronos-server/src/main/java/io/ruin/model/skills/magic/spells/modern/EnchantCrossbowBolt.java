@@ -67,7 +67,15 @@ public class EnchantCrossbowBolt extends Spell {
 		DRAGON_RUBY(49, 4462, 759, 21967, 21944, 10, 59.9, new Item(564, 1), new Item(554, 5), new Item(565, 1)),
 		DRAGON_DIAMOND(57, 4462, 759, 21969, 21946, 10, 67.0, new Item(564, 1), new Item(557, 10), new Item(563, 2)),
 		DRAGON_DRAGONSTONE(68, 4462, 759, 21971, 21948, 10, 78.0, new Item(564, 1), new Item(557, 15), new Item(566, 1)),
-		DRAGON_ONYX(87, 4462, 759, 21973, 21950, 10, 97.0, new Item(564, 1), new Item(554, 20), new Item(560, 1));
+		DRAGON_ONYX(87, 4462, 759, 21973, 21950, 10, 97.0, new Item(564, 1), new Item(554, 20), new Item(560, 1)),
+
+		/**
+		 * Ascension (Fractured Archive): the vault's shards are chiselled into ascension bolts and tipped with diamond /
+		 * onyx (Raid4Items); the enchant is the same as the gem's normal bolts (OSRS wiki). 2026-11-01: these were
+		 * missing, so the (e) bolts couldn't be made at all.
+		 */
+		ASCENSION_DIAMOND(57, 4462, 759, 34690, 34696, 10, 67.0, new Item(564, 1), new Item(557, 10), new Item(563, 2)),
+		ASCENSION_ONYX(87, 4462, 759, 34702, 34708, 10, 97.0, new Item(564, 1), new Item(554, 20), new Item(560, 1));
 
 		public final int levelReq, animation, graphic, amt, bolt, enchantedBolt;
 		public final double exp;

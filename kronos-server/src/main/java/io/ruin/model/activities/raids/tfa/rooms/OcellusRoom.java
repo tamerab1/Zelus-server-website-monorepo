@@ -1031,13 +1031,53 @@ public class OcellusRoom extends Raid4BossRoom {
 	private void sliceCollapse(int q) {
 		for (int[] s : SLICES[q])
 			removeMapLoc(s[0], s[1], s[2]);
-		for (int[] c : SLICE_COLLAPSE[q])
-			locs.add(instance.spawnObject(c[0], local(c[1], c[2]), 10, 0));
+		// 2026-11-01: the rocks fall. Each quadrant's slice_collapse locs rest on dungeonkit_guthixian03_collapse_0N_broken
+		// (their def's idle); the fall itself is dungeonkit_guthixian03_collapse_0N (15030..15033: SW 01, NW 02, NE 03,
+		// SE 04, matching the locs' _broken idles 15034..15037), played on them as they appear.
+		int anim = SEQ_SLICE_COLLAPSE + (q == 0 ? 2 : q == 1 ? 3 : q == 2 ? 0 : 1);
+		for (int[] c : SLICE_COLLAPSE[q]) {
+			GameObject g = instance.spawnObject(c[0], local(c[1], c[2]), 10, 0);
+			locs.add(g);
+			g.animate(anim);
+		}
 	}
+
+	private static final int SEQ_SLICE_COLLAPSE = 15030;
+
+	/**
+	 * D+13, the rest of the quadrant goes with its floor (2026-11-01, the owner's screenshots against live: the fallen
+	 * ground is clean). Its void patches: the recording's invisible_type0_blocking on its 84 tiles takes their layer.
+	 * Its brazier stand (tfa_brazier_guthixian01_final01 62894, on the flame's tile). And an arm whose quadrants on both
+	 * sides have now fallen loses its stones (steppingstone_despawn, as at "End...").
+	 */
+	private void clearFallenQuadrant(int q) {
+		for (var it = patches.entrySet().iterator(); it.hasNext();) {
+			GameObject patch = it.next().getValue();
+			if (quadrantOf(patch.getPosition()) == q) {
+				instance.removeObject(patch);
+				it.remove();
+			}
+		}
+		int[] flame = SLICES[q][2];
+		removeMapLoc(LOC_BRAZIER_STAND, flame[1], flame[2]);
+		// quadrant q (NE 0, SE 1, SW 2, NW 3) lies between arm q (counter-clockwise) and arm q + 1 (clockwise)
+		if (fallen[(q + 3) % 4])
+			armStonesDespawn(q);
+		if (fallen[(q + 1) % 4])
+			armStonesDespawn((q + 1) % 4);
+	}
+
+	private static final int LOC_BRAZIER_STAND = 62894;
 
 	/** E+0: the arm clockwise of the last quadrant loses its stones (south/west 7, 4, 10 out; east/north 10, 7, 4). */
 	private void stonesDespawn(int lastQuadrant) {
-		int arm = (lastQuadrant + 1) % 4;
+		armStonesDespawn((lastQuadrant + 1) % 4);
+	}
+
+	/** An arm's three stones play steppingstone_despawn_01..03 and go (+2), their tiles blocked; arms N, E, S, W. */
+	private void armStonesDespawn(int arm) {
+		if (stones[arm][0] == null && stones[arm][1] == null && stones[arm][2] == null)
+			return;
 		int[] order = arm == 2 || arm == 3 ? new int[] { 1, 0, 2 } : new int[] { 2, 1, 0 };
 		for (int n = 0; n < 3; n++)
 			if (stones[arm][order[n]] != null)
@@ -1524,26 +1564,13 @@ public class OcellusRoom extends Raid4BossRoom {
 			Raid4Fx.resetStance(boss);
 		});
 		schedule.after(12, () -> Raid4Fx.fade(boss, 0, 30, 0, 255));
-		// our warning on top of the recording (2026-10-29, testers missed the quadrant going): the floor rumbles under
-		// everyone for the last four ticks, and dust breaks out along the quadrant's edges as it goes
-		schedule.after(9, () -> {
-			for (Player p : fighters())
-				p.getPacketSender().shakeCamera(2, 3);
-		});
-		schedule.after(13, () -> {
-			for (int x = 2; x <= 12; x++)
-				for (int y = 2; y <= 12; y++)
-					if (x == 2 || y == 2 || x == 12 || y == 12)
-						Raid4Fx.mapAnim(BorkRoom.SPOT_DUST, o(qsx(q) * x, qsy(q) * y), Math.min(x, y) * 4, 0);
-		});
-		schedule.after(15, () -> {
-			for (Player p : fighters())
-				p.getPacketSender().resetCamera();
-		});
+		// 2026-11-01 1:1: the 10-29 camera shake and edge dust (ours, not in the recording) are gone; the rocks falling
+		// are the quadrant's own collapse locs and their seq (sliceCollapse)
 		schedule.after(13, () -> {
 			fallen[q] = true;
 			quadrantsFallen++;
 			sliceCollapse(q);
+			clearFallenQuadrant(q);
 			for (Player p : fighters())
 				if (quadrantOf(p.getPosition()) == q)
 					voidFall(p);
@@ -1678,6 +1705,7 @@ public class OcellusRoom extends Raid4BossRoom {
 				for (int y = -1; y <= 3; y++)
 					voidRing.add(key(sw.relative(x, y)));
 		}
+		deflectArena(d);
 		if (d == 3 || d == 34) {
 			boss.animate(SEQ_SOUL_START);
 			for (Player p : fighters()) {
@@ -1723,6 +1751,42 @@ public class OcellusRoom extends Raid4BossRoom {
 		tickOrbs(now);
 		if (d >= 59)
 			d0 += 60;
+	}
+
+	/**
+	 * The void floor's look (the starry floor of the live fight; it used to stay plain here). ocellus_plan "NPC info
+	 * audit": a tfa_invisible_npc at the last quadrant's middle, added with the first deflect and kept to the end,
+	 * carries vfx_ocellus_deflect_arena_*: the range dome (his ring) start D+0, loop D+1 and every 3 to D+19, end
+	 * D+21; the melee dome (the rest of the quadrant) start D+31, loop D+32 and every 3 to D+47, end D+50. Per
+	 * quadrant: SW plain (4349), NW _90 (4355, inferred), NE _180 (4361), SE _270 (4367); each set is range
+	 * start/loop/end then melee start/loop/end.
+	 */
+	private NPC deflectArenaNpc;
+
+	private static final int NPC_TFA_INVISIBLE = 16668;
+
+	private void deflectArena(long d) {
+		if (deflectArenaNpc == null) {
+			if (d != 0)
+				return;
+			deflectArenaNpc = spawnTemp(NPC_TFA_INVISIBLE, o(qsx(quadrant) * 7, qsy(quadrant) * 7), Direction.SOUTH);
+		}
+		int base = quadrant == 0 ? 4361 : quadrant == 1 ? 4367 : quadrant == 2 ? 4349 : 4355;
+		int id = -1;
+		if (d == 0)
+			id = base;
+		else if (d >= 1 && d <= 19 && (d - 1) % 3 == 0)
+			id = base + 1;
+		else if (d == 21)
+			id = base + 2;
+		else if (d == 31)
+			id = base + 3;
+		else if (d >= 32 && d <= 47 && (d - 32) % 3 == 0)
+			id = base + 4;
+		else if (d == 50)
+			id = base + 5;
+		if (id >= 0)
+			Raid4Fx.spot(deflectArenaNpc, 0, id, 0, 0, false);
 	}
 
 	/** The wind: every raider hit half their health; an orb for each at W+12 (2..5 from him) or W+6 (1 from him). */
@@ -1831,7 +1895,12 @@ public class OcellusRoom extends Raid4BossRoom {
 		schedule.after(14, () -> gatherAt(spawn(NPC_BLADE_VAULT_ENTRY, tile, Direction.SOUTH)));
 	}
 
-	/** Every raider not already beside The Blade is brought onto open ground next to it, so its Travel can be used. */
+	/**
+	 * Every raider not already beside The Blade is brought onto open ground next to it, so its Travel can be used.
+	 * 2026-11-01 (prod, a party stranded on a stepping stone): in phase 4 he dies in the last quadrant, ringed by the
+	 * chasm and the void, and when no open tile was found the raider was silently skipped. Now the whole party goes
+	 * straight on to the vault instead; the controller's failsafe (Raid4Controller.tickVaultFailsafe) covers the rest.
+	 */
 	private void gatherAt(NPC blade) {
 		int size = blade.getSize();
 		for (Player p : fighters()) {
@@ -1839,8 +1908,11 @@ public class OcellusRoom extends Raid4BossRoom {
 					&& Tile.get(p.getAbsX(), p.getAbsY(), p.getHeight(), true).clipping == 0)
 				continue;
 			Position spot = openBeside(blade.getPosition(), size);
-			if (spot == null)
-				continue;
+			if (spot == null) {
+				controller.getParty().message("The Blade's pull carries you onward to the vault.");
+				controller.travelToVault(p);
+				return;
+			}
 			p.getMovement().reset();
 			Raid4Fx.teleportNow(p, spot);
 			p.graphics(409);

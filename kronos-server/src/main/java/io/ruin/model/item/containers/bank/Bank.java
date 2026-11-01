@@ -180,11 +180,31 @@ public class Bank extends ItemContainerG<BankItem> {
 		player.getPacketSender().sendIfEvents(192, 3, 0, 27, 1180734);
 	}
 
+	/** Removes every real item stack of 0 or less (placeholders and blanks are kept); true if any went. */
+	public boolean removeNonPositiveStacks() {
+		boolean removed = false;
+		for (int slot = 0; slot < items.length; slot++) {
+			BankItem item = items[slot];
+			if (item == null || item.getId() == BLANK_ID || item.placehold || item.getDef() == null || item.getDef().isPlaceholder())
+				continue;
+			if (item.getAmount() <= 0) {
+				org.slf4j.LoggerFactory.getLogger(Bank.class).info("Bank: removed a stack of {} x{} from {}", item.getId(), item.getAmount(), player.getName());
+				set(slot, null);
+				removed = true;
+			}
+		}
+		if (removed)
+			sort();
+		return removed;
+	}
+
 	@Override
 	public int add(int id, int amount, Map<String, String> attributes) {
 		if (player.getGameMode().isUltimateIronman()) {
 			return 0;
 		}
+		if (amount <= 0)
+			return 0; // 2026-11-01: a negative add left a broken stack (Fight Caves Tokkul)
 		ObjType def = ObjType.get(id);
 		if (def == null || def.isPlaceholder())
 			return -1;

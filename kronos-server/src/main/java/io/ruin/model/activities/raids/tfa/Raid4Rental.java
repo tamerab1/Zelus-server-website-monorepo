@@ -33,8 +33,9 @@ import java.util.Map;
  * <li>Renting saves the real inventory, equipment and rune pouch into persisted fields and hands out the kit as
  * phantom items (PvpPresetManager.PHANTOM_KEY): they can't be dropped, traded, sold, banked, alched, forged or
  * broken down (TabInventory refuses Uncharge / Dismantle on phantom items).</li>
- * <li>The rental lives only in the lobby and the raid: leaving the lobby any other way, dying in the raid, the raid
- * ending (clear, wipe or exit) and logging out all wipe it and put the real loadout back.</li>
+ * <li>The rental lives only in the lobby and the raid: leaving the lobby any other way, the raid ending (clear, wipe
+ * or exit) and logging out all wipe it and put the real loadout back. A death in the raid keeps it (deaths there
+ * are safe; 2026-11-01 renters lost the kit they paid for on their first death).</li>
  * <li>Anything real picked up while renting (e.g. supplies) goes to the bank on return, never lost.</li>
  * <li>A rental still saved at login (the server stopped mid-raid) is returned then.</li>
  * </ul>
@@ -223,7 +224,7 @@ public final class Raid4Rental {
 		Setup sel = picked.getOrDefault(player.getUserId(), Setup.VANGUARD);
 		ps.sendString(INTERFACE, TITLE, "Archive Armoury");
 		ps.sendString(INTERFACE, SUBTITLE, "Rent a full raid kit for " + POINT_PRICE + " PvM points.<br>"
-				+ "It crumbles to dust when the raid ends, on death or on leaving.");
+				+ "It is kept through deaths, and returned when the raid ends or you leave.");
 		for (int k = 0; k < Setup.values().length; k++) {
 			Setup setup = Setup.values()[k];
 			int base = FIRST_KIT + k * KIT_STRIDE;
@@ -270,8 +271,8 @@ public final class Raid4Rental {
 		player.PvmPoints -= POINT_PRICE;
 		take(player, setup);
 		log.info("Raid 4 rental: {} rented {} for {} PvM points", player.getName(), setup, POINT_PRICE);
-		player.sendMessage("<col=ef1020>You rent the " + setup.label + " kit. It is returned when you leave the lobby, "
-				+ "die in the raid, the raid ends or you log out.</col>");
+		player.sendMessage("<col=ef1020>You rent the " + setup.label + " kit. It is kept if you die in the raid, and "
+				+ "returned when the raid ends, you leave the lobby or you log out.</col>");
 	}
 
 	/** Why this player can't rent now, or null. */

@@ -79,6 +79,8 @@ public class FightCaves {
 		 * Login
 		 */
 		LoginListener.register(p -> {
+			// 2026-11-01: a stack of 0 or less (left by the old Fight Caves exit) is removed, so the bank is usable again
+			p.getBank().removeNonPositiveStacks();
 			p.getFarming().patches.forEach((id, patch) -> {
 				patch.data.getConfig().set(p, patch.getVarpbitValue());
 			});
@@ -225,10 +227,13 @@ public class FightCaves {
 			}
 		} else {
 			int lastWave = wave - 1;
-			if (lastWave == 0) {
+			// 2026-11-01 (prod, binnes): the formula is negative for any exit before wave 51 (it left a -ve Tokkul
+			// stack in the bank that showed as 2147M and couldn't be withdrawn). No Tokkul for those exits.
+			int earned = 2 + ((lastWave - 50) * (3 + lastWave));
+			if (lastWave <= 0 || (earned <= 0 && !killedJad)) {
 				player.dialogue(new NPCDialogue(HOST, "Well I suppose you tried... better luck next time.").animate(610));
 			} else if (!practice) {
-				int tokkul = 2 + ((lastWave - 50) * (3 + lastWave));
+				int tokkul = Math.max(0, earned);
 				if (!killedJad) {
 					if (!player.isSapphire()) {
 						player.dialogue(

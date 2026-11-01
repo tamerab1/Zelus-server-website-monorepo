@@ -192,6 +192,7 @@ public class Raid4Controller {
 		}
 		if (room != null)
 			room.tick();
+		tickVaultFailsafe();
 		Raid4Hud.tick(this, party, raidStartTick < 0 ? 0 : ticks - raidStartTick, raidStartTick >= 0);
 	}
 
@@ -259,6 +260,28 @@ public class Raid4Controller {
 		int slot = completed.type().slot;
 		if (slot >= 2 && slot <= 4)
 			nextSlot = slot + 1;
+		if (completed.type() == Raid4RoomType.OCELLUS)
+			vaultFailsafeTick = ticks + VAULT_FAILSAFE_TICKS;
+	}
+
+	/**
+	 * 2026-11-01 (prod, second stuck party): after Ocellus the arena is chasm and void, so a raider can be left on a
+	 * stone with no path to The Blade. Whoever hasn't used its Travel by then is carried into the vault anyway: nobody
+	 * stays in the arena after a clear. Counted by the controller, not the room, so a room schedule problem can't
+	 * stop it.
+	 */
+	private static final int VAULT_FAILSAFE_TICKS = 17; // ~10 s after the kill
+	private long vaultFailsafeTick = -1;
+
+	private void tickVaultFailsafe() {
+		if (vaultFailsafeTick < 0 || ticks < vaultFailsafeTick)
+			return;
+		vaultFailsafeTick = -1;
+		if (state != State.ACTIVE || room == null || room.type() != Raid4RoomType.OCELLUS || !room.isComplete())
+			return; // already in the vault (Travel used) or the raid is over
+		log.info("Raid 4: vault failsafe sends {} on from Ocellus", party);
+		party.message("The Blade's pull carries you onward to the vault.");
+		travelToVault(null);
 	}
 
 	/** "Travel" on The Blade after Ocellus (16683): the party goes on to the vault. */
@@ -405,9 +428,10 @@ public class Raid4Controller {
 		Raid4Stats.count(List.of(player), Raid4Stats.OVERALL, Raid4Stats.DEATHS);
 		if (room != null)
 			Raid4Stats.count(List.of(player), Raid4Stats.section(room.type()), Raid4Stats.DEATHS);
-		Raid4Rental.release(player, "Your rented gear returns to the Quartermaster.");
 		// guardian_plan 12: D+7 "You have died. Total deaths: n.", prayers off, moved out of the fight to wait.
-		// Deaths here are safe on Zelus (no gravestone), so nothing is lost.
+		// Deaths here are safe on Zelus (no gravestone), so nothing is lost - and that includes a rented kit
+		// (2026-11-01: "once you die you lose gear"): it stays worn through the death and the revive, and goes back
+		// to the Quartermaster only when the raid ends, the renter leaves or logs out.
 		player.sendMessage("You have died. Total deaths: " + points.totalDeaths() + ".");
 		player.getPrayer().deactivateAll();
 		if (room != null)

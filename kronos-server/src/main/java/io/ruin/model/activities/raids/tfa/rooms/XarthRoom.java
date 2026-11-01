@@ -353,8 +353,8 @@ public class XarthRoom extends Raid4BossRoom {
 		}
 		NPC pillar = pillars[i];
 		Position at = pillar.getPosition().copy();
-		if (cycles < 3)
-			fireRingVisual(); // the first two falls burn the whole floor too (the third's ring also hurts, phase2)
+		// 2026-11-01 1:1 audit: no fire wave on the first two falls (xarth_plan §2: the fall is the rubble npc, its
+		// collapse seq + spot and sound 10579 only). The floor catches fire once, at the third fall (phase2).
 		removeNpc(pillar);
 		pillars[i] = null;
 		NPC rubble = spawn(NPC_RUBBLE_DESTROYED, at, Direction.SOUTH);
@@ -369,36 +369,6 @@ public class XarthRoom extends Raid4BossRoom {
 			startCycle(c + CYCLE);
 		else
 			phase2(schedule.now());
-	}
-
-	/** The fire wave over the floor around him, outward by distance, as the third fall's (no damage here). */
-	private void fireRingVisual() {
-		int z = xarth.getPosition().getZ();
-		for (int x = SW_X - FIRE_RING; x < SW_X + 3 + FIRE_RING; x++)
-			for (int y = SW_Y - FIRE_RING; y < SW_Y + 3 + FIRE_RING; y++) {
-				Position t = local(x, y);
-				int r = distance(xarth.getPosition(), 3, t);
-				if (r == 0 || Tile.get(t.getX(), t.getY(), z, true).clipping != 0)
-					continue;
-				Raid4Fx.mapAnim(SPOT_FIRE_WAVE, t, r, 0);
-			}
-	}
-
-	/**
-	 * The blast's fire rolling over the ground from his middle to the pillar it breaks (2026-10-28): the same fire wave
-	 * the third fall's ring uses, one tile at a time outward, so the first two falls read as burnt down too.
-	 */
-	private void fireTrail(Position pillarSw) {
-		Position mid = local(MID_X, MID_Y);
-		double fx = mid.getX() + 0.5, fy = mid.getY() + 0.5, tx = pillarSw.getX() + 1.0, ty = pillarSw.getY() + 1.0;
-		int steps = (int) Math.ceil(Math.max(Math.abs(tx - fx), Math.abs(ty - fy)));
-		java.util.Set<Long> done = new java.util.HashSet<>();
-		for (int s = 2; s <= steps; s++) {
-			int x = (int) Math.floor(fx + (tx - fx) * s / steps), y = (int) Math.floor(fy + (ty - fy) * s / steps);
-			Position t = new Position(x, y, mid.getZ());
-			if (done.add(key(t)))
-				Raid4Fx.mapAnim(SPOT_FIRE_WAVE, t, s * 6, 0);
-		}
 	}
 
 	/* ---------------------------------------------------------------- §3 phase 2 */
