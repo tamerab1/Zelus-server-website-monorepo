@@ -74,19 +74,31 @@ public enum GameMode {
 		return STANDARD;
 	}
 
+	/** Deaths that never cost hardcore status or a group life: the donation / vote / summer / event boss areas, region 11576. */
+	public static boolean safeHardcoreDeath(Player player) {
+		return (DonationBossHandler.map != null && DonationBossHandler.map.isIn(player))
+				|| (SummerEvent.map != null && SummerEvent.map.isIn(player))
+				|| (VoteBossHandler.map != null && VoteBossHandler.map.isIn(player))
+				|| player.getPosition().regionId() == 11576 || io.ruin.model.activities.bosses.EventBossArea.isIn(player);
+	}
+
+	/**
+	 * A Hardcore Group Ironman's death costs the group a life (2026-11-06). Set by the player-groupiron module
+	 * (GroupDeathHook); called from the death path for every death, as {@link #hardcoreDeath} is for solo hardcores.
+	 * It used to be a PlayerCombat OnDeath hook that was never registered, and that hook only runs for wilderness / PvP
+	 * deaths anyway, so hardcore groups never lost a life.
+	 */
+	public static java.util.function.Consumer<Player> hardcoreGroupDeath = p -> {
+	};
+
+	/** Calls {@link #hardcoreGroupDeath} for a Hardcore Group Ironman outside the safe areas. */
+	public static void groupDeath(Player player) {
+		if (player.getGameMode() == HARDCORE_GROUP_IRONMAN && !safeHardcoreDeath(player))
+			hardcoreGroupDeath.accept(player);
+	}
+
 	public static void hardcoreDeath(Player player, Hit killHit) {
-		if (DonationBossHandler.map != null && DonationBossHandler.map.isIn(player)) {
-			return;
-		}
-		if(SummerEvent.map != null && SummerEvent.map.isIn(player)) {
-			return;
-		}
-
-		if (VoteBossHandler.map != null && VoteBossHandler.map.isIn(player)) {
-			return;
-		}
-
-		if (player.getPosition().regionId() == 11576 || io.ruin.model.activities.bosses.EventBossArea.isIn(player)) {
+		if (safeHardcoreDeath(player)) {
 			return;
 		}
 		VarPlayerRepository.IRONMAN_MODE.set(player, 1);

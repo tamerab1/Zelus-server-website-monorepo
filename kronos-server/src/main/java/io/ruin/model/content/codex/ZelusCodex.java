@@ -149,13 +149,13 @@ public final class ZelusCodex {
 			ZelusTask.AWAKENING_IN_ZELUS.step(player, ZelusTask.STEP_PATH);
 		}
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
-		player.getPacketSender().sendString(INTERFACE, TITLE, "Zelus Codex");
+		player.getPacketSender().sendString(INTERFACE, TITLE, "Zelus Achievements");
 		draw(player, true);
 	}
 
 	static void announceComplete(Player player, String title) {
-		player.sendMessage("<col=ff981f><shad=000000>[Zelus Codex]</shad></col> Task complete: <col=ffffff>" + title
-			+ "</col>! Claim your reward in the Zelus Codex.");
+		player.sendMessage("<col=ff981f><shad=000000>[Zelus Achievements]</shad></col> Task complete: <col=ffffff>" + title
+			+ "</col>! Claim your reward in Zelus Achievements.");
 		if (player.isVisibleInterface(INTERFACE)) {
 			draw(player, false);
 		}
@@ -314,7 +314,7 @@ public final class ZelusCodex {
 		player.updateReasonPoints(task.points);
 		for (Item item : task.items) player.getInventory().addOrDrop(new Item(item.getId(), item.getAmount()));
 		player.totalAchievementsCompleted++;
-		player.sendMessage("<col=ff981f><shad=000000>[Zelus Codex]</shad></col> <col=00ff00>Reward claimed: " + task.title
+		player.sendMessage("<col=ff981f><shad=000000>[Zelus Achievements]</shad></col> <col=00ff00>Reward claimed: " + task.title
 			+ "</col> (" + String.format(Locale.ROOT, "%,d", task.points) + " Zelus points).");
 		draw(player, false);
 	}

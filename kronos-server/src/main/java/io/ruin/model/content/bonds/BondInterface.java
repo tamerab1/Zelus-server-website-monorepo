@@ -8,6 +8,7 @@ import io.ruin.model.inter.InterfaceHandler;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.actions.SimpleAction;
 import io.ruin.model.item.Item;
+import io.ruin.model.item.containers.Equipment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,19 +149,19 @@ public final class BondInterface {
 		r.add(type.bondName.replace("Bond of the ", ""));
 		r.add("Category: " + WHITE + type.category + END);
 		r.add("Status: " + status(player, type));
-		Item best = bondInInventory(player, type);
-		r.add(best == null ? GREY + "Not in your inventory" + END : "In your inventory");
+		r.add(type.tier(player) > 0 ? GREEN + "In your bond slot" + END
+				: bondInInventory(player, type) == null ? GREY + "Not in your inventory" + END : "In your inventory");
 		return r;
 	}
 
 	private static List<String> overview(Player player) {
 		List<String> r = new ArrayList<>();
 		r.add(GOLD + "How bonds work" + END);
-		r.add(BULLET + "Attune a bond to switch its perks on.");
-		r.add(BULLET + "Perks only work while the attuned bond");
-		r.add("   is in your inventory.");
-		r.add(BULLET + "One attuned bond of each type at a time.");
-		r.add(BULLET + "Sever it to switch its perks off.");
+		r.add(BULLET + "Attune a bond to put it in the bond slot,");
+		r.add("   left of your helmet.");
+		r.add(BULLET + "Only the bond in the slot gives perks.");
+		r.add(BULLET + "Attuning another swaps them over.");
+		r.add(BULLET + "Remove it from the slot to sever it.");
 		r.add(BULLET + "Upgrade with spare T1 bonds: T1 to MAX.");
 		r.add(BULLET + "Only unattuned T1 bonds can be traded.");
 		r.add("");
@@ -191,9 +192,9 @@ public final class BondInterface {
 	/** At most 7 rows: the action buttons cover the lower part of the panel on this tab. */
 	private static List<String> upgradeRows(Player player, BondType type) {
 		List<String> r = new ArrayList<>();
-		Item bond = bondInInventory(player, type);
+		Item bond = bondOnPlayer(player, type);
 		if (bond == null) {
-			r.add(RED + "No " + type.bondName.replace("Bond of the ", "") + " bond in your inventory." + END);
+			r.add(RED + "No " + type.bondName.replace("Bond of the ", "") + " bond on you." + END);
 			r.add("Take it out of your bank to attune or upgrade it.");
 			r.add("");
 			r.add(GREY + "Upgrades cost spare unattuned T1 bonds of the" + END);
@@ -239,14 +240,11 @@ public final class BondInterface {
 
 	private static List<String> summary(Player player) {
 		List<String> r = new ArrayList<>();
-		int attuned = 0;
-		for (BondType type : BondType.VALUES)
-			if (type.tier(player) > 0)
-				attuned++;
-		r.add(GOLD + "Active bonds" + END);
-		r.add((attuned > 0 ? GREEN : GREY) + attuned + " of " + BondType.VALUES.length + " attuned" + END);
-		r.add(GREY + "Perks need the attuned" + END);
-		r.add(GREY + "bond in your inventory." + END);
+		Variant worn = BondType.worn(player);
+		r.add(GOLD + "Active bond" + END);
+		r.add(worn == null ? GREY + "None" + END : GREEN + worn.type().bondName.replace("Bond of the ", "") + " " + BondType.tierLabel(worn.tier()) + END);
+		r.add(GREY + "Perks come from the" + END);
+		r.add(GREY + "bond in your bond slot." + END);
 		return r;
 	}
 
@@ -254,18 +252,21 @@ public final class BondInterface {
 
 	private static void attuneOrSever(Player player) {
 		BondType type = selected(player);
+		if (type.tier(player) > 0) {
+			BondHandler.sever(player);
+			return;
+		}
 		Item bond = bondInInventory(player, type);
 		if (bond == null) {
 			player.sendMessage("You need a " + type.bondName + " in your inventory.");
 			return;
 		}
 		BondHandler.attuneOrSever(player, bond);
-		refreshIfOpen(player);
 	}
 
 	private static void upgrade(Player player) {
 		BondType type = selected(player);
-		Item bond = bondInInventory(player, type);
+		Item bond = bondOnPlayer(player, type);
 		if (bond == null) {
 			player.sendMessage("You need a " + type.bondName + " in your inventory.");
 			return;
@@ -294,14 +295,18 @@ public final class BondInterface {
 		return best;
 	}
 
-	/** Highest tier owned in inventory or bank (0 = none). */
+	/** This bond in the bond slot, else its best copy in the inventory. */
+	private static Item bondOnPlayer(Player player, BondType type) {
+		return type.tier(player) > 0 ? player.getEquipment().get(Equipment.SLOT_BOND) : bondInInventory(player, type);
+	}
+
+	/** Highest tier owned in the bond slot, inventory or bank (0 = none). */
 	private static int bestTier(Player player, BondType type) {
-		return Math.max(BondGuide.highestOwned(player.getInventory().getItems(), type),
-				BondGuide.highestOwned(player.getBank().getItems(), type));
+		return BondGuide.highestOwned(player, type);
 	}
 
 	private static int displayItem(Player player, BondType type) {
-		Item bond = bondInInventory(player, type);
+		Item bond = bondOnPlayer(player, type);
 		if (bond != null)
 			return bond.getId();
 		int tier = bestTier(player, type);

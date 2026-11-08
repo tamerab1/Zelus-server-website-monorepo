@@ -194,7 +194,7 @@ public class DumbRoute {
 		return null;
 	}
 
-	private static boolean allowEntrance(ClipUtils clipUtils, int x, int y, int z, int size, Direction dir) {
+	public static boolean allowEntrance(ClipUtils clipUtils, int x, int y, int z, int size, Direction dir) {
 		int dx = dir.deltaX;
 		int dy = dir.deltaY;
 		if (size == 1) {

@@ -38,16 +38,22 @@ public class GearPresetInterface {
 	private static final int LOAD_BUTTON = 47;
 	private static final int PANEL_HEADER = 10;
 
+	// the 12th entry is the egg / relic slot (cache stage 16 PatchEggSlot: 132 frame, 133 silhouette, 134 item layer)
 	private static final int[] EQUIPMENT_COMPONENTS = {
-		70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80
+		70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 134
 	};
 	private static final int[] EQUIPMENT_PLACEHOLDERS = {
-		63, 64, 65, 66, 67, 68, 69, 82, 83, 84, 85
+		63, 64, 65, 66, 67, 68, 69, 82, 83, 84, 85, 133
 	};
 	private static final int[] EQUIPMENT_BACKGROUNDS = {
-		51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61
+		51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 132
 	};
-	private static final int[] EQUIPMENT_SLOTS = GearPresetHandler.EQUIPMENT_SLOTS;
+	/** the slot shown by each component above (the quiver has no cell on this screen) */
+	private static final int[] EQUIPMENT_SLOTS = {
+		Equipment.SLOT_HAT, Equipment.SLOT_CAPE, Equipment.SLOT_AMULET, Equipment.SLOT_WEAPON, Equipment.SLOT_CHEST,
+		Equipment.SLOT_SHIELD, Equipment.SLOT_LEGS, Equipment.SLOT_HANDS, Equipment.SLOT_FEET, Equipment.SLOT_RING,
+		Equipment.SLOT_AMMO, Equipment.SLOT_EGG
+	};
 	private static final int EQUIPMENT_CONTAINER_START = 9320;
 	private static final int INVENTORY_COMPONENT = 81;
 	private static final int INVENTORY_CONTAINER = 9332;

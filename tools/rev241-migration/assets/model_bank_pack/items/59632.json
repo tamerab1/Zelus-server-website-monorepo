@@ -1,0 +1,110 @@
+{
+  "id": 59632,
+  "name": "Vorkath type BIS bow",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 652,
+  "yan2d": 0,
+  "zan2d": 0,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 67801,
+  "tradeable": false,
+  "geTradeable": false,
+  "wearPos1": 3,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": false,
+  "colorFind": [
+    -30509,
+    -30477,
+    1151,
+    91,
+    121,
+    5676,
+    -30485,
+    5131,
+    -30542,
+    5688,
+    5196,
+    -30579,
+    -204,
+    127,
+    5669
+  ],
+  "colorReplace": [
+    30547,
+    30579,
+    31743,
+    11,
+    15,
+    31660,
+    30571,
+    31627,
+    30514,
+    31672,
+    31692,
+    30477,
+    6,
+    15,
+    31653
+  ],
+  "zoom2d": 14448,
+  "xOffset2d": 6,
+  "yOffset2d": 7,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": "Take"
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wield",
+    "Wield",
+    "Change",
+    "",
+    "Destroy"
+  ],
+  "maleModel0": 71658,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 71658,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

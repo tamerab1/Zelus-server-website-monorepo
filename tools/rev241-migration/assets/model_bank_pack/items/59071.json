@@ -1,0 +1,116 @@
+{
+  "id": 59071,
+  "name": "Pirate max cape",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 687,
+  "yan2d": 27,
+  "zan2d": 0,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 69275,
+  "tradeable": false,
+  "geTradeable": false,
+  "wearPos1": 1,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": false,
+  "colorFind": [
+    522,
+    668,
+    673,
+    675,
+    784,
+    815,
+    902,
+    945,
+    972,
+    4300,
+    4316,
+    4820,
+    5437,
+    5458,
+    5683,
+    5706,
+    5708,
+    5714
+  ],
+  "colorReplace": [
+    3,
+    9,
+    11,
+    11,
+    5,
+    15,
+    2,
+    8562,
+    8552,
+    839,
+    829,
+    774,
+    829,
+    829,
+    819,
+    842,
+    844,
+    844
+  ],
+  "zoom2d": 2232,
+  "xOffset2d": 0,
+  "yOffset2d": -5,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": "Take"
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wear",
+    "Wear",
+    "",
+    "",
+    "Drop"
+  ],
+  "maleModel0": 69273,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 69274,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

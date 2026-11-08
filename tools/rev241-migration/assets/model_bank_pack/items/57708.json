@@ -1,0 +1,83 @@
+{
+  "id": 57708,
+  "name": "Ethereal Bow (i)",
+  "resizeX": 100,
+  "resizeY": 100,
+  "resizeZ": 100,
+  "xan2d": 508,
+  "yan2d": 1000,
+  "zan2d": 0,
+  "cost": 675000,
+  "stackable": 1,
+  "inventoryModel": 66665,
+  "tradeable": true,
+  "geTradeable": false,
+  "wearPos1": 3,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": true,
+  "colorFind": [
+    6674
+  ],
+  "colorReplace": [
+    31516
+  ],
+  "zoom2d": 1540,
+  "xOffset2d": 7,
+  "yOffset2d": 2,
+  "ambient": -1,
+  "contrast": -1,
+  "groundOps": {
+    "ops": [
+      null,
+      null,
+      {
+        "text": "Take"
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wield",
+    null,
+    null,
+    null,
+    "Drop"
+  ],
+  "maleModel0": 66666,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 66666,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 64,
+  "notedID": 57706,
+  "notedTemplate": 799,
+  "team": 255,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "params": {
+    "434": 4,
+    "4": 75,
+    "436": 50,
+    "23": 50,
+    "1562": 3,
+    "1563": 50,
+    "1564": 3,
+    "13": 7,
+    "14": 4
+  },
+  "selected": false
+}

@@ -7,6 +7,8 @@ import io.ruin.model.entity.player.KillCounter;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.InterfaceHandler;
 import io.ruin.model.inter.ToplevelComponent;
+import io.ruin.model.inter.AccessMasks;
+import io.ruin.model.inter.actions.DefaultAction;
 import io.ruin.model.inter.actions.SimpleAction;
 import io.ruin.model.item.Item;
 import io.ruin.utility.Broadcast;
@@ -23,6 +25,8 @@ public class CollectionLogUpdated {
 	CollectionLogData currentLogClaimRewards;
 	Categories currentCategory;
 	HashMap<Integer, CollectionLogData> componentDataStore = new HashMap<>();
+	/** The unique item shown in each item component of the open log, for its Examine option (2026-11-06). */
+	final HashMap<Integer, Integer> itemByComponent = new HashMap<>();
 
 	public void open(Player player) {
 		if (player.inTutorial)
@@ -155,6 +159,7 @@ public class CollectionLogUpdated {
 
 	public void updateCollectionLog(Player player, CollectionLogData log) {
 		currentLogView = log;
+		itemByComponent.clear();
 		int skipped = 0;
 		int row = 212;
 		int i;
@@ -239,7 +244,9 @@ public class CollectionLogUpdated {
 			player.getPacketSender().sendClientScript(
 					149, "IviiiIsssss",
 					1134 << 16 | i, 1000 + i,
-					4, 7, 1, -1, "", "", "", "", "");
+					4, 7, 1, -1, "Examine", "", "", "", "");
+			player.getPacketSender().sendIfEvents(1134, i, 0, 0, AccessMasks.ClickOp1);
+			itemByComponent.put(i, items.getId());
 			if (player.uniqueDrops.get(items.getId()) == null)
 				player.uniqueDrops.put(items.getId(), 0);
 			if (player.uniqueDrops.get(items.getId()) > 0)
@@ -254,6 +261,32 @@ public class CollectionLogUpdated {
 
 		}
 		player.getPacketSender().sendString(1134, 322, "Obtained " + obtainedAmount + "/" + totalItems);
+	}
+
+	/**
+	 * Examine on a log item: its examine text, and for wearable items the stats viewer, whose Close button comes back
+	 * to this log (2026-11-06, as the shops).
+	 */
+	private void examine(Player player, int component) {
+		Integer itemId = itemByComponent.get(component);
+		if (itemId == null)
+			return;
+		CollectionLogData log = currentLogView;
+		Categories category = currentCategory;
+		io.ruin.model.item.Item.examine(player, itemId);
+		io.ruin.cache.ObjType def = io.ruin.cache.ObjType.get(itemId);
+		if (def != null && def.equipSlot != -1 && def.equipBonuses != null) // (the viewer examines non-wearables itself)
+			io.ruin.model.inter.handlers.ItemStatsViewer.open(player, itemId, () -> reopen(player, category, log));
+	}
+
+	private void reopen(Player player, Categories category, CollectionLogData log) {
+		open(player);
+		if (category != null && category != currentCategory) {
+			currentCategory = category;
+			sendCategory(player, category);
+		}
+		if (log != null)
+			updateCollectionLog(player, log);
 	}
 
 	private void viewRewards(Player player) {
@@ -396,6 +429,12 @@ public class CollectionLogUpdated {
 			h.actions[541] = (SimpleAction) (p) -> {
 				p.collectionLogUpdated().closeViewRewards(p);
 			};
+			for (int j = 326; j < 524; j++) {
+				if ((j - 326) % 6 == 0)
+					continue;
+				int comp = j;
+				h.actions[j] = (DefaultAction) (player, option, slot, itemId) -> player.collectionLogUpdated().examine(player, comp);
+			}
 			for (int i = 59; i < 299; i += 3) {
 				int finalI = i;
 				h.actions[i] = (SimpleAction) (player) -> {

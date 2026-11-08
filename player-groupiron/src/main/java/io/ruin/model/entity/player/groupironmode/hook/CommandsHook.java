@@ -34,8 +34,8 @@ public class CommandsHook {
 					var gameMode = player.getGameMode();
 					var isGroup = gameMode.isAnyOf(GameMode.GROUP_IRONMAN, GameMode.HARDCORE_GROUP_IRONMAN);
 					var pGroupIron = player.getGroupIron();
-					var hasLeader = pGroupIron == null || pGroupIron.getLeader() != null;
-					if (isGroup && hasLeader) {
+					var inGroup = pGroupIron != null; // (was "group == null || has a leader": blocked every groupless GIM)
+					if (isGroup && inGroup) {
 						player.sendMessage("You cannot deiron while in a group.");
 						yield Result.Return;
 					}
@@ -47,6 +47,10 @@ public class CommandsHook {
 			}
 
 			case "groupmembers" -> {
+				if (player.getGroupIron() == null) {
+					player.sendMessage("You are not in a group.");
+					yield Result.Return;
+				}
 				for (String name : player.getGroupIron().getMembers()) {
 					player.sendMessage(name);
 				}
@@ -54,8 +58,9 @@ public class CommandsHook {
 			}
 
 			case "addgrouplife" -> {
-				if (player.isManager()) {
-					yield Result.Return;
+				// staff only (2026-11-06: the check was inverted, so ANY player could add lives to any group)
+				if (!player.isManager()) {
+					yield Result.Pass;
 				}
 
 				var query = Arrays.stream(args).collect(Collectors.joining());

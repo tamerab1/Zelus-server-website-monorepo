@@ -1,0 +1,578 @@
+[
+  {
+    "name": "Antler Bow",
+    "id": 40004,
+    "tradeable": true,
+    "examine": "A antler bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Malevolent shadow",
+    "id": 40006,
+    "tradeable": true,
+    "examine": "A malevolent shadow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "MAGIC_STAFF"
+  },
+  {
+    "name": "Anniversary Slayer Helmet",
+    "id": 40008,
+    "tradeable": true,
+    "examine": "A anniversary slayer helmet.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true,
+    "hide_beard": true
+  },
+  {
+    "name": "Anniversary August Cape",
+    "id": 40010,
+    "tradeable": true,
+    "examine": "A anniversary august cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Cerberus (echo) mystery box",
+    "id": 40012,
+    "tradeable": true,
+    "examine": "A cerberus (echo) mystery box.",
+    "weight": 1.0
+  },
+  {
+    "name": "Love whip",
+    "id": 40015,
+    "tradeable": true,
+    "examine": "A love whip.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "WHIP"
+  },
+  {
+    "name": "Cloud Ankou Gloves",
+    "id": 40021,
+    "tradeable": true,
+    "examine": "A cloud ankou gloves.",
+    "weight": 1.0,
+    "equip_slot": 9
+  },
+  {
+    "name": "Cloud Ankou Socks",
+    "id": 40022,
+    "tradeable": true,
+    "examine": "A cloud ankou socks.",
+    "weight": 1.0,
+    "equip_slot": 10
+  },
+  {
+    "name": "Cloud Ankou Leggings",
+    "id": 40023,
+    "tradeable": true,
+    "examine": "A cloud ankou leggings.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Cloud Ankou Top",
+    "id": 40024,
+    "tradeable": true,
+    "examine": "A cloud ankou top.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Cloud Ankou Mask",
+    "id": 40025,
+    "tradeable": true,
+    "examine": "A cloud ankou mask.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true,
+    "hide_beard": true
+  },
+  {
+    "name": "Replica Crossbow (Ice)",
+    "id": 40027,
+    "tradeable": true,
+    "examine": "A replica crossbow (ice).",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "CROSSBOW",
+    "ranged_weapon": "CROSSBOW",
+    "ranged_level": 65
+  },
+  {
+    "name": "Twisted Bow (Ice)",
+    "id": 40029,
+    "tradeable": true,
+    "examine": "A twisted bow (ice).",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Phantasm twisted bow",
+    "id": 40031,
+    "tradeable": true,
+    "examine": "A phantasm twisted bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "August elegant skirt",
+    "id": 40032,
+    "tradeable": true,
+    "examine": "A august elegant skirt.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "August elegant legs",
+    "id": 40035,
+    "tradeable": true,
+    "examine": "A august elegant legs.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "August elegant shirt",
+    "id": 40038,
+    "tradeable": true,
+    "examine": "A august elegant shirt.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "August Partyhat",
+    "id": 40041,
+    "tradeable": true,
+    "examine": "A august partyhat.",
+    "weight": 1.0,
+    "equip_slot": 0
+  },
+  {
+    "name": "Ethereal Bow (i)",
+    "id": 40044,
+    "tradeable": true,
+    "examine": "A ethereal bow (i).",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Corporeal Beast Mystery Box",
+    "id": 40047,
+    "tradeable": true,
+    "examine": "A corporeal beast mystery box.",
+    "weight": 1.0
+  },
+  {
+    "name": "Lava whip",
+    "id": 40049,
+    "tradeable": true,
+    "examine": "A lava whip.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "WHIP"
+  },
+  {
+    "name": "Tempest helm",
+    "id": 40052,
+    "tradeable": true,
+    "examine": "A tempest helm.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true
+  },
+  {
+    "name": "Tempest platebody",
+    "id": 40053,
+    "tradeable": true,
+    "examine": "A tempest platebody.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Tempest legs",
+    "id": 40054,
+    "tradeable": true,
+    "examine": "A tempest legs.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Archaeology master cape",
+    "id": 40055,
+    "tradeable": true,
+    "examine": "A archaeology master cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Custom-fit trimmed spiked masterwork helm",
+    "id": 40056,
+    "tradeable": true,
+    "examine": "A custom-fit trimmed spiked masterwork helm.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true
+  },
+  {
+    "name": "Custom-fit trimmed spiked masterwork boots",
+    "id": 40057,
+    "tradeable": true,
+    "examine": "A custom-fit trimmed spiked masterwork boots.",
+    "weight": 1.0,
+    "equip_slot": 10
+  },
+  {
+    "name": "Nightrix robe top",
+    "id": 40058,
+    "tradeable": true,
+    "examine": "A nightrix robe top.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Nightrix robe bottom",
+    "id": 40059,
+    "tradeable": true,
+    "examine": "A nightrix robe bottom.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Nightrix hood",
+    "id": 40060,
+    "tradeable": true,
+    "examine": "A nightrix hood.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true
+  },
+  {
+    "name": "Voting package",
+    "id": 40061,
+    "tradeable": true,
+    "examine": "A voting package.",
+    "weight": 1.0
+  },
+  {
+    "name": "Pirate max cape",
+    "id": 40062,
+    "tradeable": true,
+    "examine": "A pirate max cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Decimation",
+    "id": 40063,
+    "tradeable": true,
+    "examine": "A decimation.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Volcanic bow (frozen)",
+    "id": 40064,
+    "tradeable": true,
+    "examine": "A volcanic bow (frozen).",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Paladin bow",
+    "id": 40065,
+    "tradeable": true,
+    "examine": "A paladin bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Valkyrie helm",
+    "id": 40066,
+    "tradeable": true,
+    "examine": "A valkyrie helm.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true
+  },
+  {
+    "name": "Valkyrie body",
+    "id": 40067,
+    "tradeable": true,
+    "examine": "A valkyrie body.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Valkyrie legs",
+    "id": 40068,
+    "tradeable": true,
+    "examine": "A valkyrie legs.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Vorkath type BIS bow",
+    "id": 40069,
+    "tradeable": true,
+    "examine": "A vorkath type bis bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Tuska helm",
+    "id": 40070,
+    "tradeable": true,
+    "examine": "A tuska helm.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_hair": true
+  },
+  {
+    "name": "Tuska cuirass",
+    "id": 40071,
+    "tradeable": true,
+    "examine": "A tuska cuirass.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Tuska robe legs",
+    "id": 40072,
+    "tradeable": true,
+    "examine": "A tuska robe legs.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Tuska gauntlets",
+    "id": 40073,
+    "tradeable": true,
+    "examine": "A tuska gauntlets.",
+    "weight": 1.0,
+    "equip_slot": 9
+  },
+  {
+    "name": "Valkyrie wings",
+    "id": 40074,
+    "tradeable": true,
+    "examine": "A valkyrie wings.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Forsaken bow",
+    "id": 40075,
+    "tradeable": true,
+    "examine": "A forsaken bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Volcanic bow",
+    "id": 40076,
+    "tradeable": true,
+    "examine": "A volcanic bow.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "TWISTED_BOW",
+    "ranged_weapon": "TWISTED_BOW",
+    "ranged_level": 75,
+    "two_handed": true
+  },
+  {
+    "name": "Ethereal elder maul",
+    "id": 40077,
+    "tradeable": true,
+    "examine": "A ethereal elder maul.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "ELDER_MAUL",
+    "two_handed": true
+  },
+  {
+    "name": "Ethereal elemental staff",
+    "id": 40078,
+    "tradeable": true,
+    "examine": "A ethereal elemental staff.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "MAGIC_STAFF"
+  },
+  {
+    "name": "Ethereal dinh\u0027s bulwark",
+    "id": 40079,
+    "tradeable": true,
+    "examine": "A ethereal dinh\u0027s bulwark.",
+    "weight": 1.0,
+    "equip_slot": 3,
+    "weapon_type": "BULWARK",
+    "two_handed": true
+  },
+  {
+    "name": "Beast icon (t1)",
+    "id": 40080,
+    "tradeable": true,
+    "examine": "A beast icon (t1).",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Beast icon (t2)",
+    "id": 40081,
+    "tradeable": true,
+    "examine": "A beast icon (t2).",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Ethereal mask",
+    "id": 40082,
+    "tradeable": true,
+    "examine": "A ethereal mask.",
+    "weight": 1.0,
+    "equip_slot": 0,
+    "hide_beard": true
+  },
+  {
+    "name": "Ethereal cape",
+    "id": 40083,
+    "tradeable": true,
+    "examine": "A ethereal cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Ethereal legs",
+    "id": 40084,
+    "tradeable": true,
+    "examine": "A ethereal legs.",
+    "weight": 1.0,
+    "equip_slot": 7
+  },
+  {
+    "name": "Ethereal gloves",
+    "id": 40085,
+    "tradeable": true,
+    "examine": "A ethereal gloves.",
+    "weight": 1.0,
+    "equip_slot": 9
+  },
+  {
+    "name": "Glorious bounty cape",
+    "id": 40086,
+    "tradeable": true,
+    "examine": "A glorious bounty cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Easter icon",
+    "id": 40087,
+    "tradeable": true,
+    "examine": "A easter icon.",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Slaughter cape",
+    "id": 40088,
+    "tradeable": true,
+    "examine": "A slaughter cape.",
+    "weight": 1.0,
+    "equip_slot": 1
+  },
+  {
+    "name": "Ethereal torso",
+    "id": 40089,
+    "tradeable": true,
+    "examine": "A ethereal torso.",
+    "weight": 1.0,
+    "equip_slot": 4,
+    "hide_arms": true
+  },
+  {
+    "name": "Amberglow icon",
+    "id": 40090,
+    "tradeable": true,
+    "examine": "A amberglow icon.",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon",
+    "id": 40091,
+    "tradeable": true,
+    "examine": "A infernoglint icon.",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Donator mystery box (u)",
+    "id": 40092,
+    "tradeable": true,
+    "examine": "A donator mystery box (u).",
+    "weight": 1.0
+  },
+  {
+    "name": "Challenge icon",
+    "id": 40093,
+    "tradeable": true,
+    "examine": "A challenge icon.",
+    "weight": 1.0,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon",
+    "id": 40094,
+    "tradeable": true,
+    "examine": "A midnight spring icon.",
+    "weight": 1.0,
+    "equip_slot": 15
+  }
+]

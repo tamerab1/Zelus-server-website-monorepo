@@ -161,6 +161,7 @@ public class StatList {
 			}
 		}
 		amount *= io.ruin.model.content.bonds.BondPerks.xpMultiplier(player, type);
+		amount *= io.ruin.model.content.CloudAnkouSet.xpMultiplier(player, type);
 		if (type == StatType.Agility || type == StatType.Prayer || type == StatType.Farming || type == StatType.Runecrafting
 			|| type == StatType.Construction || type == StatType.Crafting
 			|| type == StatType.Hunter || type == StatType.Thieving || type == StatType.Slayer || type == StatType.Fletching

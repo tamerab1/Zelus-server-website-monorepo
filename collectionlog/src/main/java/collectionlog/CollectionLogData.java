@@ -1276,7 +1276,20 @@ public enum CollectionLogData {
 			new Item(60278) /* Bond of the Slayer King */,
 	},
 			// completion rewards (none defined yet)
-			new Item[] {})
+			new Item[] {}),
+
+	// Solarmane the sun-lion (2026-11-04): the cub pet (1/500, Solarmane.java) + the Solarmane set (newDrops/30611.json).
+	SOLARMANE(CollectionLogUpdated.Categories.BOSSES, "Solarmane", new Item[] {
+			new Item(60407) /* Solarmane cub (pet) */,
+			new Item(60408) /* Solarmane hood */,
+			new Item(60409) /* Solarmane robe top */,
+			new Item(60410) /* Solarmane robe bottoms */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(7478, 15),
+				new Item(30461, 1),
+			})
 
 	;
 

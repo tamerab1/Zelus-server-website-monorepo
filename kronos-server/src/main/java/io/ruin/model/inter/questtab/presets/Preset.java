@@ -377,7 +377,7 @@ public class Preset extends QuestTabEntry {
 				return;
 			}
 			// Free preset: force-clear equipment that couldn't be banked
-			player.getEquipment().clear();
+			player.getEquipment().clearExceptBond();
 		}
 
 		/*
@@ -435,6 +435,8 @@ public class Preset extends QuestTabEntry {
 		 * First, deposit any items you have.
 		 */
 		for (Item item : container.getItems()) {
+			if (!inventory && item != null && item.getSlot() == io.ruin.model.item.containers.Equipment.SLOT_BOND)
+				continue; // the bond slot isn't gear: it stays on
 			if (item != null && player.getBank().deposit(item, item.getAmount(), false) == 0) {
 				player.sendMessage(Color.COOL_BLUE.wrap(item.getDef().name) + " x " + item.getAmount() + " could not be banked.");
 				if (!inventory) // it's okay if we fail to bank an inventory item, but we have to abort if we fail equipment or we could end up with gear equipped that we don't have stat requirements for

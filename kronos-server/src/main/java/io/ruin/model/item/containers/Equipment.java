@@ -38,7 +38,30 @@ public class Equipment extends ItemContainer {
 			SLOT_FEET = 10,
 			SLOT_RING = 12,
 			SLOT_AMMO = 13,
-			SLOT_QUIVER = 14;
+			SLOT_QUIVER = 14,
+			/**
+			 * Egg / relic slot (2026-11-06): beside the helmet in the worn-equipment tab (interface 387 components
+			 * {@link #EGG_FRAME}-{@link #EGG_ITEM}, cache stage 16 PatchEggSlot). Any item whose item_info equip_slot is
+			 * 15 goes here. Its bonuses count like any other slot; Appearance draws it in the beard's slot (11).
+			 */
+			SLOT_EGG = 15,
+			/**
+			 * Bond slot (2026-11-08): left of the helmet (cache stage 22 PatchBondSlot). Holds the one attuned Custom Bond whose
+			 * perks are active (BondType.tier). BondHandler alone fills it: bonds aren't wearable items. It isn't gear: deposit
+			 * worn and preset loads leave it on, and {@link #isEmpty} ignores it.
+			 */
+			SLOT_BOND = 16;
+
+	/** Equipment container size: slots 0-16 (14 = Dizana's quiver, 15 = egg / relic, 16 = bond). Older saves grow on load. */
+	public static final int SIZE = SLOT_BOND + 1;
+	/** Interface 387 (worn equipment) components of the egg slot: stone frame, egg silhouette, the item (Remove / Examine). */
+	public static final int EGG_FRAME = 31, EGG_SILHOUETTE = 32, EGG_ITEM = 33;
+	/** The same three on the equipment stats screen (interface 84). */
+	public static final int STATS_EGG_SILHOUETTE = 58, STATS_EGG_ITEM = 59;
+	/** Interface 387 components of the bond slot: stone frame, silhouette, the item (Remove / Overview / Examine). */
+	public static final int BOND_FRAME = 34, BOND_SILHOUETTE = 35, BOND_ITEM = 36;
+	/** The same three on the equipment stats screen (interface 84). */
+	public static final int STATS_BOND_SILHOUETTE = 61, STATS_BOND_ITEM = 62;
 
 	public transient int[] bonuses = new int[16];
 	public transient double weight;
@@ -94,6 +117,46 @@ public class Equipment extends ItemContainer {
 		return false;
 	}
 
+	/** Shows the egg slot's item in the equipment tab, or its egg silhouette when empty. */
+	public void sendEggSlot() {
+		if (player == null || items.length <= SLOT_EGG)
+			return;
+		Item egg = get(SLOT_EGG);
+		// the worn-equipment tab and the equipment stats screen
+		sendEggSlot(io.ruin.model.inter.Interface.EQUIPMENT, EGG_ITEM, EGG_SILHOUETTE, egg);
+		sendEggSlot(io.ruin.model.inter.Interface.EQUIPMENT_STATS, STATS_EGG_ITEM, STATS_EGG_SILHOUETTE, egg);
+	}
+
+	/** Shows the bond slot's item in the equipment tab and stats screen, or its silhouette when empty. */
+	public void sendBondSlot() {
+		if (player == null || items.length <= SLOT_BOND)
+			return;
+		Item bond = get(SLOT_BOND);
+		sendEggSlot(io.ruin.model.inter.Interface.EQUIPMENT, BOND_ITEM, BOND_SILHOUETTE, bond);
+		sendEggSlot(io.ruin.model.inter.Interface.EQUIPMENT_STATS, STATS_BOND_ITEM, STATS_BOND_SILHOUETTE, bond);
+	}
+
+	private void sendEggSlot(int iface, int itemComponent, int silhouette, Item egg) {
+		player.getPacketSender().sendItem(iface, itemComponent, egg == null ? -1 : egg.getId(), egg == null ? 0 : egg.getAmount());
+		player.getPacketSender().setHidden(iface, silhouette, egg != null);
+		// the hover / right-click names the item ("Remove <item>"), as the vanilla slots' scripts do: clientscript 10752
+		// set_opbase(component, text) (AddOpBaseScript)
+		player.getPacketSender().sendClientScript(10752, "Is", iface << 16 | itemComponent, egg == null ? "" : "<col=ff9040>" + egg.getDef().name + "</col>");
+	}
+
+	/** Whether no gear is worn: the bond slot doesn't count, so an attuned bond never blocks "take everything off" checks. */
+	@Override
+	public boolean isEmpty() {
+		return getCount() == (items.length > SLOT_BOND && items[SLOT_BOND] != null ? 1 : 0);
+	}
+
+	/** Empties every slot but the bond slot, for preset loads that replace the gear. */
+	public void clearExceptBond() {
+		for (int slot = 0; slot < items.length; slot++)
+			if (slot != SLOT_BOND)
+				set(slot, null);
+	}
+
 	public void equipQueue(Item item) {
 		toEquip.add(item);
 	}
@@ -105,6 +168,10 @@ public class Equipment extends ItemContainer {
 		int equipSlot = selectedDef.equipSlot;
 		if (equipSlot == -1 || selectedDef.equipOption == -1) {
 			player.sendMessage("You can't wear this item.");
+			return;
+		}
+		if (equipSlot >= items.length) { // e.g. the egg slot inside the Gauntlet's 14-slot temporary equipment
+			player.sendMessage("You can't wear that here.");
 			return;
 		}
 		if (selectedDef.equipReqs != null) {
@@ -405,6 +472,14 @@ public class Equipment extends ItemContainer {
 			updatedAppearanceSlots--;
 		if (updatedSlots[SLOT_AMMO])
 			updatedAppearanceSlots--;
+		boolean eggChanged = updatedSlots.length > SLOT_EGG && updatedSlots[SLOT_EGG]; // (temporary containers may be smaller)
+		if (eggChanged || sendAll) // (the egg is drawn on the player in the beard's appearance slot: it does update it)
+			sendEggSlot();
+		boolean bondChanged = updatedSlots.length > SLOT_BOND && updatedSlots[SLOT_BOND];
+		if (bondChanged) // (a bond isn't drawn on the player)
+			updatedAppearanceSlots--;
+		if (bondChanged || sendAll)
+			sendBondSlot();
 		if (player.getEquipment().get(SLOT_WEAPON) == null) {
 			player.getCombat().updateWeapon(false);
 		} else if (updatedSlots[SLOT_WEAPON] && player.getEquipment().get(SLOT_WEAPON).getId() != weaponId) {

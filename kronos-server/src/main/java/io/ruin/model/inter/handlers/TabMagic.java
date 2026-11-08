@@ -52,7 +52,10 @@ public class TabMagic {
 								if (player.lastServerTeleport == null) {
 									player.sendMessage("You don't have a last teleport to teleport to.");
 								} else {
-									if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
+									if (player.lastServerTeleport == ServerTeleports.SOLARMANE) { // a private instance, not a position
+										io.ruin.model.activities.bosses.solarmane.Solarmane.enter(player);
+										return;
+									} else if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
 										player.getInstanceTokenInterface().selectedBoss = InstanceMaps.VARDORVIS;
 										player.getInstanceTokenInterface().startInstance(player, true);
 										return;
@@ -129,7 +132,10 @@ public class TabMagic {
 								if (player.lastServerTeleport == null) {
 									player.sendMessage("You don't have a last teleport to teleport to.");
 								} else {
-									if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
+									if (player.lastServerTeleport == ServerTeleports.SOLARMANE) { // a private instance, not a position
+										io.ruin.model.activities.bosses.solarmane.Solarmane.enter(player);
+										return;
+									} else if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
 										player.getInstanceTokenInterface().selectedBoss = InstanceMaps.VARDORVIS;
 										player.getInstanceTokenInterface().startInstance(player, true);
 										return;
@@ -206,7 +212,10 @@ public class TabMagic {
 								if (player.lastServerTeleport == null) {
 									player.sendMessage("You don't have a last teleport to teleport to.");
 								} else {
-									if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
+									if (player.lastServerTeleport == ServerTeleports.SOLARMANE) { // a private instance, not a position
+										io.ruin.model.activities.bosses.solarmane.Solarmane.enter(player);
+										return;
+									} else if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
 										player.getInstanceTokenInterface().selectedBoss = InstanceMaps.VARDORVIS;
 										player.getInstanceTokenInterface().startInstance(player, true);
 										return;
@@ -283,7 +292,10 @@ public class TabMagic {
 								if (player.lastServerTeleport == null) {
 									player.sendMessage("You don't have a last teleport to teleport to.");
 								} else {
-									if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
+									if (player.lastServerTeleport == ServerTeleports.SOLARMANE) { // a private instance, not a position
+										io.ruin.model.activities.bosses.solarmane.Solarmane.enter(player);
+										return;
+									} else if (player.lastServerTeleport == ServerTeleports.VARDORVIS) {
 										player.getInstanceTokenInterface().selectedBoss = InstanceMaps.VARDORVIS;
 										player.getInstanceTokenInterface().startInstance(player, true);
 										return;

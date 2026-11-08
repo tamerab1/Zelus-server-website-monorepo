@@ -48,9 +48,16 @@ public class NexUtils {
 	public static void register() {
 		MapListener.registerBounds(Nex.NEX_BOUNDS)
 				.onEnter(p -> {
-					if (p.hitListener == null)
-						p.getCombat().init(p);
-					p.hitListener.postTargetDamage(NexUtils::playerPostTargetDamage);
+					// Fresh listener, then ADD the Nex damage counter to the player's own post-hit handler. It used
+					// to REPLACE it, which switched off everything in PlayerCombat.postTargetDamage inside the room
+					// (Blood fury heals, the Soulsplit perk, ...). init() first so re-entering never chains twice.
+					p.getCombat().init(p);
+					java.util.function.BiConsumer<Hit, Entity> own = p.hitListener.postTargetDamage;
+					p.hitListener.postTargetDamage((hit, target) -> {
+						if (own != null)
+							own.accept(hit, target);
+						playerPostTargetDamage(hit, target);
+					});
 				})
 				.onExit((player, logout) -> {
 					if (logout) {
@@ -130,7 +137,6 @@ public class NexUtils {
 	 * @param p
 	 */
 	static void removePlayerNexHook(Player p) {
-		p.hitListener.postTargetDamage(null);
 		resetNexDamageCounter(p);
 		p.getCombat().init(p);
 		// System.out.println("Removed "+p.getName()+"'s Nex Hook");

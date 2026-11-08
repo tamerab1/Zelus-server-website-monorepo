@@ -1,0 +1,92 @@
+{
+  "id": 55582,
+  "name": "Anniversary August Cape",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 676,
+  "yan2d": 56,
+  "zan2d": 0,
+  "cost": 100000,
+  "stackable": 0,
+  "inventoryModel": 66065,
+  "tradeable": true,
+  "geTradeable": false,
+  "wearPos1": 1,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": false,
+  "colorFind": [
+    7700,
+    11200,
+    926
+  ],
+  "colorReplace": [
+    12,
+    -10860,
+    12
+  ],
+  "zoom2d": 1612,
+  "xOffset2d": -7,
+  "yOffset2d": -10,
+  "ambient": -1,
+  "contrast": -1,
+  "groundOps": {
+    "ops": [
+      null,
+      null,
+      {
+        "text": "Take"
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wear",
+    "Wear",
+    null,
+    null,
+    "Drop"
+  ],
+  "maleModel0": 66064,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 66066,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 255,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": 55581,
+  "placeholderTemplateId": -1,
+  "params": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 1,
+    "7": 1,
+    "8": 0,
+    "9": 2,
+    "10": 0,
+    "11": 0,
+    "13": 0,
+    "14": 0
+  },
+  "selected": true
+}

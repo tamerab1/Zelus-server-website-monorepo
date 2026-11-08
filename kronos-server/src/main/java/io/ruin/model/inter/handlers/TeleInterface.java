@@ -1698,6 +1698,12 @@ public class TeleInterface extends ItemContainer {
 			player.lastServerTeleport = currentTeleport;
 			return;
 		}
+		else if (currentTeleport == ServerTeleports.SOLARMANE) { // its own private instance
+			player.closeInterfaces();
+			io.ruin.model.activities.bosses.solarmane.Solarmane.enter(player);
+			player.lastServerTeleport = currentTeleport;
+			return;
+		}
 		else if (currentTeleport == ServerTeleports.VARDORVIS) {
 			player.getInstanceTokenInterface().selectedBoss = InstanceMaps.VARDORVIS;
 			player.getInstanceTokenInterface().startInstance(player, true);

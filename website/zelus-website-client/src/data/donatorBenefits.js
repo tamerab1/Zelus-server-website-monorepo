@@ -63,8 +63,8 @@ export const BENEFIT_CATEGORIES = [
     perks: [
       { label: 'Upgrade forge success bonus', base: '—',
         values: ['+1%', '+2%', '+3%', '+4%', '+5%', '+7%', '+9%', '+11%'], src: 'UpgradeItems.getOddsForPlayer' },
-      { label: 'Woodcutting: logs noted', unit: 'chance', base: '—',
-        values: [null, '5%', '10%', '15%', '20%', '25%', '30%', '35%'], src: 'Woodcutting.getDonatorNoteChance' },
+      { label: 'Woodcutting, Fishing & Mining: resources noted', unit: 'chance', base: '—',
+        values: [null, '5%', '10%', '15%', '20%', '25%', '30%', '35%'], src: 'Woodcutting / FishingSpot / Mining .getDonatorNoteChance' },
       // pet 1-in-N multiplied by 0.98 ... 0.90
       { label: 'Woodcutting & clue pet rate', base: '—',
         values: [null, '+2%', '+4%', '+6%', '+8%', '+9%', '+10%', '+11%'], src: 'Woodcutting / ClueType.getPetDonatorBoost (×0.98 … ×0.90)' },
@@ -96,7 +96,7 @@ export const BENEFIT_CATEGORIES = [
       { label: 'Yell with rank badge (::yell)', base: '—', values: yes, src: 'CommandHandlerRegular "yell"' },
       { label: 'Unlimited donator tablet', base: '—', values: yes, src: 'CommandHandlerRegular "claimdonortablet"' },
       { label: 'Bank anywhere (::bank)', base: '—',
-        values: [null, null, null, null, null, null, '✓', '✓'], src: 'CommandHandlerRegular "bank"' },
+        values: [null, null, null, null, '✓', '✓', '✓', '✓'], src: 'CommandHandlerRegular "bank" (Gold+)' },
       { label: 'Gear preset slots', base: '3',
         values: ['4', '5', '5', '7', '7', '7', '7', '7'], src: 'GearPresetHandler.maxPresets' },
       { label: 'Trading Post offer slots', base: '3',

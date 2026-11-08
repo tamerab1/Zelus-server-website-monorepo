@@ -237,6 +237,19 @@ public class BuildMaps241 {
 					int n = Math.max(0, res.getOrDefault(k, 0) + delta);
 					if (n == 0) res.remove(k); else res.put(k, n);
 				}
+				// A loc Jagex ADDED in 241 on a tile where we removed the 231 loc is their replacement of what we
+				// removed (Chamber of Ascension 2026-11-04: 241 swapped the wall 24405/24421 at 1631,4961,1 for 42650,
+				// and the id-exact delta above let the new wall back into our room). Drop it unless we placed it too.
+				if (baseLocs != null) {
+					Set<Long> removedTiles = new HashSet<>();
+					for (long k : b.keySet())
+						if (o.getOrDefault(k, 0) < b.get(k)) removedTiles.add(k & 0xFFFC00L); // plane, x, y bits
+					for (long k : t.keySet()) {
+						if (b.containsKey(k) || o.containsKey(k) || !removedTiles.contains(k & 0xFFFC00L)) continue;
+						res.remove(k);
+						removed += t.get(k);
+					}
+				}
 				mergedLocs = toSortedList(res);
 			}
 

@@ -2,6 +2,7 @@ package io.ruin.model.content.bonds;
 
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
+import io.ruin.model.item.containers.Equipment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +14,9 @@ import java.util.Map;
  *   <li>T1 unattuned: the original bond ids (real + ground display proxy), tradeable.</li>
  *   <li>T2-T5 unattuned and all attuned ids: untradeable.</li>
  * </ul>
- * A bond's perks are active only while an ATTUNED copy is in the player's inventory -- see
- * {@link #tier(Player)} and {@link Player#getBondTier(BondType)}. Banking, dropping or severing it
- * turns them off immediately.
+ * A bond's perks are active only while its ATTUNED copy is in the bond slot (Equipment.SLOT_BOND, one bond
+ * at a time) -- see {@link #tier(Player)} and {@link Player#getBondTier(BondType)}. Removing it from the slot
+ * severs it and turns them off immediately.
  *
  * <p>Id layout per bond block {@code b} (cache spec: .dev/cache-restore-tool/bond_tier_variants.txt):
  * b+0..b+3 = unattuned T2-T5, b+4..b+8 = attuned T1-T5, bank placeholders at id + 100.</p>
@@ -147,19 +148,21 @@ public enum BondType {
 		return BY_ID.get(itemId);
 	}
 
+	/** The attuned bond in the player's bond slot, or null (temporary equipment such as the Gauntlet's has no bond slot). */
+	public static Variant worn(Player player) {
+		Item[] slots = player.getEquipment().getItems();
+		if (slots.length <= Equipment.SLOT_BOND || slots[Equipment.SLOT_BOND] == null)
+			return null;
+		Variant v = BY_ID.get(slots[Equipment.SLOT_BOND].getId());
+		return v != null && v.attuned() ? v : null;
+	}
+
 	/**
-	 * The tier of this bond's attuned copy in the player's inventory, or 0 if none is attuned there.
+	 * The tier of this bond when it is the one in the bond slot, else 0.
 	 * Gameplay hooks should call this (via {@link Player#getBondTier}) every time instead of caching.
 	 */
 	public int tier(Player player) {
-		int best = 0;
-		for (Item item : player.getInventory().getItems()) {
-			if (item == null)
-				continue;
-			Variant v = BY_ID.get(item.getId());
-			if (v != null && v.attuned() && v.type() == this && v.tier() > best)
-				best = v.tier();
-		}
-		return best;
+		Variant v = worn(player);
+		return v != null && v.type() == this ? v.tier() : 0;
 	}
 }

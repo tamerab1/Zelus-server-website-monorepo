@@ -1,0 +1,92 @@
+[
+  {
+    "id": 497,
+    "name": "skull",
+    "sprite": 24767,
+    "average": 6354,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 498,
+    "name": "ghostskull",
+    "sprite": 24768,
+    "average": 25053,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 499,
+    "name": "soulflame",
+    "sprite": 24769,
+    "average": 24024,
+    "transparent": 0,
+    "direction": 3,
+    "speed": 3
+  },
+  {
+    "id": 500,
+    "name": "frostsigil",
+    "sprite": 24770,
+    "average": 34170,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 501,
+    "name": "voideye",
+    "sprite": 24771,
+    "average": 50664,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 502,
+    "name": "voidcircle",
+    "sprite": 24772,
+    "average": 48617,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 503,
+    "name": "sun",
+    "sprite": 24773,
+    "average": 7927,
+    "transparent": 0,
+    "direction": 0,
+    "speed": 0
+  },
+  {
+    "id": 504,
+    "name": "skull_ring",
+    "sprite": 24767,
+    "average": 6354,
+    "transparent": 0,
+    "direction": 2,
+    "speed": 1
+  },
+  {
+    "id": 505,
+    "name": "ghostskull_ring",
+    "sprite": 24768,
+    "average": 25053,
+    "transparent": 0,
+    "direction": 4,
+    "speed": 1
+  },
+  {
+    "id": 506,
+    "name": "sun_ring",
+    "sprite": 24773,
+    "average": 7927,
+    "transparent": 0,
+    "direction": 2,
+    "speed": 1
+  }
+]

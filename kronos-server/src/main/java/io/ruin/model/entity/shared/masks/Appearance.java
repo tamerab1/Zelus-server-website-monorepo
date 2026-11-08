@@ -173,6 +173,10 @@ public class Appearance extends UpdateMask {
 			avatar.setColour(i, colors[i] & 0xff);
 		}
 
+		// the egg / relic slot is drawn in the beard's slot (11, below): while it's worn nothing may hide that slot, or a helm
+		// that hides the beard (wearpos3 11, e.g. the Anniversary Slayer Helmet) hides the egg too
+		var egg = player.getEquipment().getItems().length > Equipment.SLOT_EGG ? player.getEquipment().get(Equipment.SLOT_EGG) : null;
+
 		for (int slot = 0; slot < 11; slot++) {
 			var itemId = player.getEquipment().getId(slot);
 			var itemDefinition = ObjType.get(itemId);
@@ -196,8 +200,25 @@ public class Appearance extends UpdateMask {
 				wearPos3 = 11;
 			}
 
+			boolean hidesBeard = wearPos2 == 11 || wearPos3 == 11;
+			if (egg != null) {
+				if (wearPos2 == 11)
+					wearPos2 = -1;
+				if (wearPos3 == 11)
+					wearPos3 = -1;
+			}
+			// rsprot's setWornObj ignores a call with the same item id, so the hide flags would not change when the egg goes
+			// on or comes off: clear the slot first for items that can hide the beard
+			if (hidesBeard)
+				avatar.setWornObj(slot, -1, -1, -1);
 			avatar.setWornObj(slot, itemId, wearPos2, wearPos3);
 		}
+
+		// The egg / relic slot (Equipment.SLOT_EGG, 2026-11-06) has no appearance slot of its own: the avatar has 12 and
+		// 0-10 carry the worn gear, so it takes slot 11 (the beard's) while worn. A worn item that hides the beard
+		// (wearpos3 11, full helms) hides it too.
+		// cleared when it comes off (2026-11-06: it stayed drawn after removal), so the beard comes back
+		avatar.setWornObj(11, egg != null ? egg.getId() : -1, -1, -1);
 
 		var r = Renders.DEFAULT;
 		if (this.customRenders != null) {

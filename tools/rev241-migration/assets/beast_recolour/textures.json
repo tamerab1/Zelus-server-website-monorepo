@@ -1,0 +1,18 @@
+[
+  {
+    "id": 507,
+    "sprite": 24800,
+    "average": 64018,
+    "opaque": 0,
+    "direction": 1,
+    "speed": 2
+  },
+  {
+    "id": 508,
+    "sprite": 24801,
+    "average": 63917,
+    "opaque": 0,
+    "direction": 1,
+    "speed": 2
+  }
+]

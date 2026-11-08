@@ -8,13 +8,14 @@ public class TheSoulsplit extends PlayerPerk {
 		return 5;
 	}
 
+	/** 5 / 10 / 15 / 20 / 25% per hit (2026-11-08: was 12-44%). */
 	public int chanceToHeal() {
-		return 4 + (perkLevel * 8);
+		return chanceToHeal(perkLevel);
 	}
 
+	/** 8 / 10 / 12 / 14 / 16% of the hit (2026-11-08: was 10-30%); a miss heals nothing. */
 	public int healAmount(int damage) {
-		float calc = (5.0f + (this.perkLevel * 5.0f)) / 100.0f;
-		return Math.max(1, (int) (damage * calc));
+		return damage <= 0 ? 0 : Math.max(1, (int) (damage * heal(perkLevel)));
 	}
 
 	@Override
@@ -38,12 +39,11 @@ public class TheSoulsplit extends PlayerPerk {
 	}
 
 	public int chanceToHeal(int level) {
-		return 4 + (level * 8);
+		return level * 5;
 	}
 
 	public double heal(int level) {
-		double calc = 5 + (level * 5);
-		return calc / 100;
+		return (6 + level * 2) / 100D;
 	}
 
 	@Override

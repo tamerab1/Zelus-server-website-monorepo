@@ -69,6 +69,7 @@ public class Raid4VaultRoom implements Raid4Room {
 		for (Player player : players) {
 			player.fracturedArchiveKills.increment(player);
 			player.fracturedArchiveKills.messageOnKill();
+			io.ruin.model.content.codex.ZelusTask.BREAKER_OF_THE_ARCHIVE.increment(player, 1);
 		}
 		Map<Player, Raid4Loot.Reward> rolled = Raid4Loot.roll(players, controller.getPoints());
 		// chest N is the raider in party slot N, facing the middle. OSRS lays out all eight every run and marks yours only

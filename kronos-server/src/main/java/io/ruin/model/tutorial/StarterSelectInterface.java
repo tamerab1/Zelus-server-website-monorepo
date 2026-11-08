@@ -216,6 +216,7 @@ public final class StarterSelectInterface {
 			items.add(new Item(30477));
 			items.add(new Item(30588));
 			items.add(new Item(30589));
+			items.add(new Item(6199)); // mystery box, as StarterGuide.giveEcoStarter
 			if (difficulty == DifficultyType.EXTREME) {
 				items.add(new Item(30478));
 				items.add(new Item(30479));

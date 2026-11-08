@@ -37,7 +37,7 @@ public enum SetEffect {
 	GUTHAN((player, target, hit) -> {
 		if (hit.damage > 0 && Random.rollPercent(25)) {
 			target.graphics(398, 0, 0);
-			player.incrementHp(hit.damage);
+			player.incrementHp(healShare(hit.damage));
 		}
 	}, (player, hit) -> hit.attackStyle.isMelee(),
 		new Piece(Equipment.SLOT_HAT, 4724, 4904, 4905, 4906, 4907),
@@ -46,8 +46,8 @@ public enum SetEffect {
 		new Piece(Equipment.SLOT_WEAPON, 4726, 4910, 4911, 4912, 4913)),
 
 	VAMPYRICHELM((player, target, hit) -> {
-		if (Random.rollDie(5, 1) && player.wildernessLevel <= 0) {
-			player.incrementHp(hit.damage);
+		if (hit.damage > 0 && Random.rollDie(5, 1) && player.wildernessLevel <= 0) {
+			player.incrementHp(healShare(hit.damage));
 		}
 	}, (player, hit) -> hit.attackStyle.isMelee(),
 		new Piece(Equipment.SLOT_HAT, 25996)),
@@ -65,7 +65,7 @@ public enum SetEffect {
 			return;
 		}
 
-		var healHit = new Hit(HitType.HEAL).fixedDamage(damage);
+		var healHit = new Hit(HitType.HEAL).fixedDamage(healShare(damage));
 		target.graphics(1811, 0, 0);
 		player.hit(healHit);
 	}, (player, hit) -> hit.attacker.isPlayer(),
@@ -226,6 +226,11 @@ public enum SetEffect {
 
 	BiPredicate<Player, Hit> hitCondition; // must fulfill this condition to even check if the pieces are equipped
 	private Effect hitEffect;
+
+	/** Guthan's, the vampyric helm and the Blood fury heal 30% of the hit on a proc (2026-11-08: they healed the whole hit). */
+	private static int healShare(int damage) {
+		return Math.max(1, (int) (damage * 0.30));
+	}
 
 	SetEffect(Effect hitEffect, BiPredicate<Player, Hit> hitCondition, Piece... pieces) {
 		this.hitCondition = hitCondition;

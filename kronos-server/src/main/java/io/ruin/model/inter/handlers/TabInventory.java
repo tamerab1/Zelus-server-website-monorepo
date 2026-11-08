@@ -220,12 +220,26 @@ public class TabInventory {
 
 			return;
 		}
-		if (option == def.equipOption) {
+		// any equip word, not just the one getOption found first: imported items can carry two ("Wear", "Wield" on the
+		// August Partyhat), and equipOption ("wield" searched first) pointed at op 2 while the left-click is op 1 (2026-11-06)
+		if (option == def.equipOption || def.equipOption != -1 && isEquipWord(def, option)) {
 			player.getEquipment().equip(item);
 			player.resetActions(false, player.getMovement().following != null, true);
 			return;
 		}
 		item.examine(player);
+	}
+
+	private static boolean isEquipWord(ObjType def, int option) {
+		if (def.inventoryOptions == null || option < 1 || option > def.inventoryOptions.length)
+			return false;
+		String text = def.inventoryOptions[option - 1];
+		if (text == null)
+			return false;
+		for (String w : new String[] { "wield", "equip", "wear", "ride", "hold" })
+			if (w.equalsIgnoreCase(text))
+				return true;
+		return false;
 	}
 
 	private static void dropWithValueCheck(Player player, Item item, ObjType def) {

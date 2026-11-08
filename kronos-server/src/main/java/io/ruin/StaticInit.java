@@ -197,6 +197,8 @@ public final class StaticInit {
 		io.ruin.model.activities.scoreboard.Scoreboard.register();
 		io.ruin.model.content.rivals.DivisionRivalsInterfaceManager.register(); // Division Rivals interface 5120 (UI preview, 2026-10-15)
 		io.ruin.model.content.soulweapons.SoulWeapons.register(); // Soulbound Living Weapons (::soulweapon, Soul XP), 2026-10-18
+		io.ruin.model.content.EggIconMotion.register(); // egg-slot icons' looping spot-anims (cache stage 20), 2026-11-07
+		io.ruin.model.activities.colosseum.Colosseum.register(); // the Colosseum of Trials (region 12891), 2026-11-07
 		io.ruin.model.content.casino.BlackjackTable.register(); // Zelus Blackjack Table object 62442 -> BlackjackInterface, 2026-10-18
 		io.ruin.model.content.DiscordStatue.register(); // Discord Statue object 62443 -> the Discord invite, 2026-10-18
 		io.ruin.model.content.ZaryteStormpiercer.register(); // customs19 bow 31856 can't be dropped, 2026-10-19

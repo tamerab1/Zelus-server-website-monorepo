@@ -1,5 +1,6 @@
 package io.ruin.model.inter.handlers;
 
+import io.ruin.model.content.bonds.BondHandler;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.inter.Interface;
 import io.ruin.model.inter.InterfaceHandler;
@@ -27,6 +28,10 @@ public class TabEquipment {
 			h.actions[23] = (OptionAction) (player, option) -> itemAction(player, option, Equipment.SLOT_FEET);
 			h.actions[24] = (OptionAction) (player, option) -> itemAction(player, option, Equipment.SLOT_RING);
 			h.actions[25] = (OptionAction) (player, option) -> itemAction(player, option, Equipment.SLOT_AMMO);
+			// egg / relic slot (cache stage 16): op 1 Remove, op 10 Examine
+			h.actions[Equipment.EGG_ITEM] = (OptionAction) (player, option) -> itemAction(player, option, Equipment.SLOT_EGG);
+			// bond slot (cache stage 22): op 1 Remove, op 2 Overview, op 10 Examine
+			h.actions[Equipment.BOND_ITEM] = (OptionAction) (player, option) -> itemAction(player, option, Equipment.SLOT_BOND);
 			h.actions[26] = (SimpleAction) p -> {
 				p.openInterface(ToplevelComponent.MAINMODAL, 719);
 			};
@@ -60,6 +65,10 @@ public class TabEquipment {
 		if (option == 10) {
 			item.examine(player);
 			ItemStatsViewer.open(player, item.getId());
+			return;
+		}
+		if (slot == Equipment.SLOT_BOND) {
+			BondHandler.slotOption(player, option, item);
 			return;
 		}
 		int i = option - 1;

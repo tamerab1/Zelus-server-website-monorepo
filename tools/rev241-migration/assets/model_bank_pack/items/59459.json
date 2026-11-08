@@ -1,0 +1,114 @@
+{
+  "id": 59459,
+  "name": "Paladin bow",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 420,
+  "yan2d": 1045,
+  "zan2d": 1,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 70634,
+  "tradeable": false,
+  "geTradeable": false,
+  "wearPos1": 3,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": false,
+  "colorFind": [
+    -29728,
+    -29697,
+    -27688,
+    -27682,
+    -27651,
+    -27573,
+    -27544,
+    -27094,
+    -27053,
+    6171,
+    6187,
+    6733,
+    6737,
+    7424,
+    7838,
+    7891,
+    32449
+  ],
+  "colorReplace": [
+    -26656,
+    -26625,
+    -23592,
+    -23586,
+    -23555,
+    -22709,
+    -22680,
+    -22742,
+    -22701,
+    6171,
+    6187,
+    6733,
+    6737,
+    7424,
+    7838,
+    7891,
+    -25919
+  ],
+  "zoom2d": 10300,
+  "xOffset2d": 8,
+  "yOffset2d": -12,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": "Take"
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wield",
+    "Wield",
+    "",
+    "",
+    "Drop"
+  ],
+  "maleModel0": 71541,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 71541,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

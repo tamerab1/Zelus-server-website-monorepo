@@ -248,6 +248,7 @@ public class PlayerPrayer {
 		}
 
 		resistance *= 1D + PetPerkHandler.getPrayerDrainReduction(player);
+		resistance *= io.ruin.model.activities.colosseum.EggEffects.prayerDrainFactor(player);
 
 		if (drainCounter > resistance) {
 			drain(drainCounter / resistance);

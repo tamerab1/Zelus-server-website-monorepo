@@ -476,6 +476,7 @@ public class IKOD {
 		int size = Math.min(keepItems.size(), player.getInventory().getItems().length);
 		for (int i = 0; i < size; i++)
 			player.getInventory().set(i, keepItems.get(i));
+		io.ruin.model.content.bonds.BondHandler.reseatAfterDeath(player);
 		for (Item dropItem : loseItems) {
 			dropConsumer.accept(dropItem);
 		}

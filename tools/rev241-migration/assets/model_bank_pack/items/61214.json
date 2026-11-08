@@ -1,0 +1,74 @@
+{
+  "id": 61214,
+  "name": "@gre@Beast icon (t2)",
+  "resizeX": 110,
+  "resizeY": 110,
+  "resizeZ": 110,
+  "xan2d": 553,
+  "yan2d": 0,
+  "zan2d": 0,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 63618,
+  "tradeable": true,
+  "geTradeable": false,
+  "wearPos1": 9,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": true,
+  "colorFind": [
+    22439
+  ],
+  "colorReplace": [
+    11200
+  ],
+  "zoom2d": 1114,
+  "xOffset2d": 34,
+  "yOffset2d": -28,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": "Take"
+      },
+      null,
+      {
+        "text": "Take"
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wear",
+    null,
+    null,
+    null,
+    "Drop"
+  ],
+  "maleModel0": 63617,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 63617,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

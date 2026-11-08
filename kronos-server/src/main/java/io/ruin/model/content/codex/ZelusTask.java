@@ -25,7 +25,42 @@ public enum ZelusTask {
 	PATH_OF_MASTERY(ZelusCodex.Tier.ZELUS, "Path of Mastery", "Soul Tree",
 		"Unlock any node in the Soul Tree (::soultree).", 1, 5_000, new Item(30470)),
 	THE_VAULTKEEPER(ZelusCodex.Tier.ZELUS, "The Vaultkeeper", "Trading Post",
-		"List an item for sale or buy one on the Trading Post (::market).", 1, 2_500, new Item(995, 500_000));
+		"List an item for sale or buy one on the Trading Post (::market).", 1, 2_500, new Item(995, 500_000)),
+	// 2026-11-04: four more for the newer endgame content
+	CHAMPION_OF_ASCENSION(ZelusCodex.Tier.ZELUS, "Champion of Ascension", "Chamber of Ascension",
+		"Defeat Aurelius the Gilded in the Chamber of Ascension 50 times.", 50, 25_000,
+		new Item(290, 3), new Item(30459)),
+	SUNBREAKER(ZelusCodex.Tier.ZELUS, "Sunbreaker", "Solarmane",
+		"Defeat Solarmane (::solarmane) 30 times.", 30, 20_000,
+		new Item(290, 2), new Item(30456, 2)),
+	SOUL_ASCENDANT(ZelusCodex.Tier.ZELUS, "Soul Ascendant", "Soulbound weapon",
+		"Raise your Soulbound weapon to tier 10.", 10, 30_000,
+		new Item(30463), new Item(30470, 3)),
+	BREAKER_OF_THE_ARCHIVE(ZelusCodex.Tier.ZELUS, "Breaker of the Archive", "Fractured Archive",
+		"Complete the Fractured Archive (Raid 4) 35 times.", 35, 40_000,
+		new Item(30464), new Item(290, 3)),
+	// 2026-11-08: the Colosseum of Trials
+	TRIAL_CONTENDER(ZelusCodex.Tier.HARD, "Trial Contender", "Colosseum of Trials",
+		"Clear 25 trials in the Colosseum of Trials, solo or as a duo.", 25, 12_000, new Item(290, 2)),
+	BANE_OF_THE_BEHEMOTH(ZelusCodex.Tier.ELITE, "Bane of the Behemoth", "Colosseum of Trials",
+		"Defeat Balarok the Horned Behemoth in the Colosseum 15 times.", 15, 35_000, new Item(290, 3), new Item(30459));
+
+	/** Aurelius the Gilded, the Chamber of Ascension's final boss. */
+	private static final int AURELIUS = 30571, SOLARMANE = 30611;
+
+	/** SoulWeapons' tier-up: Soul Ascendant reads the tier live, so this only announces it. */
+	public static void onSoulTier(Player player, int before, int after) {
+		if (before < SOUL_ASCENDANT.goal && after >= SOUL_ASCENDANT.goal && !SOUL_ASCENDANT.claimed(player))
+			ZelusCodex.announceComplete(player, SOUL_ASCENDANT.title);
+	}
+
+	/** NPCCombat's kill path: credits the kill tasks. */
+	public static void onNpcKill(Player player, int npcId) {
+		if (npcId == AURELIUS)
+			CHAMPION_OF_ASCENSION.increment(player, 1);
+		else if (npcId == SOLARMANE)
+			SUNBREAKER.increment(player, 1);
+	}
 
 	/** Awakening steps (bit flags, the progress is how many are done). */
 	public static final int STEP_PATH = 1, STEP_KIT = 2, STEP_RELIQUARY = 4;
@@ -53,6 +88,9 @@ public enum ZelusTask {
 	}
 
 	public int progress(Player player) {
+		// read live, so weapons already past the goal count (the tier only goes up; ::resetsoul keeps it)
+		if (this == SOUL_ASCENDANT)
+			return player.soulWeapon == null ? 0 : player.soulWeapon.tier;
 		int value = store(player).getOrDefault(name(), 0);
 		return this == AWAKENING_IN_ZELUS ? Integer.bitCount(value) : value;
 	}

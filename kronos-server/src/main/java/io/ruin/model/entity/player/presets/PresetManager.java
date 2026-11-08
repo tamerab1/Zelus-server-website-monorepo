@@ -153,6 +153,8 @@ public class PresetManager {
             Item[] eq = player.getEquipment().getItems();
             Item[] eqCopy = new Item[eq.length];
             for (int i = 0; i < eq.length; i++) {
+                if (i == io.ruin.model.item.containers.Equipment.SLOT_BOND)
+                    continue; // the bond slot isn't gear: it stays on through preset loads
                 eqCopy[i] = eq[i] == null ? null : new Item(eq[i].getId(), eq[i].getAmount());
             }
             preset.getEquipment().add(eqCopy);
@@ -283,7 +285,7 @@ public class PresetManager {
                 }
             }
 
-            player.getEquipment().clear();
+            player.getEquipment().clearExceptBond();
             Item[] eq = preset.getEquipment().isEmpty() ? new Item[0] : preset.getEquipment().get(0);
             for (int i = 0; i < eq.length; i++) {
                 Item item = eq[i];

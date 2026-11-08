@@ -99,14 +99,14 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
-			// Instant-open bank shortcut -- mod+ staff or legendary+ donator.
+			// Instant-open bank shortcut -- mod+ staff or Gold Donator+ (2026-11-06, was Legendary+).
 			case "b":
 			case "bank":
 			case "openbank": {
-				if (!player.isModerator() && !player.isLegendaryDonator() && !player.isSupremeDonator()) {
+				if (!player.isModerator() && !player.getSecondaryGroup().equalToOrGreaterThan(SecondaryGroup.GOLD_DONATOR)) {
 					// Bond of the Sovereign Monarch T4+ Pocket Bank: every 10 minutes outside the Wilderness.
 					if (player.getBondTier(io.ruin.model.content.bonds.BondType.UTILITY) < 4) {
-						player.sendMessage("This command is for legendary+ donators and staff only.");
+						player.sendMessage("This command is for Gold Donators and above, and staff.");
 						return true;
 					}
 					String denied = io.ruin.model.content.bonds.BondPerks.usePocketBank(player);

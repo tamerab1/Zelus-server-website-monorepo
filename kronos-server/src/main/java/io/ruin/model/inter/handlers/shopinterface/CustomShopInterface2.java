@@ -236,7 +236,7 @@ public class CustomShopInterface2 {
 			return;
 
 		if (option == 10) {
-			item.examine(player);
+			examineWithStats(player, item);
 			return;
 		}
 
@@ -367,7 +367,7 @@ public class CustomShopInterface2 {
 			return;
 
 		if (option == 10) {
-			item.examine(player);
+			examineWithStats(player, item);
 			return;
 		}
 
@@ -482,6 +482,45 @@ public class CustomShopInterface2 {
 					+ " " + CustomShop2.getCurrency().getCurrencyHandler().name() + ".</shad>"
 				);
 			}
+		}
+	}
+
+	/**
+	 * Examine: the examine text, then (for wearable items) the item stats viewer, whose Close button
+	 * reopens this shop on the same tab -- same as examining from the inventory.
+	 */
+	private static void examineWithStats(Player player, Item item) {
+		item.examine(player);
+		ObjType def = item.getDef();
+		if (def == null || def.equipSlot == -1 || def.equipBonuses == null)
+			return;
+		CustomShop2 shop = player.getActiveCustomShop2();
+		int shopId = player.getShopIdentifier();
+		if (shop == null) {
+			io.ruin.model.inter.handlers.ItemStatsViewer.open(player, item.getId(), null);
+			return;
+		}
+		io.ruin.model.inter.handlers.ItemStatsViewer.open(player, item.getId(), () -> {
+			player.setShopIdentifier(shopId);
+			handleEnteringShop(player, shop);
+			open(player, CustomShop2.getItemsFromShop(player));
+			player.getPacketSender().sendString(891, 14, shopTitle(shopId));
+		});
+	}
+
+	private static String shopTitle(int shopId) {
+		switch (shopId) {
+			case 1: return "Melee Store";
+			case 6: return "Bounty Hunter Shop";
+			case 9: return "Donation Shop";
+			case 10: return "Voting Shop";
+			case 12: return "Ironman Store";
+			case 13: return "PKP Shop";
+			case 14: return "Zelus Points Shop";
+			case 15: return "Achievement Points Shop";
+			case 16: return "PVM Point Shop";
+			case 17: return "Sell Bounty Hunter Emblems";
+			default: return "Shop";
 		}
 	}
 

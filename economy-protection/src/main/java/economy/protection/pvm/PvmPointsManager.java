@@ -36,8 +36,10 @@ public final class PvmPointsManager {
 
 	/** Grants tier-based PVM Points for a single NPC kill, if eligible. */
 	public static void grantForKill(Player player, NPC npc) {
+		if (npc.noKillPoints) return; // Colosseum of Trials bosses pay Trial Marks instead
 		int points = pointsForKill(player, npc);
 		if (points <= 0) return;
+		points = io.ruin.model.activities.colosseum.EggEffects.pvmPoints(player, points);
 		player.PvmPoints += points;
 		player.sendMessage("<shad=000000><col=BA0000>[PVM Points]</shad> <col=0C2AC1>You earn <col=C10CB9>(+" + points + ") pvm points <col=0C2AC1>after killing <col=0C2AC1>"
 			+ npc.getDef().name + "<col=0C2AC1>! You now have <col=0C2AC1>" + player.PvmPoints + " PVM Points<col=0C2AC1>!");

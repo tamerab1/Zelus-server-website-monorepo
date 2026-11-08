@@ -54,6 +54,26 @@ public class GroupIronInvitation {
 
 	public static void acceptInvitation(Player inviter, Player player) {
 		var group = inviter.getGroupIron();
+		if (group == null) {
+			player.sendMessage("That group no longer exists.");
+			return;
+		}
+		// re-checked at accept time (2026-11-06): the dialogue can be answered long after the invite, by which time the
+		// player may have de-ironed, changed mode or joined / created another group
+		var pending = group.getInvitation();
+		if (pending == null || pending.getTargetPlayer() != player || System.currentTimeMillis() > pending.getExpirationTime()) {
+			group.setInvitation(null);
+			player.sendMessage("That invitation has expired.");
+			return;
+		}
+		if (player.getGameMode() != inviter.getGameMode() || !player.isGroupIronman()) {
+			player.sendMessage("You can only join a group of your own game mode.");
+			return;
+		}
+		if (player.getGroupIron() != null) {
+			player.sendMessage("You are already in a group.");
+			return;
+		}
 
 		if (group.getMembers().size() >= 5) {
 			player.sendMessage("This group is full.");
@@ -74,7 +94,7 @@ public class GroupIronInvitation {
 		var invitation = group.getInvitation();
 
 		if (invitation != null && invitation.getTargetPlayer() == player) {
-			invitation = null;
+			group.setInvitation(null); // single use (the old code only cleared a local variable)
 
 			group.addMember(player.getName(), true);
 			player.newGroupId = group.getGroupId();

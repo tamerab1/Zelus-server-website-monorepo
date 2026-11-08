@@ -18,6 +18,7 @@ public class Module implements IModule {
 		ObjectHook.register();
 		PlayerActionHook.register();
 		TradeHook.register();
+		GroupDeathHook.register();
 		TutorialHook.register();
 
 		GroupSettingsTabInterface.register();

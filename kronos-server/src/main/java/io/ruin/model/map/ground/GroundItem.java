@@ -386,6 +386,7 @@ public class GroundItem extends Position {
 		}
 
 		if (player.getGameMode().isIronMan()
+				&& !player.isGroupIronman() // group ironmen: the player-groupiron GroundItemHook (teammates' items allowed)
 				&& originalOwner != null
 				&& !originalOwner.isEmpty()
 				&& !originalOwner.equalsIgnoreCase(player.getName())) {

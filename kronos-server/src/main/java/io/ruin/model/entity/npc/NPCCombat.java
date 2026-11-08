@@ -447,11 +447,13 @@ public abstract class NPCCombat extends Combat {
 		 */
 		vorkathHead(dropPosition, player);
 		NPCType def = npc.getDef();
+		io.ruin.model.activities.colosseum.EggEffects.onKill(player);
 
 		/*
 		 * Gives players PVM Points (legacy named-boss table, PVM Mode only)
 		 */
-		PvmPoints.addPoints(player, npc);
+		if (!npc.noKillPoints)
+			PvmPoints.addPoints(player, npc);
 		/*
 		 * Gives players Boss Points
 		 */
@@ -641,7 +643,8 @@ public abstract class NPCCombat extends Combat {
 		}
 
 		// Raid 4's Dreadnoth jellies (16666) and Dagon'hai imps (16650) are fight mechanics, spawned by the dozen: no Zelus points
-		if (def.combatLevel >= 100 && npc.getId() != 16666 && npc.getId() != 16650) {
+		// Colosseum of Trials bosses pay Trial Marks instead (npc.noKillPoints)
+		if (def.combatLevel >= 100 && npc.getId() != 16666 && npc.getId() != 16650 && !npc.noKillPoints) {
 			int combatLevel = def.combatLevel;
 			int hpLevel = npc.getMaxHp();
 			int percentageBoost = player.getDifficulty().GetPercentagePointBoost();
@@ -657,6 +660,7 @@ public abstract class NPCCombat extends Combat {
 				case MASTER -> pointsReward = (int) (pointsReward * 1.1);
 				case GRANDMASTER -> pointsReward = (int) (pointsReward * 1.2);
 			}
+			pointsReward = io.ruin.model.activities.colosseum.EggEffects.zelusPoints(player, pointsReward);
 			player.updateReasonPoints(pointsReward);
 			player.sendFilteredMessage("You receive <col=000000><shad=29F1FE>" + pointsReward
 					+ " Zelus points<col=000000></shad> for killing a " + def.name + ".");
@@ -967,6 +971,11 @@ public abstract class NPCCombat extends Combat {
 		if (target == null || hasAttackDelay() || npc.isLocked() || !attack())
 			return;
 		updateLastAttack(info.attack_ticks);
+		afterAttack();
+	}
+
+	/** Called once after every attack that went off. */
+	protected void afterAttack() {
 	}
 
 	public boolean canAttack(Entity target) {
@@ -1210,7 +1219,10 @@ public abstract class NPCCombat extends Combat {
 				}
 
 				if (killer != null) {
-					handleNewDrop(killer.player, npc.getId(), npc.getPosition());
+					if (ironmanLootDenied(killer.player))
+						killer.player.sendMessage("As an ironman, you don't get loot from a kill other players helped with.");
+					else
+						handleNewDrop(killer.player, npc.getId(), npc.getPosition());
 				}
 
 				if (killer != null && killer.player != null) {
@@ -2775,6 +2787,7 @@ public abstract class NPCCombat extends Combat {
 					if (npc.getDef().killCounter != null) {
 						npc.getDef().killCounter.apply(killer.player).increment(killer.player);
 					}
+					io.ruin.model.content.codex.ZelusTask.onNpcKill(killer.player, npc.getId());
 					if (npc.getId() == 499) {
 						killer.player.thermonuclearSmokeDevilKills.increment(killer.player);
 					}
@@ -3420,6 +3433,25 @@ public abstract class NPCCombat extends Combat {
 	@Override
 	public double getBonus(int bonusType) {
 		return bonusType >= bonuses.length ? 0 : bonuses[bonusType];
+	}
+
+	/**
+	 * Ironman loot rule (2026-11-06): an ironman of any mode gets no drop from a kill that anyone outside their own group
+	 * damaged. The loot used to go to the npc's current target (getKiller), so an ironman it was attacking took the drop
+	 * however much a normal player had done. Only the single-killer drop path uses it: bosses that roll loot for every
+	 * participant (wilderness bosses, Sylvaroth, global / event bosses) have their own drop code.
+	 */
+	boolean ironmanLootDenied(Player p) {
+		if (p == null || !p.getGameMode().isIronMan() || killers == null)
+			return false;
+		for (Killer k : killers.values()) {
+			if (k == null || k.player == null || k.player == p || k.damage <= 0)
+				continue;
+			boolean teammate = p.isGroupIronman() && k.player.isGroupIronman() && p.newGroupId != 0 && p.newGroupId == k.player.newGroupId;
+			if (!teammate)
+				return true;
+		}
+		return false;
 	}
 
 	@Override

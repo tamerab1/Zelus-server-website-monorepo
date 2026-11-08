@@ -1,0 +1,482 @@
+[
+  {
+    "name": "Beast icon (t1)",
+    "id": 40080,
+    "tradeable": true,
+    "examine": "A smouldering beast aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Beast icon (t2)",
+    "id": 40081,
+    "tradeable": true,
+    "examine": "A smouldering beast aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Beast icon (t3)",
+    "id": 40200,
+    "tradeable": true,
+    "examine": "A smouldering beast aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Beast icon (t4)",
+    "id": 40201,
+    "tradeable": true,
+    "examine": "A smouldering beast aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Beast icon (t5)",
+    "id": 40202,
+    "tradeable": true,
+    "examine": "A smouldering beast aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Shade icon (t1)",
+    "id": 40203,
+    "tradeable": true,
+    "examine": "Shadow smoke and violet shards.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Shade icon (t2)",
+    "id": 40204,
+    "tradeable": true,
+    "examine": "Shadow smoke and violet shards.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Shade icon (t3)",
+    "id": 40205,
+    "tradeable": true,
+    "examine": "Shadow smoke and violet shards.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Shade icon (t4)",
+    "id": 40206,
+    "tradeable": true,
+    "examine": "Shadow smoke and violet shards.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Shade icon (t5)",
+    "id": 40207,
+    "tradeable": true,
+    "examine": "Shadow smoke and violet shards.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Easter icon (t1)",
+    "id": 40087,
+    "tradeable": true,
+    "examine": "A cheerful spring aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Easter icon (t2)",
+    "id": 40208,
+    "tradeable": true,
+    "examine": "A cheerful spring aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Easter icon (t3)",
+    "id": 40209,
+    "tradeable": true,
+    "examine": "A cheerful spring aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Easter icon (t4)",
+    "id": 40210,
+    "tradeable": true,
+    "examine": "A cheerful spring aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Easter icon (t5)",
+    "id": 40211,
+    "tradeable": true,
+    "examine": "A cheerful spring aura.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Amberglow icon (t1)",
+    "id": 40090,
+    "tradeable": true,
+    "examine": "It glows like warm amber.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Amberglow icon (t2)",
+    "id": 40212,
+    "tradeable": true,
+    "examine": "It glows like warm amber.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Amberglow icon (t3)",
+    "id": 40213,
+    "tradeable": true,
+    "examine": "It glows like warm amber.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Amberglow icon (t4)",
+    "id": 40214,
+    "tradeable": true,
+    "examine": "It glows like warm amber.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Amberglow icon (t5)",
+    "id": 40215,
+    "tradeable": true,
+    "examine": "It glows like warm amber.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon (t1)",
+    "id": 40091,
+    "tradeable": true,
+    "examine": "Embers dance around your feet.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon (t2)",
+    "id": 40216,
+    "tradeable": true,
+    "examine": "Embers dance around your feet.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon (t3)",
+    "id": 40217,
+    "tradeable": true,
+    "examine": "Embers dance around your feet.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon (t4)",
+    "id": 40218,
+    "tradeable": true,
+    "examine": "Embers dance around your feet.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Infernoglint icon (t5)",
+    "id": 40219,
+    "tradeable": true,
+    "examine": "Embers dance around your feet.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Challenge icon (t1)",
+    "id": 40093,
+    "tradeable": true,
+    "examine": "Proof you rose to the challenge.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Challenge icon (t2)",
+    "id": 40220,
+    "tradeable": true,
+    "examine": "Proof you rose to the challenge.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Challenge icon (t3)",
+    "id": 40221,
+    "tradeable": true,
+    "examine": "Proof you rose to the challenge.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Challenge icon (t4)",
+    "id": 40222,
+    "tradeable": true,
+    "examine": "Proof you rose to the challenge.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Challenge icon (t5)",
+    "id": 40223,
+    "tradeable": true,
+    "examine": "Proof you rose to the challenge.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon (t1)",
+    "id": 40094,
+    "tradeable": true,
+    "examine": "Petals drift through the midnight air.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon (t2)",
+    "id": 40224,
+    "tradeable": true,
+    "examine": "Petals drift through the midnight air.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon (t3)",
+    "id": 40225,
+    "tradeable": true,
+    "examine": "Petals drift through the midnight air.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon (t4)",
+    "id": 40226,
+    "tradeable": true,
+    "examine": "Petals drift through the midnight air.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Midnight spring icon (t5)",
+    "id": 40227,
+    "tradeable": true,
+    "examine": "Petals drift through the midnight air.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Bonecrown icon (t1)",
+    "id": 40228,
+    "tradeable": true,
+    "examine": "A crown of bone and grinning skulls.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Bonecrown icon (t2)",
+    "id": 40229,
+    "tradeable": true,
+    "examine": "A crown of bone and grinning skulls.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Bonecrown icon (t3)",
+    "id": 40230,
+    "tradeable": true,
+    "examine": "A crown of bone and grinning skulls.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Bonecrown icon (t4)",
+    "id": 40231,
+    "tradeable": true,
+    "examine": "A crown of bone and grinning skulls.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Bonecrown icon (t5)",
+    "id": 40232,
+    "tradeable": true,
+    "examine": "A crown of bone and grinning skulls.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Soulflame icon (t1)",
+    "id": 40233,
+    "tradeable": true,
+    "examine": "Green soulfire that never burns out.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Soulflame icon (t2)",
+    "id": 40234,
+    "tradeable": true,
+    "examine": "Green soulfire that never burns out.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Soulflame icon (t3)",
+    "id": 40235,
+    "tradeable": true,
+    "examine": "Green soulfire that never burns out.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Soulflame icon (t4)",
+    "id": 40236,
+    "tradeable": true,
+    "examine": "Green soulfire that never burns out.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Soulflame icon (t5)",
+    "id": 40237,
+    "tradeable": true,
+    "examine": "Green soulfire that never burns out.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Frost sigil icon (t1)",
+    "id": 40238,
+    "tradeable": true,
+    "examine": "A frozen sigil hums beneath you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Frost sigil icon (t2)",
+    "id": 40239,
+    "tradeable": true,
+    "examine": "A frozen sigil hums beneath you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Frost sigil icon (t3)",
+    "id": 40240,
+    "tradeable": true,
+    "examine": "A frozen sigil hums beneath you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Frost sigil icon (t4)",
+    "id": 40241,
+    "tradeable": true,
+    "examine": "A frozen sigil hums beneath you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Frost sigil icon (t5)",
+    "id": 40242,
+    "tradeable": true,
+    "examine": "A frozen sigil hums beneath you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Void eye icon (t1)",
+    "id": 40243,
+    "tradeable": true,
+    "examine": "Something in the void is watching.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Void eye icon (t2)",
+    "id": 40244,
+    "tradeable": true,
+    "examine": "Something in the void is watching.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Void eye icon (t3)",
+    "id": 40245,
+    "tradeable": true,
+    "examine": "Something in the void is watching.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Void eye icon (t4)",
+    "id": 40246,
+    "tradeable": true,
+    "examine": "Something in the void is watching.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Void eye icon (t5)",
+    "id": 40247,
+    "tradeable": true,
+    "examine": "Something in the void is watching.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Sunburst icon (t1)",
+    "id": 40248,
+    "tradeable": true,
+    "examine": "The sun itself bows to you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Sunburst icon (t2)",
+    "id": 40249,
+    "tradeable": true,
+    "examine": "The sun itself bows to you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Sunburst icon (t3)",
+    "id": 40250,
+    "tradeable": true,
+    "examine": "The sun itself bows to you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Sunburst icon (t4)",
+    "id": 40251,
+    "tradeable": true,
+    "examine": "The sun itself bows to you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  },
+  {
+    "name": "Sunburst icon (t5)",
+    "id": 40252,
+    "tradeable": true,
+    "examine": "The sun itself bows to you.",
+    "weight": 0.1,
+    "equip_slot": 15
+  }
+]

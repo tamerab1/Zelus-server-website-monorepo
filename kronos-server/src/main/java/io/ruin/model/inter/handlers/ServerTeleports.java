@@ -200,6 +200,13 @@ public enum ServerTeleports {
 		"A shattered god-fortress of obsidian and blood. <br>Slay its guardians to face the Sanguine Harrowlord, <br>the Gloomfang Devourer and the Venomtongue Abomination.",
 		"Elite", "No requirements.", 64942, 9195
 	),
+	// Solarmane the sun-lion (io.ruin.model.activities.bosses.solarmane.Solarmane): a private instance per fight, so
+	// TeleInterface.startTeleport calls Solarmane.enter instead of moving to this position. Preview: model 62802, stand 5225.
+	SOLARMANE("Solarmane", new Position(3019, 4408, 0),
+		new Item[]{new Item(60408), new Item(60409), new Item(60410), new Item(60407)},
+		"The sun-lion. Dodge the falling sun and slay her cubs before they heal her.",
+		"Elite", "No requirements.", 62802, 5225
+	),
 	TORMENTED_DEMON("Tormented Demon", new Position(4137, 4364, 0),
 		new Item[]{new Item(29580), new Item(29574), new Item(25778)},
 		"A demon wreathed in flame that hardens its shield <br>against your weapon's attack speed. Bring a demonbane <br>or abyssal weapon once its shield is up.",
@@ -435,6 +442,10 @@ public enum ServerTeleports {
 		// npc recolors (same as Cindermaw 60346 / Sylvaroth 60345). anim 7480 = Draco's stand.
 		"Hard", "82 Mining to mine the Draco Rock.", 65134, 7480
 	),
+	COLOSSEUM_OF_TRIALS("Colosseum of Trials", new Position(3231, 5841, 0),
+		new Item[]{new Item(40052), new Item(40060), new Item(40070), new Item(40228)},
+		"Fight alone or as a duo for Trial Marks, and spend them at the Grand Arbiter.",
+		"Grand Master", "No requirements, high stats recommended.", -1, -1),
 	FRACTURED_ARCHIVE("The Fractured Archive", new Position(4127, 5559, 0), new Item[]{new Item(34646),
 		new Item(34719), new Item(34727), new Item(34679), new Item(34681), new Item(34717), new Item(34722), new Item(34669)},
 		"Raid 4: the Archive Guardian, three paths of<br>two bosses each, and Ocellus.<br>",

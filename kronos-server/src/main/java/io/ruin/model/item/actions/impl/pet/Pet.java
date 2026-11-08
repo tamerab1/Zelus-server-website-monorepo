@@ -588,6 +588,7 @@ public enum Pet {
 	XAMPHUR_T1(42540, 30591, false),
 	XAMPHUR_T2(42542, 30592, false),
 	XAMPHUR_T3(42544, 30593, false),
+	DRAKTHOR_HATCHLING(60411, 21958, false), // Colosseum of Trials shop pet: +10% Trial Marks (EggEffects.trialMarks), cache stage 26
 	;
 
 	public final int itemId, npcId, metaId;

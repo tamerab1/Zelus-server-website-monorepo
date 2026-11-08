@@ -115,7 +115,7 @@ public class ShopManager {
 							player.integerInput("Enter amount to sell:", amt -> shop.sellToShop(player, new Item(playerItem.getId(), amt)));
 							break;
 						case EXAMINE:
-							playerItem.examine(player);
+							examineWithStats(player, shop, playerItem);
 							break;
 
 					}
@@ -194,7 +194,7 @@ public class ShopManager {
 						player.integerInput("Enter amount to buy:", amt -> shop.buyFromShop(player, new Item(itemForSlot.getId(), amt), amt));
 						break;
 					case EXAMINE:
-						itemForSlot.examine(player);
+						examineWithStats(player, shop, itemForSlot);
 						break;
 
 				}
@@ -206,6 +206,17 @@ public class ShopManager {
 			};
 			h.closedAction = ShopManager::uiShopClose;
 		});
+	}
+
+	/**
+	 * Examine in a shop: the examine text, then (for wearable items) the item stats viewer, whose Close
+	 * button reopens this shop -- same as examining from the inventory.
+	 */
+	private static void examineWithStats(Player player, Shop shop, Item item) {
+		item.examine(player);
+		io.ruin.cache.ObjType def = item.getDef();
+		if (def != null && def.equipSlot != -1 && def.equipBonuses != null)
+			io.ruin.model.inter.handlers.ItemStatsViewer.open(player, item.getId(), () -> shop.open(player));
 	}
 
 	//TODO Fix these messages

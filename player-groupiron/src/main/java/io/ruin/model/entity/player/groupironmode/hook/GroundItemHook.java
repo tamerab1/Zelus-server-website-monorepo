@@ -20,10 +20,8 @@ public class GroundItemHook {
 		var pGameMode = player.getGameMode();
 		var pGroupIron = player.getGroupIron();
 
-		if (pGroupIron == null) {
-			return Result.Pass;
-		}
-
+		// Group ironmen are judged here only: the core ironman check in GroundItem skips them (2026-11-06), because it
+		// blocked every item another player owned, teammates' included, after this hook had allowed it
 		if (!pGameMode.isAnyOf(GameMode.GROUP_IRONMAN, GameMode.HARDCORE_GROUP_IRONMAN)) {
 			return Result.Pass;
 		}
@@ -36,7 +34,7 @@ public class GroundItemHook {
 			return Result.Pass;
 		}
 
-		if (!pGroupIron.playerInGroup(originalOwner)) {
+		if (pGroupIron == null || !pGroupIron.playerInGroup(originalOwner)) {
 			player.sendMessage("You can't pick up items dropped by or for other players.");
 			return Result.Return;
 		}

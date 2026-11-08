@@ -52,6 +52,8 @@ public class EquipmentStats {
 		player.getPacketSender().sendClientScript(917, "ii", -1, -1);
 		player.openInterface(ToplevelComponent.MAINMODAL, Interface.EQUIPMENT_STATS);
 		player.openInterface(ToplevelComponent.INVENTORY_TAB_AREA, Interface.EQUIPMENT_STATS_INVENTORY);
+		player.getEquipment().sendEggSlot(); // the egg / relic and bond slots aren't drawn by the vanilla scripts
+		player.getEquipment().sendBondSlot();
 		player.getPacketSender().sendClientScript(149, "IviiiIsssss", 5570560, 93, 4, 7, 1, -1, "Equip", "", "", "", "");
 		player.getPacketSender().sendIfEvents(Interface.EQUIPMENT_STATS_INVENTORY, 0, 0, 27, 1180674);
 		update(player, Interface.EQUIPMENT_STATS, 24);
@@ -146,6 +148,8 @@ public class EquipmentStats {
 			h.actions[18] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_FEET);
 			h.actions[19] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_RING);
 			h.actions[20] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_AMMO);
+			h.actions[Equipment.STATS_EGG_ITEM] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_EGG);
+			h.actions[Equipment.STATS_BOND_ITEM] = (OptionAction) (player, option) -> TabEquipment.itemAction(player, option, Equipment.SLOT_BOND);
 			h.closedAction = (p, i) -> {
 				p.closeInterface(ToplevelComponent.INVENTORY_TAB_AREA);
 			};

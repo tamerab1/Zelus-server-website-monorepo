@@ -15,7 +15,7 @@ import java.util.*;
  * colours change; rev 241 record = sprite u16, average colour u16, 1, animation direction 1, speed 1 (a slow shimmer);</li>
  * <li>model 62802: the kyatt model with 478 on its body and 479 on its back ridge (assets/solarmane/model_62802.dat,
  * built by assets/solarmane/MakeSolarmaneModel; the kyatt's skins are kept, so its animations drive it);</li>
- * <li>npc 30611 Solarmane (size 4, scale 256) and npc 30612, its pet (size 1, scale 64, Talk-to / Pick-up), both on
+ * <li>npc 30611 Solarmane (size 5, scale 320) and npc 30612, its pet (size 2, scale 128, Talk-to / Pick-up), both on
  * 62802 with the kyatt's stand / walk;</li>
  * <li>item 60407, the pet item, cloned from Aggy's pet item (44842) with Solarmane's model, name, examine and framing.</li>
  * </ul>
@@ -26,9 +26,11 @@ public final class PatchSolarmane {
 	private PatchSolarmane() {
 	}
 
-	static final int BOSS = 30611, PET = 30612, PET_ITEM = 60407, PET_ITEM_TEMPLATE = 44842;
+	static final int BOSS = 30611, PET = 30612, CUB = 30613, PET_ITEM = 60407, PET_ITEM_TEMPLATE = 44842;
 	static final int MODEL = 62802, SOURCE_MODEL = 19375, SOURCE_TEXTURE = 31;
 	static final int STAND = 5225, WALK = 5226;
+	/** Body size in tiles and model scale (64 per tile). 2026-11-04: one size up from 4/256 and the pet's 1/64. */
+	static final int BOSS_SIZE = 5, BOSS_SCALE = 320, PET_SIZE = 2, PET_SCALE = 128;
 	static final String BOSS_NAME = "Solarmane", PET_NAME = "Solarmane cub";
 	static final String PET_EXAMINE = "A pride king in the making.";
 	/** {texture, sprite} + its gradient (heat 0..1 -> rgb). */
@@ -67,12 +69,14 @@ public final class PatchSolarmane {
 
 		// npcs + pet item
 		Map<Integer, byte[]> npcs = RoundTripDefs.files(dst, 9), items = RoundTripDefs.files(dst, 10);
-		for (int id : new int[] { BOSS, PET })
+		for (int id : new int[] { BOSS, PET, CUB })
 			check(npcs.get(id) == null || new String(npcs.get(id), StandardCharsets.ISO_8859_1).contains(BOSS_NAME), "npc " + id + " is taken");
 		check(items.get(PET_ITEM) == null || new String(items.get(PET_ITEM), StandardCharsets.ISO_8859_1).contains(PET_NAME), "item " + PET_ITEM + " is taken");
 		Map<Integer, byte[]> npcPut = new TreeMap<>();
-		npcPut.put(BOSS, PatchCustoms27.npc(MODEL, 4, 256, 328, STAND, WALK, BOSS_NAME));
+		npcPut.put(BOSS, PatchCustoms27.npc(MODEL, BOSS_SIZE, BOSS_SCALE, 328, STAND, WALK, BOSS_NAME));
 		npcPut.put(PET, pet());
+		// 2026-11-04: the healer cubs Solarmane calls at 40% (SolarmaneCombat): the pet's look, attackable, level 90
+		npcPut.put(CUB, PatchCustoms27.npc(MODEL, PET_SIZE, PET_SCALE, 90, STAND, WALK, PET_NAME));
 		changed += PatchCustoms27.putConfigs(dst, 9, npcPut);
 		changed += PatchCustoms27.putConfigs(dst, 10, Map.of(PET_ITEM, petItem(items.get(PET_ITEM_TEMPLATE))));
 
@@ -89,6 +93,8 @@ public final class PatchSolarmane {
 		b.write(2);
 		b.writeBytes(PET_NAME.getBytes(StandardCharsets.ISO_8859_1));
 		b.write(0);
+		b.write(12); // size
+		b.write(PET_SIZE);
 		b.write(13);
 		PatchCustoms27.u16(b, STAND);
 		b.write(14);
@@ -103,9 +109,9 @@ public final class PatchSolarmane {
 		b.write(95);
 		PatchCustoms27.u16(b, 0);
 		b.write(97);
-		PatchCustoms27.u16(b, 64);
+		PatchCustoms27.u16(b, PET_SCALE);
 		b.write(98);
-		PatchCustoms27.u16(b, 64);
+		PatchCustoms27.u16(b, PET_SCALE);
 		b.write(0);
 		byte[] out = b.toByteArray();
 		DefRewriter.rewrite("npc", out, DefRewriter.IDENTITY, k -> null);

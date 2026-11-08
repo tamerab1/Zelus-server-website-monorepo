@@ -785,7 +785,7 @@ public class GroupBank {
 	private void setFakeContainers(Player player) {
 		player.temporaryInventory = new Inventory();
 		player.temporaryEquipment = new Equipment();
-		player.temporaryEquipment.init(player, 14, -1, 64208, 94, false);
+		player.temporaryEquipment.init(player, Equipment.SIZE, -1, 64208, 94, false); // (was 14: the copy loop below overran it)
 		player.temporaryInventory.init(player, 28, -1, 0, 93, false);
 		player.getEquipment().update(Equipment.SLOT_WEAPON);
 		player.equipment.sendAll = true;

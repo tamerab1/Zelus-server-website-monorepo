@@ -1,0 +1,76 @@
+{
+  "id": 59402,
+  "name": "\u003ccol\u003d00ffff\u003eVolcanic bow (frozen)",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 484,
+  "yan2d": 1054,
+  "zan2d": 1939,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 70602,
+  "tradeable": false,
+  "geTradeable": false,
+  "wearPos1": 3,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": false,
+  "zoom2d": 8735,
+  "xOffset2d": 5,
+  "yOffset2d": -3,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": "Take"
+      },
+      {
+        "text": ""
+      },
+      {
+        "text": ""
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wield",
+    "Wield",
+    "Disassemble",
+    "",
+    "Drop"
+  ],
+  "maleModel0": 71522,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 71522,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

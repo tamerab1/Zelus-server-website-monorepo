@@ -720,6 +720,7 @@ public class PlayerCombat extends Combat {
 			if (player.getGameMode().isHardcoreIronman()) {
 				GameMode.hardcoreDeath(player, killHit);
 			}
+			GameMode.groupDeath(player); // hardcore groups lose a life the same way
 			player.setHp(player.getMaxHp());
 			player.sendMessage("Your revival scroll protects you from death and has healed you completely.");
 			return;
@@ -827,6 +828,7 @@ public class PlayerCombat extends Combat {
 				if (player.getGameMode().isHardcoreIronman()) {
 					GameMode.hardcoreDeath(player, killHit);
 				}
+				GameMode.groupDeath(player); // Hardcore Group Ironman: the group loses a life
 
 				} // end else (not pvpPresetActive)
 			}
@@ -4686,6 +4688,7 @@ public class PlayerCombat extends Combat {
 	 */
 
 	private void preDefend(Hit hit) {
+		io.ruin.model.activities.colosseum.EggEffects.preDefend(player, hit);
 		for (Item item : player.getEquipment().getItems()) {
 			if (item != null && item.getDef() != null) {
 				item.getDef().preDefend(player, item, hit);
@@ -4980,6 +4983,7 @@ public class PlayerCombat extends Combat {
 	private void preTargetDefend(Hit hit, Entity target) {
 		forinthrySkullBoost(player, hit, target);
 		io.ruin.model.content.bonds.BondPerks.preTargetDefend(player, hit, target);
+		io.ruin.model.activities.colosseum.EggEffects.preTargetDefend(player, hit, target);
 		boolean slayerHelmEffectActive = SlayerHelm.boost(player, target, hit);
 		boolean BloodFuryEffectActive = SetEffect.BLOOD_FURY.checkAndApply(player, target, hit);
 		boolean veracsEffectActive = SetEffect.VERAC.checkAndApply(player, target, hit);
@@ -5684,6 +5688,7 @@ public class PlayerCombat extends Combat {
 		}
 
 		io.ruin.model.content.bonds.BondPerks.postTargetDamage(player, hit, target);
+		io.ruin.model.activities.colosseum.EggEffects.postTargetDamage(player, hit, target);
 
 		// Process the 'Thunder Khopesh'
 		if (player.getEquipment().contains(30388)) {

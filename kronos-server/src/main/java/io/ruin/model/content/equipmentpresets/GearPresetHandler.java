@@ -55,7 +55,8 @@ public final class GearPresetHandler {
 		Equipment.SLOT_FEET,
 		Equipment.SLOT_RING,
 		Equipment.SLOT_AMMO,
-		Equipment.SLOT_QUIVER
+		Equipment.SLOT_QUIVER,
+		Equipment.SLOT_EGG // egg / relic slot (2026-11-06): saved and loaded with the preset
 	};
 
 	/** Stable equip order avoids weapon/shield conflicts while using Equipment.equip. */
@@ -70,6 +71,7 @@ public final class GearPresetHandler {
 		Equipment.SLOT_RING,
 		Equipment.SLOT_AMMO,
 		Equipment.SLOT_QUIVER,
+		Equipment.SLOT_EGG,
 		Equipment.SLOT_WEAPON,
 		Equipment.SLOT_SHIELD
 	};

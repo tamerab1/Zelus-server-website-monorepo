@@ -332,7 +332,7 @@ public class Bank extends ItemContainerG<BankItem> {
 			sortAfter(() -> {
 				boolean deposited = false;
 				for (Item item : container.getItems()) {
-					if (item != null && deposit(item, item.getAmount(), true, forced) > 0)
+					if (item != null && !staysOn(container, item) && deposit(item, item.getAmount(), true, forced) > 0)
 						deposited = true;
 				}
 				if (!deposited && message)
@@ -397,12 +397,17 @@ public class Bank extends ItemContainerG<BankItem> {
 		sortAfter(() -> {
 			boolean deposited = false;
 			for (Item item : container.getItems()) {
-				if (item != null && deposit(item, item.getAmount(), false) > 0)
+				if (item != null && !staysOn(container, item) && deposit(item, item.getAmount(), false) > 0)
 					deposited = true;
 			}
 			if (!deposited && message)
 				player.sendMessage("Your bank cannot hold your items.");
 		});
+	}
+
+	/** The bond in the bond slot isn't gear: "deposit worn" and every preset / loadout load leave it on. */
+	private static boolean staysOn(ItemContainer container, Item item) {
+		return container instanceof Equipment && item.getSlot() == Equipment.SLOT_BOND;
 	}
 
 	public void removeBlankItems() {

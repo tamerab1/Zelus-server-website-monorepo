@@ -1,0 +1,1922 @@
+[
+  {
+    "id": 40080,
+    "name": "Beast icon (t1)",
+    "inventoryModel": 63272,
+    "maleModel0": 63271,
+    "femaleModel0": 63271,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40081,
+    "name": "Beast icon (t2)",
+    "inventoryModel": 63272,
+    "maleModel0": 63409,
+    "femaleModel0": 63409,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40200,
+    "name": "Beast icon (t3)",
+    "inventoryModel": 63272,
+    "maleModel0": 63410,
+    "femaleModel0": 63410,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40201,
+    "name": "Beast icon (t4)",
+    "inventoryModel": 63272,
+    "maleModel0": 63411,
+    "femaleModel0": 63411,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40202,
+    "name": "Beast icon (t5)",
+    "inventoryModel": 63272,
+    "maleModel0": 63412,
+    "femaleModel0": 63412,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40203,
+    "name": "Shade icon (t1)",
+    "inventoryModel": 63270,
+    "maleModel0": 63269,
+    "femaleModel0": 63269,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40204,
+    "name": "Shade icon (t2)",
+    "inventoryModel": 63270,
+    "maleModel0": 63413,
+    "femaleModel0": 63413,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40205,
+    "name": "Shade icon (t3)",
+    "inventoryModel": 63270,
+    "maleModel0": 63414,
+    "femaleModel0": 63414,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40206,
+    "name": "Shade icon (t4)",
+    "inventoryModel": 63270,
+    "maleModel0": 63415,
+    "femaleModel0": 63415,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40207,
+    "name": "Shade icon (t5)",
+    "inventoryModel": 63270,
+    "maleModel0": 63416,
+    "femaleModel0": 63416,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 110,
+    "resizeY": 110,
+    "resizeZ": 110,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40087,
+    "name": "Easter icon (t1)",
+    "inventoryModel": 63277,
+    "maleModel0": 63276,
+    "femaleModel0": 63276,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40208,
+    "name": "Easter icon (t2)",
+    "inventoryModel": 63277,
+    "maleModel0": 63417,
+    "femaleModel0": 63417,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40209,
+    "name": "Easter icon (t3)",
+    "inventoryModel": 63277,
+    "maleModel0": 63418,
+    "femaleModel0": 63418,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40210,
+    "name": "Easter icon (t4)",
+    "inventoryModel": 63277,
+    "maleModel0": 63419,
+    "femaleModel0": 63419,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40211,
+    "name": "Easter icon (t5)",
+    "inventoryModel": 63277,
+    "maleModel0": 63420,
+    "femaleModel0": 63420,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40090,
+    "name": "Amberglow icon (t1)",
+    "inventoryModel": 63253,
+    "maleModel0": 63252,
+    "femaleModel0": 63252,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40212,
+    "name": "Amberglow icon (t2)",
+    "inventoryModel": 63253,
+    "maleModel0": 63421,
+    "femaleModel0": 63421,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40213,
+    "name": "Amberglow icon (t3)",
+    "inventoryModel": 63253,
+    "maleModel0": 63422,
+    "femaleModel0": 63422,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40214,
+    "name": "Amberglow icon (t4)",
+    "inventoryModel": 63253,
+    "maleModel0": 63423,
+    "femaleModel0": 63423,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40215,
+    "name": "Amberglow icon (t5)",
+    "inventoryModel": 63253,
+    "maleModel0": 63424,
+    "femaleModel0": 63424,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40091,
+    "name": "Infernoglint icon (t1)",
+    "inventoryModel": 63251,
+    "maleModel0": 63250,
+    "femaleModel0": 63250,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40216,
+    "name": "Infernoglint icon (t2)",
+    "inventoryModel": 63251,
+    "maleModel0": 63425,
+    "femaleModel0": 63425,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40217,
+    "name": "Infernoglint icon (t3)",
+    "inventoryModel": 63251,
+    "maleModel0": 63426,
+    "femaleModel0": 63426,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40218,
+    "name": "Infernoglint icon (t4)",
+    "inventoryModel": 63251,
+    "maleModel0": 63427,
+    "femaleModel0": 63427,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40219,
+    "name": "Infernoglint icon (t5)",
+    "inventoryModel": 63251,
+    "maleModel0": 63428,
+    "femaleModel0": 63428,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40093,
+    "name": "Challenge icon (t1)",
+    "inventoryModel": 63245,
+    "maleModel0": 63244,
+    "femaleModel0": 63244,
+    "zoom2d": 1318,
+    "xan2d": 526,
+    "yan2d": 1010,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40220,
+    "name": "Challenge icon (t2)",
+    "inventoryModel": 63245,
+    "maleModel0": 63429,
+    "femaleModel0": 63429,
+    "zoom2d": 1195,
+    "xan2d": 526,
+    "yan2d": 1010,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40221,
+    "name": "Challenge icon (t3)",
+    "inventoryModel": 63245,
+    "maleModel0": 63430,
+    "femaleModel0": 63430,
+    "zoom2d": 1082,
+    "xan2d": 526,
+    "yan2d": 1010,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40222,
+    "name": "Challenge icon (t4)",
+    "inventoryModel": 63245,
+    "maleModel0": 63431,
+    "femaleModel0": 63431,
+    "zoom2d": 979,
+    "xan2d": 526,
+    "yan2d": 1010,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40223,
+    "name": "Challenge icon (t5)",
+    "inventoryModel": 63245,
+    "maleModel0": 63432,
+    "femaleModel0": 63432,
+    "zoom2d": 885,
+    "xan2d": 526,
+    "yan2d": 1010,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40094,
+    "name": "Midnight spring icon (t1)",
+    "inventoryModel": 63243,
+    "maleModel0": 63242,
+    "femaleModel0": 63242,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40224,
+    "name": "Midnight spring icon (t2)",
+    "inventoryModel": 63243,
+    "maleModel0": 63433,
+    "femaleModel0": 63433,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40225,
+    "name": "Midnight spring icon (t3)",
+    "inventoryModel": 63243,
+    "maleModel0": 63434,
+    "femaleModel0": 63434,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40226,
+    "name": "Midnight spring icon (t4)",
+    "inventoryModel": 63243,
+    "maleModel0": 63435,
+    "femaleModel0": 63435,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40227,
+    "name": "Midnight spring icon (t5)",
+    "inventoryModel": 63243,
+    "maleModel0": 63436,
+    "femaleModel0": 63436,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40228,
+    "name": "Bonecrown icon (t1)",
+    "inventoryModel": 63437,
+    "maleModel0": 63438,
+    "femaleModel0": 63438,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40229,
+    "name": "Bonecrown icon (t2)",
+    "inventoryModel": 63437,
+    "maleModel0": 63439,
+    "femaleModel0": 63439,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40230,
+    "name": "Bonecrown icon (t3)",
+    "inventoryModel": 63437,
+    "maleModel0": 63440,
+    "femaleModel0": 63440,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40231,
+    "name": "Bonecrown icon (t4)",
+    "inventoryModel": 63437,
+    "maleModel0": 63441,
+    "femaleModel0": 63441,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40232,
+    "name": "Bonecrown icon (t5)",
+    "inventoryModel": 63437,
+    "maleModel0": 63442,
+    "femaleModel0": 63442,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40233,
+    "name": "Soulflame icon (t1)",
+    "inventoryModel": 63443,
+    "maleModel0": 63444,
+    "femaleModel0": 63444,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40234,
+    "name": "Soulflame icon (t2)",
+    "inventoryModel": 63443,
+    "maleModel0": 63445,
+    "femaleModel0": 63445,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40235,
+    "name": "Soulflame icon (t3)",
+    "inventoryModel": 63443,
+    "maleModel0": 63446,
+    "femaleModel0": 63446,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40236,
+    "name": "Soulflame icon (t4)",
+    "inventoryModel": 63443,
+    "maleModel0": 63447,
+    "femaleModel0": 63447,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40237,
+    "name": "Soulflame icon (t5)",
+    "inventoryModel": 63443,
+    "maleModel0": 63448,
+    "femaleModel0": 63448,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40238,
+    "name": "Frost sigil icon (t1)",
+    "inventoryModel": 63449,
+    "maleModel0": 63450,
+    "femaleModel0": 63450,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40239,
+    "name": "Frost sigil icon (t2)",
+    "inventoryModel": 63449,
+    "maleModel0": 63451,
+    "femaleModel0": 63451,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40240,
+    "name": "Frost sigil icon (t3)",
+    "inventoryModel": 63449,
+    "maleModel0": 63452,
+    "femaleModel0": 63452,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40241,
+    "name": "Frost sigil icon (t4)",
+    "inventoryModel": 63449,
+    "maleModel0": 63453,
+    "femaleModel0": 63453,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40242,
+    "name": "Frost sigil icon (t5)",
+    "inventoryModel": 63449,
+    "maleModel0": 63454,
+    "femaleModel0": 63454,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40243,
+    "name": "Void eye icon (t1)",
+    "inventoryModel": 63455,
+    "maleModel0": 63456,
+    "femaleModel0": 63456,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40244,
+    "name": "Void eye icon (t2)",
+    "inventoryModel": 63455,
+    "maleModel0": 63457,
+    "femaleModel0": 63457,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40245,
+    "name": "Void eye icon (t3)",
+    "inventoryModel": 63455,
+    "maleModel0": 63458,
+    "femaleModel0": 63458,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40246,
+    "name": "Void eye icon (t4)",
+    "inventoryModel": 63455,
+    "maleModel0": 63459,
+    "femaleModel0": 63459,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40247,
+    "name": "Void eye icon (t5)",
+    "inventoryModel": 63455,
+    "maleModel0": 63460,
+    "femaleModel0": 63460,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40248,
+    "name": "Sunburst icon (t1)",
+    "inventoryModel": 63461,
+    "maleModel0": 63462,
+    "femaleModel0": 63462,
+    "zoom2d": 1400,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40249,
+    "name": "Sunburst icon (t2)",
+    "inventoryModel": 63461,
+    "maleModel0": 63463,
+    "femaleModel0": 63463,
+    "zoom2d": 1270,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40250,
+    "name": "Sunburst icon (t3)",
+    "inventoryModel": 63461,
+    "maleModel0": 63464,
+    "femaleModel0": 63464,
+    "zoom2d": 1150,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40251,
+    "name": "Sunburst icon (t4)",
+    "inventoryModel": 63461,
+    "maleModel0": 63465,
+    "femaleModel0": 63465,
+    "zoom2d": 1040,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  },
+  {
+    "id": 40252,
+    "name": "Sunburst icon (t5)",
+    "inventoryModel": 63461,
+    "maleModel0": 63466,
+    "femaleModel0": 63466,
+    "zoom2d": 940,
+    "xan2d": 553,
+    "yan2d": 0,
+    "resizeX": 128,
+    "resizeY": 128,
+    "resizeZ": 128,
+    "wearPos1": 9,
+    "members": true,
+    "cost": 1,
+    "groundOps": {
+      "ops": [
+        null,
+        null,
+        {
+          "text": "Take"
+        }
+      ]
+    },
+    "interfaceOptions": [
+      null,
+      "Wear",
+      null,
+      null,
+      "Drop"
+    ]
+  }
+]

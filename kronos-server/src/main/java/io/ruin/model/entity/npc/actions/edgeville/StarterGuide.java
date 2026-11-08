@@ -657,6 +657,8 @@ public class StarterGuide {
 				recordClaim(player.getIp());
 				break;
 		}
+		// a mystery box (2026-11-06), last so the gear gets the inventory slots first; the bank if it's full
+		player.getInventory().addOrSendToBank(6199, 1);
 	}
 
 	private static NPC find(Player player, int id) {

@@ -12,7 +12,7 @@ public class Ghommal {
 	private static void talk(Player player, NPC npc) {
 		player.dialogue(
 			new NPCDialogue(npc.getId(), "What do you want?"),
-			new OptionsDialogue(new Option("Open my Zelus Codex.", () -> io.ruin.model.content.codex.ZelusCodex.open(player)),
+			new OptionsDialogue(new Option("Open Zelus Achievements.", () -> io.ruin.model.content.codex.ZelusCodex.open(player)),
 				new Option("I would like to claim the next combat achievement tier rewards.", () -> {
 				player.dialogue(new PlayerDialogue("I'm here to claim combat achievement rewards.").action(() -> CombatAchievementSystem.claimNextReward(player)));
 			}), new Option("I would like to open the combat achievements interface", () -> {

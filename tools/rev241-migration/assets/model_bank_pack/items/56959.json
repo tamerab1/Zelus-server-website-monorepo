@@ -1,0 +1,82 @@
+{
+  "id": 56959,
+  "name": "August elegant shirt",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 452,
+  "yan2d": 0,
+  "zan2d": 0,
+  "cost": 2000,
+  "stackable": 0,
+  "inventoryModel": 66458,
+  "tradeable": true,
+  "geTradeable": false,
+  "wearPos1": 4,
+  "wearPos2": 6,
+  "wearPos3": -1,
+  "members": true,
+  "colorFind": [
+    105,
+    -10364,
+    64,
+    47,
+    35,
+    26
+  ],
+  "colorReplace": [
+    109,
+    11179,
+    9917,
+    9771,
+    8867,
+    10910
+  ],
+  "zoom2d": 1373,
+  "xOffset2d": -1,
+  "yOffset2d": 7,
+  "ambient": -1,
+  "contrast": -1,
+  "groundOps": {
+    "ops": [
+      null,
+      null,
+      {
+        "text": "Take"
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wear",
+    "Wear",
+    null,
+    null,
+    "Drop"
+  ],
+  "maleModel0": 66460,
+  "maleModel1": 66462,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 66459,
+  "femaleModel1": 66461,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": 56961,
+  "notedTemplate": -1,
+  "team": 255,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": 56960,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

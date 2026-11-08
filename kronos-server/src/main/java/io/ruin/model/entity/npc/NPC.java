@@ -57,6 +57,8 @@ public class NPC extends NPCAttributes {
 	public transient Position walkTo;
 	public transient Predicate<Position> skipReachCheck;
 	public transient boolean skipMovementCheck;
+	/** No Zelus points or PVM Points for killing it (Colosseum of Trials bosses pay Trial Marks instead), 2026-11-07. */
+	public transient boolean noKillPoints;
 	public transient Bounds spawnBounds;
 	public transient RespawnListener respawnListener;
 	protected transient NPCCombat combat;

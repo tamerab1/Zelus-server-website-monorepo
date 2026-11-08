@@ -1144,20 +1144,26 @@ public enum PickPocket {
 	}
 
 	public static void register() {
+		// Each npc gets the action on ITS OWN "Pickpocket" slot (2026-11-04). TzHaar-Hur and the H.A.M. members used
+		// to be registered from inside this loop with whichever other npc matched last's slot, so they only worked
+		// while that npc happened to keep Pickpocket on the same slot as them.
+		final int[] HAM_MEMBERS = {2540, 2541};
 		NPCType.forEach(npcDef -> {
+			if (npcDef.name == null)
+				return;
+			int pickpocketOption = npcDef.getOption("pickpocket");
+			if (pickpocketOption == -1)
+				return;
 			for (PickPocket pickpocket : values()) {
 				if (npcDef.name.equalsIgnoreCase(pickpocket.name().replace("_", " ")) ||
-					npcDef.name.toLowerCase().contains(pickpocket.name().toLowerCase())) {
-					int pickpocketOption = npcDef.getOption("pickpocket");
-					if (pickpocketOption == -1)
-						return;
-					NPCAction.register(npcDef.name, pickpocketOption, (player, npc) -> pickpocket(player, npc, pickpocket));
-					NPCAction.register("tzhaar-hur", pickpocketOption, (player, npc) -> pickpocket(player, npc, TZHAAR_HUR));
-					final int[] HAM_MEMBERS = {2540, 2541};
-					for (int hamMember : HAM_MEMBERS)
-						NPCAction.register(hamMember, pickpocketOption, (player, npc) -> pickpocket(player, npc, HAM));
-				}
+					npcDef.name.toLowerCase().contains(pickpocket.name().toLowerCase()))
+					NPCAction.register(npcDef.id, pickpocketOption, (player, npc) -> pickpocket(player, npc, pickpocket));
 			}
+			if (npcDef.name.equalsIgnoreCase("tzhaar-hur"))
+				NPCAction.register(npcDef.id, pickpocketOption, (player, npc) -> pickpocket(player, npc, TZHAAR_HUR));
+			for (int hamMember : HAM_MEMBERS)
+				if (npcDef.id == hamMember)
+					NPCAction.register(npcDef.id, pickpocketOption, (player, npc) -> pickpocket(player, npc, HAM));
 		});
 	}
 }

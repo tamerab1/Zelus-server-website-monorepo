@@ -2081,7 +2081,7 @@ public class Player extends PlayerAttributes {
 		lootingBag.init(this, 28, -1, 63786, 516, false);
 		materialBag.init(this, 28, -1, 63786, 516, false);
 		inventory.init(this, 28, -1, 0, 93, false);
-		equipment.init(this, 15, -1, 64208, 94, false);
+		equipment.init(this, Equipment.SIZE, -1, 64208, 94, false); // 16 slots since the egg slot (2026-11-06)
 		runePouch.init(this, 3, -1, -1, -1, false);
 		DivinerunePouch.init(this, 4, -1, -1, -1, false);
 		tournamentRunePouch.init(this, 3, -1, -1, -1, false);
@@ -4651,7 +4651,7 @@ public class Player extends PlayerAttributes {
 		this.delveTimer = new ActivityTimer();
 	}
 
-	/** True while an attuned copy of this Custom Bond is in the inventory (its perks are active). */
+	/** True while this Custom Bond is the one in the bond slot (its perks are active). */
 	public boolean hasAttunedBond(io.ruin.model.content.bonds.BondType type) {
 		return getBondTier(type) > 0;
 	}
@@ -4661,7 +4661,7 @@ public class Player extends PlayerAttributes {
 		return rivalsFight;
 	}
 
-	/** Tier (1-5) of the attuned Custom Bond in the inventory, or 0 when none is attuned. */
+	/** Tier (1-5) of this Custom Bond when it is in the bond slot, else 0. */
 	public int getBondTier(io.ruin.model.content.bonds.BondType type) {
 		return inRivalsFight() ? 0 : type.tier(this); // RivalsFairPlay
 	}

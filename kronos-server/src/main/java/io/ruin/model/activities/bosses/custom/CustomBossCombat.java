@@ -7,10 +7,18 @@ import io.ruin.model.combat.Hit;
 import io.ruin.model.entity.Entity;
 import io.ruin.model.entity.npc.NPCCombat;
 import io.ruin.model.entity.player.Player;
+import io.ruin.model.map.ClipUtils;
+import io.ruin.model.map.Direction;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.Projectile;
+import io.ruin.model.map.route.routes.DumbRoute;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Shared combat for the custom bosses 16200-16214 (2026-10-19, models from "new customs/bosses"; cache side
@@ -71,12 +79,123 @@ public class CustomBossCombat extends NPCCombat {
 			Map.entry(21935, new Tune(4, 1465, 88, 22, 0, 8, 16, false, 1466, 124)),
 			// Round 2 (2026-10-20, 16217-16225): the melee ones need no tune
 			Map.entry(21939, new Tune(8, 1459, 60, 18, 0, 10, 15, true, 1460, 92)), // Kaelen: Water Surge from the staff thrust
+			Map.entry(21940, new Tune(8, RANGED_GFX, 55, 18, 0)),                   // Morvath: arrow on the bow release (2026-11-07: ranged)
 			Map.entry(21941, new Tune(8, MAGIC_GFX, 55, 16, 0)),                    // Zephyros: bolt off the cast hand
 			Map.entry(21944, new Tune(7, 1044, 70, 20, 0, 10, 24, true, -1, 0))     // Malakor: toxic flask lobbed at the toss
 	);
 
 	private Tune tune;
 	private int hulkAttacks;
+
+	/**
+	 * Set by a Colosseum trial (2026-11-07): the players in its arena. In a duo every normal attack reaches both
+	 * (2026-11-08): casters and archers fire at each, melee bosses slam the ground under a partner out of reach.
+	 */
+	public java.util.function.Supplier<java.util.List<Player>> arena;
+	private int partnerMaxHit;
+
+	/** Marks the attack in progress as a normal one: in a duo, the player it wasn't aimed at takes a hit of up to maxHit too. */
+	protected void hitPartnerToo(int maxHit) {
+		partnerMaxHit = maxHit;
+	}
+
+	@Override
+	protected void afterAttack() {
+		int max = partnerMaxHit;
+		partnerMaxHit = 0;
+		if (max <= 0 || arena == null)
+			return;
+		for (Player p : arena.get()) {
+			if (p == target)
+				continue;
+			if (!info.attack_style.isMelee()) {
+				fire(p, max);
+				continue;
+			}
+			if (p.getPosition().distance(npc.getCentrePosition()) > npc.getSize() / 2 + 1)
+				World.sendGraphics(EARTHQUAKE_GFX, 0, 10, p.getPosition().copy());
+			p.hit(new Hit(npc, info.attack_style, null).randDamage(max).delay(1));
+		}
+	}
+
+	protected static final int GFX_SKY_SHADOW = 1447, GFX_SKY_FIREBALL = 1465, GFX_BOMB_BURST = 157;
+	private static final int OPEN_RANGE = 12, BOMB_FALL_TICKS = 2;
+	private List<Position> openTiles;
+
+	/**
+	 * Every tile a body can walk to from this boss, up to {@link #OPEN_RANGE} away (a fresh list each call). Floor specials
+	 * pick from this, so nothing lands behind a wall or outside the arena (2026-11-08).
+	 */
+	protected List<Position> openTiles() {
+		if (openTiles == null) {
+			Set<Long> seen = new HashSet<>();
+			ArrayDeque<int[]> queue = new ArrayDeque<>();
+			List<Position> open = new ArrayList<>();
+			int bx = npc.getAbsX(), by = npc.getAbsY(), z = npc.getHeight(), s = npc.getSize();
+			for (int x = bx; x < bx + s; x++)
+				for (int y = by; y < by + s; y++)
+					if (seen.add((long) x << 32 | y))
+						queue.add(new int[] { x, y });
+			Direction[] dirs = { Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST };
+			while (!queue.isEmpty()) {
+				int[] c = queue.poll();
+				open.add(new Position(c[0], c[1], z));
+				for (Direction d : dirs) {
+					int nx = c[0] + d.deltaX, ny = c[1] + d.deltaY;
+					if (Math.max(Math.abs(nx - bx - s / 2), Math.abs(ny - by - s / 2)) > OPEN_RANGE || seen.contains((long) nx << 32 | ny))
+						continue;
+					if (!DumbRoute.allowEntrance(ClipUtils.REGULAR, c[0], c[1], z, 1, d))
+						continue;
+					seen.add((long) nx << 32 | ny);
+					queue.add(new int[] { nx, ny });
+				}
+			}
+			openTiles = open;
+		}
+		return new ArrayList<>(openTiles);
+	}
+
+	/**
+	 * Shadows on the tiles, then a fireball falls onto each: anyone still on one when it lands takes minHit-maxHit, through
+	 * defence and prayer.
+	 */
+	protected void skyBombs(List<Position> tiles, int shadowTicks, int minHit, int maxHit) {
+		for (Position at : tiles)
+			World.sendGraphics(GFX_SKY_SHADOW, 0, 0, at);
+		npc.addEvent(e -> {
+			for (int t = 1; t <= shadowTicks; t++) {
+				e.delay(1);
+				if (t % 2 == 1 && t < shadowTicks)
+					for (Position at : tiles)
+						World.sendGraphics(GFX_SKY_SHADOW, 0, 0, at);
+			}
+			// started a tile off the target: the client can't draw a projectile whose source and target tiles are the same
+			Projectile fall = new Projectile(GFX_SKY_FIREBALL, 220, 0, 0, 55, 0, 0, 0);
+			for (Position at : tiles)
+				fall.send(at.relative(-1, -1), at);
+			e.delay(BOMB_FALL_TICKS);
+			if (isDead())
+				return;
+			for (Position at : tiles)
+				World.sendGraphics(GFX_BOMB_BURST, 0, 0, at);
+			for (Player p : players())
+				for (Position at : tiles)
+					if (p.getPosition().equals(at.getX(), at.getY(), at.getZ())) {
+						p.hit(new Hit(npc).randDamage(minHit, maxHit).ignoreDefence().ignorePrayer());
+						break;
+					}
+		});
+	}
+
+	/** Who a special hits: everyone in the arena, or just the target outside one. */
+	protected java.util.List<Player> players() {
+		java.util.List<Player> l = new java.util.ArrayList<>();
+		if (arena != null)
+			l.addAll(arena.get());
+		else if (target != null && target.player != null)
+			l.add(target.player);
+		return l;
+	}
 
 	@Override
 	public void init() {
@@ -96,6 +215,7 @@ public class CustomBossCombat extends NPCCombat {
 		if (style.isMelee()) {
 			if (!withinDistance(1))
 				return false;
+			hitPartnerToo(info.max_damage);
 			if (tune.hitDelay() == 0) {
 				basicAttack(info.attack_animation, style, info.max_damage);
 				return true;
@@ -107,21 +227,27 @@ public class CustomBossCombat extends NPCCombat {
 		}
 		if (!withinDistance(tune.range()))
 			return false;
+		npc.animate(info.attack_animation);
+		faceTarget();
+		fire(target, info.max_damage);
+		hitPartnerToo(info.max_damage);
+		return true;
+	}
+
+	/** This boss's projectile at one victim, its hit landing on arrival. */
+	protected void fire(Entity victim, int maxHit) {
+		AttackStyle style = info.attack_style;
 		int gfx = tune.gfx() != -1 ? tune.gfx() : style.isDragonfire() ? DRAGONFIRE_GFX : style.isRanged() ? RANGED_GFX : MAGIC_GFX;
 		Projectile projectile = new Projectile(gfx, tune.height(), 31, tune.release(), tune.release() + 2 * tune.flight(),
 				tune.flight(), tune.curve(), 64);
 		if (tune.fromFront())
 			projectile.tileOffset(npc.getSize() / 2);
-		npc.animate(info.attack_animation);
-		faceTarget();
-		Entity victim = target;
 		int arrives = projectile.send(npc, victim);
 		int delay = Math.max(1, (arrives + 15) / 30);
-		Hit hit = new Hit(npc, style, null).randDamage(info.max_damage).delay(delay);
+		Hit hit = new Hit(npc, style, null).randDamage(maxHit).delay(delay);
 		if (tune.impact() != -1)
 			hit.afterPostDamage(h -> victim.graphics(tune.impact(), tune.impactHeight(), 0));
 		victim.hit(hit);
-		return true;
 	}
 
 	/** Sweep up close, boulders at range (and sometimes up close), the Ground Smash special every few attacks. */
@@ -134,6 +260,7 @@ public class CustomBossCombat extends NPCCombat {
 			groundSmash();
 			return true;
 		}
+		hitPartnerToo(info.max_damage);
 		if (!adjacent || Random.rollDie(4)) {
 			throwBoulder();
 			return true;

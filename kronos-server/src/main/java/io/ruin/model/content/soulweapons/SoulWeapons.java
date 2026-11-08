@@ -296,6 +296,7 @@ public final class SoulWeapons {
 				+ "You have " + data.availableSoulPoints + " Soul Point" + (data.availableSoulPoints == 1 ? "" : "s") + " to spend.");
 			player.privateSound(SOUND_TIER_UP);
 			player.graphics(GFX_TIER_UP);
+			io.ruin.model.content.codex.ZelusTask.onSoulTier(player, before, data.tier);
 			for (int t = before + 1; t <= data.tier; t++) {
 				SoulAura aura = SoulAura.unlockedAt(t);
 				if (aura != null)

@@ -850,6 +850,10 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public String raid4RentalSetup;
 	/** The player's Soulbound weapon and all its progression (SoulWeapons, 2026-10-18); null until chosen. */
 	public io.ruin.model.content.soulweapons.SoulWeaponData soulWeapon;
+	/** The Colosseum of Trials (2026-11-07): Trial Marks to spend at the Arbiter's Reliquary / Egg Forge. */
+	public int trialMarks;
+	/** The Colosseum of Trials: personal best clear times in ticks, keyed "TRIAL_SOLO" / "TRIAL_DUO"; null until the first clear. */
+	public java.util.Map<String, Integer> trialBests;
 	/** True while a Rivals match kit is on (set and cleared by RivalsSnapshot): every account buff is off (RivalsFairPlay). */
 	public transient boolean rivalsFight;
 	public int[] preTournyAttack;

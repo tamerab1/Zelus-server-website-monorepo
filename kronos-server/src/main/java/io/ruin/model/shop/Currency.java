@@ -149,6 +149,28 @@ public enum Currency {
 			return amount;
 		}
 	}),
+	// the Colosseum of Trials' points (2026-11-07), spent at the Arbiter's Reliquary
+	TRIAL_MARKS(new CurrencyHandler("Trial Marks") {
+		@Override
+		public int getCurrencyCount(Player player) {
+			return player.trialMarks;
+		}
+
+		@Override
+		public int removeCurrency(Player player, int amount) {
+			if (amount > player.trialMarks)
+				return 0;
+			player.trialMarks -= amount;
+			return amount;
+		}
+
+		@Override
+		public int addCurrency(Player player, int amount) {
+			player.trialMarks = (int) Math.min(Integer.MAX_VALUE, (long) player.trialMarks + amount);
+			return amount;
+		}
+	}),
+
 	BOSS_POINTS(new CurrencyHandler("boss points") {
 		@Override
 		public int getCurrencyCount(Player player) {

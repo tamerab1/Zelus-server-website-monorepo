@@ -1,0 +1,84 @@
+{
+  "id": 60572,
+  "name": "@gre@Ethereal elder maul",
+  "resizeX": 128,
+  "resizeY": 128,
+  "resizeZ": 128,
+  "xan2d": 237,
+  "yan2d": 429,
+  "zan2d": 0,
+  "cost": 1,
+  "stackable": 0,
+  "inventoryModel": 64762,
+  "tradeable": true,
+  "geTradeable": false,
+  "wearPos1": 3,
+  "wearPos2": -1,
+  "wearPos3": -1,
+  "members": true,
+  "colorFind": [
+    5056,
+    8125,
+    16,
+    0,
+    33,
+    20
+  ],
+  "colorReplace": [
+    5,
+    8,
+    3018,
+    5,
+    5,
+    5
+  ],
+  "zoom2d": 1744,
+  "xOffset2d": -3,
+  "yOffset2d": -58,
+  "ambient": 0,
+  "contrast": 0,
+  "groundOps": {
+    "ops": [
+      {
+        "text": "Take"
+      },
+      null,
+      {
+        "text": "Take"
+      }
+    ],
+    "subOps": [],
+    "conditionalOps": [],
+    "conditionalSubOps": []
+  },
+  "interfaceOptions": [
+    "Wield",
+    null,
+    null,
+    null,
+    "Drop"
+  ],
+  "maleModel0": 64761,
+  "maleModel1": -1,
+  "maleModel2": -1,
+  "maleOffset": 0,
+  "maleHeadModel": -1,
+  "maleHeadModel2": -1,
+  "femaleModel0": 64760,
+  "femaleModel1": -1,
+  "femaleModel2": -1,
+  "femaleOffset": 0,
+  "femaleHeadModel": -1,
+  "femaleHeadModel2": -1,
+  "category": 0,
+  "notedID": -1,
+  "notedTemplate": -1,
+  "team": 0,
+  "weight": 0,
+  "shiftClickDropIndex": -2,
+  "boughtId": -1,
+  "boughtTemplateId": -1,
+  "placeholderId": -1,
+  "placeholderTemplateId": -1,
+  "selected": true
+}

@@ -66,11 +66,11 @@ public final class BondGuide {
 		lines.add(CATEGORY + type.category + ":</col> " + status(player, type));
 		lines.add("");
 		lines.add(HEADER + "How bonds work</col>");
-		lines.add(TEXT + BULLET + "Attune a bond to turn its perks on");
-		lines.add(TEXT + BULLET + "Perks only work while the attuned");
-		lines.add(TEXT + "   bond is in your inventory");
-		lines.add(TEXT + BULLET + "One attuned bond of each type");
-		lines.add(TEXT + BULLET + "Sever it to turn its perks off");
+		lines.add(TEXT + BULLET + "Attune a bond to put it in the bond");
+		lines.add(TEXT + "   slot, left of your helmet");
+		lines.add(TEXT + BULLET + "Only the bond in the slot gives perks");
+		lines.add(TEXT + BULLET + "Attuning another swaps them over");
+		lines.add(TEXT + BULLET + "Remove it from the slot to sever it");
 		lines.add(TEXT + BULLET + "Only unattuned T1 bonds can be traded");
 		for (int tier = 1; tier <= BondType.MAX_TIER; tier++) {
 			lines.add("");
@@ -90,8 +90,14 @@ public final class BondGuide {
 		int attuned = type.tier(player);
 		if (attuned > 0)
 			return ATTUNED + "Attuned (" + BondType.tierLabel(attuned) + ")</col>";
-		int best = Math.max(highestOwned(player.getInventory().getItems(), type), highestOwned(player.getBank().getItems(), type));
+		int best = highestOwned(player, type);
 		return best > 0 ? OWNED + "Owned " + BondType.tierLabel(best) + " (not attuned)</col>" : NOT_OWNED + "Not owned</col>";
+	}
+
+	/** Highest tier of this bond in the bond slot, inventory or bank (0 = none). */
+	static int highestOwned(Player player, BondType type) {
+		return Math.max(type.tier(player), Math.max(highestOwned(player.getInventory().getItems(), type),
+				highestOwned(player.getBank().getItems(), type)));
 	}
 
 	static int highestOwned(Item[] items, BondType type) {
