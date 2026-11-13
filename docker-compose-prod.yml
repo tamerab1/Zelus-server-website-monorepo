@@ -113,7 +113,10 @@ services:
     # network (service name resolves automatically), never publishes a host
     # port directly. Only reachable through reverse_proxy.
     website_api:
-        image: "${IMAGE_REGISTRY}/website-api:${IMAGE_TAG}"
+        # WEBSITE_*_IMAGE_TAG: set by ci-cd.yml deploy-production to the tag already
+        # running, so a server release never redeploys the website (website releases
+        # come from the karn-website branch via website-deploy.yml).
+        image: "${IMAGE_REGISTRY}/website-api:${WEBSITE_API_IMAGE_TAG}"
         restart: unless-stopped
         environment:
             DB_HOST: db_sql
@@ -210,7 +213,7 @@ services:
     # image build time (see .github/workflows/ci-cd.yml build-args), not
     # configurable here at runtime. Only reachable through reverse_proxy.
     website_client:
-        image: "${IMAGE_REGISTRY}/website-client:${IMAGE_TAG}"
+        image: "${IMAGE_REGISTRY}/website-client:${WEBSITE_CLIENT_IMAGE_TAG}"
         restart: unless-stopped
         deploy:
             resources:

@@ -1,0 +1,121 @@
+name: Website Deploy
+
+# Website-only releases: pushing the `karn-website` branch tests and builds
+# ONLY the two website images, then (after the same manual approval gate as
+# server releases) swaps ONLY the website_client / website_api services on
+# the production swarm. The game server, databases and proxy are never
+# touched, so no player gets kicked by a website update.
+#
+# The reverse also holds: ci-cd.yml's deploy-production (server `v*` tags)
+# keeps whatever website images are already running instead of redeploying
+# the website from the server branch's copy of the code.
+on:
+  push:
+    branches: [karn-website]
+    paths:
+      - "website/**"
+      - ".github/workflows/website-deploy.yml"
+  workflow_dispatch:
+
+# Never cancel a run that may be mid-deploy; queue the next one instead.
+concurrency:
+  group: website-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      image_base: ${{ steps.vars.outputs.image_base }}
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - name: Compute image base and tag
+        id: vars
+        run: |
+          echo "image_base=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "tag=web-$(echo '${{ github.sha }}' | cut -c1-12)" >> "$GITHUB_OUTPUT"
+
+  test-website-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - working-directory: website/zelus-website-client
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+  test-website-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - working-directory: website/zelus-website-api
+        run: |
+          pip install --no-cache-dir -r requirements.txt
+          pip install --no-cache-dir "ruff==0.17.1" pytest
+          ruff check .
+          pytest --exitfirst || test $? -eq 5
+
+  # Both images are always rebuilt under the same web-<sha> tag, so the two
+  # website services always run a matched pair.
+  release-website:
+    needs: [setup, test-website-client, test-website-api]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-client
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-client:${{ needs.setup.outputs.tag }}
+          # Same production build-args as ci-cd.yml's release-production.
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL_PROD }}
+            VITE_TURNSTILE_SITE_KEY=${{ vars.VITE_TURNSTILE_SITE_KEY_PROD }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: website/zelus-website-api
+          push: true
+          tags: ${{ needs.setup.outputs.image_base }}/website-api:${{ needs.setup.outputs.tag }}
+
+  deploy-website:
+    needs: [setup, release-website]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Trust deploy host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+      - name: Update website services only
+        env:
+          DOCKER_HOST: ssh://${{ secrets.DEPLOY_HOST_USER }}@${{ secrets.DEPLOY_HOST }}
+          IMAGE_BASE: ${{ needs.setup.outputs.image_base }}
+          TAG: ${{ needs.setup.outputs.tag }}
+        run: |
+          # GHCR_PULL_TOKEN, not GITHUB_TOKEN: see the comment in ci-cd.yml's
+          # deploy-development (2026-08-23 outage from an expired job token).
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
+          # `service update` keeps each service's existing env/secrets/limits
+          # and changes only the image, so no compose env is needed here.
+          docker service update --with-registry-auth --image "$IMAGE_BASE/website-api:$TAG" zelus_prod_website_api
+          docker service update --with-registry-auth --image "$IMAGE_BASE/website-client:$TAG" zelus_prod_website_client
