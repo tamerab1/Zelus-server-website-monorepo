@@ -411,6 +411,7 @@ jobs:
         run: |
           export $(cat docker-compose.env | xargs)
           export IMAGE_TAG=latest-dev
+          export WEBSITE_API_IMAGE_TAG=latest-dev WEBSITE_CLIENT_IMAGE_TAG=latest-dev
           # GHCR_PULL_TOKEN (classic PAT, read:packages, no expiration) -- NOT GITHUB_TOKEN.
           # --with-registry-auth bakes whatever credential is used here directly into the
           # swarm service, and Swarm reuses that SAME credential for every future pull tied
@@ -496,4 +497,15 @@ jobs:
           # GHCR_PULL_TOKEN, not GITHUB_TOKEN -- see the identical comment on deploy-development
           # above. Same reasoning, same real incident (2026-08-23 production outage).
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PULL_TOKEN }}
+          # 2026-11-13: the website ships on its own from the karn-website branch
+          # (website-deploy.yml). Keep whatever website images are running now so a
+          # server release never redeploys the website from this branch's copy.
+          # Falls back to this release's tag only if a service doesn't exist yet.
+          running_tag() {
+            docker service inspect "$1" --format '{{.Spec.TaskTemplate.ContainerSpec.Image}}' 2>/dev/null | sed -E 's/@.*//; s/.*://'
+          }
+          export WEBSITE_API_IMAGE_TAG="$(running_tag zelus_prod_website_api)"
+          export WEBSITE_CLIENT_IMAGE_TAG="$(running_tag zelus_prod_website_client)"
+          : "${WEBSITE_API_IMAGE_TAG:=$IMAGE_TAG}" "${WEBSITE_CLIENT_IMAGE_TAG:=$IMAGE_TAG}"
+          echo "website_api -> $WEBSITE_API_IMAGE_TAG, website_client -> $WEBSITE_CLIENT_IMAGE_TAG"
           docker stack config --compose-file docker-compose.yml,docker-compose-prod.yml | docker stack deploy --with-registry-auth -c - zelus_prod
