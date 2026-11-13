@@ -20,7 +20,7 @@ RUN npm run build
 # ── Stage 2: Nginx static server ──────────────────────────────────────────────
 FROM nginx:1.25-alpine
 
-LABEL org.opencontainers.image.title="Zelus Website"
+LABEL org.opencontainers.image.title="Karn Website"
 
 # Custom Nginx config for SPA routing
 COPY docker-nginx.conf /etc/nginx/conf.d/default.conf

@@ -8,7 +8,7 @@
  * Only describe content that is LIVE in game.
  */
 
-export const NEWS_AUTHOR = { name: 'Zelus Team', role: 'Developer' };
+export const NEWS_AUTHOR = { name: 'Karn Team', role: 'Developer' };
 
 export const NEWS = [
   {
@@ -19,7 +19,7 @@ export const NEWS = [
     date: '2026-10-29',
     accent: '#8b5cf6',
     cover: 'radial-gradient(120% 90% at 15% 0%, rgba(139,92,246,0.55), transparent 60%), radial-gradient(90% 80% at 90% 100%, rgba(212,175,55,0.4), transparent 65%), linear-gradient(135deg, #0f0a1c, #0b0c10)',
-    snippet: 'Zelus moves to OSRS revision 241 and opens its fourth raid: the Archive Guardian, three branching paths and Ocellus waiting in the vault.',
+    snippet: 'Karn moves to OSRS revision 241 and opens its fourth raid: the Archive Guardian, three branching paths and Ocellus waiting in the vault.',
     body: [
       'Our biggest update yet: the whole game now runs on OSRS revision 241, with a new client built on the latest RuneLite and an updated 117HD.',
       { heading: 'Before you play' },

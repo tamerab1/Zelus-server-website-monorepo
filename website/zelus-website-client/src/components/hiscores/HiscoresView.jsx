@@ -98,7 +98,7 @@ function TableRow({ player, rank, renderCells, isEven }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         background: hovered ? 'rgba(212,175,55,0.06)' : isEven ? 'rgba(255,255,255,0.015)' : 'transparent',
-        borderBottom: '1px solid rgba(30,26,20,0.6)',
+        borderBottom: '1px solid rgba(42,34,38,0.6)',
         transition: 'background 0.12s',
       }}
     >
@@ -209,7 +209,7 @@ export default function HiscoresView() {
       {/* Page heading */}
       <div className="mb-6">
         <h1 className="font-fantasy text-2xl font-bold tracking-widest" style={{ color: '#d4af37' }}>
-          ⚔ HISCORES
+          ⚔ HIGHSCORES
         </h1>
         <div className="gold-divider mt-2" />
       </div>
@@ -242,7 +242,7 @@ export default function HiscoresView() {
                       style={{
                         background: pvpCat.id === cat.id ? 'rgba(212,175,55,0.08)' : 'transparent',
                         borderLeft: pvpCat.id === cat.id ? '2px solid #d4af37' : '2px solid transparent',
-                        borderBottom: '1px solid rgba(30,26,20,0.5)',
+                        borderBottom: '1px solid rgba(42,34,38,0.5)',
                       }}
                     >
                       <img
@@ -290,7 +290,7 @@ export default function HiscoresView() {
                         style={{
                           background: isActive ? 'rgba(212,175,55,0.08)' : 'transparent',
                           borderLeft: isActive ? `2px solid ${skill.color}` : '2px solid transparent',
-                          borderBottom: '1px solid rgba(30,26,20,0.4)',
+                          borderBottom: '1px solid rgba(42,34,38,0.4)',
                         }}
                       >
                         <img
@@ -325,7 +325,7 @@ export default function HiscoresView() {
                        style={{ imageRendering: 'pixelated', ...(section === 'pvp' ? pvpCat.iconStyle : {}) }} />
                 )}
                 <span className="font-fantasy text-sm tracking-widest font-bold" style={{ color: '#d4af37' }}>
-                  {activeCat.label.toUpperCase()} HISCORES
+                  {activeCat.label.toUpperCase()} HIGHSCORES
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -357,7 +357,7 @@ export default function HiscoresView() {
             {loading && (
               <div className="py-20 text-center">
                 <span className="font-fantasy text-sm tracking-widest animate-pulse" style={{ color: '#8a8070' }}>
-                  LOADING HISCORES...
+                  LOADING HIGHSCORES...
                 </span>
               </div>
             )}
@@ -400,13 +400,13 @@ export default function HiscoresView() {
             {/* Footer */}
             {!loading && !error && (
               <div className="px-5 py-3 flex items-center justify-between"
-                   style={{ borderTop: '1px solid rgba(30,26,20,0.6)', background: 'rgba(0,0,0,0.2)' }}>
+                   style={{ borderTop: '1px solid rgba(42,34,38,0.6)', background: 'rgba(0,0,0,0.2)' }}>
                 <span className="font-fantasy text-xs" style={{ color: '#6a6058' }}>
                   {search
                     ? `${ranked.length} result${ranked.length !== 1 ? 's' : ''} for "${search}"`
                     : `${ranked.length} player${ranked.length !== 1 ? 's' : ''} ranked`}
                 </span>
-                <span className="font-fantasy text-xs" style={{ color: '#2a2420' }}>ZELUS HISCORES</span>
+                <span className="font-fantasy text-xs" style={{ color: '#2A2226' }}>KARN HIGHSCORES</span>
               </div>
             )}
           </div>

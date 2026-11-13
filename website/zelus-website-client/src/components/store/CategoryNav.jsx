@@ -102,8 +102,8 @@ export default function CategoryNav({ active, onChange, counts = {} }) {
                 style={{
                   background: isActive
                     ? 'rgba(212,175,55,0.16)'
-                    : 'linear-gradient(160deg, #1a1a26 0%, #14141e 100%)',
-                  border: `1px solid ${isActive ? 'rgba(212,175,55,0.55)' : '#2e2820'}`,
+                    : 'linear-gradient(160deg, #18141A 0%, #121014 100%)',
+                  border: `1px solid ${isActive ? 'rgba(212,175,55,0.55)' : '#2A2226'}`,
                   color: isActive ? '#d4af37' : '#7a7060',
                   boxShadow: isActive
                     ? '0 0 12px rgba(212,175,55,0.12)'

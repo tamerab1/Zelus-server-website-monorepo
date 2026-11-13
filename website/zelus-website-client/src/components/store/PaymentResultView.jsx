@@ -30,7 +30,7 @@ export default function PaymentResultView({ result, onGoToStore, onGoHome }) {
         {isSuccess ? (
           <div className="space-y-4">
             <p className="text-sm leading-relaxed" style={{ color: '#c8bfb0' }}>
-              Your order is being processed. Log into Zelus and type{' '}
+              Your order is being processed. Log into Karn and type{' '}
               <span
                 className="font-mono font-bold px-1.5 py-0.5"
                 style={{ background: 'rgba(212,175,55,0.1)', color: '#d4af37', borderRadius: 2 }}
@@ -61,7 +61,7 @@ export default function PaymentResultView({ result, onGoToStore, onGoHome }) {
               border: '1px solid rgba(212,175,55,0.4)',
               color: '#d4af37',
             }}
-            onMouseOver={e => { e.currentTarget.style.background = '#d4af37'; e.currentTarget.style.color = '#0a0a14'; }}
+            onMouseOver={e => { e.currentTarget.style.background = '#d4af37'; e.currentTarget.style.color = '#0B090C'; }}
             onMouseOut={e  => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = '#d4af37'; }}
           >
             Back to Store

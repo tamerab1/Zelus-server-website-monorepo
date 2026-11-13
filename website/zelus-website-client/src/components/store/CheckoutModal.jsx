@@ -89,13 +89,13 @@ function UsernameField({ value, onChange, disabled }) {
         className="w-full px-3 py-2 text-sm font-mono"
         style={{
           background: 'rgba(0,0,0,0.5)',
-          border: '1px solid #2a2520',
+          border: '1px solid #2A2226',
           borderRadius: 2,
           color: '#e8e0d0',
           outline: 'none',
         }}
         onFocus={e => (e.currentTarget.style.borderColor = '#d4af37')}
-        onBlur={e  => (e.currentTarget.style.borderColor = '#2a2520')}
+        onBlur={e  => (e.currentTarget.style.borderColor = '#2A2226')}
       />
       <p className="text-xs mt-1" style={{ color: '#555' }}>
         Items delivered here — type{' '}
@@ -236,9 +236,9 @@ export default function CheckoutModal({ pkg, onClose }) {
           <>
             {/* Divider */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
+              <div className="flex-1 h-px" style={{ background: '#2A2226' }} />
               <span className="font-fantasy text-xs tracking-widest" style={{ color: '#3a3530' }}>OR</span>
-              <div className="flex-1 h-px" style={{ background: '#2a2520' }} />
+              <div className="flex-1 h-px" style={{ background: '#2A2226' }} />
             </div>
 
             {/* OSRS GP */}
@@ -375,7 +375,7 @@ export default function CheckoutModal({ pkg, onClose }) {
             className="px-4 py-3 flex justify-between items-center"
             style={{
               background: 'rgba(0,0,0,0.3)',
-              border: '1px solid #1e1a14',
+              border: '1px solid #2A2226',
               borderRadius: 2,
             }}
           >
@@ -484,7 +484,7 @@ export default function CheckoutModal({ pkg, onClose }) {
         className="w-full py-3 font-fantasy text-xs tracking-widest uppercase rounded-sm transition-all duration-200"
         style={{
           background: 'rgba(255,255,255,0.04)',
-          border: '1px solid #2a2520',
+          border: '1px solid #2A2226',
           color: '#6a6058',
         }}
         onMouseOver={e => (e.currentTarget.style.color = '#d4af37')}

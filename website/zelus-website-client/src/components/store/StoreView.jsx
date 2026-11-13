@@ -1,5 +1,5 @@
 /**
- * StoreView — Premium Zelus store with category navigation & cart system.
+ * StoreView — Premium Karn store with category navigation & cart system.
  *
  * Architecture:
  *   StoreView (state)
@@ -34,7 +34,7 @@ function CartFAB({ count, onClick }) {
       onClick={onClick}
       className="fixed bottom-8 right-6 z-30 flex items-center gap-2 px-5 py-3 rounded-full font-fantasy text-sm tracking-wider shadow-xl transition-all duration-200"
       style={{
-        background: 'linear-gradient(180deg, #1e1e2e 0%, #14141e 100%)',
+        background: 'linear-gradient(180deg, #1B171D 0%, #121014 100%)',
         border: '1px solid rgba(212,175,55,0.5)',
         color: '#d4af37',
         boxShadow: '0 4px 24px rgba(0,0,0,0.7), 0 0 16px rgba(212,175,55,0.15)',
@@ -196,7 +196,7 @@ export default function StoreView() {
         <div
           className="inline-block px-10 pt-8 pb-9 mb-2 rounded-sm"
           style={{
-            background: 'linear-gradient(180deg, rgba(5,4,8,0.72) 0%, rgba(5,4,8,0.45) 100%)',
+            background: 'linear-gradient(180deg, rgba(9,8,10,0.72) 0%, rgba(9,8,10,0.45) 100%)',
             backdropFilter: 'blur(2px)',
             boxShadow: '0 0 60px rgba(0,0,0,0.6)',
           }}
@@ -226,7 +226,7 @@ export default function StoreView() {
             className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-[0.18em] uppercase rounded-lg transition-all duration-200 hover:-translate-y-0.5"
             style={{
               color: '#f3d36b',
-              background: 'rgba(21,24,33,0.7)',
+              background: 'rgba(18,16,20,0.7)',
               border: '1px solid rgba(212,175,55,0.45)',
               boxShadow: '0 0 18px rgba(212,175,55,0.12)',
               backdropFilter: 'blur(8px)',
@@ -278,7 +278,7 @@ export default function StoreView() {
             <div
               className="mb-6 p-4 flex items-start gap-3"
               style={{
-                background: 'rgba(5,4,8,0.88)',
+                background: 'rgba(9,8,10,0.88)',
                 backdropFilter: 'blur(2px)',
                 border: '1px solid rgba(212,175,55,0.3)',
                 borderRadius: 2,

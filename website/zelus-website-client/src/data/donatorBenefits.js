@@ -2,7 +2,7 @@
  * donatorBenefits.js — the Donator rank benefits matrix shown in the store.
  *
  * Every value below was read from the live kronos-server source (2026-10-15), NOT from older marketing copy.
- * Zelus has EIGHT donator ranks (SecondaryGroup / Player.is*Donator, by lifetime Total Donated). Each perk lists
+ * Karn has EIGHT donator ranks (SecondaryGroup / Player.is*Donator, by lifetime Total Donated). Each perk lists
  * its source so it can be re-checked whenever the server changes.
  *
  * Deliberately NOT listed: the "double drop chance" (SecondaryGroup.doubleDropChance 2.50-7.00%) — every use of it

@@ -111,7 +111,7 @@ export default function VoteCard({ site, initialState = 'idle', initialSecondsLe
             style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 3 }}
           >
             <span
-              className="w-4 h-4 rounded-full border-2 border-zelus-border border-t-zelus-gold animate-spin inline-block"
+              className="w-4 h-4 rounded-full border-2 border-karn-border border-t-karn-gold animate-spin inline-block"
             />
             <span style={{ color: '#d4af37' }}>SUBMITTING...</span>
           </div>
@@ -152,7 +152,7 @@ export default function VoteCard({ site, initialState = 'idle', initialSecondsLe
                 Type&nbsp;
                 <span
                   className="font-mono px-1.5 py-0.5"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid #2a2420', borderRadius: 2, color: '#d4af37' }}
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid #2A2226', borderRadius: 2, color: '#d4af37' }}
                 >
                   ::claimvote
                 </span>

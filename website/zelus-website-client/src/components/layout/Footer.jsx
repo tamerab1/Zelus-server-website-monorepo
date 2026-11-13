@@ -1,176 +1,77 @@
 import { useApp } from '../../context/AppContext.jsx';
+import { DISCORD_URL, SITE_DOMAIN, REVISION } from '../../data/links.js';
+import DiscordIcon from '../ui/DiscordIcon.jsx';
+import logo from '../../assets/karn-logo.webp';
 
-const DISCORD_URL = 'https://discord.gg/sVrcatBdyG';
-
-const NAV_LINKS = [
-  { label: 'Play Now',         view: 'download' },
-  { label: 'Vote for Rewards', view: 'vote'     },
-  { label: 'Donor Store',      view: 'store'    },
-  { label: 'Hiscores',         view: 'hiscores' },
+// Real destinations only: nothing here links to a page that doesn't exist yet.
+const GAME_LINKS = [
+  { label: 'Play Now',   view: 'download' },
+  { label: 'Highscores', view: 'hiscores' },
+  { label: 'Vote',       view: 'vote'     },
+  { label: 'Store',      view: 'store'    },
 ];
 
-// Real, working links only. Anything without a destination yet renders as
-// dimmed/disabled text (see FooterComingSoon) instead of a dead "#" link.
-const COMMUNITY_LINKS = [
-  { label: 'Discord Server', href: DISCORD_URL },
-];
-
-const COMMUNITY_COMING_SOON = ['Server Rules', 'Support Ticket', 'Report a Bug'];
-const LEGAL_COMING_SOON     = ['Terms of Service', 'Privacy Policy', 'Disclaimer'];
-
-function FooterNavLink({ label, onClick }) {
-  return (
-    <li>
-      <button
-        onClick={onClick}
-        className="font-fantasy text-xs tracking-wide transition-colors text-left"
-        style={{ color: '#8a7f72' }}
-        onMouseOver={e => e.currentTarget.style.color = '#d4af37'}
-        onMouseOut={e  => e.currentTarget.style.color = '#8a7f72'}
-      >
-        {label}
-      </button>
-    </li>
-  );
-}
-
-function FooterComingSoon({ label }) {
-  return (
-    <li>
-      <span
-        className="font-fantasy text-xs tracking-wide cursor-default"
-        style={{ color: '#4a4038' }}
-        title="Coming soon"
-      >
-        {label}
-      </span>
-    </li>
-  );
-}
-
-function FooterExternalLink({ label, href }) {
-  return (
-    <li>
-      <a
-        href={href}
-        target={href.startsWith('http') ? '_blank' : undefined}
-        rel="noopener noreferrer"
-        className="font-fantasy text-xs tracking-wide transition-colors"
-        style={{ color: '#8a7f72', textDecoration: 'none' }}
-        onMouseOver={e => e.currentTarget.style.color = '#d4af37'}
-        onMouseOut={e  => e.currentTarget.style.color = '#8a7f72'}
-      >
-        {label}
-      </a>
-    </li>
-  );
+function FooterHeading({ children }) {
+  return <h3 className="font-ui font-bold text-[0.78rem] uppercase tracking-[0.24em] text-karn-gold-hi mb-4">{children}</h3>;
 }
 
 export default function Footer() {
-  const { setCurrentView } = useApp();
+  const { setCurrentView, setPlayOpen } = useApp();
+  const year = new Date().getFullYear();
 
   return (
-    <footer style={{ background: '#030305', borderTop: '1px solid #1e1a14' }}>
-      <div className="gold-divider" />
+    <footer className="relative mt-24 border-t border-karn-border" style={{ background: '#060507' }}>
+      <div className="k-divider absolute inset-x-0 top-0" />
 
-      <div className="max-w-7xl mx-auto px-8 pt-10 pb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-
-          {/* ── Brand ── */}
-          <div className="md:col-span-1">
-            <h4
-              className="font-fantasy text-lg tracking-widest mb-3"
-              style={{ color: '#d4af37', textShadow: '0 0 12px rgba(212,175,55,0.3)' }}
-            >
-              ✦ ZELUS RSPS ✦
-            </h4>
-            <p className="font-sans text-xs leading-relaxed mb-4" style={{ color: '#8a7f72' }}>
-              A dedicated team delivering the most immersive custom RuneScape
-              experience. Join our ever-growing community today.
-            </p>
-            {/* Social icons — only Discord is live; others render disabled until we have real accounts */}
-            <div className="flex gap-2">
-              {[
-                { label: 'Discord', letter: 'D',  href: DISCORD_URL },
-                { label: 'YouTube', letter: 'YT', href: null },
-                { label: 'Twitter', letter: 'X',  href: null },
-              ].map(({ label, letter, href }) =>
-                href ? (
-                  <a
-                    key={label}
-                    href={href}
-                    title={label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center font-fantasy text-xs font-bold transition-all no-underline"
-                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2420', borderRadius: 2, color: '#8a7f72' }}
-                    onMouseOver={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)'; }}
-                    onMouseOut={e  => { e.currentTarget.style.color = '#8a7f72'; e.currentTarget.style.borderColor = '#2a2420'; }}
-                  >
-                    {letter}
-                  </a>
-                ) : (
-                  <span
-                    key={label}
-                    title={`${label} — coming soon`}
-                    className="w-8 h-8 flex items-center justify-center font-fantasy text-xs font-bold cursor-default"
-                    style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid #201c16', borderRadius: 2, color: '#3a352e' }}
-                  >
-                    {letter}
-                  </span>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* ── Quick Links ── */}
-          <div>
-            <h5 className="font-fantasy text-xs tracking-widest mb-4" style={{ color: '#6a5f50' }}>
-              QUICK LINKS
-            </h5>
-            <ul className="space-y-2.5">
-              {NAV_LINKS.map(({ label, view }) => (
-                <FooterNavLink key={label} label={label} onClick={() => setCurrentView(view)} />
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Community ── */}
-          <div>
-            <h5 className="font-fantasy text-xs tracking-widest mb-4" style={{ color: '#6a5f50' }}>
-              COMMUNITY
-            </h5>
-            <ul className="space-y-2.5">
-              {COMMUNITY_LINKS.map(({ label, href }) => (
-                <FooterExternalLink key={label} label={label} href={href} />
-              ))}
-              {COMMUNITY_COMING_SOON.map(label => (
-                <FooterComingSoon key={label} label={label} />
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Legal ── */}
-          <div>
-            <h5 className="font-fantasy text-xs tracking-widest mb-4" style={{ color: '#6a5f50' }}>
-              LEGAL
-            </h5>
-            <ul className="space-y-2.5">
-              {LEGAL_COMING_SOON.map(label => (
-                <FooterComingSoon key={label} label={label} />
-              ))}
-            </ul>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-10 grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+        {/* Brand */}
+        <div>
+          <img src={logo} alt="Karn" className="h-14 w-auto" />
+          <p className="mt-4 text-sm text-karn-muted leading-relaxed max-w-sm">
+            A revision {REVISION} Old School server built around true progression PvM, the Colosseum of Trials and
+            high-stakes PvP.
+          </p>
+          <button type="button" onClick={() => setPlayOpen(true)} className="k-btn k-btn-crimson h-10 px-5 text-[0.8rem] mt-6">
+            Play Karn free
+          </button>
         </div>
 
-        {/* ── Bottom bar ── */}
-        <div
-          className="flex flex-col md:flex-row justify-between items-center pt-5 font-fantasy text-xs tracking-widest"
-          style={{ borderTop: '1px solid #1a1610', color: '#6a5f50' }}
-        >
-          <p>© 2026 ZELUS PROJECT. ALL RIGHTS RESERVED.</p>
-          <p className="mt-3 md:mt-0" style={{ color: '#4a3f32' }}>
-            NOT AFFILIATED WITH JAGEX LIMITED.
+        {/* Game */}
+        <nav aria-label="Footer">
+          <FooterHeading>Game</FooterHeading>
+          <ul className="space-y-2.5">
+            {GAME_LINKS.map(l => (
+              <li key={l.view}>
+                <button type="button" onClick={() => setCurrentView(l.view)}
+                  className="text-sm text-karn-muted hover:text-karn-gold-hi transition-colors">
+                  {l.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Community */}
+        <div>
+          <FooterHeading>Community</FooterHeading>
+          <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer"
+             className="inline-flex items-center gap-2 text-sm text-karn-muted hover:text-white transition-colors">
+            <DiscordIcon size={16} color="#8C9EFF" /> Discord server
+          </a>
+          <p className="text-sm text-karn-dim mt-3 leading-relaxed">
+            Updates, support and giveaways are all posted on Discord.
+          </p>
+        </div>
+      </div>
+
+      <div className="border-t border-karn-border/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-xs text-karn-dim leading-relaxed">
+          <p>
+            © {year} <span className="text-karn-muted font-semibold">{SITE_DOMAIN}</span>. All rights reserved.
+          </p>
+          <p className="md:text-right max-w-2xl">
+            Karn is an independent fan-made game server and is not affiliated with, endorsed by or connected to Jagex Ltd.
+            Old School RuneScape and RuneScape are trademarks of Jagex Ltd.
           </p>
         </div>
       </div>

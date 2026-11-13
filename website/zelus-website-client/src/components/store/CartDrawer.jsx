@@ -127,8 +127,8 @@ export default function CartDrawer({
         style={{
           width: '360px',
           maxWidth: '100vw',
-          background: 'linear-gradient(160deg, #1a1a26 0%, #12121c 100%)',
-          borderLeft: '1px solid #2e2820',
+          background: 'linear-gradient(160deg, #18141A 0%, #121014 100%)',
+          borderLeft: '1px solid #2A2226',
           borderTop:  '2px solid #d4af37',
           boxShadow: '-8px 0 40px rgba(0,0,0,0.8)',
           transform: isOpen ? 'translateX(0)' : 'translateX(100%)',

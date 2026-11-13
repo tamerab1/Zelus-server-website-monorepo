@@ -1,215 +1,75 @@
-import React, { useState } from 'react';
+import { useMemo } from 'react';
+import { Download } from 'lucide-react';
 import { useApp } from '../../context/AppContext.jsx';
-import logo from '../../assets/logo.png';
-import useDiscordInvite from '../../hooks/useDiscordInvite.js';
-import { DISCORD_URL, LAUNCHER_URL, JAR_URL } from '../../data/links.js';
+import { DISCORD_URL } from '../../data/links.js';
 import DiscordIcon from '../ui/DiscordIcon.jsx';
-import './HomeSections.css';
+import heroArt from '../../assets/karn-hero.webp';
+import logo from '../../assets/karn-logo.webp';
 
-/* ── Diamond gem ornament — pure inline SVG, no shared gradient IDs ── */
-let _gemId = 0;
-function DiamondGem({ side }) {
-  const id = React.useRef(`gem_${++_gemId}`).current;
-  const fillId   = `${id}_f`;
-  const borderId = `${id}_b`;
+/** A handful of rising embers over the artwork (CSS only; hidden for reduced motion). */
+function Embers({ count = 18 }) {
+  const embers = useMemo(() => Array.from({ length: count }, (_, i) => ({
+    left: `${(i * 53) % 100}%`,
+    delay: `${(i * 0.73) % 9}s`,
+    duration: `${9 + ((i * 1.7) % 7)}s`,
+    drift: `${((i % 5) - 2) * 18}px`,
+    size: 2 + (i % 3),
+  })), [count]);
   return (
-    <div
-      className="absolute top-1/2"
-      style={{
-        [side]: '-13px',
-        transform: 'translateY(-50%)',
-        zIndex: 3,
-        pointerEvents: 'none',
-      }}
-    >
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <defs>
-          <linearGradient id={fillId} x1="5" y1="5" x2="21" y2="21" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stopColor="#6dd5ed"/>
-            <stop offset="40%"  stopColor="#1a8aaa"/>
-            <stop offset="100%" stopColor="#0a3f5c"/>
-          </linearGradient>
-          <linearGradient id={borderId} x1="0" y1="0" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stopColor="#e8c84a"/>
-            <stop offset="50%"  stopColor="#9a7020"/>
-            <stop offset="100%" stopColor="#c9a030"/>
-          </linearGradient>
-        </defs>
-        {/* outer gold diamond frame */}
-        <polygon points="13,1 25,13 13,25 1,13" fill="#0a1e30" stroke={`url(#${borderId})`} strokeWidth="1.5"/>
-        {/* inner gem face */}
-        <polygon points="13,5 21,13 13,21 5,13" fill={`url(#${fillId})`}/>
-        {/* top-left highlight */}
-        <polygon points="13,5 21,13 13,13" fill="rgba(140,230,255,0.18)"/>
-        {/* centre spark */}
-        <circle cx="13" cy="13" r="1.5" fill="rgba(180,240,255,0.55)"/>
-      </svg>
+    <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+      {embers.map((e, i) => (
+        <span key={i} className="k-ember"
+          style={{ left: e.left, animationDelay: e.delay, animationDuration: e.duration, '--drift': e.drift, width: e.size, height: e.size }} />
+      ))}
     </div>
   );
 }
-
-/* ── Key icon SVG (for download button) ── */
-function KeyIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a030" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="7.5" cy="15.5" r="5.5"/>
-      <path d="M21 2L13 10"/>
-      <path d="M15 4l2 2"/>
-      <path d="M13 10l-2 2"/>
-      <path d="M11 12l-3 3"/>
-    </svg>
-  );
-}
-
-/* ── MMO-style button (a link when href is given) ──────── */
-function MMOButton({ children, onClick, href, external = false, wide = false, accent = 'gold', className = '' }) {
-  const [hovered, setHovered] = useState(false);
-  const discord = accent === 'discord';
-  const Tag = href ? 'a' : 'button';
-  return (
-    <Tag
-      href={href}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noopener noreferrer' : undefined}
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`btn-mmo font-fantasy ${discord ? 'btn-mmo--discord' : ''} ${className}`}
-      style={{
-        width: wide ? 'min(340px, 100%)' : 'min(240px, 100%)',
-        textDecoration: 'none',
-        boxShadow: hovered
-          ? (discord
-            ? '0 0 40px rgba(88,101,242,0.45), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(160,170,255,0.18)'
-            : '0 0 40px rgba(0,180,220,0.25), 0 0 60px rgba(212,175,55,0.18), 0 6px 24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(100,210,240,0.12)')
-          : (discord
-            ? '0 0 22px rgba(88,101,242,0.25), 0 4px 18px rgba(0,0,0,0.85)'
-            : '0 0 22px rgba(212,175,55,0.18), 0 4px 18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(100,210,240,0.07)'),
-        borderColor: discord ? (hovered ? '#8b95ff' : '#5865f2') : (hovered ? '#d4af37' : '#a87c18'),
-      }}
-    >
-      <DiamondGem side="left" />
-      <div className="btn-mmo-bevel-top" />
-      <div className="btn-mmo-content">{children}</div>
-      <DiamondGem side="right" />
-    </Tag>
-  );
-}
-
-/* ── Client preview card (glass) ── */
-function ClientCard({ title, sub, lines, cta, onClick, soon = false }) {
-  return (
-    <div className={`zh-glass zh-client ${soon ? 'zh-client--soon' : ''}`}>
-      <div className="zh-client-top">
-        <span className="zh-client-title font-fantasy">{title}</span>
-        <span className={`zh-pill ${soon ? 'zh-pill--muted' : 'zh-pill--live'}`}>{soon ? 'Coming soon' : 'Available'}</span>
-      </div>
-      <p className="zh-client-sub">{sub}</p>
-      <ul className="zh-client-lines">
-        {lines.map((l) => <li key={l}>{l}</li>)}
-      </ul>
-      {cta && (
-        <button type="button" className="zh-client-cta" onClick={onClick}>
-          {cta}
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────── */
 
 export default function Hero() {
-  const { setCurrentView } = useApp();
-  const discord = useDiscordInvite();
+  const { setPlayOpen } = useApp();
 
   return (
-    <section className="relative flex items-center justify-center" style={{ minHeight: '85vh', overflow: 'visible' }}>
-      {/* Lightning flash effect */}
-      <div className="absolute inset-0 pointer-events-none lightning-overlay" />
+    <section className="relative isolate overflow-hidden" style={{ minHeight: 'min(92vh, 920px)' }}>
+      {/* Artwork */}
+      <img src={heroArt} alt="" aria-hidden="true" fetchPriority="high"
+           className="absolute inset-0 -z-20 w-full h-full object-cover object-[center_40%]" />
+      {/* Vignette + bottom fade into the void */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10" style={{
+        background: [
+          'radial-gradient(ellipse 75% 60% at 50% 42%, rgba(9,8,10,0.05) 0%, rgba(9,8,10,0.55) 70%, rgba(9,8,10,0.85) 100%)',
+          'linear-gradient(180deg, rgba(9,8,10,0.7) 0%, rgba(9,8,10,0.1) 22%, rgba(9,8,10,0.15) 55%, rgba(9,8,10,0.85) 82%, #09080A 100%)',
+        ].join(','),
+      }} />
+      <Embers />
 
-      {/* Logo */}
-      <img
-        src={logo}
-        alt="Zelus"
-        className="logo-animated"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          zIndex: 600,
-          height: 'clamp(10rem, 24vw, 22rem)',
-          width: 'auto',
-          objectFit: 'contain',
-          pointerEvents: 'none',
-          opacity: 0,
-        }}
-      />
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center"
+           style={{ paddingTop: 'calc(var(--k-header-h) + clamp(40px, 9vh, 110px))', paddingBottom: 'clamp(150px, 20vh, 210px)' }}>
+        <img src={logo} alt="Karn" className="k-logo-glow k-rise w-[min(560px,86vw)] h-auto" />
 
-      {/* Content */}
-      <div
-        className="relative z-10 text-center px-4 pb-16 w-full max-w-5xl mx-auto flex flex-col items-center"
-        style={{ paddingTop: 'clamp(9rem, 21vw, 17rem)' }}
-      >
-        <p className="font-fantasy text-sm tracking-[0.45em] mb-3 uppercase" style={{ color: '#d4af37', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}>
-          OLD SCHOOL FANTASY RSPS
-        </p>
-        <h1 className="zh-headline font-fantasy">PREPARE FOR THE ADVENTURE</h1>
-        <p className="text-gray-200 text-base max-w-xl mx-auto mb-9 leading-relaxed font-serif tracking-wide" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.95)' }}>
-          Experience the pinnacle of custom RSPS. Fight legendary bosses,
-          compete in high-stakes PvP, and build your legacy.
-        </p>
-
-        {/* ── Primary CTAs ── */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full">
-          <MMOButton wide href={LAUNCHER_URL}>
-            <div className="flex flex-col items-center gap-0.5">
-              <div className="flex items-center gap-3">
-                <span className="text-sm tracking-[0.2em] font-bold" style={{ color: '#f0e060', textShadow: '0 0 14px rgba(212,175,55,0.7), 0 1px 3px rgba(0,0,0,0.9)' }}>
-                  DOWNLOAD CLIENT
-                </span>
-                <KeyIcon />
-              </div>
-              <span style={{ color: '#9fd3e3', fontSize: '10px', letterSpacing: '0.2em' }}>— WINDOWS LAUNCHER —</span>
-            </div>
-          </MMOButton>
-
-          <MMOButton wide external accent="discord" href={DISCORD_URL}>
-            <div className="flex flex-col items-center gap-0.5">
-              <div className="flex items-center gap-3">
-                <span className="text-sm tracking-[0.2em] font-bold" style={{ color: '#e6e8ff', textShadow: '0 0 14px rgba(88,101,242,0.8), 0 1px 3px rgba(0,0,0,0.9)' }}>
-                  JOIN OUR DISCORD
-                </span>
-                <DiscordIcon color="#c7cbff" />
-              </div>
-              <span style={{ color: '#c7cbff', fontSize: '10px', letterSpacing: '0.2em' }} className="flex items-center gap-1.5">
-                {discord?.online != null
-                  ? <><span className="zh-dot" />{discord.online.toLocaleString()} ONLINE NOW</>
-                  : '— COMMUNITY & SUPPORT —'}
-              </span>
-            </div>
-          </MMOButton>
+        <div className="k-rise mt-6 flex items-center gap-3 sm:gap-4" style={{ animationDelay: '.12s' }}>
+          <span className="hidden sm:block h-px w-16" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37)' }} />
+          <h1 className="font-ui font-bold uppercase text-[0.95rem] sm:text-[1.2rem] tracking-[0.22em] sm:tracking-[0.3em] text-white"
+              style={{ textShadow: '0 2px 12px rgba(0,0,0,.9)' }}>
+            Revision 241 <span className="text-karn-crimson-hi mx-1.5">•</span> True Progression PvM &amp; High-Stakes PvP
+          </h1>
+          <span className="hidden sm:block h-px w-16" style={{ background: 'linear-gradient(90deg, #D4AF37, transparent)' }} />
         </div>
-        <p className="mt-4 text-xs" style={{ color: '#c8d3df', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
-          Prefer the jar? <a href={JAR_URL} className="zh-link">Download client.jar</a> (Java 21) ·{' '}
-          <button type="button" className="zh-link" onClick={() => setCurrentView('download')}>All download options</button>
+
+        <p className="k-rise mt-4 max-w-xl text-karn-text/80 text-[0.98rem] sm:text-[1.05rem] leading-relaxed"
+           style={{ animationDelay: '.2s', textShadow: '0 2px 10px rgba(0,0,0,.95)' }}>
+          Four raids, a Colosseum built for champions and a weapon that grows with every kill.
+          Your legend is earned, not handed out.
         </p>
 
-        {/* ── Client preview cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-3xl mt-12 text-left">
-          <ClientCard
-            title="DESKTOP CLIENT"
-            sub="Windows 10 / 11"
-            lines={['Auto-updating launcher', 'GPU & HD rendering', 'Zelus plugins built in']}
-            cta="Download options"
-            onClick={() => setCurrentView('download')}
-          />
-          <ClientCard
-            title="WEB / MOBILE"
-            sub="Play from the browser or your phone"
-            lines={['No install needed', 'Same world, same account', 'In development']}
-            soon
-          />
+        <div className="k-rise mt-9 flex flex-col sm:flex-row items-center gap-3 sm:gap-4" style={{ animationDelay: '.28s' }}>
+          <button type="button" onClick={() => setPlayOpen(true)}
+                  className="k-btn k-btn-crimson h-14 px-10 text-[1.05rem] tracking-[0.2em] w-64 sm:w-auto">
+            <Download size={19} /> Play Now
+          </button>
+          <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer"
+             className="k-btn k-btn-ghost h-14 px-8 text-[0.95rem] w-64 sm:w-auto">
+            <DiscordIcon size={18} color="#8C9EFF" /> Join Discord
+          </a>
         </div>
       </div>
     </section>

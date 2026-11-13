@@ -1,5 +1,5 @@
 /**
- * storeItems.js — Unified item catalogue for the Zelus Store.
+ * storeItems.js — Unified item catalogue for the Karn Store.
  *
  * DATA CONTRACT
  * ─────────────
@@ -148,7 +148,7 @@ const storeItems = [
     color:        'from-emerald-700 to-emerald-950',
     icon_path:    '/assets/ranks/rank_donator.png',
     iconFallback: '💎',
-    description:  'Begin your donor journey and support Zelus.',
+    description:  'Begin your donor journey and support Karn.',
     benefits: [
       'Donator rank & "Donor" title prefix',
       'Access to the Donator Zone (::dzone)',
@@ -228,7 +228,7 @@ const storeItems = [
     color:        'from-orange-600 to-red-950',
     icon_path:    '/assets/ranks/rank_noble_donator.png',
     iconFallback: '🔥',
-    description:  'A noble name commands respect across Zelus.',
+    description:  'A noble name commands respect across Karn.',
     benefits: [
       'Everything in Elite Donator, plus:',
       '"Noble" title prefix',
@@ -304,7 +304,7 @@ const storeItems = [
     icon_path:    '/assets/ranks/rank_legendary_donator.png',
     iconFallback: '👑',
     badge_label:  'EXCLUSIVE',
-    description:  'Join the legends of Zelus — one of the elite few.',
+    description:  'Join the legends of Karn — one of the elite few.',
     benefits: [
       'Everything in Platinum Donator, plus:',
       '"Legend" title prefix',
@@ -329,7 +329,7 @@ const storeItems = [
     icon_path:    '/assets/ranks/rank_supreme_donator.png',
     iconFallback: '⚜️',
     badge_label:  'ULTIMATE',
-    description:  'The pinnacle of Zelus prestige — unmatched power.',
+    description:  'The pinnacle of Karn prestige — unmatched power.',
     benefits: [
       'Everything in Legendary Donator, plus:',
       '+7.00% double drop chance boost — the highest in the game',

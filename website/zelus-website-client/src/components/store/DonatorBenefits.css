@@ -1,16 +1,16 @@
 /* DonatorBenefits — dark obsidian glass UI for the donator rank matrix. Scoped with the zb- prefix. */
 
 .zb {
-  --zb-bg: #0d0e12;
-  --zb-panel: #151821;
+  --zb-bg: #0F0D11;
+  --zb-panel: #141116;
   --zb-line: rgba(255, 255, 255, 0.07);
-  --zb-text: #f0f6fc;
-  --zb-dim: #c3cbd6;
+  --zb-text: #EDE6DD;
+  --zb-dim: #B8AEA4;
   --zb-value: #f1c40f;
   --zb-tick: #2ecc71;
-  --zb-border: #2b3240;
-  --zb-row-a: #161b24;
-  --zb-row-b: #1a202c;
+  --zb-border: #2A2226;
+  --zb-row-a: #151216;
+  --zb-row-b: #1B171D;
   --zb-gold: #d4af37;
   --zb-crimson: #e2384d;
   --zb-purple: #a855f7;
@@ -21,7 +21,7 @@
   isolation: isolate;
   /* solid backplate: the lightning background must never show through the text (2026-10-17) */
   padding: clamp(14px, 2.4vw, 24px);
-  background: rgba(13, 17, 23, 0.96);
+  background: rgba(15, 13, 17, 0.96);
   border: 1px solid var(--zb-border);
   border-radius: 16px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
@@ -40,7 +40,7 @@
 }
 
 .zb-glass {
-  background: #11161e;
+  background: #121014;
   border: 1px solid var(--zb-border);
   border-radius: 14px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -147,7 +147,7 @@
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.14em;
-  color: #0d0e12;
+  color: #0F0D11;
   background: var(--c);
 }
 
@@ -191,9 +191,9 @@
 }
 
 /* ---- matrix (desktop) ---- */
-.zb-matrix { overflow-x: auto; padding: 0; background: #0d1117; }
+.zb-matrix { overflow-x: auto; padding: 0; background: #0F0D11; }
 .zb-table { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; font-size: 13px; }
-.zb-table th, .zb-table td { padding: 10px 10px; text-align: center; border-bottom: 1px solid #222936; white-space: nowrap; }
+.zb-table th, .zb-table td { padding: 10px 10px; text-align: center; border-bottom: 1px solid #221C22; white-space: nowrap; }
 .zb-table thead th {
   position: sticky;
   top: 0;
@@ -202,7 +202,7 @@
   font-weight: 800;
   letter-spacing: 0.06em;
   color: var(--c, var(--zb-dim));
-  background: #0d1117;
+  background: #0F0D11;
   border-bottom: 1px solid var(--zb-border);
 }
 .zb-table th:first-child, .zb-table td:first-child {
@@ -216,7 +216,7 @@
 /* zebra rows: every cell is opaque (the sticky first column needs it too) */
 .zb-table tbody tr.zb-row-a td { background: var(--zb-row-a); }
 .zb-table tbody tr.zb-row-b td { background: var(--zb-row-b); }
-.zb-table tbody tr.zb-row-a:hover td, .zb-table tbody tr.zb-row-b:hover td { background: #212837; }
+.zb-table tbody tr.zb-row-a:hover td, .zb-table tbody tr.zb-row-b:hover td { background: #201A21; }
 .zb-group td {
   padding-top: 16px;
   font-size: 12px;
@@ -225,15 +225,15 @@
   text-transform: uppercase;
   text-align: left;
   color: color-mix(in srgb, var(--a) 45%, #ffffff);
-  background: #0d1117 !important;
+  background: #0F0D11 !important;
   border-bottom: 2px solid color-mix(in srgb, var(--a) 60%, transparent);
 }
 .zb-perk-label { color: var(--zb-text); }
-.zb-perk-src { display: block; font-size: 11px; color: #a8b3c2; margin-top: 2px; }
+.zb-perk-src { display: block; font-size: 11px; color: #A39A90; margin-top: 2px; }
 .zb-table td { color: var(--zb-value); font-weight: 600; }
 .zb-table td:first-child { font-weight: 500; }
 .zb-base { color: var(--zb-dim) !important; font-weight: 500 !important; }
-.zb-none { color: #a3adbb; font-weight: 400; }
+.zb-none { color: #A39A90; font-weight: 400; }
 .zb-check { color: var(--zb-tick); font-weight: 800; font-size: 15px; }
 /* the selected rank: tinted, outlined column with a glowing header */
 .zb-table td.zb-col-on {
@@ -242,7 +242,7 @@
   font-weight: 800;
 }
 .zb-table thead th.zb-col-on {
-  background: color-mix(in srgb, var(--zb-rank) 16%, #0d1117);
+  background: color-mix(in srgb, var(--zb-rank) 16%, #0F0D11);
   box-shadow: inset 1px 0 0 var(--zb-rank), inset -1px 0 0 var(--zb-rank), inset 0 3px 0 var(--zb-rank), 0 0 18px color-mix(in srgb, var(--zb-rank) 45%, transparent);
   text-shadow: 0 0 10px color-mix(in srgb, var(--zb-rank) 60%, transparent);
 }
@@ -273,10 +273,10 @@
   gap: 12px;
   padding: 9px 0;
   font-size: 13px;
-  border-top: 1px solid #222936;
+  border-top: 1px solid #221C22;
 }
 .zb-card li span:last-child { font-weight: 700; color: var(--zb-value); text-align: right; }
-.zb-card li .zb-none { font-weight: 400; color: #a3adbb; }
+.zb-card li .zb-none { font-weight: 400; color: #A39A90; }
 .zb-card li:nth-child(even) { background: var(--zb-row-b); }
 .zb-card li { padding-left: 8px !important; padding-right: 8px !important; border-radius: 6px; }
 
@@ -301,12 +301,12 @@
   justify-content: center;
   padding: 4vh 16px;
   overflow-y: auto;
-  background: rgba(5, 6, 9, 0.85);
+  background: rgba(9, 8, 10, 0.85);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   animation: zb-fade 0.18s ease;
 }
-.zb-modal { width: min(1180px, 100%); padding: 22px; position: relative; background: rgba(13, 17, 23, 0.98); }
+.zb-modal { width: min(1180px, 100%); padding: 22px; position: relative; background: rgba(15, 13, 17, 0.98); }
 .zb-close {
   position: absolute;
   top: 14px;

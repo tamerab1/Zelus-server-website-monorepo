@@ -9,7 +9,7 @@
  * cooldown enforced server-side in /vote/submit.
  *
  * HOW TO UPDATE URLS:
- *   After submitting Zelus to each topsite, replace the listing slug/ID below
+ *   After submitting Karn to each topsite, replace the listing slug/ID below
  *   with the slug/ID assigned to your server's listing.
  *   - RuneLocus: the slug in the URL of your listing page
  *   - RSPS-List: the `u=` parameter from your listing's vote link
@@ -22,7 +22,7 @@ const VOTE_SITES = [
     tagline:  'Top 100 RSPS Network',
     icon:     '👑',
     /**
-     * Zelus's actual RuneLocus listing slug/vote link (confirmed live 2026-08-11):
+     * Karn's actual RuneLocus listing slug/vote link (confirmed live 2026-08-11):
      * https://www.runelocus.com/top-rsps-list/zelus/vote/
      *
      * RuneLocus (now rebranded RuLocus) never once sent a postback to our
@@ -50,7 +50,7 @@ const VOTE_SITES = [
     tagline:  'RS Private Server Rankings',
     icon:     '📜',
     /**
-     * u=mrboolt is Zelus's actual RSPS-List listing account username (confirmed
+     * u=mrboolt is Karn's actual RSPS-List listing account username (confirmed
      * live 2026-08-11 after registering the server there).
      * The id= param passes the in-game username through as the callback identifier.
      */
@@ -69,7 +69,7 @@ const VOTE_SITES = [
     tagline:  'RSPS Toplist',
     icon:     '🏆',
     /**
-     * Zelus's RuneRank listing (2026-10-21). RuneRank confirms the vote server-to-server with a signed webhook
+     * Karn's RuneRank listing (2026-10-21). RuneRank confirms the vote server-to-server with a signed webhook
      * (POST /api/vote/runerank) that carries the username back, so it is passed on the vote link as `username=`.
      */
     buildUrl: (username) =>

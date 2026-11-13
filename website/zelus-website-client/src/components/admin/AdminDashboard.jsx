@@ -9,7 +9,7 @@ function AdminTable({ columns, rows, renderRow }) {
       <table className="w-full text-left min-w-[400px]">
         <thead>
           <tr className="font-fantasy text-xs tracking-widest"
-              style={{ color: '#555', borderBottom: '1px solid #1e1a14' }}>
+              style={{ color: '#555', borderBottom: '1px solid #2A2226' }}>
             {columns.map(col => (
               <th key={col.key} className={`p-4 ${col.align === 'right' ? 'text-right' : ''}`}>
                 {col.label}
@@ -22,7 +22,7 @@ function AdminTable({ columns, rows, renderRow }) {
             <tr
               key={i}
               className="transition-colors"
-              style={{ borderBottom: '1px solid rgba(30,26,20,0.5)' }}
+              style={{ borderBottom: '1px solid rgba(42,34,38,0.5)' }}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
               onMouseOut={e  => e.currentTarget.style.background = 'transparent'}
             >
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
                         className="font-fantasy text-xs tracking-widest px-2 py-1"
                         style={{
                           background:   u.privilege === 'PLAYER' ? 'rgba(255,255,255,0.03)' : 'rgba(127,29,29,0.2)',
-                          border:       `1px solid ${u.privilege === 'PLAYER' ? '#2a2420' : 'rgba(127,29,29,0.5)'}`,
+                          border:       `1px solid ${u.privilege === 'PLAYER' ? '#2A2226' : 'rgba(127,29,29,0.5)'}`,
                           color:        u.privilege === 'PLAYER' ? '#555' : '#f87171',
                           borderRadius: 2,
                         }}

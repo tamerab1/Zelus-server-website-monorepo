@@ -42,7 +42,10 @@ const PATH_TO_VIEW = {
   '/vote':         'vote',
   '/hiscores':     'hiscores',
   '/download':     'download',
+  '/play':         'download',
+  '/highscores':   'hiscores',
   '/staff-login':  'staff_login',
+  '/login':        'staff_login',
   '/admin':        'admin',
 };
 
@@ -51,9 +54,9 @@ const VIEW_TO_PATH = {
   home:           '/',
   store:          '/store',
   vote:           '/vote',
-  hiscores:       '/hiscores',
-  download:       '/download',
-  staff_login:    '/staff-login',
+  hiscores:       '/highscores',
+  download:       '/play',
+  staff_login:    '/login',
   admin:          '/admin',
   payment_result: '/',
 };
@@ -98,6 +101,8 @@ export function AppProvider({ children }) {
   const [storeMessage,  setStoreMessage]     = useState({ type: '', message: '' });
   // When set to a package object, the CheckoutModal is open.
   const [checkoutPkg,   setCheckoutPkg]      = useState(null);
+  // The "Play Now" launcher download modal (opened from the hero and the nav).
+  const [playOpen,      setPlayOpen]         = useState(false);
 
   const setCurrentUser = (user) => {
     setCurrentUserState(user);
@@ -151,6 +156,7 @@ export function AppProvider({ children }) {
       handleLogout,
       handleCheckout,
       checkoutPkg,    setCheckoutPkg,
+      playOpen,       setPlayOpen,
       paymentResult,  setPaymentResult,
     }}>
       {children}

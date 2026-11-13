@@ -95,21 +95,21 @@ function RankContent({ item }) {
         )}
       </div>
 
-      <p className="text-xs text-center mb-4 leading-snug" style={{ color: '#c9d1d9' }}>
+      <p className="text-xs text-center mb-4 leading-snug" style={{ color: '#B8AEA4' }}>
         {item.description}
       </p>
 
       {/* Benefits accordion */}
       {item.benefits?.length > 0 && (
         <div>
-          <p className="font-fantasy text-xs tracking-widest mb-2" style={{ color: '#c3cbd6' }}>
+          <p className="font-fantasy text-xs tracking-widest mb-2" style={{ color: '#B8AEA4' }}>
             PERKS
           </p>
           <ul className="space-y-1.5">
             {visible?.map((b, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className="text-xs mt-0.5 shrink-0" style={{ color: item.badge }}>✦</span>
-                <span className="text-xs leading-snug" style={{ color: '#e6edf3' }}>{b}</span>
+                <span className="text-xs leading-snug" style={{ color: '#EDE6DD' }}>{b}</span>
               </li>
             ))}
           </ul>

@@ -139,7 +139,7 @@ export default function VoteView() {
         <div
           className="inline-block px-10 pt-8 pb-9 mb-2 rounded-sm"
           style={{
-            background: 'linear-gradient(180deg, rgba(5,4,8,0.72) 0%, rgba(5,4,8,0.45) 100%)',
+            background: 'linear-gradient(180deg, rgba(9,8,10,0.72) 0%, rgba(9,8,10,0.45) 100%)',
             backdropFilter: 'blur(2px)',
             boxShadow: '0 0 60px rgba(0,0,0,0.6)',
           }}
@@ -210,12 +210,12 @@ export default function VoteView() {
                 color: '#9a8f80',
                 marginLeft: 'auto',
                 background: 'rgba(0,0,0,0.55)',
-                border: '1px solid #2e2820',
+                border: '1px solid #2A2226',
                 borderRadius: 2,
                 padding: '0.35rem 0.75rem',
               }}
               onMouseOver={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = '#d4af37'; }}
-              onMouseOut={e  => { e.currentTarget.style.color = '#9a8f80'; e.currentTarget.style.borderColor = '#2e2820'; }}
+              onMouseOut={e  => { e.currentTarget.style.color = '#9a8f80'; e.currentTarget.style.borderColor = '#2A2226'; }}
             >
               Change
             </button>

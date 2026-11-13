@@ -1,4 +1,4 @@
-# Zelus Web Portal
+# Karn Web Portal
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -7,19 +7,19 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-1.25-009639?style=for-the-badge&logo=nginx&logoColor=white)
 
-A production-deployed, full-featured React SPA serving as the community web portal for **Zelus RSPS** — a custom RuneScape private server. The portal provides player authentication, a live donation store (Stripe & PayPal), a voting reward system, real-time game event feeds, and a full hiscores leaderboard — all without any client-side routing library.
+A production-deployed, full-featured React SPA serving as the community web portal for **Karn RSPS** — a custom RuneScape private server. The portal provides player authentication, a live donation store (Stripe & PayPal), a voting reward system, real-time game event feeds, and a full hiscores leaderboard — all without any client-side routing library.
 
 ---
 
 ## 🌐 Live Demo
 
-**[https://zelusrsps.com](https://zelusrsps.com)**
+**[https://karnps.com](https://karnps.com)**
 
 ---
 
 ## Project Overview
 
-The Zelus Web Portal is a modern, reactive single-page application built with React 18 and Vite. It serves as the primary interface between the gaming community and the backend services, handling:
+The Karn Web Portal is a modern, reactive single-page application built with React 18 and Vite. It serves as the primary interface between the gaming community and the backend services, handling:
 
 - **Player accounts** — email-verified registration, secure login, password reset
 - **Donation store** — Stripe and PayPal checkout with in-game fulfillment via `::claim`
@@ -127,7 +127,7 @@ No component imports `fetch` directly. This means the API base URL, error handli
 
 - **Node.js** v18 or higher
 - **npm** v9 or higher
-- A running instance of the Zelus Website API (or point `VITE_API_URL` at the production API)
+- A running instance of the Karn Website API (or point `VITE_API_URL` at the production API)
 
 ### Steps
 
@@ -253,7 +253,7 @@ src/
 │
 └── assets/
     ├── hero.jpg                # Full-viewport hero background image
-    └── logo.png                # Zelus logo
+    └── logo.png                # Karn logo
 ```
 
 ---
@@ -351,14 +351,14 @@ Docker Compose (5 containers, zelus_internal network)
    └── zelus_game       → Java game server
 ```
 
-SSL certificates are managed automatically by **Certbot** (Let's Encrypt), renewed via a cron job on the VPS. The nginx container serves `https://zelusrsps.com` with A+ TLS configuration.
+SSL certificates are managed automatically by **Certbot** (Let's Encrypt), renewed via a cron job on the VPS. The nginx container serves `https://karnps.com` with A+ TLS configuration.
 
 ---
 
 ## Licence
 
-This project is proprietary software. All rights reserved — Zelus Project 2026.
+This project is proprietary software. All rights reserved — Karn Project 2026.
 
 ---
 
-> Built with React 18 · Deployed at [zelusrsps.com](https://zelusrsps.com)
+> Built with React 18 · Deployed at [karnps.com](https://karnps.com)

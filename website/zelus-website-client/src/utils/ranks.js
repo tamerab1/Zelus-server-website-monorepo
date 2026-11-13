@@ -1,5 +1,5 @@
 /**
- * ranks.js — Privilege and donor-rank utilities for Zelus.
+ * ranks.js — Privilege and donor-rank utilities for Karn.
  *
  * Aligned with NR 288 Kronos server:
  *   PlayerGroup  enum → isAdmin(), STAFF_LABELS
