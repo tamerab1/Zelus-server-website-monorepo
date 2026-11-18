@@ -118,7 +118,7 @@ function PlatformCard({ platform, primary }) {
 }
 
 export default function DownloadView() {
-  const mine = useMemo(detectPlatform, []);
+  const mine = useMemo(() => detectPlatform(), []);
   const ordered = useMemo(
     () => [...PLATFORMS].sort((a, b) => (b.id === mine) - (a.id === mine)),
     [mine],
