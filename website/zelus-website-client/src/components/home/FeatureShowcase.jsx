@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Skull, Castle, Swords, Hammer, Download } from 'lucide-react';
+import { Skull, Castle, Swords, Hammer, Download, Flame } from 'lucide-react';
 import { useApp } from '../../context/AppContext.jsx';
 
 /**
@@ -7,6 +7,21 @@ import { useApp } from '../../context/AppContext.jsx';
  * Images live in /public/assets/news/. A tab without `image` draws the Colosseum crest instead.
  */
 const FEATURES = [
+  {
+    id: 'fiveseals',
+    tab: 'The Five Seals',
+    short: 'Five Seals',
+    Icon: Flame,
+    title: 'Break the Five Seals',
+    blurb: "Karn's signature minigame. Five sealed rooms, solo or with up to five players, and every seal you break raises the reward. Cash out, or push on for Vorgath and the Sovereign Vault.",
+    points: [
+      'Five rooms: offerings, waves and Baelgor, conduits, Shadow Stalkers and Vorgath',
+      'Your multiplier climbs from x1 to x5: cash out after any seal or risk it all',
+      "Full clears can drop the Duskwarden and Hellfang sets, the Decimation and Lil' Vorgath",
+      'Ascension shards buy titles, ornament kits, the Sealbreaker cape and sigil upgrades',
+    ],
+    stats: [['1-5', 'Players'], ['x5', 'Max multiplier'], ['5', 'Seals']],
+  },
   {
     id: 'pvm',
     tab: 'PvM & Raids',
