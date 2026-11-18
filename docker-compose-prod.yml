@@ -128,8 +128,8 @@ services:
             GAME_DB_NAME: reason
             GAME_DB_USERNAME: website_api
             GAME_DB_PASSWORD: ${WEBSITE_DB_PASSWORD}
-            SITE_URL: https://${BETA_DOMAIN}
-            CORS_ORIGINS: https://${BETA_DOMAIN}
+            SITE_URL: https://${KARN_DOMAIN:-karnps.com}
+            CORS_ORIGINS: https://${KARN_DOMAIN:-karnps.com},https://www.${KARN_DOMAIN:-karnps.com}
             TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
             SMTP_HOST: ${SMTP_HOST}
             SMTP_PORT: ${SMTP_PORT}
@@ -157,7 +157,7 @@ services:
             # This service's OWN public URL -- embedded in each NOWPayments invoice's
             # ipn_callback_url so NOWPayments knows where to send its webhook. Not the
             # same as SITE_URL (that's the frontend, a different subdomain).
-            API_BASE_URL: https://${BETA_API_DOMAIN}
+            API_BASE_URL: https://${KARN_API_DOMAIN:-api.karnps.com}
             # Default is beta's sandbox value; production overrides via
             # PAYPAL_BASE_URL in its own DOCKER_COMPOSE_ENV secret (see
             # the KRONOS_BOOT_OPTS comment on game_server for why this
@@ -247,8 +247,12 @@ services:
               protocol: tcp
               mode: host
         environment:
-            BETA_DOMAIN: ${BETA_DOMAIN}
-            BETA_API_DOMAIN: ${BETA_API_DOMAIN}
+            # Karn move (beta 2026-11-18): the domains are fixed here, not taken from the DOCKER_COMPOSE_ENV secret's
+            # old BETA_DOMAIN / BETA_API_DOMAIN (zelusrsps); the Caddyfile still reads them under these names.
+            BETA_DOMAIN: ${KARN_DOMAIN:-karnps.com}
+            BETA_API_DOMAIN: ${KARN_API_DOMAIN:-api.karnps.com}
+            LEGACY_DOMAIN: zelusrsps.com
+            LEGACY_API_DOMAIN: api.zelusrsps.com
         volumes:
             # Same absolute-path reasoning as game_server's server.properties
             # mount above — see the comment there.

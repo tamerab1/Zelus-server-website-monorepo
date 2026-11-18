@@ -12,6 +12,26 @@ export const NEWS_AUTHOR = { name: 'Karn Team', role: 'Developer' };
 
 export const NEWS = [
   {
+    id: 'the-five-seals',
+    title: 'The Five Seals: Trials of Ascension',
+    tag: 'New Minigame',
+    date: '2026-11-18',
+    accent: '#b81d24',
+    cover: 'radial-gradient(120% 90% at 15% 0%, rgba(184,29,36,0.6), transparent 60%), radial-gradient(90% 80% at 90% 100%, rgba(212,175,55,0.45), transparent 65%), linear-gradient(135deg, #1a0a0d, #0b090c)',
+    snippet: 'Break five seals solo or with up to five players. Every seal raises your multiplier: cash out, or push on for Vorgath and the Sovereign Vault.',
+    body: [
+      'Karn\'s signature minigame is here. Five sealed rooms stand between you and the Sovereign Vault, and every seal you break makes the reward bigger. Go alone or bring a party of up to five: the rooms, waves and bosses scale to your group.',
+      { heading: 'The five seals' },
+      'The first seal: chop Karnwood and mine Bloodgold ore, then offer them at the altar while its guardians try to stop you. The second: survive the waves, then bring down Baelgor, who changes his guard as he weakens and calls Crimson Ankous to his side behind a Fel Ward. The third: hold the conduits while they charge. The fourth: hunt the Shadow Stalkers before they hunt you. The fifth: face Vorgath, whose arrows, shadow orbs, volleys and pounces punish anyone not watching his shouts.',
+      { heading: 'Push your luck' },
+      'Each seal raises your multiplier, from x1 up to x5. After every seal you choose: cash out and take your rewards, or open the next barrier and risk it all for more. Clear all five and the Sovereign Vault opens, with its own loot window to bank or take your rewards.',
+      { heading: 'Rewards' },
+      'Every run pays Ascension shards, coins and perk points, plus rolls on the reward table (more rolls the further you get). Full clears have a chance at the Duskwarden and Hellfang armour sets, the Decimation and the Lil\' Vorgath pet. Spend your shards in the Five Seals shop on rewards and cosmetics, the Ascension sigil (up to +25% on every run) and permanent upgrades such as stronger run supplies, the Altar Conduit and Sovereign Greed.',
+      { heading: 'How to get there' },
+      'Speak to the Keeper of the Seals in the roped hall at home to start a solo run, form a party or open the shop, or type ::fiveseals. The fastest clears each week are carved into the Hall of Seals, and all your drops have their own collection log page.',
+    ],
+  },
+  {
     id: 'rev-241-fractured-archive',
     image: '/assets/news/fractured-archive-ocellus.webp',
     title: 'Revision 241 & Raid 4: The Fractured Archive',

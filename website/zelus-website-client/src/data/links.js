@@ -12,10 +12,15 @@ export const FORUMS_URL = null;
 export const REVISION = 241;
 
 /**
- * Direct downloads. These names are the real GitHub release repo and asset that the client CI uploads
- * (.github/workflows/build-client.yml in the client repo), so they keep their old spelling until that
- * workflow publishes a Karn-named asset.
+ * Direct downloads: the rolling "development-latest" release of the client repo, published by its
+ * .github/workflows/build-client.yml (beta 2026-11-18: Karn Beta launchers for Windows, macOS and Linux). The repo
+ * keeps its old name until it is renamed at launch; GitHub redirects the old URL after a rename.
  */
 export const RELEASES_BASE = 'https://github.com/tamerab1/zelus-clientv1.0.1/releases/download/development-latest';
-export const LAUNCHER_URL = `${RELEASES_BASE}/ZelusLauncher-windows.exe`;
+export const LAUNCHER_URL = `${RELEASES_BASE}/KarnBeta-windows.exe`;
+export const MAC_ARM_URL = `${RELEASES_BASE}/KarnBeta-macos-arm64.dmg`;
+export const MAC_INTEL_URL = `${RELEASES_BASE}/KarnBeta-macos-x64.dmg`;
+export const LINUX_APPIMAGE_URL = `${RELEASES_BASE}/KarnBeta-linux-x86_64.AppImage`;
+export const LINUX_TAR_URL = `${RELEASES_BASE}/KarnBeta-linux-x64.tar.gz`;
+export const LAUNCHER_JAR_URL = `${RELEASES_BASE}/karn-beta-launcher.jar`;
 export const JAR_URL = `${RELEASES_BASE}/client.jar`;

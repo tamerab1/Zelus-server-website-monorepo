@@ -128,6 +128,7 @@ class UserSkillStat(Base):
     runecrafting_xp  = Column(Integer, default=0)
     hunter_xp        = Column(Integer, default=0)
     construction_xp  = Column(Integer, default=0)
+    sailing_xp       = Column(Integer, default=0)
 
 
 # ---------------------------------------------------------------------------

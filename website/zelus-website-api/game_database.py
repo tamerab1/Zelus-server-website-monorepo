@@ -44,7 +44,7 @@ GameBase = declarative_base()
 # Column layout (matches NR 288 Kronos Hiscores.java):
 #   user_id, username, difficulty (game mode), mode (ironman variant)
 #   totalLevel, totalXp
-#   attackXp … constructionXp  (23 skills, same order as StatType.java)
+#   attackXp … sailingXp  (24 skills, same order as StatType.java)
 # ---------------------------------------------------------------------------
 class HiscoreUser(GameBase):
     __tablename__ = "hs_users"
@@ -97,6 +97,7 @@ class HiscoreUser(GameBase):
     runecrafting_xp  = Column(Integer, name="runecraftingXp")
     hunter_xp        = Column(Integer, name="hunterXp")
     construction_xp  = Column(Integer, name="constructionXp")
+    sailing_xp       = Column(Integer, name="sailingXp")
 
 
 # ── ORM model: pklog ─────────────────────────────────────────────────────────
@@ -155,6 +156,7 @@ HISCORE_SORT_COLUMNS: dict[str, object] = {
     "runecrafting_xp":  HiscoreUser.runecrafting_xp,
     "hunter_xp":        HiscoreUser.hunter_xp,
     "construction_xp":  HiscoreUser.construction_xp,
+    "sailing_xp":       HiscoreUser.sailing_xp,
 }
 
 

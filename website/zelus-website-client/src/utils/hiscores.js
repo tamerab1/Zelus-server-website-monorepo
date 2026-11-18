@@ -50,4 +50,5 @@ export const SKILLS = [
   { id: 'farming',      label: 'Farming',       key: 'farming_xp',     color: '#166534', icon: `${WIKI}/Farming_icon.png`       },
   { id: 'construction', label: 'Construction',  key: 'construction_xp',color: '#92400e', icon: `${WIKI}/Construction_icon.png`  },
   { id: 'hunter',       label: 'Hunter',        key: 'hunter_xp',      color: '#78350f', icon: `${WIKI}/Hunter_icon.png`        },
+  { id: 'sailing',      label: 'Sailing',       key: 'sailing_xp',     color: '#0e7490', icon: `${WIKI}/Sailing_icon.png`       },
 ];

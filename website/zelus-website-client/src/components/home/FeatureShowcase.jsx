@@ -29,6 +29,8 @@ const FEATURES = [
     tab: 'Colosseum of Trials',
     short: 'Colosseum',
     Icon: Castle,
+    image: '/assets/news/colosseum-arena.jpg',
+    caption: 'The arena of the Colosseum of Trials.',
     title: 'Prove yourself in the Colosseum',
     blurb: 'Boss trials built for champions, solo or with a partner. Every clear pays Trial Marks, and marks buy things you can only earn here.',
     points: [

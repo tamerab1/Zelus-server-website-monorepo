@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import json
 import logging
 import math
@@ -110,7 +111,7 @@ _SKILL_ORDER = [
     'prayer_xp', 'magic_xp', 'cooking_xp', 'woodcutting_xp', 'fletching_xp',
     'fishing_xp', 'firemaking_xp', 'crafting_xp', 'smithing_xp', 'mining_xp',
     'herblore_xp', 'agility_xp', 'thieving_xp', 'slayer_xp', 'farming_xp',
-    'runecrafting_xp', 'hunter_xp', 'construction_xp',
+    'runecrafting_xp', 'hunter_xp', 'construction_xp', 'sailing_xp',
 ]
 
 # ── Game username validator ───────────────────────────────────────────────────
@@ -279,6 +280,7 @@ def _build_hiscore_row(stat: HiscoreUser) -> dict:
         "runecrafting_xp":  stat.runecrafting_xp  or 0,
         "hunter_xp":        stat.hunter_xp        or 0,
         "construction_xp":  stat.construction_xp  or 0,
+        "sailing_xp":       stat.sailing_xp       or 0,
         # PvP stats not in hs_users — placeholder so the frontend shape is complete
         "kills":      0,
         "deaths":     0,
@@ -294,6 +296,7 @@ _SKILL_COLUMNS = [
     "firemaking_xp", "crafting_xp", "smithing_xp", "mining_xp",
     "herblore_xp", "agility_xp", "thieving_xp", "slayer_xp",
     "farming_xp", "runecrafting_xp", "hunter_xp", "construction_xp",
+    "sailing_xp",
 ]
 with engine.connect() as _conn:
     # Ensure all skill columns exist on the local fallback table
@@ -805,6 +808,7 @@ def get_hiscores(
                 "runecrafting_xp":  s.runecrafting_xp  or 0,
                 "hunter_xp":        s.hunter_xp        or 0,
                 "construction_xp":  s.construction_xp  or 0,
+                "sailing_xp":       s.sailing_xp       or 0,
                 "kills": 0, "deaths": 0, "kdr": 0.0, "killstreak": 0,
             }
             for u, s in rows
@@ -1079,7 +1083,7 @@ def _handle_vote_callback(site: str, provided_secret: str | None, request: Reque
         raise HTTPException(status_code=404, detail=f"Unknown vote callback site: {site}")
 
     expected_secret = _VOTE_CALLBACK_SECRETS_BY_SITE.get(site_name, "")
-    if expected_secret and provided_secret != expected_secret:
+    if expected_secret and not hmac.compare_digest(str(provided_secret or ""), expected_secret):
         log.warning("vote_callback: rejected %s ping with bad/missing secret from %s",
                     site_name, _get_real_client_ip(request))
         raise HTTPException(status_code=403, detail="Invalid callback secret.")
@@ -1237,9 +1241,47 @@ async def vote_callback_runerank(request: Request, db: Session = Depends(get_db)
 # this username is atomically marked "claimed" and returned in one call, so a
 # retried/duplicate request from the game server can't double-claim -- once
 # marked "claimed" here, a vote won't be picked up by a second call.
+def _require_game_session(request: Request, db: Session = Depends(get_db)) -> str:
+    """
+    FastAPI dependency.  Validates the r_auth cookie sent by the game server.
+    Raises 403 if the token is missing, unknown, or expired.
+    Returns the token string so callers can refresh it.
+    """
+    # OkHttp sends cookies in the Cookie header; FastAPI also parses them.
+    token = request.cookies.get("r_auth")
+    if not token:
+        # Fallback: parse the raw Cookie header (some HTTP clients set it differently)
+        raw = request.headers.get("cookie", "") or request.headers.get("Cookie", "")
+        for part in raw.split(";"):
+            part = part.strip()
+            if part.startswith("r_auth="):
+                token = part[7:]
+                break
+
+    if not token:
+        raise HTTPException(status_code=403, detail="Missing game-server auth token.")
+
+    session = db.query(models.GameSession).filter(models.GameSession.token == token).first()
+    if session is None or session.expires_at < datetime.utcnow():
+        if session is not None:
+            db.delete(session)
+            db.commit()
+        raise HTTPException(status_code=403, detail="Invalid or expired game-server session.")
+
+    # Sliding expiry — active servers keep their token alive indefinitely
+    session.expires_at = datetime.utcnow() + timedelta(seconds=_SESSION_TTL_SECONDS)
+    db.commit()
+    return token
+
+
+
+
 @app.get("/voting/claim/{username}")
 @limiter.limit("30/minute")
-def claim_votes_for_game(username: str, request: Request, db: Session = Depends(get_db)):
+def claim_votes_for_game(username: str, request: Request, db: Session = Depends(get_db),
+                         _token: str = Depends(_require_game_session)):
+    # Beta audit 2026-11-18: game-server only (its r_auth cookie) -- anyone could call this before and burn another
+    # player's pending votes -- and the rows are locked, so two quick ::claimvote calls can't both pay the same vote.
     from sqlalchemy import func as sa_func
 
     try:
@@ -1251,6 +1293,7 @@ def claim_votes_for_game(username: str, request: Request, db: Session = Depends(
                 sa_func.lower(models.Vote.game_username) == norm,
                 models.Vote.status == "pending",
             )
+            .with_for_update()
             .all()
         )
 
@@ -1330,7 +1373,8 @@ def get_pending_votes(username: str, db: Session = Depends(get_db)):
 
 
 @app.post("/votes/claim/{vote_id}")
-def claim_vote(vote_id: int, db: Session = Depends(get_db)):
+def claim_vote(vote_id: int, db: Session = Depends(get_db), _token: str = Depends(_require_game_session)):
+    # Beta audit 2026-11-18: was open to anyone (burn any vote by id); nothing on the website calls it.
     try:
         vote = db.query(models.Vote).filter(models.Vote.id == vote_id).first()
         if not vote:
@@ -1376,39 +1420,6 @@ def claim_vote(vote_id: int, db: Session = Depends(get_db)):
 _SESSION_TTL_SECONDS = 6 * 3600  # 6 hours
 
 
-def _require_game_session(request: Request, db: Session = Depends(get_db)) -> str:
-    """
-    FastAPI dependency.  Validates the r_auth cookie sent by the game server.
-    Raises 403 if the token is missing, unknown, or expired.
-    Returns the token string so callers can refresh it.
-    """
-    # OkHttp sends cookies in the Cookie header; FastAPI also parses them.
-    token = request.cookies.get("r_auth")
-    if not token:
-        # Fallback: parse the raw Cookie header (some HTTP clients set it differently)
-        raw = request.headers.get("cookie", "") or request.headers.get("Cookie", "")
-        for part in raw.split(";"):
-            part = part.strip()
-            if part.startswith("r_auth="):
-                token = part[7:]
-                break
-
-    if not token:
-        raise HTTPException(status_code=403, detail="Missing game-server auth token.")
-
-    session = db.query(models.GameSession).filter(models.GameSession.token == token).first()
-    if session is None or session.expires_at < datetime.utcnow():
-        if session is not None:
-            db.delete(session)
-            db.commit()
-        raise HTTPException(status_code=403, detail="Invalid or expired game-server session.")
-
-    # Sliding expiry — active servers keep their token alive indefinitely
-    session.expires_at = datetime.utcnow() + timedelta(seconds=_SESSION_TTL_SECONDS)
-    db.commit()
-    return token
-
-
 # ─── Slug → in-game item delivery ─────────────────────────────────────────────
 #
 # Maps each store slug to a list of (item_id, amount) tuples.
@@ -1438,7 +1449,6 @@ def _require_game_session(request: Request, db: Session = Depends(get_db)) -> st
 #   30572 = 5% Drop rate scroll
 #   30458 = Slayer task skip scroll
 #   22092 = Pet bonus token (24 h)
-
 SLUG_TO_ITEMS: dict[str, list[tuple[int, int]]] = {
 
     # ── Donator Points (bond items — player redeems in-game for DP + rank credit)
@@ -1565,7 +1575,10 @@ def store_claim(
     if not username or len(username) > 12:
         raise HTTPException(status_code=400, detail="Invalid username.")
 
-    # Fetch all unclaimed rows for this player
+    # Fetch all unclaimed rows for this player, LOCKED: they are marked claimed below, before the response goes out.
+    # Beta audit 2026-11-18: rows used to stay "unclaimed" until the game's separate /store/claim/confirm call, which the
+    # game fires and forgets -- a failed confirm (API restart, expired session) or a relog in between delivered the same
+    # purchase again on the next ::claim. Claim-on-read hands every row out exactly once; /confirm stays as a no-op.
     pending = (
         db.query(models.PendingClaim)
         .filter(
@@ -1573,6 +1586,7 @@ def store_claim(
             models.PendingClaim.claimed_status == "unclaimed",
         )
         .order_by(models.PendingClaim.created_at)
+        .with_for_update()
         .all()
     )
 
@@ -1605,6 +1619,8 @@ def store_claim(
             "basketModel":  basket_model,
             "inGameItems":  {"items": ingame_items},
         })
+        claim.claimed_status = "claimed"
+        claim.claimed_at     = datetime.utcnow()
 
         # Accumulate USD cents for DonationBossHandler (price from catalog, or 0)
         from store_catalog import get_item as _catalog_get
@@ -1631,7 +1647,8 @@ def store_claim(
         "viewModels":           view_models,
     }
 
-    log.info("store/claim: returning %d pending claim(s) for '%s'.", len(view_models), username)
+    db.commit()  # the rows are claimed now; the game delivers what it was given
+    log.info("store/claim: returning %d pending claim(s) for '%s' (marked claimed).", len(view_models), username)
     return JSONResponse(content=response_payload)
 
 
