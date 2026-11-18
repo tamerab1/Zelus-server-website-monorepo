@@ -35,7 +35,7 @@ public final class LaunchWipe {
 
 	// Server owners -- permanently preserved. Matched via normalize() so "Mr Boolt", "mr boolt",
 	// "mr_boolt" (gear_loadouts' sanitized key scheme) etc. all match the same target.
-	private static final Set<String> PRESERVE_NORMALIZED = Set.of("mrboolt", "peaks");
+	private static final Set<String> PRESERVE_NORMALIZED = Set.of("mrboolt"); // Karn Beta (2026-11-18): only Mr Boolt is kept
 
 	private static final String[] LOG_TABLE_PREFIX_LIKE = {"logs\\_%"};
 
