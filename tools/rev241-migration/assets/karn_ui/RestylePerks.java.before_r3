@@ -1,0 +1,55 @@
+import net.runelite.cache.definitions.InterfaceDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Round 2 restyle of Karn Perks, interface 1151 (server: PerkHub; the main view, the set view 676 and the combo view
+ * 717), from our 231 cache. Art: KarnArtPerks. The stone palette is remapped everywhere (including hover colours); the
+ * main view's five panels are painted; the stone buttons become arcane button sprites at their own sizes.
+ */
+final class RestylePerks {
+
+	private RestylePerks() {
+	}
+
+	/** The old warm-stone palette onto the Karn arcane one: fills, borders, the paired active fill/border, text. */
+	static final Map<Integer, Integer> PALETTE = new HashMap<>();
+
+	static {
+		int[][] m = {
+				{ 0x36302a, 0x171013 }, { 0x000000, 0x070405 }, { 0x60574b, 0x46333a }, { 0x4b443a, 0x2a1d23 }, { 0x575045, 0x3a2830 },
+				{ 0x2b2620, 0x3b2a30 }, { 0x2b251d, 0x4a1230 }, { 0x15120f, 0xc08a3a }, { 0x221c16, 0x161013 }, { 0x2e271f, 0x24171c },
+				{ 0x5a4d3a, 0x4a3640 }, { 0x2a2520, 0x120c0e }, { 0x1a1612, 0x0e090b }, { 0x5c2a22, 0x6a1a20 }, { 0x74352b, 0x8a2228 },
+				{ 0x433b31, 0x2a1d23 }, { 0x25201b, 0x120c0e }, { 0x2f2924, 0x1c1216 },
+				{ 0xd8d0c0, 0xeee3d2 }, { 0xff9900, 0xf0d0dc }, { 0xff981f, 0xe3b45c }, { 0xffff00, 0xf5d58e } };
+		for (int[] p : m)
+			PALETTE.put(p[0], p[1]);
+	}
+
+	static RestyleKarnUi2.G apply(RestyleKarnUi2.G g) {
+		g.remap(PALETTE);
+		g.sprite(1, 25150, -1).pos(1, 14, 9, 487, 306);
+		g.sprite(2, RestyleKarnUi2.CLOSE, RestyleKarnUi2.CLOSE_HOVER).pos(2, 472, 14, 18, 18);
+		g.hide(3); // painted heading
+		g.pos(4, 26, 45, 300, 13).colour(4, 0xc8b8c0);
+		// the main view's panels are painted: hide their base rects (fill, black, light border, fill)
+		for (int panel : new int[] { 5, 40, 82, 110, 637 })
+			g.hide(panel + 1, panel + 2, panel + 3, panel + 4);
+		// search field
+		InterfaceDefinition s = g.d(855);
+		s.type = 5;
+		s.filled = false;
+		g.sprite(855, 25151, 25152);
+		g.hide(857, 858);
+		// every stretched stone button becomes the arcane button of its size
+		for (InterfaceDefinition d : g.c.values()) {
+			if (d.type != 5 || d.spriteId != 4525)
+				continue;
+			for (int i = 0; i < KarnArtPerks.SIZES.length; i++)
+				if (KarnArtPerks.SIZES[i][0] == d.originalWidth && KarnArtPerks.SIZES[i][1] == d.originalHeight)
+					g.sprite(d.id & 0xffff, 25153 + i * 2, 25154 + i * 2);
+		}
+		return g;
+	}
+}

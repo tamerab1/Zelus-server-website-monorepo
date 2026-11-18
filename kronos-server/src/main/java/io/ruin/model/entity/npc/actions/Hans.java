@@ -59,7 +59,7 @@ public class Hans {
 			new PlayerDialogue("Can you tell me how long I've been here?"),
 			new NPCDialogue(3105, "Ahh, I see all the newcomers arriving in Lumbridge, " +
 				"fresh-faced and eager for adventure. I remember you..."),
-			new NPCDialogue(3105, "You've spent " + toTime(player) + " in Zelus.")
+			new NPCDialogue(3105, "You've spent " + toTime(player) + " in Karn.")
 		);
 	}
 

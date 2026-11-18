@@ -26,6 +26,7 @@ import io.ruin.model.content.loyaltytitles.LoyaltyTitleManager;
 import io.ruin.model.inter.Interface;
 import io.ruin.model.inter.ToplevelComponent;
 import io.ruin.model.inter.dialogue.NPCDialogue;
+import io.ruin.model.map.Direction;
 import io.ruin.model.inter.dialogue.OptionsDialogue;
 import io.ruin.model.inter.handlers.XpCounter;
 import io.ruin.model.inter.utils.Option;
@@ -263,7 +264,7 @@ public class StarterGuide {
 			Broadcast.WORLD.sendNews(Icon.NEWCOMER_SMILE,"<col=005f9e><shad=0>[Welcome]</shad></col> <col=ffffff><shad=0>" + player.getName()
 					+ "</shad></col> <col=005f9e>has just joined " + World.type.getWorldName() + "! Welcome them to the realm!</col>");
 			// ...and a personal tip, since the broadcast is easy to miss and reads as third-person.
-			player.sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> Type <col=00ff00><shad=0>::zelus</shad></col> to claim your exclusive starter referral rewards!");
+			player.sendMessage("<col=005f9e><shad=0>[Karn]</shad></col> Type <col=00ff00><shad=0>::karn</shad></col> to claim your exclusive starter referral rewards!");
 			// checkAllUnlocks otherwise only runs on kill/logout, so without this a
 			// launch-window player wouldn't see DAY ONE unlock until one of those --
 			// sweep it here too so eligible titles are visible right after tutorial.
@@ -279,7 +280,7 @@ public class StarterGuide {
 
 			if (startTutorial.get()) {
 				player.dialogue(new NPCDialogue(WARDEN_NPC,
-						"Welcome to Zelus! Let me walk you through our core features and protect your account with a"
+						"Welcome to Karn! Let me walk you through our core features and protect your account with a"
 								+ " Security PIN."),
 						new NPCDialogue(WARDEN_NPC, "I can show you around home in a quick tour, or you can jump straight"
 								+ " in. Type ::help any time for commands."),
@@ -304,103 +305,120 @@ public class StarterGuide {
 		player.startEvent((e) -> {
 			player.getPacketSender().sendClientScript(39, "i", 100);
 			VarPlayerRepository.LOCK_CAMERA.set(player, 1);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Welcome to Zelus, where you'll embark on an unforgettable journey! Expect nothing less than an unparalleled experience. Best of luck on your adventure!"));
-			e.waitForDialogue(player);
-
-			player.getMovement().teleport(3089, 3511, 0);
+			// the tour starts and ends at 3098,3492 facing north (user 2026-11-14)
+			player.getMovement().teleport(3098, 3492, 0);
 			e.delay(1);
+			player.face(Direction.NORTH);
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Welcome to Karn, where you'll embark on an unforgettable journey! Expect nothing less than an unparalleled experience. Best of luck on your adventure!"));
+			e.waitForDialogue(player);
 
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Starting off with Zelus's main bank! Here, you can take care of all your banking needs."));
-			e.waitForDialogue(player);
-			player.getMovement().teleport(3115, 3486, 0);
-			e.delay(2);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Exhibit two, the Zelus Market and the Zelus Upgrader! The market is where players buy and sell all kinds"
-								+ " of items (::market works too), and the upgrader forges your gear into stronger versions."));
-			e.waitForDialogue(player);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Right next to the Upgrader is the Item Workbench, where you will be able to place perks onto your equipment with minerals and enhancers from breaking down items."));
-			e.waitForDialogue(player);
-			e.delay(2);
-			// construction portal
-			player.getMovement().teleport(3089, 3475, 0);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Now to make you feel at home... the POH portal! This is where you can begin building your dream estate. Visit the estate agent to purchase a house..."));
-			e.waitForDialogue(player);
-			e.delay(2);
-
-			player.getMovement().teleport(3096, 3512, 0);
-
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Zelus's central shops! Here you'll find all the basic shops to assist your journey. Ironman players also have access to some of the shops, so be sure to explore everything this marketplace has to offer."));
-			e.waitForDialogue(player);
-			e.delay(2);
-
-			player.getMovement().teleport(3090, 3486, 0);
-
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Here, we have the Zelus teleport nexus.<br>" +
-							"Interacting with the nexus will open the teleport menu. Once the menu is open, select one of the many options and you'll be transported there."));
-			e.waitForDialogue(player);
-			e.delay(2);
-			player.getMovement().teleport(3105, 3513, 0);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Right behind you is the healing pool! This pool will rid you of any status conditions and heal you completely. You'll also be healed when you teleport home."));
-			e.waitForDialogue(player);
-			player.getMovement().teleport(3105, 3488, 0);
+			player.getMovement().teleport(3094, 3496, 0);
 			e.delay(1);
+			player.face(Direction.EAST); // tour stop: face the feature
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Feeling belligerent already? Look no further than the Slayer Masters, who can assign you tasks. You can also loot the crystal, larran's, brimstone, and slayer chests here."));
+					"Starting off with Karn's bank! Here you can take care of all your banking needs."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3116, 3487, 0);
-			e.delay(1);
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"This is where you will find the perk master. Talk to him for information about obtaining and equipping perks! Perks play a huge role in Zelus, so check them out."));
+					"Right beside it is the Karn Market, where players buy and sell all kinds of items. You can open it from anywhere with ::market too."));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3083, 3502, 0);
 			e.delay(1);
+			player.getMovement().teleport(3089, 3508, 0);
+			e.delay(1);
+			player.face(Direction.NORTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Karn's central shops and the point stores! Everything basic you'll need for your journey is here, and the point store NPCs let you spend the points you earn. Ironman players can use some of these shops too."));
+			e.waitForDialogue(player);
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"The altars here let you restore your prayer and switch your spellbook, and the healing pool will rid you of any status conditions and heal you completely. You'll also be healed whenever you teleport home."));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3105, 3504, 0);
+			e.delay(1);
+			player.face(Direction.NORTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"This is the Karn Statue. Sacrifice coins into one of its blessings: fill a blessing's pool through its three tiers and the whole server is blessed for a while. Keep an eye on it, every coin counts!"));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3115, 3488, 0);
+			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Here you'll find the Perk Master, the Karn Upgrader and the Item Workbench. Talk to the Perk Master to learn about obtaining and equipping perks; they play a huge role in Karn."));
+			e.waitForDialogue(player);
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"The Upgrader forges your gear into stronger versions, and at the Workbench you can place perks onto your equipment with the minerals and enhancers you get from breaking down items."));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3087, 3500, 0);
+			e.delay(1);
+			player.face(Direction.WEST); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Here we have Karn Teleports. Interacting with it opens the teleport menu: pick one of the many destinations and you'll be transported there."));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3085, 3491, 0);
+			e.delay(1);
+			player.face(Direction.WEST); // tour stop: face the feature
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"A little fairy magic here. Take full advantage of this resource!"));
 			e.waitForDialogue(player);
-			player.getMovement().teleport(3094, 3463, 0);
 			e.delay(1);
-			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"Here is the Camel Statue, where certain boosts can be activated by offering gold. Note: These are global boosts. There is also a thieving area to the left!"));
-			e.waitForDialogue(player);
-			player.getMovement().teleport(3078, 3484, 0);
+			player.getMovement().teleport(3089, 3475, 0);
 			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
-					"And finally, here are the point store NPCs! Spend your various points here."));
+					"Now to make you feel at home... the POH portal! This is where you can begin building your dream estate. Visit the estate agent to purchase a house."));
 			e.waitForDialogue(player);
 			e.delay(1);
-
+			player.getMovement().teleport(3105, 3488, 0);
+			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"Feeling belligerent already? Look no further than the Slayer Masters, who can assign you tasks. You can also loot the crystal, larran's, brimstone and slayer chests here."));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3083, 3484, 0);
+			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"This is the Soulbound Sanctuary and its Reliquary of Souls. Bind your soul to a living weapon here, commune with it to open your Soul Tree, and read its guide to learn how your weapon grows."));
+			e.waitForDialogue(player);
+			e.delay(1);
+			player.getMovement().teleport(3079, 3474, 0);
+			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"This is the Pit, home of the Pit Championship! Scheduled single-elimination tournaments are fought here. Sign up when one is announced and fight your way up the Champion Ladder."));
+			e.waitForDialogue(player);
+			e.delay(1);
 			player.getMovement().teleport(3123, 3479, 0);
 			e.delay(1);
+			player.face(Direction.SOUTH); // tour stop: face the feature
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
 					"And here's the gambling zone! Feeling lucky? Step inside and try your hand -- just remember, gambling carries the risk of losing whatever you stake."));
 			e.waitForDialogue(player);
 			e.delay(1);
-
-			// player.getPacketSender().moveCameraToLocation(2064, 3583, 1000, 0, 12);
-			// player.getPacketSender().turnCameraToLocation(2062, 3570, 0, 0, 30);
-			// e.delay(1);
-			// player.dialogue(new NPCDialogue(guide,
-			// "Last, but not least, there is a skilling area to the east of home just over
-			// the bridge. Fishing is also available to the north."));
-			// e.delay(10);
-			// player.getPacketSender().moveCameraToLocation(2064, 3572, 1200, 0, 12);
-			// player.getPacketSender().turnCameraToLocation(2064, 3590, 0, 0, 32);
-			// e.waitForDialogue(player);
+			// the training area (::train), user 2026-11-14
+			player.getMovement().teleport(2707, 5348, 0);
+			e.delay(1);
+			player.face(Direction.EAST); // tour stop: face the feature
+			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"This is Karn's training area! Type ::train any time to come back here. Fight the Training Guards to level your combat stats and collect their drops, and use the combat dummies to test your damage."));
+			e.waitForDialogue(player);
+			e.delay(1);
 			VarPlayerRepository.LOCK_CAMERA.set(player, 0);
 			player.getPacketSender().resetCamera();
 			player.tutorialStage = 1;
 
-			player.getMovement().teleport(3092, 3494, 0);
-			player.getPacketSender().moveCameraToLocation(3092, 3494, 450, 0, 12);
-			player.getPacketSender().turnCameraToLocation(3092, 3494, 400, 0, 30);
+			player.getMovement().teleport(3098, 3492, 0);
+			player.getPacketSender().moveCameraToLocation(3098, 3492, 450, 0, 12);
+			player.getPacketSender().turnCameraToLocation(3098, 3492, 400, 0, 30);
+			e.delay(1);
+			player.face(Direction.NORTH);
 			player.dialogue(new NPCDialogue(WARDEN_NPC,
+					"One last thing: Karn has Sailing! Head to the dock at Port Sarim to board your boat and start training it."),
+				new NPCDialogue(WARDEN_NPC,
 					"Looks like you're ready to begin your adventure, good luck!"));
 			e.waitForDialogue(player);
 			e.delay(3);

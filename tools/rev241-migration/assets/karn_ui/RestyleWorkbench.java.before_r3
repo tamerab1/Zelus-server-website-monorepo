@@ -1,0 +1,77 @@
+import net.runelite.cache.definitions.InterfaceDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Round 2 restyle of the Karn Forge item workbench, interface 1153 (server: WorkbenchHub), from our 231 cache. Art:
+ * KarnArtWorkbench ("Blood Steel"). Stone palette -> gunmetal + crimson; panels painted; the stone bezel buttons become
+ * single sprites. Component ids are unchanged.
+ */
+final class RestyleWorkbench {
+
+	private RestyleWorkbench() {
+	}
+
+	static final Map<Integer, Integer> PALETTE = new HashMap<>();
+
+	static {
+		int[][] m = {
+				{ 0x463f34, 0x1c1d22 }, { 0x423b31, 0x18191d }, { 0x4f4739, 0x2a2b33 }, { 0x2b251d, 0x3a1014 }, { 0x15120f, 0xd8484e },
+				{ 0x2b2620, 0x34363e }, { 0x2c2721, 0x0e0e11 }, { 0x1d1915, 0x0a0a0c }, { 0x3d362d, 0x16161a }, { 0x524b40, 0x2c2e36 },
+				{ 0x5f5749, 0x3c3e48 }, { 0x3b352d, 0x1e1f25 },
+				{ 0xff981f, 0xff7a6a }, { 0xb0a898, 0xa8abb6 }, { 0xd8d0c0, 0xe6e7ee }, { 0x6f6658, 0x6a6c78 }, { 0xffc35a, 0xf5d58e } };
+		for (int[] p : m)
+			PALETTE.put(p[0], p[1]);
+	}
+
+	static void toSprite(RestyleKarnUi2.G g, int id, int sprite, int hover) {
+		InterfaceDefinition d = g.d(id);
+		d.type = 5;
+		d.filled = false;
+		d.opacity = 0;
+		g.sprite(id, sprite, hover);
+	}
+
+	static RestyleKarnUi2.G apply(RestyleKarnUi2.G g) {
+		g.remap(PALETTE);
+		g.sprite(1, 25200, -1).pos(1, 14, 9, 487, 306);
+		g.sprite(2, RestyleKarnUi2.CLOSE, RestyleKarnUi2.CLOSE_HOVER).pos(2, 472, 14, 18, 18);
+		g.hide(3); // painted heading
+		g.pos(4, 21, 45, 473, 14);
+		// perk list (root 24,64)
+		g.hide(6, 7, 8);
+		for (int i = 0; ; i++) {
+			int card = 11 + i * 9;
+			if (card + 5 >= 182 || g.c.get(card + 5) == null || g.d(card + 5).type != 3)
+				break;
+			toSprite(g, card + 5, 25201, -1);
+		}
+		// the perk (root 188,64)
+		g.hide(183, 184, 185, 192, 193);
+		g.colour(188, 0x34363e);
+		// target + materials (root 342,64)
+		g.hide(211, 212, 213);
+		toSprite(g, 215, 25202, -1);
+		g.hide(216, 217, 218);
+		for (int s : new int[] { 225, 228, 231, 234, 238, 241, 244, 247 }) {
+			toSprite(g, s, 25203, -1);
+			g.hide(s + 1);
+		}
+		// Add minimum / Upgrade: one sprite each, the 9-slice bezels and their pressed copies go
+		toSprite(g, 250, 25204, 25205);
+		for (int k = 251; k <= 258; k++)
+			g.hide(k);
+		g.colour(260, 0x0a0a0c).opacity(260, 120);
+		for (int k = 261; k <= 268; k++)
+			g.hide(k);
+		toSprite(g, 270, 25206, 25207);
+		for (int k = 271; k <= 278; k++)
+			g.hide(k);
+		g.colour(280, 0x3a0a0c).opacity(280, 120);
+		for (int k = 281; k <= 288; k++)
+			g.hide(k);
+		g.colour(269, 0xe6e7ee).colour(289, 0xfff4e6);
+		return g;
+	}
+}

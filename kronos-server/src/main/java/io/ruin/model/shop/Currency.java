@@ -11,6 +11,7 @@ public enum Currency {
 	COINS(new ItemCurrencyHandler(ItemID.COINS_995)),
 	// the Donator Ticket (59600, DonatorBond.DONATOR_TICKET_ID). It was 30035 = "Moonrise wines" (fixed 2026-10-15)
 	DTICKETS(new ItemCurrencyHandler(io.ruin.model.item.actions.impl.DonatorBond.DONATOR_TICKET_ID)),
+	ASCENSION_SHARDS(new ItemCurrencyHandler(34669)), // The Five Seals token shop (2026-11-16)
 	GAUNTLET_SHARDS(new ItemCurrencyHandler(10506)),
 	STARDUST(new ItemCurrencyHandler(25527)),
 	ADMIN_TOKEN(new ItemCurrencyHandler(ItemID.SURVIVAL_TOKEN)),
@@ -349,7 +350,7 @@ public enum Currency {
 			return amount;
 		}
 	}),
-	REASON(new CurrencyHandler("Zelus points") {
+	REASON(new CurrencyHandler("Karn points") {
 
 		@Override
 		public int getCurrencyCount(Player player) {

@@ -1,3 +1,4 @@
+// Beta audit 2026-11-18: the hard-coded Discord webhook URLs (with tokens) were removed from this legacy class.
 package io.ruin.services.discord.old.impl;
 
 import io.ruin.api.utils.ServerWrapper;
@@ -15,7 +16,7 @@ public class TournamentEmbedMessage {
             return;
         }
         try {
-            Webhook webhook = new Webhook("https://discord.com/api/webhooks/879388840631074886/Um-Da-oDXyxW5rjFwLAiE-YHnuee8FTMK3ShxHg7AqoQcC4ZLAxKNBWFWwh-DtEO5Vl5");
+            Webhook webhook = new Webhook("");
             Message message = new Message();
 
             Embed embedMessage = new Embed();

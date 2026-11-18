@@ -1,0 +1,116 @@
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Round 2 art for the Karn Upgrader's Relic Forge, interface 1158 (item upgrades): "Molten Forge" -- forged obsidian lit
+ * by molten orange; the centre panel is a transmutation altar (base socket, a molten chevron, the glowing outcome
+ * socket). 25100 window, 25101/25102 search, 25103/25104 Clear, 25105/25106 category tab, 25107 the active tab's
+ * underline, 25108 recipe slot, 25109 base socket, 25110 outcome socket, 25111 reagent slot, 25112/25113 Forge.
+ */
+final class KarnArtForge {
+
+	private KarnArtForge() {
+	}
+
+	static final Color MOLTEN = new Color(0xf07a2a), MOLTEN_HI = new Color(0xffb35a), MOLTEN_DK = new Color(0x6e2208);
+
+	static void paint() throws Exception {
+		BufferedImage im = KarnArt.window(487, 306, 31, MOLTEN, 1158);
+		Graphics2D g = KarnArt.g(im);
+		KarnArt.heading(g, "Relic Forge", 243.5, 23, 17f, MOLTEN_HI, MOLTEN);
+		BufferedImage anvil = KarnArt.icon("anvil", 16, MOLTEN_HI, new Color(0xb0501a));
+		g.drawImage(anvil, 176, 8, null);
+		g.drawImage(anvil, 295, 8, null);
+		// left: recipes (root 24,64 170x242)
+		KarnArt.plate(g, 10, 55, 170, 242, new Color(0x201619), new Color(0x120c0e), KarnArt.LINE);
+		KarnArt.well(g, 13, 84, 164, 210, new Color(0x0d0809), KarnArt.LINE); // the list area under the tabs
+		// centre: the altar (root 198,64 150x242)
+		KarnArt.plate(g, 184, 55, 150, 242, new Color(0x2a1a14), new Color(0x140c0b), new Color(0x5a3626));
+		KarnArt.hairline(g, 190, 328, 55, MOLTEN, 200);
+		KarnArt.glow(g, 259, 112, 52, 40, MOLTEN, 70);
+		KarnArt.glow(g, 259, 197, 56, 44, MOLTEN, 95);
+		// the chevron from base to outcome (root y ~164)
+		Path2D chev = new Path2D.Double();
+		chev.moveTo(247, 146);
+		chev.lineTo(259, 155);
+		chev.lineTo(271, 146);
+		g.setStroke(new BasicStroke(3.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g.setColor(new Color(0, 0, 0, 150));
+		g.draw(AffineTransform.getTranslateInstance(0, 1.5).createTransformedShape(chev));
+		g.setPaint(new GradientPaint(0, 145, MOLTEN_HI, 0, 156, MOLTEN));
+		g.draw(chev);
+		KarnArt.hairline(g, 192, 245, 151, new Color(0x8a4a20), 220);
+		KarnArt.hairline(g, 273, 326, 151, new Color(0x8a4a20), 220);
+		KarnArt.well(g, 188, 227, 142, 66, new Color(0x0d0809), new Color(0x4a3026)); // stat changes
+		// right: reagents (root 352,64 136x242)
+		KarnArt.plate(g, 338, 55, 136, 242, new Color(0x201619), new Color(0x120c0e), KarnArt.LINE);
+		KarnArt.well(g, 344, 192, 124, 10, new Color(0x0a0607), KarnArt.LINE); // the success-rate track
+		KarnArt.hairline(g, 344, 468, 182, KarnArt.LINE_HI, 220);
+		g.dispose();
+		MakeKarnUi2.save(25100, im);
+
+		MakeKarnUi2.save(25101, field(158, 20, false));
+		MakeKarnUi2.save(25102, field(158, 20, true));
+		MakeKarnUi2.save(25103, KarnArt.button(42, 14, KarnArt.Style.DARK, false));
+		MakeKarnUi2.save(25104, KarnArt.button(42, 14, KarnArt.Style.DARK, true));
+		MakeKarnUi2.save(25105, KarnArt.button(52, 22, KarnArt.Style.DARK, false));
+		MakeKarnUi2.save(25106, KarnArt.button(52, 22, KarnArt.Style.DARK, true));
+		BufferedImage under = KarnArt.image(40, 2);
+		Graphics2D u = KarnArt.g(under);
+		u.setPaint(new GradientPaint(0, 0, MOLTEN, 40, 0, MOLTEN_HI));
+		u.fillRect(0, 0, 40, 2);
+		u.dispose();
+		MakeKarnUi2.save(25107, under);
+		MakeKarnUi2.save(25108, socket(36, 32, false));
+		MakeKarnUi2.save(25109, socket(44, 40, false));
+		MakeKarnUi2.save(25110, socket(44, 40, true));
+		MakeKarnUi2.save(25111, socket(38, 36, false));
+		MakeKarnUi2.save(25112, forge(128, 34, false));
+		MakeKarnUi2.save(25113, forge(128, 34, true));
+	}
+
+	static BufferedImage field(int w, int h, boolean hover) {
+		BufferedImage im = KarnArt.image(w, h);
+		Graphics2D g = KarnArt.g(im);
+		KarnArt.well(g, 0, 0, w, h, hover ? new Color(0x1c1214) : new Color(0x130c0e), hover ? new Color(0x8a4a20) : KarnArt.LINE_HI);
+		g.dispose();
+		KarnArt.stamp(im, KarnArt.icon("search", 12, hover ? MOLTEN_HI : MOLTEN, new Color(0xa0501a)), 4, 4);
+		return im;
+	}
+
+	/** An item socket: recessed, with a molten rim when lit (the outcome). */
+	static BufferedImage socket(int w, int h, boolean lit) {
+		BufferedImage im = KarnArt.image(w, h);
+		Graphics2D g = KarnArt.g(im);
+		KarnArt.well(g, 0, 0, w, h, lit ? new Color(0x2a1208) : new Color(0x110a0b), lit ? MOLTEN : new Color(0x4a3430));
+		if (lit) {
+			Shape c = new Rectangle2D.Double(2, 2, w - 4, h - 4);
+			g.setClip(c);
+			KarnArt.glow(g, w / 2.0, h / 2.0, w * 0.6, h * 0.6, MOLTEN, 90);
+			g.setClip(null);
+			g.setColor(KarnArt.alpha(MOLTEN_HI, 160));
+			g.drawRect(1, 1, w - 3, h - 3);
+		}
+		g.dispose();
+		return im;
+	}
+
+	/** The Forge button: molten orange with a gold rim and a hot centre. */
+	static BufferedImage forge(int w, int h, boolean hover) {
+		BufferedImage im = KarnArt.image(w, h);
+		Graphics2D g = KarnArt.g(im);
+		g.setColor(KarnArt.LINE_DK);
+		g.fill(KarnArt.chamfer(0, 0, w, h, 6));
+		g.setPaint(new GradientPaint(0, 1, hover ? new Color(0xff9a44) : new Color(0xe6702a), 0, h - 1, hover ? new Color(0xa83a10) : new Color(0x86280a)));
+		g.fill(KarnArt.chamfer(1, 1, w - 2, h - 2, 5.5));
+		Shape inner = KarnArt.chamfer(2, 2, w - 4, h - 4, 5);
+		g.setClip(inner);
+		KarnArt.glow(g, w / 2.0, h * 0.25, w * 0.45, h * 0.8, new Color(0xffe0a0), hover ? 90 : 55);
+		g.setClip(null);
+		g.setColor(hover ? KarnArt.GOLD_HI : KarnArt.GOLD);
+		g.draw(KarnArt.chamfer(1.5, 1.5, w - 3, h - 3, 5));
+		g.dispose();
+		return im;
+	}
+}

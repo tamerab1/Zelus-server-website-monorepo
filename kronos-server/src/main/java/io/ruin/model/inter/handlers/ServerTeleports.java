@@ -128,7 +128,7 @@ public enum ServerTeleports {
 		"The mother of temple spiders.", "Hard", "No requirements.", 37292, 8320
 	),
 	OPHIDIA("Ophidia", new Position(3149, 4658, 0),
-		new Item[]{(new Item(30617)), new Item(30618), new Item(30619), new Item(30620), new Item(30622)},
+		new Item[]{(new Item(30617)), new Item(30618), new Item(30619), new Item(30620), new Item(30622), new Item(30623)},
 		"A Strange creature abandoned in the ruins of an ancient temple.", "Master", "No requirements.", 21379, 5616
 	),
 	GROTESQUE_GUARDIANS("Grotesque Guardians", new Position(3149, 4658, 0),
@@ -150,6 +150,34 @@ public enum ServerTeleports {
 	SOL_HEREDIT("Sol Heredit", new Position(3149, 4658, 0),
 		new Item[]{(new Item(28951)), new Item(30461), new Item(28933), new Item(28936), new Item(28939), new Item(28805)},
 		"The final fight of the colosseum", "Master", "No requirements.", 0, 0
+	),
+	ZALCANO("Zalcano", new Position(3034, 6068, 0),
+		new Item[]{(new Item(23760)), new Item(23953), new Item(23908), new Item(6571)},
+		"A demon of rock bound beneath Prifddinas. Bring a pickaxe.", "Hard", "Pickaxe; Mining and Smithing help.", 0, 0
+	),
+	HESPORI("Hespori", new Position(1243, 10081, 0),
+		new Item[]{(new Item(22994)), new Item(22883), new Item(22885), new Item(22881), new Item(20661)},
+		"Grow a Hespori seed in the Farming Guild cave and harvest it.", "Medium", "A grown Hespori seed and a spade.", 0, 0
+	),
+	MAGGOT_KING("Maggot King", new Position(2678, 7848, 0),
+		new Item[]{(new Item(33642)), new Item(33634), new Item(33631)},
+		"A bloated horror nesting in the darkwood of Vampyrium.", "Master", "No requirements.", 0, 0
+	),
+	MOONS_OF_PERIL("Moons of Peril", new Position(1441, 9658, 0),
+		new Item[]{(new Item(28997)), new Item(28988), new Item(29000), new Item(29022), new Item(29013), new Item(29004)},
+		"Subdue the Blood, Blue and Eclipse Moons beneath Neypotzli, then claim the Lunar Chest.", "Hard", "No requirements.", 0, 0
+	),
+	HUEYCOATL("The Hueycoatl", new Position(1527, 3291, 0),
+		new Item[]{(new Item(30152)), new Item(30070), new Item(30066), new Item(30085)},
+		"A colossal serpent atop the Darkfrost. Break its body, then its tail, then the beast itself.", "Hard", "No requirements.", 0, 0
+	),
+	ROYAL_TITANS("Royal Titans", new Position(2950, 9574, 0),
+		new Item[]{(new Item(42768)), new Item(30631), new Item(42771), new Item(30637), new Item(42770), new Item(42769)},
+		"Branda the Fire Queen and Eldric the Ice King, deep in the Asgarnian Ice Dungeon.", "Hard", "No requirements.", 0, 0
+	),
+	BRUTUS("Brutus", new Position(3262, 3297, 0),
+		new Item[]{(new Item(33124)), new Item(33101), new Item(33091), new Item(33093), new Item(33099)},
+		"The bull of the Lumbridge cow field. Feed him an abyssal potato for Demonic Brutus.", "Easy", "No requirements.", 0, 0
 	),
 	DUKE_SUCELLUS("Duke Sucellus", new Position(3149, 4658, 0),
 		new Item[]{(new Item(30583)), new Item(28321), new Item(30521), new Item(30522), new Item(30523), new Item(28250)},
@@ -360,6 +388,7 @@ public enum ServerTeleports {
 	ARDOUGNE_ROOFTOP_COURSE("Ardougne rooftop", new Position(2673, 3296, 0), null, "Train agility whilst obtaining <br>marks of grace.",
 		"", "90 Agility.", 0, 0),
 	WILDERNESS_AGILITY_COURSE("Wilderness course", new Position(2997, 3914, 0), null, "Warning: Level 50 Wilderness.", "", "52 Agility.", 0, 0),
+	SAILING_PORT_SARIM("Port Sarim docks", new Position(3051, 3193, 0), null, "Board your boat, take port tasks<br>and set sail. (Sailing)", "", "No requirements.", 0, 0),
 	EDGEVILLE_MARKETPLACE("Edgeville marketplace", new Position(3093, 3467, 0), null, "Various npcs to pickpocket and <br>stalls to thieve from.", "", "No requirements.", 0, 0),
 	TAVERLEY_DUNGEON("Taverley dungeon", new Position(2884, 9798, 0), null, "Various slayer creatures lurk <br>within this dungeon", "", "No requirements.", 0, 0),
 	LUMMY_DUNGEON("Lumbridge Dungeon", new Position(3235, 9570, 0), null, "Various slayer creatures lurk <br>within this dungeon", "", "No requirements.", 0, 0),
@@ -414,6 +443,13 @@ public enum ServerTeleports {
 		new Item(8842), new Item(11663), new Item(11664), new Item(11665)},
 		"Elite Void Knights hold a copy of the<br>Pest Control island. They drop the<br>Elite Void pieces.",
 		"Hard", "No requirements, combat 100+ recommended.", 0, 0),
+	// the Scar's two halves don't connect (a chasm between the rift and the camp): one teleport each (user, 2026-11-14)
+	THE_SCAR("The Scar", new Position(2014, 6433, 0), new Item[]{new Item(33118)},
+		"The Scar, in Abyssal Space. Arrive by<br>the Abyssal Rift (Enter: Temple of the Eye);<br>abyssal leeches to the east.",
+		"Easy", "No requirements.", 0, 0),
+	THE_SCAR_GROWTH("The Scar (Growth)", new Position(2052, 6440, 0), new Item[]{new Item(33118)},
+		"The camp in the Scar. Pluck the Growth<br>north of the fire for an abyssal potato<br>(Demonic Brutus). Teleport out.",
+		"Easy", "No requirements.", 0, 0),
 	ARMOURED_ZOMBIES("Armoured Zombies", new Position(3558, 9778, 0), new Item[]{new Item(28810, 1)}, "Aggressive armoured zombies inside.", "", "", 0, 0),
 	SHAMANS("Lizardman shamans", new Position(1293, 10063, 0), new Item[]{new Item(13576)}, "Fight shamans in a single way <br>combat location.", "Medium", "No requirements.", 36345, 7191),
 	CHAMBERS_OF_XERIC("Chambers of Xeric", new Position(1254, 3567, 0), new Item[]{new Item(20997),

@@ -21,8 +21,8 @@ import static core.task.api.API.*;
  *               HARDCORE_IRONMAN, GROUP_IRONMAN, HARDCORE_GROUP_IRONMAN
  * The website API must decode using this same ordinal order.
  *
- * Skill xp columns follow StatType's declaration order (Attack..Construction,
- * 23 skills), which is also the ordinal order StatList indexes stats by.
+ * Skill xp columns follow StatType's declaration order (Attack..Construction, Sailing,
+ * 24 skills), which is also the ordinal order StatList indexes stats by.
  */
 @Slf4j
 public final class Highscores {
@@ -38,6 +38,8 @@ public final class Highscores {
 	}
 
 	public static void register() {
+		// the schema check runs on dev too: submit() (on logout) isn't dev-gated, so a missing column fails there as well
+		ensureSailingColumn();
 		if (World.isDev()) {
 			return;
 		}
@@ -48,6 +50,24 @@ public final class Highscores {
 				for (Player player : World.players()) {
 					if (player != null) {
 						submit(player);
+					}
+				}
+			}
+		});
+	}
+
+	// Sailing (stat 23) came after the table: add its xp column once if the live table doesn't have it yet.
+	private static void ensureSailingColumn() {
+		Server.gameDb.execute(con -> {
+			try (PreparedStatement check = con.prepareStatement(
+					"SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() "
+						+ "AND TABLE_NAME = 'hs_users' AND COLUMN_NAME = 'sailingXp'");
+				 java.sql.ResultSet rs = check.executeQuery()) {
+				if (rs.next() && rs.getInt(1) == 0) {
+					try (PreparedStatement alter = con.prepareStatement(
+							"ALTER TABLE hs_users ADD COLUMN sailingXp int(11) NOT NULL DEFAULT 0 AFTER constructionXp")) {
+						alter.executeUpdate();
+						log.info("Added the sailingXp column to hs_users");
 					}
 				}
 			}
@@ -102,7 +122,7 @@ public final class Highscores {
 					"attackXp, defenceXp, strengthXp, hitpointsXp, rangedXp, prayerXp, magicXp, cookingXp, " +
 					"woodcuttingXp, fletchingXp, fishingXp, firemakingXp, craftingXp, smithingXp, miningXp, " +
 					"herbloreXp, agilityXp, thievingXp, slayerXp, farmingXp, runecraftingXp, hunterXp, " +
-					"constructionXp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+					"constructionXp, sailingXp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 				insert.setString(1, username);
 				insert.setInt(2, userId);
 				insert.setInt(3, difficultyOrdinal);

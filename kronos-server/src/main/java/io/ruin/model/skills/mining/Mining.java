@@ -127,7 +127,7 @@ public class Mining {
 					player.animate(rockData == Rock.AMETHYST ? pickaxe.crystalAnimationID : pickaxe.regularAnimationID);
 					attempts++;
 				} else if (attempts % 2 == 0 && Random.get(100) <= chance(getEffectiveLevel(player), rockData, pickaxe)) {
-					if (pickaxe == Pickaxe.INFERNAL && (player.infernalPickaxeSpecial > 0 || Random.rollDie(3, 1))) {//TODO: change back to bar smelting when charge consuming is added
+					if (pickaxe == Pickaxe.INFERNAL && rockData != Rock.BLOODGOLD && (player.infernalPickaxeSpecial > 0 || Random.rollDie(3, 1))) { // Bloodgold has no bar//TODO: change back to bar smelting when charge consuming is added
 						player.graphics(580, 155, 0);
 						addBar(player, rockData.ore);
 						//TODO: Get the proper message and take away charge
@@ -143,7 +143,7 @@ public class Mining {
 							PerkTaskHandler.handleGatherResource(player, id, 1);
 							DailyTasks.handleItemObtained(player, id, StatType.Mining);
 							if (Random.rollPercent(getDonatorNoteChance(player)))
-								player.getInventory().add(id + 1, 1);
+								player.getInventory().add(io.ruin.cache.ObjType.notedId(id), 1);
 							else
 								player.getInventory().add(id, 1);
 							player.sendFilteredMessage("Your pickaxe's buff allows you to mine an additional ore!");
@@ -151,7 +151,7 @@ public class Mining {
 							PerkTaskHandler.handleGatherResource(player, id, 1);
 							DailyTasks.handleItemObtained(player, id, StatType.Mining);
 							if (Random.rollPercent(getDonatorNoteChance(player)))
-								player.getInventory().add(id + 1, 1);
+								player.getInventory().add(io.ruin.cache.ObjType.notedId(id), 1);
 							else
 								player.getInventory().add(id, 1);
 							player.sendFilteredMessage("You manage to mine an additional ore.");
@@ -163,7 +163,7 @@ public class Mining {
 								PerkTaskHandler.handleGatherResource(player, id, 1);
 								DailyTasks.handleItemObtained(player, id, StatType.Mining);
 								if (Random.rollPercent(getDonatorNoteChance(player)))
-									player.getInventory().add(id + 1, 1);
+									player.getInventory().add(io.ruin.cache.ObjType.notedId(id), 1);
 								else
 									player.getInventory().add(id, 1);
 								player.sendFilteredMessage("Your mining expertise allows you to mine an additional ore!");
@@ -402,7 +402,8 @@ public class Mining {
 			{Rock.BASALT, 33257, 33253, PlayerCounter.MINED_BASALT},
 			{Rock.URT_SALT, 33254, 33253, PlayerCounter.MINED_URT_SALT},
 			{Rock.TE_SALT, 33256, 33253, PlayerCounter.MINED_TE_SALT},
-			{Rock.EFH_SALT, 33255, 33253, PlayerCounter.MINED_EFH_SALT}
+			{Rock.EFH_SALT, 33255, 33253, PlayerCounter.MINED_EFH_SALT},
+			{Rock.BLOODGOLD, 63309, 63310, PlayerCounter.MINED_BLOODGOLD} // The Five Seals
 		};
 		for (Object[] d : oreData) {
 			Rock rock = (Rock) d[0];
@@ -412,7 +413,7 @@ public class Mining {
 			ObjectAction.register(baseId, "mine", (player, obj) -> mine(rock, player, obj, emptyId, counter));
 			ObjectAction.register(baseId, "prospect", (player, obj) -> prospect(rock, player, false));
 		}
-		int[] emptyOreIds = {11390, 11391};
+		int[] emptyOreIds = {11390, 11391, 63310};
 		for (int id : emptyOreIds) {
 			ObjectAction.register(id, "mine", (player, obj) -> player.sendMessage("There is no ore currently available in this rock."));
 			ObjectAction.register(id, "prospect", (player, obj) -> player.sendMessage("There is no ore currently available in this rock."));

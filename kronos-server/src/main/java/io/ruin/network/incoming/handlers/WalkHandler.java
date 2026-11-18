@@ -27,6 +27,14 @@ public class WalkHandler implements Incoming {
 
 		@Override
 		public void consume(Player player, MoveGameClick msg) {
+			var boat = player.boat;
+			if (boat != null) { // sailing: a click beside the boat arrives in sea coords, map it onto the deck
+				if (boat.navigating)
+					return;
+				var dest = boat.resolveClick(msg.getX(), msg.getZ(), player.getHeight());
+				handle(player, dest.getX(), dest.getY(), msg.getKeyCombination());
+				return;
+			}
 			handle(player, msg.getX(), msg.getZ(), msg.getKeyCombination());
 		}
 	}
@@ -36,6 +44,12 @@ public class WalkHandler implements Incoming {
 	}
 
 	private static void handle(Player player, int x, int y, int type) {
+		// Hespori vines: a walk click while entangled is a struggle, not a step
+		if (io.ruin.model.activities.bosses.Hespori.struggle(player))
+			return;
+		// Eclipse Moon clones: a click while bound turns the player to face it (parry)
+		if (io.ruin.model.activities.moonsofperil.bosses.EclipseMoon.faceClick(player, x, y))
+			return;
 		if (player.isLocked() || player.isStunned()) {
 			/* is our player new to the game? */
 			if (player.inTutorial) {

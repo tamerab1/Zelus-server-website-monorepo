@@ -169,15 +169,18 @@ public final class PacketSender {
 		player.removeFromRegions();
 		Position position = player.getPosition();
 		Region region = player.lastRegion = position.getRegion();
-		int chunkX = position.getChunkX();
-		int chunkY = position.getChunkY();
+		// sailing: the player stands on the boat's deck instance but the client builds the sea around the boat
+		Position anchor = player.renderAnchor();
+		boolean sailing = player.boat != null;
+		int chunkX = anchor.getChunkX();
+		int chunkY = anchor.getChunkY();
 		int depth = Region.CLIENT_SIZE >> 4;
-		boolean dynamic = region.dynamicData != null;
+		boolean dynamic = !sailing && region.dynamicData != null;
 		if (login || !dynamic) {
 			// rsprot 241: the info protocols track the build area themselves and must be told
 			// about every root-world rebuild (login, normal and region).
 			player.rsprotInfos.updateRootCoord(position.getZ(), position.getX(), position.getY());
-			player.rsprotInfos.updateRootBuildAreaCenteredOnPlayer(position.getX(), position.getY());
+			player.rsprotInfos.updateRootBuildAreaCenteredOnPlayer(anchor.getX(), anchor.getY());
 			if (login) {
 				player.rsprotSession.queue(
 						new RebuildLoginV2(
@@ -1138,6 +1141,6 @@ public final class PacketSender {
 	// blank card sprites) and GearLoadoutInterface.java (spellbook icon) -- both currently
 	// silently non-functional for this reason. Do not "fix" by guessing a negative constant.
 	public void setGraphic(int parent, int child, int gfx) {
-		sendClientScript(44, "", parent << 16 | child, gfx);
+		sendClientScript(44, "Ii", parent << 16 | child, gfx);
 	}
 }

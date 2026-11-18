@@ -91,7 +91,7 @@ public class WebhookSender {
 
 	/** multipart/form-data: the JSON as payload_json, then each file as files[n] (Discord's upload format). */
 	private static HttpRequest buildMultipartRequest(String url, String json, Map<String, byte[]> files) {
-		var boundary = "zelus" + UUID.randomUUID().toString().replace("-", "");
+		var boundary = "karn" + UUID.randomUUID().toString().replace("-", "");
 		var body = new ByteArrayOutputStream();
 		var crlf = "\r\n";
 		body.writeBytes(("--" + boundary + crlf

@@ -265,7 +265,7 @@ public class TournamentHandler {
 			return;
 		}
 		if (player.playTime < MIN_PLAYTIME_TICKS) {
-			player.sendMessage("<col=ff0000>You need at least 30 minutes of total playtime on Zelus to enter tournaments.</col>");
+			player.sendMessage("<col=ff0000>You need at least 30 minutes of total playtime on Karn to enter tournaments.</col>");
 			return;
 		}
 		queue.removeIf(p -> p.getName().equalsIgnoreCase(player.getName())); // stale entry from before a relog

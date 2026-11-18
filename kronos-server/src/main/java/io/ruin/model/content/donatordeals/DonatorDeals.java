@@ -52,7 +52,7 @@ public final class DonatorDeals {
 
 	private static final String WHITE = "<col=ffffff>", GREY = "<col=9a9a9a>", GREEN = "<col=00ff00>",
 		GOLD = "<col=ffc35a>", RED = "<col=ff5050>", ORANGE = "<col=ff981f>", END = "</col>";
-	private static final String TAG = "<col=b85900><shad=000000>[Zelus Deals]:</shad></col> ";
+	private static final String TAG = "<col=b85900><shad=000000>[Karn Deals]:</shad></col> ";
 
 	/* ---------------- config ---------------- */
 
@@ -295,7 +295,7 @@ public final class DonatorDeals {
 		View v = view(player);
 		List<Deal> active = active();
 		v.drawn = ids(active);
-		ps.sendString(INTERFACE, TITLE, "Zelus Donator Store");
+		ps.sendString(INTERFACE, TITLE, "Karn Donator Store");
 		// tabs: Deals is the active (recessed) one
 		ps.setHidden(INTERFACE, SHOP_TAB + 1, true);
 		ps.setHidden(INTERFACE, SHOP_TAB + 2, true);

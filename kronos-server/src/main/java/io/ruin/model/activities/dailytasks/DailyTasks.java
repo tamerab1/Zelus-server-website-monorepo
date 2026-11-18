@@ -220,7 +220,7 @@ public enum DailyTasks {
 	BUILD_OAK_THRONE("Build oak thrones in your POH", "You're tasked with building oak thrones in your POH", Difficulty.HARD, 15, 30, Buildable.OAK_THRONE, StatType.Construction, TaskType.SKILLING, Buildable.OAK_THRONE.getLevelReq()),
 	KILL_WINTERTODT("Subdue the wintertodt", "You're tasked with subduing the wintertodt", Difficulty.HARD, 2, 5, "wintertodt", StatType.Firemaking, TaskType.SKILLING, 50),
 	OBTAIN_PERK_POINTS("Obtain perk points", "You're tasked with obtaining perk points through the perk master", Difficulty.ELITE, 2, 4, "perkPoints", null, TaskType.SKILLING, 1),
-	OBTAIN_REASON_POINTS("Obtain Zelus points", "You are tasked with obtaining", Difficulty.ELITE, 5000, 15000, "reasonPoints", null, TaskType.SKILLING, 1),
+	OBTAIN_REASON_POINTS("Obtain Karn points", "You are tasked with obtaining", Difficulty.ELITE, 5000, 15000, "reasonPoints", null, TaskType.SKILLING, 1),
 	CATCH_ECLECTRIC("Catch eclectic implings", "You're tasked with catching eclectric implings", Difficulty.MEDIUM, 5, 10, "eclectic", StatType.Hunter, TaskType.SKILLING, 50),
 	CATCH_GOURMET_IMPLINGS("Catch gourmet implings", "You're tasked with catching gourmet implings", Difficulty.MEDIUM, 5, 20, "gourmet", StatType.Hunter, TaskType.SKILLING, 28),
 	CATCH_NATURE_IMPLINGS("Catch nature implings", "You're tasked with catching nature implings", Difficulty.HARD, 7, 25, "nature", StatType.Hunter, TaskType.SKILLING, 58),
@@ -232,6 +232,12 @@ public enum DailyTasks {
 	;
 
 	String name;
+
+	/** the task's display name (the welcome screen 1185 lists today's tasks, 2026-11-15) */
+	public String getName() {
+		return name;
+	}
+
 	String description;
 	Difficulty difficulty;
 	int mimumumAmount;

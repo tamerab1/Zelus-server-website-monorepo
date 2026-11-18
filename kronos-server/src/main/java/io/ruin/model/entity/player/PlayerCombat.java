@@ -573,8 +573,8 @@ public class PlayerCombat extends Combat {
 		for (Hit hit : hits) {
 			if (io.ruin.model.content.bonds.BondPerks.saveAmmo(player, target))
 				continue; // Bond of the Void Deadeye
-			if (hasQuiver()) {
-
+			if (hasKarnAva() || hasQuiver()) {
+				// Ava's of Karn / Dizana's quiver: nothing is lost
 			} else if (hasAvaAssembler()) {
 				if (assembler && rollAssemblerChance()) {
 					// player.sendMessage("Saved Ammo 80% chance");
@@ -3174,6 +3174,10 @@ public class PlayerCombat extends Combat {
 			target.hit(new Hit(player, style, type).randDamage(maxDamage)
 					.setAttackWeapon(player.getEquipment().getDef(Equipment.SLOT_WEAPON)));
 		} else {
+			if (weapon.id == io.ruin.model.combat.RewardItems.DUAL_MACUAHUITL) {
+				attackWithMacuahuitl(style, type, maxDamage, attackBoost, attackTicks);
+				return;
+			}
 			// Khopseh
 			if (weapon.id == 30388 && target.isNpc()) {
 				attackWithThunderKhopseh(player, target);
@@ -3346,6 +3350,11 @@ public class PlayerCombat extends Combat {
 		ObjType wepDef = wep.getDef();
 		RangedWeapon rangedWep = wepDef.rangedWeapon;
 
+		if (wep.getId() == io.ruin.model.combat.RewardItems.ECLIPSE_ATLATL) {
+			attackWithAtlatl(wep);
+			return;
+		}
+
 		if (rangedWep == null) {
 			player.sendMessage("Unhandled ranged weapon: " + wepDef.name);
 			reset();
@@ -3418,6 +3427,7 @@ public class PlayerCombat extends Combat {
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_GREEN
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_BLACK
 					&& rangedWep != RangedWeapon.BOW_OF_FAERDHINEN_PURPLE
+					&& rangedWep != RangedWeapon.KARN_BOW
 					&& rangedWep != RangedWeapon.ZARYTE_STORMPIERCER) // fires its own bolts: never ammo itself
 				ammo = wep;
 		} else {
@@ -3738,6 +3748,58 @@ public class PlayerCombat extends Combat {
 			removeAmmo(ammo, hits);
 			target.hit(hits);
 		}
+	}
+
+	/**
+	 * Dual macuahuitl: two splats a tick apart, the max hit split floor/ceil; the second can only hit if the first did.
+	 * Bloodrager (full Blood Moon set) can bring the next attack a tick early.
+	 */
+	private void attackWithMacuahuitl(AttackStyle style, AttackType type, int maxDamage, double attackBoost, int attackTicks) {
+		attackAnim();
+		ObjType wep = player.getEquipment().getDef(Equipment.SLOT_WEAPON);
+		int first = maxDamage / 2, second = maxDamage - first;
+		Hit h1 = new Hit(player, style, type).boostAttack(attackBoost).randDamage(first).setAttackWeapon(wep);
+		target.hit(h1);
+		boolean hit1 = !h1.isBlocked(), hit2 = false;
+		if (hit1) {
+			Hit h2 = new Hit(player, style, type).boostAttack(attackBoost).randDamage(second).delay(1).setAttackWeapon(wep);
+			target.hit(h2);
+			hit2 = !h2.isBlocked();
+		}
+		if (io.ruin.model.combat.RewardItems.bloodrager(player, hit1, hit2))
+			updateLastAttack(Math.max(1, attackTicks - 1));
+	}
+
+	/** Eclipse atlatl (a Bow): atlatl darts; max hit from Strength + melee strength bonus with ranged prayers/style (CombatUtils.getMaxAtlatlDamage). Rapid is a tick faster. */
+	private static final Projectile ATLATL_DART = Projectile.thrown(2795, 11);
+
+	private void attackWithAtlatl(Item wep) {
+		AttackStyle style = attackSet.style;
+		AttackType type = attackSet.type;
+		int maxDamage = CombatUtils.getMaxAtlatlDamage(player, type);
+		if (handleSpecial(style, type, maxDamage))
+			return;
+		Item ammo = player.getEquipment().get(Equipment.SLOT_AMMO);
+		if (ammo == null || ammo.getId() != io.ruin.model.combat.RewardItems.ATLATL_DART) {
+			player.sendMessage("You need atlatl darts to use the Eclipse atlatl.");
+			reset();
+			return;
+		}
+		updateLastAttack(type == AttackType.RAPID_RANGED ? weaponType.attackTicks - 1 : weaponType.attackTicks);
+		attackAnim();
+		ATLATL_DART.send(player, target);
+		final int delayTicks = getThrownHitDelay(getChebyshevDistance(player, target));
+		Hit hit = new Hit(player, style, type).setAttackWeapon(wep.getDef()).setRangedAmmo(ammo.getDef())
+				.randDamage(maxDamage).delay(delayTicks);
+		Entity t = target;
+		hit.postDamage(e -> {
+			if (!hit.isBlocked())
+				t.graphics(2796, 0, 0);
+			io.ruin.model.combat.RewardItems.eclipseBurn(player, t, hit);
+		});
+		defendAnimTicks(delayTicks - 1);
+		target.hit(hit);
+		removeAmmo(ammo, hit);
 	}
 
 	private void attackWithCorruptedJavelin(Item wep) {
@@ -4200,7 +4262,9 @@ public class PlayerCombat extends Combat {
 		int assemblerSaveChance = 40;
 		int avaSaveChance = 25;
 
-		if (hasQuiver()) {
+		if (hasKarnAva()) {
+			// Ava's of Karn: every dart is kept
+		} else if (hasQuiver()) {
 			if (!Random.rollPercent(quiverSaveChance)) {
 				dartAmount--;
 			}
@@ -4359,7 +4423,9 @@ public class PlayerCombat extends Combat {
 
 		boolean assembler = hasAvaAssembler();
 		boolean ava = hasAvaDevice();
-		if (hasAvaAssembler()) {
+		if (hasKarnAva()) {
+			// Ava's of Karn: every dart is kept
+		} else if (hasAvaAssembler()) {
 			if (assembler && rollAssemblerChance()) {
 			} else if (assembler && rollAssemblerDestroy())
 				dartAmount--;
@@ -4510,8 +4576,8 @@ public class PlayerCombat extends Combat {
 		// Fuck off
 		boolean assembler = hasAvaAssembler();
 		boolean ava = hasAvaDevice();
-		if (hasQuiver()) {
-
+		if (hasKarnAva() || hasQuiver()) {
+			// Ava's of Karn / Dizana's quiver: nothing is lost
 		} else if (hasAvaAssembler()) {
 			if (assembler && rollAssemblerChance()) {
 				// player.sendMessage("Saved Ammo 80% chance");
@@ -4546,7 +4612,13 @@ public class PlayerCombat extends Combat {
 		// destroys AND drops every shot's ammo. Reported as "Ava's assembler (l)" (misread
 		// as "(i)") losing 100% of arrows/bolts while the plain "Ava's assembler" was fine.
 		return capeID == 21898 || capeID == 22109 || capeID == 27374
-				|| capeID == 24135 || capeID == 24222 || capeID == 27363 || capeID == 27365;
+				|| capeID == 24135 || capeID == 24222 || capeID == 27363 || capeID == 27365
+				|| capeID == 42767; // Ava's of Karn (2026-11-14)
+	}
+
+	/** Ava's of Karn (42767, 2026-11-14): the top Ava's device, keeps every arrow, bolt and dart. */
+	public boolean hasKarnAva() {
+		return player.getEquipment().getId(Equipment.SLOT_CAPE) == 42767;
 	}
 
 	private boolean hasQuiver() {
@@ -4738,6 +4810,8 @@ public class PlayerCombat extends Combat {
 				}
 			}
 		}
+
+		io.ruin.model.combat.special.melee.DuskwardenBlade.absorb(player, hit); // Duskfall Ward (Duskwarden blade special)
 
 		if (hit.attacker != null) {
 			/* elysian spirit shield */
@@ -4982,6 +5056,7 @@ public class PlayerCombat extends Combat {
 
 	private void preTargetDefend(Hit hit, Entity target) {
 		forinthrySkullBoost(player, hit, target);
+		io.ruin.model.combat.RewardItems.preTargetDefend(player, hit, target);
 		io.ruin.model.content.bonds.BondPerks.preTargetDefend(player, hit, target);
 		io.ruin.model.activities.colosseum.EggEffects.preTargetDefend(player, hit, target);
 		boolean slayerHelmEffectActive = SlayerHelm.boost(player, target, hit);

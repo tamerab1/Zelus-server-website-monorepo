@@ -1203,7 +1203,7 @@ public class MysteryBox {
 				int random = Random.get(250);
 				if (random < 50) {
 					player.updateReasonPoints(5000);
-					player.sendMessage("You have received 5,000 Zelus points!");
+					player.sendMessage("You have received 5,000 Karn points!");
 				}
 				if (random >= 50 && random < 100) {
 					player.updateAchievementPoints(1);
@@ -1225,7 +1225,7 @@ public class MysteryBox {
 				int random = Random.get(250);
 				if (random < 50) {
 					player.updateReasonPoints(100000);
-					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>100,000 Zelus points </shad> from a point mystery box!");
+					Broadcast.WORLD.sendNewsDropMessage(player, Icon.YELLOW_KEY, "<col=000000>" + player.getName(), " received <shad=D80808>100,000 Karn points </shad> from a point mystery box!");
 				}
 				if (random >= 50 && random < 100) {
 					player.updateAchievementPoints(10);

@@ -1533,6 +1533,19 @@ public class Player extends PlayerAttributes {
 
 	/** The client's canvas size, from its WindowStatus packets (login and every resize); 0 until the first one. */
 	public transient int canvasWidth, canvasHeight;
+	/** Sailing: the boat (world entity) this player is standing on, or null. */
+	public transient io.ruin.model.skills.sailing.Boat boat;
+	/** a camera target to send right after the world entity info this tick */
+	public transient net.rsprot.protocol.message.OutgoingGameMessage pendingCamTarget;
+	/** force the boat's deck to be described again this tick (boarding), even if the client already saw it */
+	public transient int boatRebuildPending = -1;
+
+	/** Where the client's map is built around: the boat's sea tile while sailing, else the player's own tile. */
+	@Override
+	public io.ruin.model.map.Position renderAnchor() {
+		io.ruin.model.skills.sailing.Boat b = boat;
+		return b != null ? b.seaPosition() : getPosition();
+	}
 
 	/**
 	 * Whether the 1.35x "large" screens (1142 presets, 1157 PvP loadouts: 691x451, opened in the world-map slot) fit
@@ -2178,9 +2191,9 @@ public class Player extends PlayerAttributes {
 		setInvisibleAction(4, PlayerAction.TRADE);
 
 		// one branded welcome (shadowed so it reads on the parchment chatbox) + where to start
-		sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> <col=ffffff><shad=0>" + (newPlayer ? "Welcome to " + World.type.getWorldName() + ", "
+		sendMessage("<col=005f9e><shad=0>[Karn]</shad></col> <col=ffffff><shad=0>" + (newPlayer ? "Welcome to " + World.type.getWorldName() + ", "
 			: "Welcome back, ") + getName() + "!</shad></col>");
-		sendMessage("<col=005f9e><shad=0>[Zelus]</shad></col> Type <col=00ff00><shad=0>::help</shad></col> for commands, <col=ff981f><shad=0>::pit</shad></col>"
+		sendMessage("<col=005f9e><shad=0>[Karn]</shad></col> Type <col=00ff00><shad=0>::help</shad></col> for commands, <col=ff981f><shad=0>::pit</shad></col>"
 			+ " for tournaments, or open your Quest Tab for profile stats.");
 		packetSender.sendDiscordPresence("Idle");
 
@@ -3713,6 +3726,11 @@ public class Player extends PlayerAttributes {
 		} catch (Throwable e) {
 			log.error("Unable to deallocate rsprot properly.", e);
 		}
+	}
+
+	/** False while the player's rsprot info isn't set up yet (logging in) or is already released (logged out). */
+	public boolean hasAvatar() {
+		return this.rsprotPlayerInfo != null;
 	}
 
 	public PlayerAvatar avatar() {

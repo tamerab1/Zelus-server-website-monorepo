@@ -15,6 +15,12 @@ import java.time.ZoneId;
 
 public class DailyTasksInterface {
 	public void open(Player player) {
+		// 2026-11-15: the Karn Daily Tasks window (1188) replaces this one everywhere it opens from
+		DailyTasksHub.open(player);
+	}
+
+	/** the old window (1106), kept for reference */
+	void openLegacy(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, 1106);
 		sendResetTimer(player);
 		startResetTimerTicker(player);
@@ -89,7 +95,7 @@ public class DailyTasksInterface {
 
 	}
 
-	private void claimCompletionReward(Player player) {
+	void claimCompletionReward(Player player) {
 		if (player.dailyTaskCompletionRewardClaimed) {
 			player.sendMessage("You've already claimed your reward today.");
 			return;
@@ -104,12 +110,12 @@ public class DailyTasksInterface {
 			player.sendMessage("You have claimed your reward.");
 			player.getInventory().addOrDrop(player.dailyTasksCompletionReward.getId(), player.dailyTasksCompletionReward.getAmount());
 			int pointsReward = Misc.random(2500, 7500);
-			player.sendMessage("You receive <col=000000><shad=29F1FE>" + pointsReward + " Zelus points<col=000000></shad> for completing the task.");
+			player.sendMessage("You receive <col=000000><shad=29F1FE>" + pointsReward + " Karn points<col=000000></shad> for completing the task.");
 			player.updateReasonPoints(pointsReward);
 		} else player.sendMessage("You must complete all the tasks first.");
 	}
 
-	private void claimReward(Player player, int index) {
+	void claimReward(Player player, int index) {
 		if (player.currentDailyTaskAmounts[index] <= 0) {
 			if (!player.getInventory().hasRoomFor(player.currentDailyRewards[index])) {
 				player.sendMessage("You don't have enough inventory space to claim this reward.");
@@ -118,7 +124,7 @@ public class DailyTasksInterface {
 			if (!player.currentDailyRewardsClaimed[index]) {
 				player.getInventory().addOrDrop(player.currentDailyRewards[index]);
 				int pointsReward = Misc.random(1000, 3000) + (player.currentDailyTasks[index].difficulty.ordinal() * 1500);
-				player.sendMessage("You receive <col=000000><shad=29F1FE>" + pointsReward + " Zelus points<col=000000></shad> for completing the task.");
+				player.sendMessage("You receive <col=000000><shad=29F1FE>" + pointsReward + " Karn points<col=000000></shad> for completing the task.");
 				player.updateReasonPoints(pointsReward);
 				player.currentDailyRewardsClaimed[index] = true;
 				int coinReward = 500000 * (1 + player.currentDailyTasks[index].difficulty.ordinal());
@@ -150,7 +156,7 @@ public class DailyTasksInterface {
 	}
 
 	/** Daily tasks reset at midnight (server local time) - see DailyTask#register's date check. */
-	private String getTimeUntilReset() {
+	String getTimeUntilReset() {
 		ZoneId zone = ZoneId.systemDefault();
 		Instant nextReset = LocalDate.now(zone).plusDays(1).atStartOfDay(zone).toInstant();
 		Duration remaining = Duration.between(Instant.now(), nextReset);

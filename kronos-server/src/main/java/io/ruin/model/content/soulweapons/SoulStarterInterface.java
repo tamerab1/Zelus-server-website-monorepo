@@ -23,7 +23,7 @@ public class SoulStarterInterface {
 	/** Card parts (offsets from its first component). Talent row t: name CARD_TALENT + t * 7 + 5, description + 6. */
 	private static final int CARD_GLOW = 5, CARD_NAME = 9, CARD_ARCHETYPE = 10, CARD_MODEL = 19, CARD_ROLE = 20,
 			CARD_TALENT = 22, TALENT_STRIDE = 7, CARD_SELECT = 43, CARD_PRESSED = 45;
-	private static final String CYAN = "<col=2fe8f0>", MUTED = "<col=a89c86>", ORANGE = "<col=ff981f>", GREEN = "<col=3ddc5a>",
+	private static final String CYAN = "<col=f06a4a>", MUTED = "<col=a89c86>", ORANGE = "<col=ff981f>", GREEN = "<col=3ddc5a>",
 			RED = "<col=e0402a>", END = "</col>";
 	private static final SoulWeaponType[] ORDER = {SoulWeaponType.MELEE, SoulWeaponType.RANGED, SoulWeaponType.MAGIC};
 
@@ -83,8 +83,7 @@ public class SoulStarterInterface {
 		PacketSender ps = player.getPacketSender();
 		SoulWeaponType sel = picked.get(player.getUserId());
 		ps.sendString(INTERFACE, TITLE, "Choose Your Soulbound Weapon");
-		ps.sendString(INTERFACE, SUBTITLE, "A living weapon that grows with you from Tier 1 to Tier 15.<br>"
-				+ "Choose wisely - this choice is permanent!");
+		ps.sendString(INTERFACE, SUBTITLE, "A living weapon that grows with you to Tier 15. Choose wisely - it's permanent!");
 		for (int c = 0; c < ORDER.length; c++) {
 			SoulWeaponType type = ORDER[c];
 			int card = FIRST_CARD + c * CARD_STRIDE;

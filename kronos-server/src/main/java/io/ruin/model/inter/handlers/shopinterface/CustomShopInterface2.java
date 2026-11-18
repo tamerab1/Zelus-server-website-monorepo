@@ -88,7 +88,7 @@ public class CustomShopInterface2 {
 				open(player, CustomShop2.getItemsFromShop(player));
 			};
 			h.actions[20] = (DefaultAction) (player, option, slot, itemId) -> {
-				player.getPacketSender().sendString(891, 14, "Zelus Points Shop");
+				player.getPacketSender().sendString(891, 14, "Karn Points Shop");
 				player.setShopIdentifier(14);
 				handleEnteringShop(player, CustomShop2.ZELUS_POINTS_SHOP);
 				sendBalanceMessage(player, CustomShop2.ZELUS_POINTS_SHOP);
@@ -516,7 +516,7 @@ public class CustomShopInterface2 {
 			case 10: return "Voting Shop";
 			case 12: return "Ironman Store";
 			case 13: return "PKP Shop";
-			case 14: return "Zelus Points Shop";
+			case 14: return "Karn Points Shop";
 			case 15: return "Achievement Points Shop";
 			case 16: return "PVM Point Shop";
 			case 17: return "Sell Bounty Hunter Emblems";

@@ -60,7 +60,7 @@ public class CrystalTrees {
 		}
 		if (ACTIVE.treeSpawn.equals(3221, 6126) || ACTIVE.treeSpawn.equals(3316, 6080)
 			|| ACTIVE.treeSpawn.equals(3287, 6179) || ACTIVE.treeSpawn.equals(3226, 6030)) {
-			return "Somewhere in Zelus";
+			return "Somewhere in Karn";
 		}
 		return "Uknown";
 	}

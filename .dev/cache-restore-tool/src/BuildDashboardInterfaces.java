@@ -42,7 +42,7 @@ public class BuildDashboardInterfaces {
                     new Section("Server", 5, 0, 0),
                     new Section("Events", 4, 0, 0),
                     new Section("World bosses", 3, 0, 0, true),
-                    new Section("Quick tools", 0, 10, 0)),
+                    new Section("Quick tools", 0, 12, 0)), // 2026-11-15: + Battle Pass, Best in Slot
             new Group(1145, "WILDERNESS", "Wilderness", 168,
                     new Section("Hotspot", 2, 0, 0),
                     new Section("Boss status", 4, 0, 0),

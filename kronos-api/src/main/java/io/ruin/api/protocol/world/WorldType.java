@@ -1,12 +1,12 @@
 package io.ruin.api.protocol.world;
 
 public enum WorldType {
-	ECO("Zelus", "https://zelusrsps.com/"),
-	BETA("ZelusBeta", "https://zelusrsps.com/"),
-	PVP("ZelusPvP", "https://zelusrsps.com/"),
+	ECO("Karn", "https://karnps.com/"),
+	BETA("KarnBeta", "https://karnps.com/"),
+	PVP("KarnPvP", "https://karnps.com/"),
 
-	DEADMAN("ZelusDMM", "https://zelusrsps.com/"),
-	DEV("ZelusDev", "https://zelusrsps.com/");
+	DEADMAN("KarnDMM", "https://karnps.com/"),
+	DEV("KarnDev", "https://karnps.com/");
 
 	WorldType(String worldName, String websiteUrl) {
 		this.worldName = worldName;

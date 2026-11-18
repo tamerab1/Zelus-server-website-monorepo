@@ -20,7 +20,7 @@ public final class TournamentMaster {
 	public static final int NPC_ID = 10528;
 	private static final int CHEER = 862;
 	private static final int VISIBLE_TICKS = 34, REFRESH_TICKS = 2, GAP_MIN_TICKS = 16, GAP_MAX_TICKS = 32;
-	private static final String EXAMINE = "The master of competitive Zelus tournaments.";
+	private static final String EXAMINE = "The master of competitive Karn tournaments.";
 
 	private TournamentMaster() {
 	}

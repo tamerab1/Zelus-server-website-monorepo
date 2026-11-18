@@ -24,13 +24,13 @@ public final class DashboardLayout {
 			new int[]{},
 			new int[]{-1, -1, -1, -1});
 
-	public static final Layout SERVER = new Layout(1144, 470,
+	public static final Layout SERVER = new Layout(1144, 501,
 			new int[]{8, 23, 36, 47},
 			new int[][]{{11, 13, 15, 17, 19}, {26, 28, 30, 32}, {39, 41, 43}, {}},
 			new int[][]{{12, 14, 16, 18, 20}, {27, 29, 31, 33}, {40, 42, 44}, {}},
-			new int[]{50, 53, 56, 59, 62, 65, 68, 71, 74, 77},
-			new int[]{52, 55, 58, 61, 64, 67, 70, 73, 76, 79},
-			new int[]{51, 54, 57, 60, 63, 66, 69, 72, 75, 78},
+			new int[]{50, 53, 56, 59, 62, 65, 68, 71, 74, 77, 80, 83},
+			new int[]{52, 55, 58, 61, 64, 67, 70, 73, 76, 79, 82, 85},
+			new int[]{51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84},
 			new int[]{-1, -1, -1, -1});
 
 	public static final Layout WILDERNESS = new Layout(1145, 289,

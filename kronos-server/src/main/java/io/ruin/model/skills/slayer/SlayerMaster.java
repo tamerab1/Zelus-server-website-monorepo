@@ -316,6 +316,7 @@ public class SlayerMaster {
 				final int current = VarPlayerRepository.SLAYER_POINTS.get(player);
 				PerkTaskHandler.handleSlayerTaskCompletion(player, master);
 				player.totalSlayerTasksCompleted++;
+				io.ruin.model.content.battlepass.BattlePass.onSlayerTask(player);
 				if (master == KRYSTILIA_ID) {
 					player.wildernessSlayerTasksCompleted++;
 					if (player.wildernessSlayerTasksCompleted == Achievements.SLAYERS_GETTING_WILD.getCompletionAmount())
@@ -368,6 +369,7 @@ public class SlayerMaster {
 					}
 					PerkTaskHandler.handleSlayerTaskCompletion(player, master);
 					player.totalSlayerTasksCompleted++;
+				io.ruin.model.content.battlepass.BattlePass.onSlayerTask(player);
 					if (player.totalSlayerTasksCompleted == 1)
 						player.sendMessage("<col=000080>You have completed the newcomer task: <col=800000>"
 								+ NewcomerTasks.SLAYER_TASK_COMPLETION.getFormattedName() + "!");

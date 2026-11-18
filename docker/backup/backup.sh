@@ -88,6 +88,23 @@ fi
 
 echo "[$(date -Iseconds)] OK: mysql=${mysql_size} bytes, mongo=${mongo_size} bytes"
 
+# --- Player saves (beta audit 2026-11-18) ------------------------------------
+# The accounts players log in with are NOT in either database: PlayerDatabase is a flat-file JSON store under
+# data/runtime/saves (Mongo's reason.players is only a mirror). Archive the whole runtime state minus the
+# network/log churn: saves, referrals, bans, donation deals, deleted accounts, plus the top-level *.json state files.
+DATA_DIR="${DATA_DIR:-/opt/zelus/data}"
+saves_out="${BACKUP_DIR}/saves_${TIMESTAMP}.tar.gz"
+echo "[$(date -Iseconds)] Archiving player saves (${DATA_DIR}/runtime)..."
+tar -C "${DATA_DIR}" --exclude='runtime/network' --exclude='runtime/logs' -czf "${saves_out}.tmp" runtime \
+    $(cd "${DATA_DIR}" && ls -1 *.json 2>/dev/null | grep -E 'claimed|leaderboard|chest|referral' || true)
+mv "${saves_out}.tmp" "${saves_out}"
+saves_size=$(stat -c%s "${saves_out}")
+if (( saves_size < 10240 )); then
+    notify_failure "player saves archive suspiciously small (${saves_size} bytes)"
+    exit 1
+fi
+echo "[$(date -Iseconds)] OK: saves=${saves_size} bytes"
+
 # --- Optional offsite copy -------------------------------------------------
 # Set RCLONE_REMOTE (e.g. "b2:zelus-backups") to also push both files offsite.
 # Leave unset to skip -- local rotation below still applies either way.
@@ -95,6 +112,7 @@ if [[ -n "${RCLONE_REMOTE:-}" ]] && command -v rclone >/dev/null 2>&1; then
     echo "[$(date -Iseconds)] Pushing to ${RCLONE_REMOTE}..."
     rclone copy "${mysql_out}" "${RCLONE_REMOTE}" --quiet || notify_failure "rclone push of mysql dump failed"
     rclone copy "${mongo_out}" "${RCLONE_REMOTE}" --quiet || notify_failure "rclone push of mongo dump failed"
+    rclone copy "${saves_out}" "${RCLONE_REMOTE}" --quiet || notify_failure "rclone push of player saves failed"
 fi
 
 echo "[$(date -Iseconds)] Rotating backups older than ${RETENTION_DAYS} days..."

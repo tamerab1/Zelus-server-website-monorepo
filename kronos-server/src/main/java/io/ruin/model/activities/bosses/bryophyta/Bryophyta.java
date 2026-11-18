@@ -47,7 +47,7 @@ public class Bryophyta extends NPCCombat {
 			{ -1, 0 },
 	};
 
-	private static final Position SPAWN_POSITION = new Position(3223, 9933, 0);
+	private static final Position SPAWN_POSITION = new Position(3219, 9932, 0); // wiki LocLine centre 3220,9933 (size 3)
 
 	private boolean growthlinSpawned = false;
 	private final NPC[] growthlin = new NPC[3];
@@ -149,7 +149,7 @@ public class Bryophyta extends NPCCombat {
 			player.animate(4540);
 			player.getPacketSender().fadeOut();
 			event.delay(1);
-			player.getMovement().teleport(3214, 9937, 0);
+			player.getMovement().teleport(map.convertX(3214), map.convertY(9937), 0);
 
 			player.getInventory().remove(ItemID.MOSSY_KEY, 1);
 			player.face(Direction.EAST);

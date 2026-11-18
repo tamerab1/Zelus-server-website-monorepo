@@ -112,7 +112,7 @@ public class DailyVoteInterface {
 				startingTextComponent++;
 				loops = 0;
 			}
-			player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=cc3333>Unclaimed");
+			player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=e0605a>Unclaimed");
 
 			player.getPacketSender().sendClientScript(
 					149, "IviiiIsssss",
@@ -157,11 +157,11 @@ public class DailyVoteInterface {
 			player.getPacketSender().setHidden(INTERFACE_ID, startingLockComponent, true);
 
 			if (i < (player.voteStreak - 1))
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=6fd36a>Claimed");
 			else if (i == (player.voteStreak - 1) && player.claimedVoteToday)
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=6fd36a>Claimed");
 			else
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=cc3333>Unclaimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=e0605a>Unclaimed");
 
 			startingLockComponent += 14;
 			startingClaimedComponent += 14;

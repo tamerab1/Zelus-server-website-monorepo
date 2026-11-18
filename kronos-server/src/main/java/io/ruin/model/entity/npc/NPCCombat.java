@@ -663,7 +663,7 @@ public abstract class NPCCombat extends Combat {
 			pointsReward = io.ruin.model.activities.colosseum.EggEffects.zelusPoints(player, pointsReward);
 			player.updateReasonPoints(pointsReward);
 			player.sendFilteredMessage("You receive <col=000000><shad=29F1FE>" + pointsReward
-					+ " Zelus points<col=000000></shad> for killing a " + def.name + ".");
+					+ " Karn points<col=000000></shad> for killing a " + def.name + ".");
 			if (Random.get(0, 250) == 0)
 				npcRareDropTable.HandleDrop(player, 2, npc);
 		} else if (def.combatLevel < 100 && Random.get(0, 250) == 0)
@@ -1242,9 +1242,11 @@ public abstract class NPCCombat extends Combat {
 								.getCombatAchievement()).check(killer.player);
 					}
 					DailyTasks.handleTaskKill(killer.player, npc.getId());
+					io.ruin.model.content.battlepass.BattlePass.onKill(killer.player, npc);
 					PerkTaskHandler.handleMonsterKill(killer.player, npc.getId());
 					PerkTaskHandler.handleMonsterKill(killer.player, npc.getDef().name.toLowerCase());
-					DailyTasks.handleTaskDecrement(killer.player, npc.getId());
+					// (no handleTaskDecrement(player, npcId) here: handleTaskKill above already counts npc-id kill tasks --
+					// both ran, so every kill counted twice, user 2026-11-15)
 					DailyTasks.handleTaskDecrement(killer.player, npc.getDef().name.toLowerCase());
 
 					var killerPerks = killer.player.getPlayerPerkHandler();
@@ -3011,6 +3013,13 @@ public abstract class NPCCombat extends Combat {
 	 * @pKillerLastHit = the player that made the last hit
 	 * @items - items to drop
 	 */
+	/** Drops code-rolled loot through the same path as table loot (broadcasts, collection log, loot tracking). */
+	protected void handleDrop(Player player, Position dropPosition, List<Item> items) {
+		Killer killer = new Killer();
+		killer.player = player;
+		handleDrop(killer, dropPosition, player, items);
+	}
+
 	private void handleDrop(Killer killer, Position dropPosition, Player pKillerLastHit, List<Item> items) {
 		io.ruin.model.activities.scoreboard.Scoreboard.onNpcDrop(pKillerLastHit, items);
 
@@ -3433,6 +3442,12 @@ public abstract class NPCCombat extends Combat {
 	@Override
 	public double getBonus(int bonusType) {
 		return bonusType >= bonuses.length ? 0 : bonuses[bonusType];
+	}
+
+	/** Changes one equipment-style bonus at runtime (e.g. the Maggot King's magic defence at the wall). */
+	protected void setBonus(int bonusType, int value) {
+		if (bonuses != null && bonusType >= 0 && bonusType < bonuses.length)
+			bonuses[bonusType] = value;
 	}
 
 	/**

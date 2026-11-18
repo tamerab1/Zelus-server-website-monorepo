@@ -45,7 +45,7 @@ public class StatueOfFortune {
 	static final long BROADCAST_GAP = MINUTE;
 	public static final String[] TIER = {"", "I", "II", "III"};
 	/** Chat styling on the parchment chatbox: dark red prefix, amber names, default (dark) text for the rest. */
-	static final String PREFIX = "<col=800000>[Statue of Fortune]</col> ", NAME_COL = "<col=b25900>", END = "</col>";
+	static final String PREFIX = "<col=800000>[Karn Statue]</col> ", NAME_COL = "<col=b25900>", END = "</col>";
 	/** All-time donor ranks: threshold, name, colour. */
 	static final Object[][] RANKS = {{10_000_000_000L, "Fortune's Chosen", "ff9a1f"}, {1_000_000_000L, "Patron", "ffb83f"}, {100_000_000L, "Benefactor", "e6d8b8"}};
 
@@ -276,7 +276,7 @@ public class StatueOfFortune {
 			long now = System.currentTimeMillis();
 			if (now - lastBroadcast.getOrDefault(uid, 0L) >= BROADCAST_GAP) {
 				lastBroadcast.put(uid, now);
-				Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Statue of Fortune",
+				Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Karn Statue",
 						player.getName() + " sacrificed " + shortGp(paid) + " to the " + b.title + " blessing!");
 			}
 		}
@@ -344,7 +344,7 @@ public class StatueOfFortune {
 	}
 
 	static void announceTier(Blessing b, int tier) {
-		Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Statue of Fortune",
+		Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Karn Statue",
 				"Tier " + TIER[tier] + " " + b.title + " blessing is active: " + b.effect(tier).toLowerCase() + "!");
 		try {
 			JSONArray perks = new JSONArray();
@@ -369,7 +369,7 @@ public class StatueOfFortune {
 			p.contrib.clear();
 			long seed = p.reserve;
 			p.reserve = 0;
-			Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Statue of Fortune", "The " + b.title + " blessing has faded.");
+			Broadcast.GLOBAL.sendNews(Icon.SERVER_EVENT, "Karn Statue", "The " + b.title + " blessing has faded.");
 			if (seed > 0)
 				credit(b, seed, true);
 			save();

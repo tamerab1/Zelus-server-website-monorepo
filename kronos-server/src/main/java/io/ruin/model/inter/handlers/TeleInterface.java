@@ -431,6 +431,15 @@ public class TeleInterface extends ItemContainer {
 			case PHANTOM_MUSPAH: return 12079;
 			case LEVIATHAN:     return 12214;
 			case DUKE_SUCELLUS: return 12191;
+			case ZALCANO:       return 9049;
+			case HESPORI:       return 8583;
+			case MAGGOT_KING:   return 15742;
+			case MOONS_OF_PERIL: return 13016;
+			case HUEYCOATL:     return 14009;
+			case ROYAL_TITANS:  return 12596;
+			case BRUTUS:        return 15626;
+			case THE_SCAR:      return 12392;
+			case THE_SCAR_GROWTH: return 12392;
 			case VARDORVIS:     return 12223;
 			case MALAKAR:       return 12336;
 			case SOL_HEREDIT:   return 12821;

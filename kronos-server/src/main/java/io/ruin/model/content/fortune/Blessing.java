@@ -7,7 +7,7 @@ package io.ruin.model.content.fortune;
  * rate, 12% extra-roll chance, 15% better pet odds. Costs are first-pass placeholders to tune from donation logs.
  */
 public enum Blessing {
-	ZELUS_POINTS("Zelus Points", "Zelus points from every source.", Kind.MULTIPLIER, 995,
+	ZELUS_POINTS("Karn Points", "Karn points from every source.", Kind.MULTIPLIER, 995,
 			250_000_000L, 500_000_000L, 800_000_000L, 0.05, 0.10, 0.20),
 	PERK_EXPERIENCE("Perk Experience", "Perk experience from completed tasks.", Kind.MULTIPLIER, 11640,
 			500_000_000L, 1_000_000_000L, 2_000_000_000L, 0.03, 0.05, 0.10),

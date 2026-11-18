@@ -367,6 +367,39 @@ public enum UpgradeItems {
 		"This item provides better stats than the Thammaron's sceptre and has a powerful special attack"
 	),
 
+	// 2026-11-15 (user): the three Karn pieces. 100%: the user's ingredient lists, the last one bound as the catalyst
+	KARN_MASTER_CAPE(
+		new Item(42766),
+		new Ingredient[]{new Ingredient(30614)/* Ali's cape */, new Ingredient(42582)/* Rivals Champion cape */,
+			new Ingredient(21295)/* Infernal cape */},
+		100,
+		new Item(40083)/* Ethereal cape */,
+		"The cape of Karn's masters: the best cape in the game in every category."
+	),
+	KARN_SWORD(
+		new Item(42773),
+		new Ingredient[]{new Ingredient(30388)/* Thunder khopesh */, new Ingredient(60405)/* Draco Pickaxe */},
+		100,
+		new Item(42608)/* Karn Scythe of Vitur */,
+		"The blade of Karn, forged in crimson and gold: the best sword in the game."
+	),
+	AVAS_OF_KARN(
+		new Item(42767),
+		new Ingredient[]{new Ingredient(28955)/* Blessed Dizana's quiver */, new Ingredient(22109)/* Ava's assembler */,
+			new Ingredient(60389, 10_000)/* Dracodust */},
+		100,
+		new Item(12934, 20_000)/* Zulrah's scales */,
+		"Ava's finest work in the colours of Karn: keeps all your ammunition, with top ranged bonuses."
+	),
+
+	KARN_BOW(
+		new Item(40076),
+		new Ingredient[]{new Ingredient(30515)/* Twisted zaryte bow */, new Ingredient(30568)/* Webweaver bow (u) */},
+		100,
+		new Item(59568)/* Tempest Bow */,
+		"The bow of Karn, strung with crimson fire: the best bow in the game, and it needs no arrows."
+	),
+
 	WEBWEAVER_BOW(
 		new Item(30568),
 		new Ingredient[]{new Ingredient(ItemID.CRAWS_BOW_U)},
@@ -586,7 +619,14 @@ public enum UpgradeItems {
 					}
 				}
 			}
-			item.remove();
+			int need = 1;
+			for (Item v : ingredient.variants)
+				if (v.getId() == item.getId())
+					need = v.getAmount();
+			if (need > 1)
+				player.getInventory().remove(item.getId(), need); // a stackable cost: only that much of the stack
+			else
+				item.remove();
 		}
 
 		player.getInventory().remove(bindingItem);
@@ -602,7 +642,8 @@ public enum UpgradeItems {
 					continue;
 				}
 
-				if (item.getId() == costItem.getId() && item.getAmount() == costItem.getAmount()) {
+				// a stack of at least the amount (2026-11-15: ingredients can carry an amount, e.g. 10,000 Dracodust)
+				if (item.getId() == costItem.getId() && item.getAmount() >= costItem.getAmount()) {
 					return item;
 				}
 			}
@@ -614,6 +655,11 @@ public enum UpgradeItems {
 	public record Ingredient(Item[] variants) {
 		public Ingredient(int item) {
 			this(new Item[] {new Item(item)});
+		}
+
+		/** a stackable cost (only this amount is taken) */
+		public Ingredient(int item, int amount) {
+			this(new Item[] {new Item(item, amount)});
 		}
 
 		public Ingredient(int[] variants) {

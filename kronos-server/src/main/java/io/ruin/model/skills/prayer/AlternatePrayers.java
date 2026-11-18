@@ -23,7 +23,8 @@ import io.ruin.model.var.VarPlayerRepository;
  */
 public final class AlternatePrayers {
 
-	public static final int DEADEYE_SCROLL = 30626, MYSTIC_VIGOUR_SCROLL = 30627, HORN_OF_BRAN = 34679, KING_ARTHUR = 3531;
+	public static final int DEADEYE_SCROLL = 42769, MYSTIC_VIGOUR_SCROLL = 42770, // cache stage 43 (vanilla 30626 / 30627 are our old custom ids)
+			 HORN_OF_BRAN = 34679, KING_ARTHUR = 3531;
 	private static final Bounds CAMELOT = new Bounds(2744, 3483, 2776, 3520, 0);
 
 	private AlternatePrayers() {

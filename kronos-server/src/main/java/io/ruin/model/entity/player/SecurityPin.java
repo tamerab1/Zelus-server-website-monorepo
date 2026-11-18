@@ -175,7 +175,7 @@ public class SecurityPin {
 		player.logoutListener = null;
 		player.allowedAccess = true;
 		player.getMovement().teleport(back != null ? back : World.HOME);
-		player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, "Thank you, have fun playing Zelus."));
+		player.dialogue(new NPCDialogue(io.ruin.model.entity.npc.actions.edgeville.StarterGuide.WARDEN_NPC, "Thank you, have fun playing Karn."));
 	}
 
 	// ---------------------------------------------------------------- onboarding
@@ -265,7 +265,7 @@ public class SecurityPin {
 			}
 			player.inTutorial = false;
 			player.dialogue(new NPCDialogue(7958,
-					"Welcome to Zelus. The perk ticket in your inventory will allow you claim a free level 5 perk.")
+					"Welcome to Karn. The perk ticket in your inventory will allow you claim a free level 5 perk.")
 				.action(() -> {
 					if (!World.isLive())
 						player.join(PlayerGroup.OWNER);

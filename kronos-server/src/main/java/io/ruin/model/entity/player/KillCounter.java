@@ -84,6 +84,7 @@ public class KillCounter {
 		set(p -> p.leviathanKills, "leviathan");
 		set(p -> p.whispererKills, "the whisperer");
 		set(p -> p.dukeKills, "duke sucellus");
+		set(p -> p.hesporiKills, 8583);
 		set(p -> p.vardorvisKills, "vardorvis");
 		set(p -> p.sarachnisKills, "sarachnis");
 		set(p -> p.phantomMuspahKills, "phantom muspah");
@@ -220,6 +221,16 @@ public class KillCounter {
 			p.leviathanKills.setName("Leviathan").messageOnKill();
 			p.whispererKills.setName("The Whisperer").messageOnKill();
 			p.dukeKills.setName("Duke Sucellus").messageOnKill();
+			p.hesporiKills.setName("Hespori").messageOnKill();
+			p.zalcanoKills.setName("Zalcano").messageOnKill();
+			p.maggotKingKills.setName("Maggot King").messageOnKill();
+			p.bloodMoonKills.setName("Blood Moon").messageOnKill();
+			p.blueMoonKills.setName("Blue Moon").messageOnKill();
+			p.eclipseMoonKills.setName("Eclipse Moon").messageOnKill();
+			p.hueycoatlKills.setName("The Hueycoatl").messageOnKill();
+			p.royalTitansKills.setName("Royal Titans").messageOnKill();
+			p.brutusKills.setName("Brutus").messageOnKill();
+			p.demonicBrutusKills.setName("Demonic Brutus").messageOnKill();
 			p.vardorvisKills.setName("Vardorvis").messageOnKill();
 			p.sarachnisKills.setName("Sarachnis").messageOnKill();
 			p.phantomMuspahKills.setName("Phantom Muspah").messageOnKill();
@@ -231,6 +242,7 @@ public class KillCounter {
 			p.tombsOfAmascutKills.setName("Tombs of Amascut").messageOnKill();
 			p.dominionOfEchoesKills.setName("Dominion of Echoes").messageOnKill();
 			p.fracturedArchiveKills.setName("The Fractured Archive").messageOnKill();
+			p.fiveSealsClears.setName("The Five Seals").messageOnKill();
 			p.vorgathKills.setName("Vorgath the Shadowrider").messageOnKill();
 			p.baelgorKills.setName("Baelgor the Felreaver").messageOnKill();
 			p.derangedArchaeologistKills.setName("Deranged Archaeologist").messageOnKill();
@@ -346,7 +358,19 @@ public class KillCounter {
 			p -> p.gloomfangKills,
 			p -> p.venomtongueKills,
 			p -> p.dracoKills,
-			p -> p.perkersKills
+			p -> p.perkersKills,
+			p -> p.dukeKills,
+			p -> p.hesporiKills,
+			p -> p.zalcanoKills,
+			p -> p.maggotKingKills,
+			p -> p.moonsOfPerilKills,
+			p -> p.bloodMoonKills,
+			p -> p.blueMoonKills,
+			p -> p.eclipseMoonKills,
+			p -> p.hueycoatlKills,
+			p -> p.royalTitansKills,
+			p -> p.brutusKills,
+			p -> p.demonicBrutusKills
 		);
 
 		/* Slayer list */

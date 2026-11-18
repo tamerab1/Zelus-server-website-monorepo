@@ -19,7 +19,7 @@ import java.util.Locale;
  * {@link ZelusTask}s; Easy / Medium / Hard / Elite show the original {@link Achievements} with their own counters and
  * claim path (Player.AchievementRewardHandler), so nobody's progress moved. A tier tab lists its tasks (status pip +
  * name); the card shows the description, progress, rewards and Claim Reward. Opened from the journal / newcomer
- * book (JournalTab.openAchievementInterface) and by Zezu.
+ * book (JournalTab.openAchievementInterface) and by the Achievement Master (was Zezu).
  */
 public final class ZelusCodex {
 
@@ -43,7 +43,7 @@ public final class ZelusCodex {
 	private static final String[] NAME_COLOUR = {"<col=d8d0c0>", YELLOW, BLUE, GREEN};
 
 	public enum Tier {
-		BEGINNER("Beginner"), EASY("Easy"), MEDIUM("Medium"), HARD("Hard"), ELITE("Elite"), ZELUS("Zelus");
+		BEGINNER("Beginner"), EASY("Easy"), MEDIUM("Medium"), HARD("Hard"), ELITE("Elite"), ZELUS("Karn");
 
 		final String label;
 
@@ -149,13 +149,13 @@ public final class ZelusCodex {
 			ZelusTask.AWAKENING_IN_ZELUS.step(player, ZelusTask.STEP_PATH);
 		}
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
-		player.getPacketSender().sendString(INTERFACE, TITLE, "Zelus Achievements");
+		player.getPacketSender().sendString(INTERFACE, TITLE, "Karn Achievements");
 		draw(player, true);
 	}
 
 	static void announceComplete(Player player, String title) {
-		player.sendMessage("<col=ff981f><shad=000000>[Zelus Achievements]</shad></col> Task complete: <col=ffffff>" + title
-			+ "</col>! Claim your reward in Zelus Achievements.");
+		player.sendMessage("<col=ff981f><shad=000000>[Karn Achievements]</shad></col> Task complete: <col=ffffff>" + title
+			+ "</col>! Claim your reward in Karn Achievements.");
 		if (player.isVisibleInterface(INTERFACE)) {
 			draw(player, false);
 		}
@@ -268,7 +268,7 @@ public final class ZelusCodex {
 	private static String rewardText(Task t) {
 		var lines = new ArrayList<String>();
 		int points = t.zelus != null ? t.zelus.points : t.legacy.getReasonPointReward();
-		if (points > 0) lines.add(bullet(YELLOW + String.format(Locale.ROOT, "%,d", points) + END + " Zelus points"));
+		if (points > 0) lines.add(bullet(YELLOW + String.format(Locale.ROOT, "%,d", points) + END + " Karn points"));
 		if (t.legacy != null) {
 			if (t.legacy.getAchievementPointReward() > 0)
 				lines.add(bullet(YELLOW + t.legacy.getAchievementPointReward() + END + " achievement point"
@@ -314,8 +314,8 @@ public final class ZelusCodex {
 		player.updateReasonPoints(task.points);
 		for (Item item : task.items) player.getInventory().addOrDrop(new Item(item.getId(), item.getAmount()));
 		player.totalAchievementsCompleted++;
-		player.sendMessage("<col=ff981f><shad=000000>[Zelus Achievements]</shad></col> <col=00ff00>Reward claimed: " + task.title
-			+ "</col> (" + String.format(Locale.ROOT, "%,d", task.points) + " Zelus points).");
+		player.sendMessage("<col=ff981f><shad=000000>[Karn Achievements]</shad></col> <col=00ff00>Reward claimed: " + task.title
+			+ "</col> (" + String.format(Locale.ROOT, "%,d", task.points) + " Karn points).");
 		draw(player, false);
 	}
 }

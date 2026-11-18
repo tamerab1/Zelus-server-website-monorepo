@@ -18,6 +18,14 @@ public final class PatchSpecBars {
 	static final Object[][] SPECS = {
 			{ 40077, 550, "Shatterquake: A crushing blow with 30% increased accuracy and 25% increased damage that lowers your target's Defence by 35%. An ethereal aftershock follows for 40% of the damage, also striking adjacent monsters in multi-combat." },
 			{ 40079, 500, "Phantom Rampart: Slam with 25% increased accuracy and 20% increased damage, striking up to 11 nearby monsters in multi-combat. Each hit lowers the target's Defence by 10%, and you heal 10% of the damage dealt." },
+			// the Karn pieces (2026-11-15)
+			{ 42773, 500, "Karn's Judgement: A slash with 40% increased accuracy and 30% increased damage, then a crimson follow-up for half of it. You heal 20% of all the damage dealt." },
+			{ 40076, 550, "Crimson Volley: Fire two crimson arrows with 50% increased accuracy and 25% increased damage. Each arrow that lands heals you for 10% of its damage." },
+			// The Five Seals purples and their (or) versions (2026-11-18)
+			{ 42702, 500, "Duskfall Ward: A shadow slash with 35% increased accuracy and 15% increased damage. Half of the damage dealt (up to 30) becomes a dusk ward that absorbs the damage you take for 15 seconds." },
+			{ 42810, 500, "Duskfall Ward: A shadow slash with 35% increased accuracy and 15% increased damage. Half of the damage dealt (up to 30) becomes a dusk ward that absorbs the damage you take for 15 seconds." },
+			{ 42712, 550, "Hellfang Rend: Fire a dragonfire bolt with 25% increased accuracy and a hellfire fang behind it for 60% damage. If both land, your target burns for 5 hits of 4 damage." },
+			{ 42815, 550, "Hellfang Rend: Fire a dragonfire bolt with 25% increased accuracy and a hellfire fang behind it for 60% damage. If both land, your target burns for 5 hits of 4 damage." },
 			{ 40015, 500, "Heartbreaker: Lash with 30% increased accuracy and 10% increased damage. If it lands, heal for half the damage dealt and restore 5 Prayer, and leave your target lovestruck." },
 	};
 

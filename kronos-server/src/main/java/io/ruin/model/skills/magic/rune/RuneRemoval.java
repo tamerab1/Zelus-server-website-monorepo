@@ -80,6 +80,12 @@ public class RuneRemoval {
 				 */
 				continue;
 			}
+			if (io.ruin.model.combat.RewardItems.freeRune(player, reqRune)) {
+				/**
+				 * Tome of earth / Twinflame staff
+				 */
+				continue;
+			}
 			if (reqRune == Rune.FIRE && player.getEquipment().hasId(20714)) {
 				/**
 				 * Use tome of fire

@@ -34,7 +34,9 @@ public class PlayerPerkHandler {
 			player.activePerksList.add(perks);
 		}
 		updateActivePerkSets(player);
-
+		// the 2026-11-15 cheaper curve: players already past the new thresholds get their levels (and points) now
+		if (player.perkTreeLevel > 0)
+			addPerkExperience(player, 0);
 	}
 
 	public void updateActivePerks(Player player) {
@@ -498,7 +500,7 @@ public class PlayerPerkHandler {
 		// 2026-10-29: the fixed reward fell far behind the level curve (an elite skilling task ~4k against ~300k a level
 		// at 120). A task now pays at least a share of the current level's cost (easy 0.5%, medium 1%, hard 2%,
 		// elite 4%), so low levels are unchanged and an elite skilling task is ~25 a level at 120 instead of ~75.
-		int levelCost = calculateExperienceForLevel(player.perkTreeLevel) - calculateExperienceForLevel(player.perkTreeLevel - 1);
+		int levelCost = legacyLevelCost(player.perkTreeLevel);
 		double share = new double[] { 0.005, 0.01, 0.02, 0.04 }[tier.ordinal()];
 		reward = Math.max(reward, (int) (levelCost * share) + Random.get(difficulty * 75));
 		if (type == PerkTasks.TaskType.PVM) {
@@ -546,8 +548,16 @@ public class PlayerPerkHandler {
 	// let a single big lamp skip ~20 levels at once regardless of how deep into the tree the
 	// player was. Rebalanced 2026-09-16 against the 250k-XP lamp: level 50 = 3,250,000 total
 	// XP, level 100 = 12,750,000 total XP (1250*L*(L+2) solves both exactly).
+	// 2026-11-15 (user: "too hard to reach level 50 and 75", then "25% cheaper, not 40%"): 937.5*L*(L+2): level 50 =
+	// 2,437,500 total XP, 75 = 5,376,562, 100 = 9,562,500. Task payouts stay tied to the old cost (legacyLevelCost), so a
+	// level needs 25% fewer tasks.
 	public int calculateExperienceForLevel(int level) {
-		return 1250 * level * (level + 2);
+		return (int) (1875L * level * (level + 2) / 2);
+	}
+
+	/** what a level cost before 2026-11-15 (1250*L*(L+2) cumulative): task rewards scale off this, not the cheaper curve */
+	private static int legacyLevelCost(int level) {
+		return 1250 * level * (level + 2) - 1250 * (level - 1) * (level + 1);
 	}
 
 	public float calculateNextPerkLevelPercentage(Player player) {

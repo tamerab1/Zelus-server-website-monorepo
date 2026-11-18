@@ -60,6 +60,7 @@ public enum PlayerCounter {
 	CHOPPED_CELASTRUS((p, amt) -> p.choppedCelastrus = amt, p -> p.choppedCelastrus),
 	CHOPPED_MAHOGANY((p, amt) -> p.choppedMahogany = amt, p -> p.choppedMahogany),
 	CHOPPED_CORRUPT((p, amt) -> p.choppedCorrupt = amt, p -> p.choppedCorrupt),
+	CHOPPED_KARNWOOD((p, amt) -> p.choppedKarnwood = amt, p -> p.choppedKarnwood),
 	OPENED_BIRDS_NESTS((p, amt) -> p.openedBirdsNests = amt, p -> p.openedBirdsNests),
 	ACQUIRED_BIRDS_NESTS((p, amt) -> p.acquiredBirdsNests = amt, p -> p.acquiredBirdsNests),
 
@@ -86,6 +87,7 @@ public enum PlayerCounter {
 	MINED_GRANITE((p, amt) -> p.minedGranite = amt, p -> p.minedGranite),
 	MINED_GEM_ROCK((p, amt) -> p.minedGemRock = amt, p -> p.minedGemRock),
 	MINED_CORRUPT((p, amt) -> p.minedCorrupt = amt, p -> p.minedCorrupt),
+	MINED_BLOODGOLD((p, amt) -> p.minedBloodgold = amt, p -> p.minedBloodgold),
 	MINED_BASALT((p, amt) -> p.minedBasalt = amt, p -> p.minedBasalt),
 	MINED_URT_SALT((p, amt) -> p.minedUrtSalt = amt, p -> p.minedUrtSalt),
 	MINED_TE_SALT((p, amt) -> p.minedTeSalt = amt, p -> p.minedTeSalt),

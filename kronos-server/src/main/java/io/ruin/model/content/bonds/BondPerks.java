@@ -323,22 +323,24 @@ public final class BondPerks {
 	 */
 	public static void gatherResource(Player player, int id, int amount, boolean noted) {
 		int tier = player.getBondTier(BondType.SKILLING);
+		// The Five Seals' Karnwood logs / Bloodgold ore are offered at the seal: never banked, transmuted or noted
+		boolean sealResource = id == 42775 || id == 42776;
 		if (tier >= 2 && Random.rollPercent(tier >= 5 ? 35 : 10)) {
 			amount *= 2;
 			player.sendFilteredMessage("Your Bond of the Artisan doubles your resources.");
 		}
-		if (tier >= 5 && Random.rollPercent(10)) {
+		if (tier >= 5 && !sealResource && Random.rollPercent(10)) {
 			ObjType def = ObjType.get(id);
 			long coins = (long) Math.max(1, def == null ? 1 : def.value) * amount;
 			player.getInventory().addOrDrop(995, (int) Math.min(Integer.MAX_VALUE, coins));
 			player.sendFilteredMessage("Your Bond of the Artisan transmutes your resources into " + coins + " coins.");
 			return;
 		}
-		if (tier >= 4 && Random.rollPercent(25) && player.getBank().add(id, amount) > 0) {
+		if (tier >= 4 && !sealResource && Random.rollPercent(25) && player.getBank().add(id, amount) > 0) {
 			player.sendFilteredMessage("Your Bond of the Artisan sends your resources to the bank.");
 			return;
 		}
-		player.getInventory().add(noted ? id + 1 : id, amount);
+		player.getInventory().add(noted ? ObjType.notedId(id) : id, amount);
 	}
 
 	/* ------------------------------------------------------------------ */

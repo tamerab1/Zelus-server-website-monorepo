@@ -52,7 +52,7 @@ public enum CS2Script {
 	BUFF_BAR_2_INIT(5929, ""),
 	BUFF_BAR_LAYOUT_REDRAW(5937, ""),
 	SETTINGS_INTERFACE_SCALING(2358, "i"),
-	WORLDMAP_TRANSMITDATA(1749, "cc"),
+	WORLDMAP_TRANSMITDATA(1749, "ccc"), // rev 241: (you-are-here varc 188, clue varc 1078, gravestone varc 401); 231 had two
 	SETTINGS_CLIENT_MODE(3998, "i"),
 	CHATBOX_MULTI_INIT(58, "ss"),
 	CHATBOX_EMPTY(1508, "s"),

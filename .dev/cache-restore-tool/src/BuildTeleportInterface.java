@@ -22,10 +22,15 @@ public class BuildTeleportInterface {
     static final int GROUP = 1152, SRC = 1002;
     static final int GOLD = 0xffc35a, TEXT = 0xd8d0c0;
     static final int HEADING_FONT = 496, BIG_FONT = 495, TEXT_FONT = 494;
-    static final int TITLE_Y = 14, SUB_Y = 45;
-    static final int PANEL_FILL = 0x36302a, BOX = 0x433b31, BOX_HOVER = 0x524737, BORDER = 0x5a4d3a;
-    static final int SLOT_FILL = 0x2a2520, SLOT_BORDER = 0x5a4d3a;
-    static final int CATEGORIES = 7, ROWS = 80, ROW_H = 38, ROW_PITCH = 40, DROPS = 4;
+    static final int TITLE_Y = 12, SUB_Y = 33; // round 2: both above the art's divider (root y 51)
+    // Karn theme (2026-11-11): the window, its panels and frame are art (assets/karn_ui, sprite 24816 on 1002:1's
+    // component); cards and slots in the Karn colours, crimson buttons with gold rims (24820-24823), a gem close button
+    // round 2 (lighter, user 2026-11-11): warm burgundy cards on the lighter art, gold rims
+    static final int PANEL_FILL = 0x36302a, BOX = 0x4a2c30, BOX_HOVER = 0x5e363b, BORDER = 0x9a7840;
+    static final int SLOT_FILL = 0x2e1c1f, SLOT_BORDER = 0x9a7840;
+    static final int ART = 24816, CLOSE = 24818, CLOSE_HOVER = 24819, GO = 24820, GO_HOVER = 24821, TELE = 24840, TELE_HOVER = 24841;
+    static final int TITLE_GOLD = 0xffc35a, LABEL = 0xffd27a, MUTED = 0xc2b29a, PICKED = 0x7a2228, PICKED_EDGE = 0xc9a24a;
+    static final int CATEGORIES = 7, ROWS = 80, ROW_H = 36, ROW_PITCH = 38, DROPS = 4;
     /** Favourite stars: gold (favourited) and grey (not), from the old teleport interface's sprite set. */
     static final int STAR_GOLD = 4576, STAR_GREY = 4573;
     /** The old interface's model components (851:60,61,62,63,65,66): zoom and vertical offset per preset. */
@@ -52,11 +57,26 @@ public class BuildTeleportInterface {
             Map<String, Integer> ids = new LinkedHashMap<>();
             for (int c = 0; c <= 2; c++) {
                 byte[] b = src.findFile(c).getContents();
-                comps.add(b);
-                want.add(loader.load((GROUP << 16) | c, b));
+                InterfaceDefinition d = loader.load((GROUP << 16) | c, b);
+                if (c == 0) {
+                    comps.add(b);
+                    want.add(d);
+                    continue;
+                }
+                if (c == 1) // the window: the Karn art in place of the stone frame
+                    d.spriteId = ART;
+                if (c == 2) { // close: the gem button, lit while hovered
+                    d.spriteId = CLOSE;
+                    d.onMouseOverListener = new Object[]{44, -2147483645, CLOSE_HOVER};
+                    d.onMouseLeaveListener = new Object[]{44, -2147483645, CLOSE};
+                    d.hasListener = true;
+                }
+                add(comps, want, d);
             }
             InterfaceDefinition title = loader.load((GROUP << 16) | 3, src.findFile(3).getContents());
             title.originalY = TITLE_Y;
+            title.originalHeight = 20;
+            title.textColor = TITLE_GOLD;
             add(comps, want, title);
             InterfaceDefinition layerT = loader.load(0, src.findFile(153).getContents());
             InterfaceDefinition[] rectT = {loader.load(0, src.findFile(159).getContents()),
@@ -72,85 +92,90 @@ public class BuildTeleportInterface {
             sub.xTextAlignment = 1;
             add(comps, want, sub);
 
-            // ---- left: categories x (box, border, gold outline x2, icon, label) ----
-            int left = panel(comps, want, layerT, rectT, 0, 24, 62, 116, 243);
+            // ---- top: the categories as a tab bar (box, border, gold outline x2, icon, label) ----
+            int left = panel(comps, want, layerT, rectT, 0, 27, 56, 457, 44);
             ids.put("FIRST_CATEGORY", comps.size());
             for (int c = 0; c < CATEGORIES; c++) {
-                int y = 5 + c * 33;
-                selectable(comps, want, rect, left, 5, y, 106, 32, "View");
-                InterfaceDefinition icon = sprite(buttonT, left, 6, y, 36, 32, c == 0 ? STAR_GOLD : -1, 0);
+                int x = c * 66;
+                selectable(comps, want, rect, left, x, 0, 61, 44, "View");
+                InterfaceDefinition icon = sprite(buttonT, left, x + 12, 0, 36, 32, c == 0 ? STAR_GOLD : -1, 0);
                 if (c == 0) {
-                    icon.originalX = 14;
-                    icon.originalY = y + 7;
+                    icon.originalX = x + 21;
+                    icon.originalY = 6;
                     icon.originalWidth = 19;
                     icon.originalHeight = 18;
                 }
                 add(comps, want, icon);
-                // regular 12pt over 66px: "Wilderness" in bold ran past the stone (2026-10-15)
-                add(comps, want, text(textT, left, 42, y + 2, 66, 30, BIG_FONT, TEXT, ""));
+                InterfaceDefinition label = text(textT, left, x + 1, 30, 59, 13, TEXT_FONT, TEXT, "");
+                label.xTextAlignment = 1;
+                add(comps, want, label);
             }
 
             // ---- middle: search + destination cards ----
-            int middle = panel(comps, want, layerT, rectT, 0, 144, 62, 190, 243);
+            int middle = panel(comps, want, layerT, rectT, 0, 24, 105, 244, 197);
             ids.put("SEARCH", comps.size());
-            InterfaceDefinition search = solid(rect, middle, 5, 5, 180, 20, BOX);
+            InterfaceDefinition search = solid(rect, middle, 8, 8, 228, 20, BOX);
             search.clickMask = 2;
             search.actions = new String[]{"Search"};
             hover(search, BOX, BOX_HOVER);
             add(comps, want, search);
-            add(comps, want, text(textT, middle, 10, 5, 172, 20, TEXT_FONT, 0x9a9a9a, ""));
+            add(comps, want, text(textT, middle, 14, 8, 216, 20, TEXT_FONT, MUTED, ""));
             ids.put("SCROLL", comps.size());
             ids.put("SCROLLBAR", comps.size() + 1);
-            add(comps, want, layer(layerT, middle, 4, 29, 166, 210));
-            add(comps, want, layer(layerT, middle, 171, 29, 16, 210));
+            add(comps, want, layer(layerT, middle, 8, 34, 210, 155));
+            add(comps, want, layer(layerT, middle, 220, 34, 16, 155));
             int scroll = ids.get("SCROLL");
             ids.put("FIRST_ROW", comps.size());
             for (int r = 0; r < ROWS; r++) {
                 int row = comps.size();
-                add(comps, want, layer(layerT, scroll, 0, r * ROW_PITCH, 166, ROW_H));
-                selectable(comps, want, rect, row, 0, 0, 166, ROW_H, "Select");
-                add(comps, want, text(textT, row, 5, 2, 138, 15, TEXT_FONT, GOLD, ""));
-                add(comps, want, text(textT, row, 5, 19, 100, 15, TEXT_FONT, TEXT, ""));
+                add(comps, want, layer(layerT, scroll, 0, r * ROW_PITCH, 210, ROW_H));
+                selectable(comps, want, rect, row, 0, 0, 210, ROW_H, "Select");
+                add(comps, want, text(textT, row, 7, 3, 120, 14, TEXT_FONT, GOLD, ""));
+                add(comps, want, text(textT, row, 7, 19, 120, 14, TEXT_FONT, TEXT, ""));
                 InterfaceDefinition go = copy(buttonT);
-                place(go, row, 106, 19, 57, 17);
+                place(go, row, 132, 16, 57, 17);
+                go.spriteId = GO;
+                go.spriteTiling = false;
+                go.borderType = 0;
+                go.shadowColor = 0;
                 go.clickMask = 2;
                 go.actions = new String[]{"Teleport"};
-                go.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-                go.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
+                go.onMouseOverListener = new Object[]{44, -2147483645, GO_HOVER};
+                go.onMouseLeaveListener = new Object[]{44, -2147483645, GO};
                 add(comps, want, go);
-                InterfaceDefinition goLabel = text(textT, row, 106, 19, 57, 17, TEXT_FONT, 0x00ff00, "Teleport");
+                InterfaceDefinition goLabel = text(textT, row, 132, 16, 57, 17, TEXT_FONT, LABEL, "Teleport");
                 goLabel.xTextAlignment = 1;
                 add(comps, want, goLabel);
-                InterfaceDefinition on = sprite(buttonT, row, 146, 1, 19, 18, STAR_GOLD, 0);
+                InterfaceDefinition on = sprite(buttonT, row, 190, 9, 19, 18, STAR_GOLD, 0);
                 on.clickMask = 2;
                 on.actions = new String[]{"Unfavourite"};
                 on.isHidden = true;
                 add(comps, want, on);
-                InterfaceDefinition off = sprite(buttonT, row, 146, 1, 19, 18, STAR_GREY, 120);
+                InterfaceDefinition off = sprite(buttonT, row, 190, 9, 19, 18, STAR_GREY, 120);
                 off.clickMask = 2;
                 off.actions = new String[]{"Favourite"};
                 add(comps, want, off);
             }
 
             // ---- right: preview ----
-            int right = panel(comps, want, layerT, rectT, 0, 338, 62, 150, 243);
+            int right = panel(comps, want, layerT, rectT, 0, 274, 105, 214, 197);
             ids.put("PREVIEW_EMPTY", comps.size());
-            InterfaceDefinition empty = text(textT, right, 8, 80, 134, 60, TEXT_FONT, 0x9a9a9a,
+            InterfaceDefinition empty = text(textT, right, 12, 68, 190, 60, TEXT_FONT, MUTED,
                     "Select a destination to see it here.");
             empty.xTextAlignment = 1;
             add(comps, want, empty);
             ids.put("PREVIEW_NAME", comps.size());
-            InterfaceDefinition name = text(textT, right, 5, 4, 140, 16, HEADING_FONT, GOLD, "");
+            InterfaceDefinition name = text(textT, right, 8, 8, 198, 16, HEADING_FONT, GOLD, "");
             name.xTextAlignment = 1;
             add(comps, want, name);
-            InterfaceDefinition tagLine = text(textT, right, 5, 20, 140, 13, TEXT_FONT, TEXT, "");
+            InterfaceDefinition tagLine = text(textT, right, 8, 24, 198, 12, TEXT_FONT, TEXT, "");
             tagLine.xTextAlignment = 1;
             add(comps, want, tagLine);
             ids.put("FIRST_MODEL", comps.size());
             for (int[] preset : MODEL_PRESETS) {
                 InterfaceDefinition m = copy(modelT);
                 m.contentType = 0; // 84:4 is contentType 328 (always the local player) -- must be cleared
-                place(m, right, 3, 34, 144, 80);
+                place(m, right, 8, 38, 198, 44);
                 m.modelType = 1;
                 m.modelId = -1;
                 m.modelZoom = (int) Math.round(preset[0] * MODEL_ZOOM_SCALE);
@@ -164,17 +189,17 @@ public class BuildTeleportInterface {
                 add(comps, want, m);
             }
             ids.put("PREVIEW_DESC", comps.size());
-            InterfaceDefinition desc = text(textT, right, 5, 120, 140, 50, TEXT_FONT, TEXT, "");
+            InterfaceDefinition desc = text(textT, right, 10, 84, 194, 36, TEXT_FONT, TEXT, "");
             desc.xTextAlignment = 1;
             desc.yTextAlignment = 0;
             desc.lineHeight = 12;
             add(comps, want, desc);
             ids.put("FIRST_DROP", comps.size());
             for (int k = 0; k < DROPS; k++) {
-                int x = 3 + k * 37;
-                add(comps, want, solid(rect, right, x, 172, 36, 32, SLOT_FILL));
-                add(comps, want, outlineRect(rect, right, x, 172, 36, 32, SLOT_BORDER, false));
-                InterfaceDefinition item = sprite(buttonT, right, x, 172, 36, 32, -1, 0);
+                int x = 16 + k * 40;
+                add(comps, want, solid(rect, right, x, 136, 36, 32, SLOT_FILL));
+                add(comps, want, outlineRect(rect, right, x, 136, 36, 32, SLOT_BORDER, false));
+                InterfaceDefinition item = sprite(buttonT, right, x, 136, 36, 32, -1, 0);
                 item.borderType = 1;
                 item.shadowColor = 0x302020;
                 item.clickMask = 2;
@@ -182,28 +207,33 @@ public class BuildTeleportInterface {
                 add(comps, want, item);
             }
             ids.put("PREVIEW_REQ", comps.size());
-            InterfaceDefinition req = text(textT, right, 5, 206, 140, 13, TEXT_FONT, TEXT, "");
+            InterfaceDefinition req = text(textT, right, 8, 121, 198, 12, TEXT_FONT, TEXT, "");
             req.xTextAlignment = 1;
             add(comps, want, req);
             ids.put("PREVIEW_TELEPORT", comps.size());
             InterfaceDefinition tele = copy(buttonT);
-            place(tele, right, 5, 221, 112, 19);
+            place(tele, right, 8, 172, 198, 20);
+            tele.spriteId = TELE;
+            tele.spriteTiling = false;
+            tele.borderType = 0;
+            tele.shadowColor = 0;
             tele.clickMask = 2;
             tele.actions = new String[]{"Teleport"};
-            tele.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-            tele.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
+            tele.onMouseOverListener = new Object[]{44, -2147483645, TELE_HOVER};
+            tele.onMouseLeaveListener = new Object[]{44, -2147483645, TELE};
             add(comps, want, tele);
             InterfaceDefinition teleLabel = copy(labelT);
-            place(teleLabel, right, 6, 222, 110, 16);
+            place(teleLabel, right, 9, 174, 196, 16);
             teleLabel.text = "Teleport";
+            teleLabel.textColor = LABEL;
             add(comps, want, teleLabel);
             ids.put("PREVIEW_STAR_ON", comps.size());
-            InterfaceDefinition on = sprite(buttonT, right, 124, 221, 19, 18, STAR_GOLD, 0);
+            InterfaceDefinition on = sprite(buttonT, right, 178, 143, 19, 18, STAR_GOLD, 0);
             on.clickMask = 2;
             on.actions = new String[]{"Unfavourite"};
             on.isHidden = true;
             add(comps, want, on);
-            InterfaceDefinition off = sprite(buttonT, right, 124, 221, 19, 18, STAR_GREY, 120);
+            InterfaceDefinition off = sprite(buttonT, right, 178, 143, 19, 18, STAR_GREY, 120);
             off.clickMask = 2;
             off.actions = new String[]{"Favourite"};
             add(comps, want, off);
@@ -222,6 +252,16 @@ public class BuildTeleportInterface {
                     if (!Objects.deepEquals(f.get(got), f.get(exp)))
                         throw new IllegalStateException("component " + c + ": " + f.getName() + " " + f.get(got) + " != " + f.get(exp));
                 }
+            }
+            if (args[0].equals("export")) { // rev 231 component files for cache stage 30 (PatchKarnUi, 2026-11-11)
+                File out = new File(args[2]);
+                out.mkdirs();
+                for (File f : out.listFiles())
+                    f.delete();
+                for (int c = 0; c < comps.size(); c++)
+                    java.nio.file.Files.write(new File(out, c + ".dat").toPath(), comps.get(c));
+                System.out.println("EXPORTED " + comps.size() + " rev 231 components to " + out);
+                return;
             }
             if (!apply) {
                 System.out.println("VERIFY OK -- " + comps.size() + " components, nothing written.");
@@ -263,12 +303,16 @@ public class BuildTeleportInterface {
                      int parent, int x, int y, int w, int h) {
         int id = comps.size();
         add(comps, want, layer(layerT, parent, x, y, w, h));
-        add(comps, want, solid(rectT[1], id, 0, 0, w, h, PANEL_FILL));
+        // Karn: the panel itself is painted into the window art (24816); its fill and frame stay as hidden components
+        InterfaceDefinition fill = solid(rectT[1], id, 0, 0, w, h, PANEL_FILL);
+        fill.isHidden = true;
+        add(comps, want, fill);
         for (int k = 0; k < 3; k++) {
             InterfaceDefinition r = copy(rectT[k]);
             if (k == 2) // the frame's filled inner rect (1002:161, 312b23) is the visible panel colour: warm stone
                 r.textColor = 0x36302a;
             place(r, id, k, k, w - 2 * k, h - 2 * k);
+            r.isHidden = true;
             add(comps, want, r);
         }
         return id;
@@ -286,10 +330,10 @@ public class BuildTeleportInterface {
         hover(b, BOX, BOX_HOVER);
         add(comps, want, b);
         add(comps, want, outlineRect(rect, parent, x, y, w, h, BORDER, false));
-        InterfaceDefinition recess = solid(rect, parent, x + 1, y + 1, w - 2, h - 2, 0x1c1814);
+        InterfaceDefinition recess = solid(rect, parent, x + 1, y + 1, w - 2, h - 2, PICKED); // Karn: picked = deep crimson
         recess.isHidden = true;
         add(comps, want, recess);
-        add(comps, want, outlineRect(rect, parent, x, y, w, h, 0x15120f, true)); // dark pressed-stone edge: any lighter trim read as a yellow box
+        add(comps, want, outlineRect(rect, parent, x, y, w, h, PICKED_EDGE, true)); // a dark gold edge, not a bright one
     }
 
     static InterfaceDefinition sprite(InterfaceDefinition buttonT, int parent, int x, int y, int w, int h, int spriteId, int opacity) {

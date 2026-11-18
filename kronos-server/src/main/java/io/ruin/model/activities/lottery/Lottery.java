@@ -66,7 +66,7 @@ public final class Lottery {
 	private static final String ORANGE = "<col=ff981f>", WHITE = "<col=ffffff>", GREY = "<col=9a9a9a>", GREEN = "<col=00ff00>",
 		YELLOW = "<col=ffff00>", RED = "<col=ff3333>", END = "</col>";
 	/** Chat: gold-star badge + high-contrast prefix (readable on the parchment chatbox). */
-	private static final String TAG = Icon.COLLECTION_LOG.tag() + " <col=b85900><shad=000000>[Zelus Lottery]:</shad></col> ";
+	private static final String TAG = Icon.COLLECTION_LOG.tag() + " <col=b85900><shad=000000>[Karn Lottery]:</shad></col> ";
 	private static final String CHAT_POINTS = "<col=006600><b>", CHAT_PCT = "<col=000080><shad=000000><b>", CHAT_END = "</b></col>",
 		CHAT_PCT_END = "</b></shad></col>", CHAT_ERROR = "<col=7f0000>";
 
@@ -192,7 +192,7 @@ public final class Lottery {
 	/** Jackpot Jarvis's "Talk-to": the lottery in four lines, then an offer to open it. */
 	private static void talk(Player player, NPC npc) {
 		player.dialogue(
-			new io.ruin.model.inter.dialogue.NPCDialogue(npc, "Welcome to the Zelus Lottery! Players pool together PK Points and "
+			new io.ruin.model.inter.dialogue.NPCDialogue(npc, "Welcome to the Karn Lottery! Players pool together PK Points and "
 				+ "PvM Points, and one lucky entrant wins the whole grand pot."),
 			new io.ruin.model.inter.dialogue.NPCDialogue(npc, "To keep things fair, PK Points are weighted at " + PKP_WEIGHT
 				+ "x the value of PvM Points: 1 PKP counts as " + PKP_WEIGHT + " tickets, 1 PvMP as 1 ticket."),
@@ -375,7 +375,7 @@ public final class Lottery {
 				state.pendingPvmp.merge(winner.uid, pvmpPot, Long::sum);
 		}
 		save();
-		Broadcast.GLOBAL.sendNews(Icon.COLLECTION_LOG, "Zelus Lottery", winner.name + " has won the lottery pot of "
+		Broadcast.GLOBAL.sendNews(Icon.COLLECTION_LOG, "Karn Lottery", winner.name + " has won the lottery pot of "
 			+ potText(pkpPot, pvmpPot) + " with a win chance of " + String.format(Locale.ROOT, "%.3f", chance) + "%!");
 		refreshViewers();
 	}
@@ -423,7 +423,7 @@ public final class Lottery {
 	public static void open(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "Zelus Lottery" + END);
+		ps.sendString(INTERFACE, TITLE, ORANGE + "Karn Lottery" + END);
 		ps.sendString(INTERFACE, RULES, "Add PK Points or PvM Points to the lotto. Your win chance is your weight"
 			+ " divided by the total weight.");
 		ps.sendString(INTERFACE, POT_LABEL, "- TOTAL POT SIZE -");
@@ -497,7 +497,7 @@ public final class Lottery {
 		if (d == null)
 			return;
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, MODAL_TITLE, ORANGE + "Zelus Lottery · Deposit " + d.currency.longName + END);
+		ps.sendString(INTERFACE, MODAL_TITLE, ORANGE + "Karn Lottery · Deposit " + d.currency.longName + END);
 		ps.sendString(INTERFACE, MODAL_BALANCE, "Available: " + GREEN + fmt(d.currency.balance(player)) + " " + d.currency.shortName + END);
 		for (int k = 0; k < 5; k++) {
 			int comp = FIRST_AMOUNT + k * AMOUNT_STRIDE;

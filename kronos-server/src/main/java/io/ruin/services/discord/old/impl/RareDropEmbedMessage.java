@@ -1,3 +1,4 @@
+// Beta audit 2026-11-18: the hard-coded Discord webhook URLs (with tokens) were removed from this legacy class.
 package io.ruin.services.discord.old.impl;
 
 import io.ruin.api.utils.NumberUtils;
@@ -25,7 +26,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1185410450930794628/DksGrkYmv625ltYkd9nE3bqAFEk5QlQ5GBhQvBrV27lJAAS3EjXiFlArCgHM8sv1TFSw");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -77,7 +78,7 @@ public class RareDropEmbedMessage {
 		}
 
 		try {
-			Webhook webhook = new Webhook("https://discord.com/api/webhooks/1340050937699500042/L_PcztA4btH98i6WKltXEVH8zn-h67DySRfHuzyOa4FCrGSRklteTLc_zf4jOgMi3BCS");
+			Webhook webhook = new Webhook("");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -104,7 +105,7 @@ public class RareDropEmbedMessage {
 		}
 
 		try {
-			Webhook webhook = new Webhook("https://discord.com/api/webhooks/1340050937699500042/L_PcztA4btH98i6WKltXEVH8zn-h67DySRfHuzyOa4FCrGSRklteTLc_zf4jOgMi3BCS");
+			Webhook webhook = new Webhook("");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -133,7 +134,7 @@ public class RareDropEmbedMessage {
 	public static void sendPvpDeathWebhook(Player player, Player from, List<Item> lootedItems) {
 		if (!World.isLive()) return;
 		try {
-			var webhook = new Webhook("https://discord.com/api/webhooks/1397668619735007303/yj1hB2L8QmUCVksrD-wDg99bQrXquXsCVKyMxUUa0LoQj6fO1KolXak2H9zkdksuifQL");
+			var webhook = new Webhook("");
 			var message = new Message();
 			var embedMessage = new Embed();
 			var sb = new StringBuilder();
@@ -169,7 +170,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1185410450930794628/DksGrkYmv625ltYkd9nE3bqAFEk5QlQ5GBhQvBrV27lJAAS3EjXiFlArCgHM8sv1TFSw");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -203,7 +204,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discordapp.com/api/webhooks/1241445767206404117/XlXHqbsLnrWrDdJZ_Wb_-DmF9R5xV8mG24DGQY7tOFWvQjsCU8HEYy6_xUNmxNDrekx9");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -234,7 +235,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1344687625562488862/T54pouf8Thmer238_szHnvcASvL9fm-93SakUlmqBYewOfiFH8u36o1pn3z_K-KFfJeR");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -264,7 +265,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discordapp.com/api/webhooks/1241445767206404117/XlXHqbsLnrWrDdJZ_Wb_-DmF9R5xV8mG24DGQY7tOFWvQjsCU8HEYy6_xUNmxNDrekx9");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -295,7 +296,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1191798479668903976/E97nqTesHzL9f1qacbgiFMU3mqHpg6vIzVOHwnMYoYRcTN5ovB9hWfF5JPOhUEuMUteC");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -324,7 +325,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1296238190289748118/aGMspgIGR0faI_0m99v1y0UpYpL3ah9pxue2NY2wFfk5AgXkTA4JkplREQPZtTStmkZk");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -351,7 +352,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1296238190289748118/aGMspgIGR0faI_0m99v1y0UpYpL3ah9pxue2NY2wFfk5AgXkTA4JkplREQPZtTStmkZk");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -378,7 +379,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1296238190289748118/aGMspgIGR0faI_0m99v1y0UpYpL3ah9pxue2NY2wFfk5AgXkTA4JkplREQPZtTStmkZk");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -407,7 +408,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1189980888298168461/xXOgvkVTdx_KU5NzSupkFS-ok-9N77N54uiUbBq2CfCqVllKZ0e9i6bqdCps014y3JUg");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -435,7 +436,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1191800294133211146/wi2pXOuQ8H1r1yKdw-RbLq8EYuP2f1SyRGl6BQcgMsw2glzjSabZeqsWSgv04Km3H_0r");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -463,7 +464,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1296238190289748118/aGMspgIGR0faI_0m99v1y0UpYpL3ah9pxue2NY2wFfk5AgXkTA4JkplREQPZtTStmkZk");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -491,7 +492,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1191800294133211146/wi2pXOuQ8H1r1yKdw-RbLq8EYuP2f1SyRGl6BQcgMsw2glzjSabZeqsWSgv04Km3H_0r");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -520,7 +521,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1296238190289748118/aGMspgIGR0faI_0m99v1y0UpYpL3ah9pxue2NY2wFfk5AgXkTA4JkplREQPZtTStmkZk");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -548,7 +549,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1303428057322885211/nLh0XS-wMwdVU-DWoOTvrcGyunmpr-siKJW6oHtbV6__nMyMJ83st9BzT30b8oPV2SAN");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -577,7 +578,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1191800294133211146/wi2pXOuQ8H1r1yKdw-RbLq8EYuP2f1SyRGl6BQcgMsw2glzjSabZeqsWSgv04Km3H_0r");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -606,7 +607,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1201344161530523708/ul3CgmKWMRMpDGc-d7M_As20PYg8dTRmWmmMTV7OOC-zyvCBEBEB-_Avczd0ooFFZTm4");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -643,7 +644,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1192299187795132547/GxennZIP_mCo_CKZR_vyecnL78MMUBoVrj3PViNTsGSiYUmyNYdCX_7KJuxuBA1tcE9g");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -678,7 +679,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1192300359201325116/ODjsMOx4YsXXvzX91yyaXKx-cfiDbc9wSoSYYt8oe8miaUEAZ1ajp--uAPWsz6Vr6aJI");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -714,7 +715,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1189985122544521296/iIDpUh6bYhbPLcdOxPW7yuALyh28B1QLL-dYH6yCvvfBnE5c0Aln7I90n0a2bZyqzUE7");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -742,7 +743,7 @@ public class RareDropEmbedMessage {
 
 		try {
 			Webhook webhook = new Webhook(
-				"https://discord.com/api/webhooks/1189984062568415344/EllsVq4kEao2PahwrDVytSGONePGQZozr3AjSiNJVv6_GAmHTrI3ka1SCv2seuhyWBQ2");
+				"");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();
@@ -770,7 +771,7 @@ public class RareDropEmbedMessage {
 		}
 
 		try {
-			Webhook webhook = new Webhook("https://discord.com/api/webhooks/1201344161530523708/ul3CgmKWMRMpDGc-d7M_As20PYg8dTRmWmmMTV7OOC-zyvCBEBEB-_Avczd0ooFFZTm4");
+			Webhook webhook = new Webhook("");
 			Message message = new Message();
 
 			Embed embedMessage = new Embed();

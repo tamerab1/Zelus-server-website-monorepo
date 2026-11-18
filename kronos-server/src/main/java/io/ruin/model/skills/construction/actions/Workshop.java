@@ -17,6 +17,8 @@ public class Workshop {
 
 	public static void register() {
 		ItemObjectAction.register(Buildable.ARMOUR_STAND.getBuiltObjects()[0], (player, item, obj) -> {
+			if (io.ruin.model.combat.MoonArmour.repair(player, item, true))
+				return;
 			ItemBreaking broken = item.getDef().brokenFrom;
 			if (broken == null) {
 				player.dialogue(new MessageDialogue("You can't repair that."));

@@ -41,49 +41,31 @@ public class MoonsOfPerilObjects {
 			}
 		});
 		ObjectAction.register(51373, "Use", (player, obj) -> {
-			if (player.getMoonsOfPerilHandler().blueMoonDead) {
-				player.sendMessage("The Blue Moon has already been defeated.");
+			MoonsOfPerilHandler h = player.getMoonsOfPerilHandler();
+			if (h.isDead(MoonsOfPerilHandler.Moon.BLUE)) {
+				player.sendMessage("The Blue Moon has already been subdued. Claim your reward from the Lunar Chest first.");
 				return;
 			}
 			player.dialogue(new MessageDialogue("Would you like to start the blue moon boss fight?"),
 				new OptionsDialogue(
-					new Option("Yes.", () -> {
-						player.getMoonsOfPerilHandler().enterBlueMoon(player);
-					}),
+					new Option("Yes.", () -> h.startFight(player, MoonsOfPerilHandler.Moon.BLUE)),
 					new Option("No.")));
 		});
 		ObjectAction.register(51372, "Use", (player, obj) -> {
-			if (player.getMoonsOfPerilHandler().bloodMoonDead) {
-				player.sendMessage("The Blood Moon has already been defeated.");
+			MoonsOfPerilHandler h = player.getMoonsOfPerilHandler();
+			if (h.isDead(MoonsOfPerilHandler.Moon.BLOOD)) {
+				player.sendMessage("The Blood Moon has already been subdued. Claim your reward from the Lunar Chest first.");
 				return;
 			}
 			player.dialogue(new MessageDialogue("Would you like to start the blood moon boss fight?"),
 				new OptionsDialogue(
-					new Option("Yes.", () -> {
-						player.getMoonsOfPerilHandler().enterBloodMoon(player);
-					}),
+					new Option("Yes.", () -> h.startFight(player, MoonsOfPerilHandler.Moon.BLOOD)),
 					new Option("No.")));
 		});
-		ObjectAction.register(53003, "Escape", (player, obj) -> {
-			if (player.getMoonsOfPerilHandler().eclipseMoonRoom.swRegion.id == player.getPosition().getRegionId()) {
-				player.getMoonsOfPerilHandler().leaveEclipseMoon(player);
-			} else {
-				player.getMoonsOfPerilHandler().leaveBloodMoon(player);
-			}
-		});
-		ObjectAction.register(53003, "Quick-escape", (player, obj) -> {
-			if (player.getMoonsOfPerilHandler().eclipseMoonRoom.swRegion.id == player.getPosition().getRegionId()) {
-				player.getMovement().teleport(1466, 9632, 0);
-			} else {
-				player.getMovement().teleport(1413, 9632, 0);
-			}
-		});
-		ObjectAction.register(53004, "Escape", (player, obj) -> {
-			player.getMoonsOfPerilHandler().leaveBlueMoon(player);
-		});
-		ObjectAction.register(53004, "Quick-escape", (player, obj) -> {
-			player.getMovement().teleport(1440, 9658, 0);
-		});
+		ObjectAction.register(53003, "Escape", (player, obj) -> player.getMoonsOfPerilHandler().escape(player, true));
+		ObjectAction.register(53003, "Quick-escape", (player, obj) -> player.getMoonsOfPerilHandler().escape(player, false));
+		ObjectAction.register(53004, "Escape", (player, obj) -> player.getMoonsOfPerilHandler().escape(player, true));
+		ObjectAction.register(53004, "Quick-escape", (player, obj) -> player.getMoonsOfPerilHandler().escape(player, false));
 		ObjectAction.register(51359, "Trap", (player, obj) -> player.getMoonsOfPerilHandler().catchMossLizard(player));
 		ObjectAction.register(51365, "Collect-from", (player, obj) -> player.getMoonsOfPerilHandler().pickMoonlightGrub(player));
 		ObjectAction.register(51362, "Cook", (player, obj) -> {
@@ -95,18 +77,21 @@ public class MoonsOfPerilObjects {
 				player.sendMessage("You have nothing to cook here.");
 			}
 		});
+		// the stove's second option restores run energy (wiki: no two-tick delay since 3 April 2024)
+		ObjectAction.register(51362, "Make-cuppa", (player, obj) -> {
+			player.getMovement().restoreEnergy(100);
+		});
 		ObjectAction.register(51346, "Claim", (player, obj) -> player.getMoonsOfPerilHandler().lootShrine(player));
 		ObjectAction.register(51367, "Fish", (player, obj) -> player.getMoonsOfPerilHandler().fishBream(player));
 		ObjectAction.register(51374, "Use", (player, obj) -> {
-			if (player.getMoonsOfPerilHandler().eclipseMoonDead) {
-				player.sendMessage("The Eclipse Moon has already been defeated.");
+			MoonsOfPerilHandler h = player.getMoonsOfPerilHandler();
+			if (h.isDead(MoonsOfPerilHandler.Moon.ECLIPSE)) {
+				player.sendMessage("The Eclipse Moon has already been subdued. Claim your reward from the Lunar Chest first.");
 				return;
 			}
 			player.dialogue(new MessageDialogue("Would you like to start the eclipse moon boss fight?"),
 				new OptionsDialogue(
-					new Option("Yes.", () -> {
-						player.getMoonsOfPerilHandler().enterEclipseMoon(player);
-					}),
+					new Option("Yes.", () -> h.startFight(player, MoonsOfPerilHandler.Moon.ECLIPSE)),
 					new Option("No.")));
 		});
 		ObjectAction.register(51375, "Pass-through", (player, obj) -> {

@@ -18,10 +18,10 @@ public class Commands implements Hook<CommandHandler.Hook.Handle> {
 		var command = ctx.command();
 
 		switch (command) {
-			case "market", "zelusmarket", "tradepost" -> {
+			case "market", "karnmarket", "tradepost" -> {
 				// anywhere but the Wilderness / mid-fight (the GE booths and clerks work as before)
 				if (player.wildernessLevel > 0 || player.getCombat().isDefending(17)) {
-					player.sendMessage("You can't open the Zelus Market in the Wilderness or during combat.");
+					player.sendMessage("You can't open the Karn Market in the Wilderness or during combat.");
 					return Result.Return;
 				}
 				ZelusMarket.open(player);

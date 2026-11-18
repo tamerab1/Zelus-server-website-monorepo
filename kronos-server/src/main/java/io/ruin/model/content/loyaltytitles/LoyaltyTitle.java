@@ -317,7 +317,7 @@ public class LoyaltyTitle {
 		p(30205, Category.DONATOR, "<col=0f0f0f>Platinum </col>", "Platinum Donator rank", 0);
 		p(30206, Category.DONATOR, "<col=bb7c00>Legend </col>", "Legendary Donator rank", 0);
 		p(30207, Category.DONATOR, "<col=FC7306>Supreme </col>", "Supreme Donator rank", 0);
-		pDp(30208, Category.DONATOR, "<col=00FFFF>ZLUS </col>", 500);
+		pDp(30208, Category.DONATOR, "<col=FF0000>KARN </col>", 500);
 		pDp(30209, Category.DONATOR, "<col=C0392B>VIP </col>", 2000);
 		sDp(30210, Category.DONATOR, "<col=FF8C00> the Wallet Warrior</col>", 1000);
 		sDp(30211, Category.DONATOR, "<col=2ECC71> the Big Spender</col>", 5000);
@@ -327,12 +327,16 @@ public class LoyaltyTitle {
 		pPk(30215, Category.PVP, "<col=000000>KILLER </col>", 5000);
 		sPk(30216, Category.PVP, "<col=800000> the Feared</col>", 2500);
 		pPk(30217, Category.PVP, "<col=A9A9A9>Edgevillian </col>", 1500);
-		// Staff-only, non-purchasable -- granted manually via ::givetitle. Cyan to
-		// match the ZLUS donator title's color (30208).
-		p(30220, Category.GENERAL, "<col=00FFFF>CM </col>", "Awarded to the Zelus Community Manager", 0);
+		// Staff-only, non-purchasable -- granted manually via ::givetitle. Cyan (the
+		// old colour of the 30208 donator title, now KARN in red).
+		p(30220, Category.GENERAL, "<col=00FFFF>CM </col>", "Awarded to the Karn Community Manager", 0);
 		// Division Rivals shop titles (io.ruin.model.content.rivals.RivalsShop), unlocked there for Rivals Points
 		s(30221, Category.PVP, "<col=990000> the Rival</col>", "Bought from the Division Rivals shop", 0);
 		p(30222, Category.PVP, "<col=FFD700>Undefeated </col>", "Bought from the Division Rivals shop", 0);
 		p(30223, Category.PVP, "<col=8a0303>Weekly Warlord </col>", "A rare reward from the Division Rivals tier 2 weekly chest", 0);
+		// The Five Seals shop titles (io.ruin.model.activities.fiveseals.FiveSealsShop), bought in order for Ascension shards
+		p(30224, Category.PVM, "<col=B81D24>Sealbreaker </col>", "Bought from The Five Seals shop", 0);
+		s(30225, Category.PVM, "<col=D4AF37> the Ascended</col>", "Bought from The Five Seals shop", 0);
+		p(30226, Category.PVM, "<col=E5B84B>Sovereign </col>", "Bought from The Five Seals shop", 0);
 	}
 }

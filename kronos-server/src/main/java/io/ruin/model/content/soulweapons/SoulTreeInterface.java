@@ -46,10 +46,10 @@ public class SoulTreeInterface {
 	/** Aura card parts: orb, silhouette, lock, name, state pills (activate / active / locked), label, tooltip. */
 	private static final int AURA_ORB = 2, AURA_SILHOUETTE = 3, AURA_LOCK = 4, AURA_NAME = 5, AURA_PILL = 6,
 			AURA_LABEL = 9, AURA_TIP = 10;
-	private static final int ICON_SPRITE = 24700, SOCKET_SPRITE = 24591, SET_COLOUR = 45, LINK_LIT = 0x2fd2d8,
-			LINK_GOLD = 0xffc35a, LINK_DIM = 0x2a2620;
+	private static final int ICON_SPRITE = 24700, SOCKET_SPRITE = 24591, SET_COLOUR = 45, LINK_LIT = 0xf06a4a,
+			LINK_GOLD = 0xffc35a, LINK_DIM = 0x4a2a2e;
 	private static final int RESET_COST = 500; // PvM points
-	private static final String GOLD = "<col=ffc35a>", TEAL = "<col=2fd2d8>", CYAN = "<col=00ffff>", ORANGE = "<col=ff981f>",
+	private static final String GOLD = "<col=ffc35a>", TEAL = "<col=f06a4a>", CYAN = "<col=00ffff>", ORANGE = "<col=ff981f>",
 			GREEN = "<col=3ddc5a>", MUTED = "<col=8f8573>", WHITE = "<col=ffffff>", RED = "<col=ff6666>", END = "</col>";
 	private static final String[] ROMAN = {"I", "II", "III"};
 	private static final String[] LINE_NAMES = {"Soulblade", "Soulbow", "Soulspire"};

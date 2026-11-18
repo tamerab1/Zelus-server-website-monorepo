@@ -20,8 +20,13 @@ import java.io.File;
 // Prints "CONST name = id" lines. Usage: verify|apply|rebuild <cachePath>
 public class BuildSoulTreeInterface {
     static final int GROUP = 1176, ROWS = 3, COLS = 2, ARCS = 5, AURAS = 3, PARTICLES = 8;
-    static final int TEAL = 0x2fd2d8, MUTED = 0x8f8573, LINK_DIM = 0x2a2620;
-    static final int BG_TREE = 0x14120f, CARD = 0x1d1913, CARD_HOVER = 0x2a241c, NODE_CARD = 0x1a1612, NODE_EDGE = 0x3a3128;
+    // Karn theme (2026-11-11): the teal accent is now ember, the stone panels dark glass (IfKit.karn), the window the
+    // Karn art (assets/karn_ui 24817), the bezels / tabs the Karn buttons (24824-24833); SoulTreeInterface matches
+    // round 2 (user 2026-11-11: lighter, clean; header text off the line): warm burgundy, gold rims
+    static final int TEAL = 0xf06a4a, MUTED = 0xc2b29a, LINK_DIM = 0x4a2a2e;
+    static final int BG_TREE = 0x301b1e, CARD = 0x452a2e, CARD_HOVER = 0x5a3438, NODE_CARD = 0x3a2226, NODE_EDGE = 0x9a7840;
+    static final int ART = 24817, CLOSE = 24818, CLOSE_HOVER = 24819, SPARK = 0xffe6a8, EDGE = 0x9a7840, EDGE_DIM = 0x6a4a2a,
+            PLATE = 0x2a181b;
     static final int SET_GRAPHIC = 44, SET_COLOUR = 45, SELF = -2147483645;
     static final int GEM = 24608, ORB = 24609, SILHOUETTE = 24612, LOCK = 24613, PILL = 24614, SOCKET_BIG = 24591, ICON_BIG = 24582;
     static final int ICON = 24700, TRACK = 24712, ARC = 24713, HALO = 24718, SELECT = 24719, SOCKET = 24720, DIM_DISC = 24726,
@@ -37,17 +42,34 @@ public class BuildSoulTreeInterface {
         try (Store store = new Store(new File(args[1]))) {
             store.load();
             k = new IfKit(GROUP, store, rebuild || !apply);
+            k.karn = true;
+            k.karnButtons = new int[][]{{112, 20, 24824, 24825}, {152, 18, 24826, 24827}, {204, 16, 24828, 24829},
+                    {112, 22, 24830, 24831}, {104, 24, 24832, 24833}};
+            InterfaceDefinition window = k.want.get(1); // the Karn art in place of the stone frame
+            window.spriteId = ART;
+            k.comps.set(1, BuildBondsInterface.encodeIf3(window));
+            InterfaceDefinition close = k.want.get(2); // the gem close button, lit while hovered
+            close.spriteId = CLOSE;
+            close.onMouseOverListener = new Object[]{SET_GRAPHIC, SELF, CLOSE_HOVER};
+            close.onMouseLeaveListener = new Object[]{SET_GRAPHIC, SELF, CLOSE};
+            close.hasListener = true;
+            k.comps.set(2, BuildBondsInterface.encodeIf3(close));
+            InterfaceDefinition title = k.want.get(3);
+            title.textColor = IfKit.GOLD;
+            title.originalY = 12; // above the art's divider (root y 51), the subtitle row under it
+            title.originalHeight = 20;
+            k.comps.set(3, BuildBondsInterface.encodeIf3(title));
 
             // ---- header ----
             k.mark("SUBTITLE");
-            k.add(k.text(0, 28, 46, 280, 13, IfKit.TEXT_FONT, MUTED, ""));
+            k.add(k.text(0, 64, 33, 230, 13, IfKit.TEXT_FONT, MUTED, "")); // right of the K emblem
             k.mark("POINTS");
-            k.add(IfKit.right(k.text(0, 250, 46, 214, 13, IfKit.HEADING_FONT, IfKit.GOLD, "")));
-            k.add(sprite(0, 468, 45, 16, 16, GEM));
+            k.add(IfKit.right(k.text(0, 236, 33, 214, 13, IfKit.TEXT_FONT, IfKit.GOLD, "")));
+            k.add(sprite(0, 454, 32, 16, 16, GEM)); // clear of the close button (474,19)
             k.mark("TAB_WEAPON");
-            k.bezelTab(0, 24, 62, 112, 20, "Weapon", true, "Weapon");
+            k.bezelTab(0, 144, 58, 112, 20, "Weapon", true, "Weapon"); // a centred pair under the divider
             k.mark("TAB_TALENTS");
-            k.bezelTab(0, 140, 62, 112, 20, "Talents", true, "Talents");
+            k.bezelTab(0, 256, 58, 112, 20, "Talents", true, "Talents");
 
             // ================= the Weapon page =================
             k.mark("PAGE_WEAPON");
@@ -64,7 +86,7 @@ public class BuildSoulTreeInterface {
             k.add(k.model(clip, 0, 0, 260, 118));
             k.mark("FIRST_PARTICLE");
             for (int p = 0; p < PARTICLES; p++)
-                k.add(IfKit.hidden(k.solid(clip, 76 + p * 15, 108, 2, 2, p % 3 == 0 ? 0xc8ffff : TEAL)));
+                k.add(IfKit.hidden(k.solid(clip, 76 + p * 15, 108, 2, 2, p % 3 == 0 ? SPARK : TEAL)));
             k.mark("ARROW_LEFT");
             k.add(arrow(stage, 14, 141, ARROW_LEFT, "Previous weapon"));
             k.mark("ARROW_RIGHT");
@@ -124,8 +146,8 @@ public class BuildSoulTreeInterface {
                     disc.opacity = 110;
                     int dim = k.add(disc);
                     int name = k.add(k.block(tree, x0 + 46, y0 + 4, 56, 26, IfKit.GOLD, 12, false));
-                    k.add(k.solid(tree, x0 + 46, y0 + 33, 30, 11, 0x0b0a08));
-                    k.add(k.outline(tree, x0 + 46, y0 + 33, 30, 11, 0x5a4d3a, false));
+                    k.add(k.solid(tree, x0 + 46, y0 + 33, 30, 11, PLATE));
+                    k.add(k.outline(tree, x0 + 46, y0 + 33, 30, 11, EDGE, false));
                     int badge = k.add(IfKit.centred(k.text(tree, x0 + 46, y0 + 33, 30, 11, IfKit.TEXT_FONT, IfKit.GOLD, "")));
                     int tip = k.add(IfKit.hidden(k.text(tree, x0, 0, 104, 12, IfKit.TEXT_FONT, IfKit.TEXT, "")));
                     if (n == 0) {
@@ -158,8 +180,8 @@ public class BuildSoulTreeInterface {
             k.mark("INSP_NEXT");
             k.add(k.block(insp, 14, 116, 204, 26, IfKit.TEXT, 12, false));
             // the action: a dim plate always there, the bezel over it only when a rank can be bought; label on top
-            k.add(k.solid(insp, 14, 144, 204, 16, 0x0b0a08));
-            k.add(k.outline(insp, 14, 144, 204, 16, 0x3a3128, false));
+            k.add(k.solid(insp, 14, 144, 204, 16, PLATE));
+            k.add(k.outline(insp, 14, 144, 204, 16, EDGE_DIM, false));
             k.mark("INSP_RUNE");
             k.bezel(insp, 14, 144, 204, 16, "Rank Up");
 
@@ -177,7 +199,7 @@ public class BuildSoulTreeInterface {
                 card.onMouseLeaveListener = new Object[]{SET_COLOUR, SELF, CARD};
                 card.hasListener = true;
                 k.add(card);
-                k.add(k.outline(strip, x, y, 106, 42, 0x5a4d3a, false));
+                k.add(k.outline(strip, x, y, 106, 42, EDGE, false));
                 int orb = k.add(IfKit.hidden(sprite(strip, x + 5, y + 7, 28, 28, ORB + a)));
                 k.add(sprite(strip, x + 5, y + 7, 28, 28, SILHOUETTE));
                 k.add(sprite(strip, x + 14, y + 15, 10, 12, LOCK));
@@ -221,6 +243,15 @@ public class BuildSoulTreeInterface {
             k.bezel(box, 138, 96, 104, 24, "Cancel");
 
             k.finish(apply);
+            if (args[0].equals("export")) { // rev 231 component files for cache stage 30 (PatchKarnUi, 2026-11-11)
+                File out = new File(args[2]);
+                out.mkdirs();
+                for (File f : out.listFiles())
+                    f.delete();
+                for (int c = 0; c < k.comps.size(); c++)
+                    java.nio.file.Files.write(new File(out, c + ".dat").toPath(), k.comps.get(c));
+                System.out.println("EXPORTED " + k.comps.size() + " rev 231 components to " + out);
+            }
         }
     }
 

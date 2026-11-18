@@ -10,7 +10,7 @@ import io.ruin.model.map.Position;
 
 /**
  * Pandora, the Enigma Keeper (npc 17033, the Mystery Box boss; was "Vorath") -- an event boss (2026-10-20). It appears
- * every 2-3 hours (60 seconds' warning, then the spawn broadcast); the next timer starts when it dies. ::pandora takes
+ * every 6-7 hours (60 seconds' warning, then the spawn broadcast); the next timer starts when it dies. ::pandora takes
  * players to its lair while it's up and says how long until it returns otherwise; admins can force it with
  * ::spawnpandora.
  * <p>
@@ -27,8 +27,8 @@ public class VorathHandler {
     public static NPC boss;
     public static final Position teleportPosition = new Position(1964, 5022, 0);
     private static final Position spawnPosition   = new Position(1962, 5044, 0);
-    /** 2-3 hours between appearances, in ticks (100 ticks a minute). */
-    private static final int MIN_DELAY = 120 * 100, MAX_DELAY = 180 * 100, WARNING = 100;
+    /** 6-7 hours between appearances, in ticks (100 ticks a minute; user 2026-11-18, was 2-3). */
+    private static final int MIN_DELAY = 360 * 100, MAX_DELAY = 420 * 100, WARNING = 100;
 
     /** Server tick the next appearance is due, or -1 while it's up / about to spawn. */
     private static long nextSpawnTick = -1;
@@ -85,10 +85,10 @@ public class VorathHandler {
         return minutes >= 60 ? (minutes / 60) + "h " + (minutes % 60) + "m" : minutes + "m";
     }
 
-    /** Called by Pandora's death listener: the next appearance is 2-3 hours out. */
+    /** Called by Pandora's death listener: the next appearance is 6-7 hours out. */
     public static void onDeath() {
         boss = null;
-        announce("<col=a020f0>[Pandora]</col> Pandora has been slain! Its chest will reform in 2-3 hours...");
+        announce("<col=a020f0>[Pandora]</col> Pandora has been slain! Its chest will reform in 6-7 hours...");
         scheduleNext();
     }
 

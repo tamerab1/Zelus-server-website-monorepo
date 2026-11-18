@@ -1,3 +1,4 @@
+// Beta audit 2026-11-18: the hard-coded Discord webhook URLs (with tokens) were removed from this legacy class.
 package io.ruin.services.discord.old.impl;
 
 import io.ruin.model.World;
@@ -26,7 +27,7 @@ public class SuspiciousTransactionWebhook {
 			return;
 		}
 		var webhook = new Webhook(
-			"https://discord.com/api/webhooks/1386167749545427006/sky_gjpXx0ZWVFXjqEqCQOBBooE71_wwTSUjZfK_fa41haCz70svU2fNKTsGLdGHtNjK");
+			"");
 		// time stamp
 		var footer = new Footer();
 		footer.setText(LocalDateTime.now().toString());

@@ -29,7 +29,7 @@ public class BlackjackTable {
 		ObjectAction.register(OBJECT, 1, (player, obj) -> io.ruin.model.content.blackjack.BlackjackInterface.open(player));
 		NPCAction.register(DEALER, "Play Blackjack", (player, npc) -> io.ruin.model.content.blackjack.BlackjackInterface.open(player));
 		NPCAction.register(DEALER, "Talk-to", (player, npc) -> player.dialogue(
-				new NPCDialogue(npc, "Welcome to the Zelus tables, " + player.getName() + "! Blackjack pays 3 to 2 and "
+				new NPCDialogue(npc, "Welcome to the Karn tables, " + player.getName() + "! Blackjack pays 3 to 2 and "
 						+ "the dealer stands on all 17s. Care to take a seat?"),
 				new OptionsDialogue("Play Blackjack?",
 						new Option("Deal me in.", () -> io.ruin.model.content.blackjack.BlackjackInterface.open(player)),

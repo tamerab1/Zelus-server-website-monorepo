@@ -1,0 +1,791 @@
+package io.ruin.model.activities.bosses.royaltitans;
+
+import io.ruin.api.utils.Random;
+import io.ruin.cache.Color;
+import io.ruin.cache.Icon;
+import io.ruin.cache.ObjType;
+import io.ruin.model.World;
+import io.ruin.model.combat.AttackStyle;
+import io.ruin.model.combat.Hit;
+import io.ruin.model.entity.npc.NPC;
+import io.ruin.model.entity.npc.NPCAction;
+import io.ruin.model.entity.npc.NPCCombat;
+import io.ruin.model.entity.player.Player;
+import io.ruin.model.entity.shared.listeners.HitListener;
+import io.ruin.model.inter.ToplevelComponent;
+import io.ruin.model.item.Item;
+import io.ruin.model.item.actions.impl.pet.Pet;
+import io.ruin.model.map.Direction;
+import io.ruin.model.map.Position;
+import io.ruin.model.map.Projectile;
+import io.ruin.model.map.dynamic.DynamicMap;
+import io.ruin.model.map.ground.GroundItem;
+import io.ruin.model.map.object.GameObject;
+import io.ruin.model.map.object.actions.ObjectAction;
+import io.ruin.model.skills.prayer.Prayer;
+import io.ruin.utility.Broadcast;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+
+/**
+ * The Royal Titans: Branda the Fire Queen (rt_fire_queen 12596) and Eldric the Ice King (rt_ice_king 14147), in an
+ * instanced copy of their cave (region 11669) off the Asgarnian Ice Dungeon. Mechanics per the OSRS wiki (2026-11);
+ * every id is the cache's own (gameval names), the arena from the map's blocked flags: players fight on the five-tile
+ * strip x 2909-2913, y 9561-9573, Branda on the lava to the west, Eldric on the ice to the east.
+ * <ul>
+ * <li>Phase 1: each titan walks its side. In melee it lines up with you and stomps the three columns in front of it
+ * (up to 26, fully blocked by Protect from Melee); it then spends ~20 seconds away, firing at you (accuracy x6), raising
+ * a wall of fire / icicles across a row (spawn spotanims 3218/3221, the wall 4 ticks later as locs 56001/56002 with
+ * Douse/Melt hitboxes 14152/14153; standing on a tile takes up to 12 and stops it forming; magic douses a tile and its
+ * neighbours), or summoning three elementals (14150/14151; from 100 damage taken). Elementals explode for 8-10 in a
+ * 3x3 if left alive.</li>
+ * <li>Phase 2 (either titan at 35%): both teleport (11984/11983, 3216) to the ends of the strip and stay there:
+ * stomps hit the three rows in front, summons continue, and Elemental Blast covers the strip three times with one safe
+ * tile each (marker loc 56003), up to 30. A titan teleporting onto you knocks you back for 15-30.</li>
+ * <li>One titan down: the other's attacks pierce prayer (stomp up to 10).</li>
+ * <li>Both down: they fall (deaths 11992/11987, floor locs 55995-56000) and become their inactive forms
+ * (14148/14149): Loot (two rolls), Sacrifice (no drops, pet x2) or Take pages (10-19 desiccated pages) on ONE of
+ * them. Uniques: element staff crown 1/75, prayer scroll 1/75, Giantsoul amulet 1/16; hard clue 1/25, elite clue
+ * 1/100, Bran 1/3000.</li>
+ * </ul>
+ */
+@Slf4j
+public class RoyalTitans extends NPCCombat {
+
+	public static final int BRANDA = 12596, ELDRIC = 14147, BRANDA_INACTIVE = 14148, ELDRIC_INACTIVE = 14149;
+	public static final int FIRE_ELEMENTAL = 14150, ICE_ELEMENTAL = 14151, FIRE_HITBOX = 14152, ICE_HITBOX = 14153;
+	private static final int ENTRANCE = 55986, EXIT = 55987, SCOREBOARD = 56004;
+	private static final int REGION = 11669;
+	private static final Position OUTSIDE = new Position(2950, 9574, 0), ENTRY = new Position(2911, 9562, 0);
+
+	/* per titan: index 0 = Branda (fire, west), 1 = Eldric (ice, east) */
+	private static final int[] SPAWN_ANIM = { 11966, 11963 }, MELEE_ANIM = { 11974, 11973 }, SUMMON_ANIM = { 11976, 11975 },
+		SUMMON2_ANIM = { 11978, 11977 }, AOE1_ANIM = { 11981, 11975 }, AOE2_ANIM = { 11982, 11977 }, TELEPORT_ANIM = { 11984, 11983 },
+		INACTIVE_ANIM = { 11990, 11985 }, DEATH_ANIM = { 11992, 11987 };
+	private static final int[] WALL_LOC = { 56001, 56002 }, WALL_SPAWN_GFX = { 3218, 3221 }, WALL_DESPAWN_GFX = { 3220, 3223 },
+		HITBOX = { FIRE_HITBOX, ICE_HITBOX }, ELEMENTAL = { FIRE_ELEMENTAL, ICE_ELEMENTAL }, SUMMON_GFX = { 3212, 3212 },
+		BLAST_GFX = { 3214, 3208 };
+	private static final int[][] SPAWN_FLOOR = { { 55993, 55994 }, { 55997, 55998 } }, DEATH_FLOOR = { { 55995, 55996 }, { 55999, 56000 } };
+	private static final Projectile[] RANGED = { new Projectile(3209, 90, 31, 30, 50, 10, 16, 64), new Projectile(3210, 90, 31, 30, 50, 10, 16, 64) };
+	private static final int STOMP_GFX = 3211, TELEPORT_GFX = 3216, SAFE_MARKER = 56003;
+
+	/* static arena */
+	private static final int STRIP_MIN_X = 2909, STRIP_MAX_X = 2913, STRIP_MIN_Y = 9561, STRIP_MAX_Y = 9573;
+	private static final Position[] SPAWN = { new Position(2906, 9566, 0), new Position(2914, 9566, 0) };
+	/* phase 2: Branda at the north end, Eldric at the south end, both on the strip */
+	private static final Position[] P2_POS = { new Position(2910, 9571, 0), new Position(2910, 9561, 0) };
+
+	/* ------------------------------------------------------------------ instance */
+
+	private static final class Arena {
+		DynamicMap map;
+		Player player; // the leader (whose instance it is)
+		final List<Player> players = new ArrayList<>(); // 1-2 fighters
+		final Set<Integer> everEntered = new HashSet<>(), looted = new HashSet<>(), deadCounted = new HashSet<>();
+		final Map<Integer, Integer> damage = new HashMap<>(); // userId -> damage dealt to the titans
+		final NPC[] titans = new NPC[2];
+		final boolean[] down = new boolean[2];
+		boolean phase2;
+		int startTick, blastCooldown;
+		final List<NPC> elementals = new ArrayList<>();
+		final List<Object[]> walls = new ArrayList<>(); // {loc or null, hitbox npc, ticksLeft, x, y, side}
+		final List<GameObject> floorLocs = new ArrayList<>();
+		final int[] contribution = new int[2];
+	}
+
+	private static final Map<Integer, Arena> ARENAS = new HashMap<>();
+	private static int globalKills, globalDeaths, globalBest = -1;
+
+	public static void register() {
+		ObjectAction.register(ENTRANCE, 1, (p, obj) -> enter(p));
+		ObjectAction.register(ENTRANCE, 3, (p, obj) -> enter(p));
+		ObjectAction.register(ENTRANCE, 2, (p, obj) -> join(p));
+		ObjectAction.register(EXIT, 1, (p, obj) -> p.sendMessage("The tunnel leads back to the Asgarnian Ice Dungeon."));
+		ObjectAction.register(EXIT, 2, (p, obj) -> p.getMovement().teleport(OUTSIDE));
+		ObjectAction.register(SCOREBOARD, 1, (p, obj) -> scoreboard(p));
+		for (int i = 0; i < 2; i++) {
+			int side = i;
+			int npcId = side == 0 ? BRANDA_INACTIVE : ELDRIC_INACTIVE;
+			NPCAction.register(npcId, 1, (p, n) -> claim(p, side, 0));
+			NPCAction.register(npcId, 3, (p, n) -> claim(p, side, 1));
+			NPCAction.register(npcId, 4, (p, n) -> claim(p, side, 2));
+		}
+	}
+
+	private static void scoreboard(Player p) {
+		p.openInterface(ToplevelComponent.MAINMODAL, 909);
+		p.getPacketSender().sendString(909, 9, String.valueOf(p.royalTitansKills.getKills()));
+		p.getPacketSender().sendString(909, 11, String.valueOf(p.royalTitansDeaths));
+		p.getPacketSender().sendString(909, 13, time(p.royalTitansBestTicks));
+		p.getPacketSender().sendString(909, 15, String.valueOf(globalKills));
+		p.getPacketSender().sendString(909, 17, String.valueOf(globalDeaths));
+		p.getPacketSender().sendString(909, 19, time(globalBest));
+	}
+
+	private static String time(int ticks) {
+		if (ticks <= 0)
+			return "-";
+		int cs = ticks * 60;
+		return cs / 6000 + ":" + String.format("%02d.%02d", (cs / 100) % 60, cs % 100);
+	}
+
+	private static void enter(Player p) {
+		if (ARENAS.containsKey(p.getUserId()))
+			return;
+		DynamicMap map;
+		try {
+			map = new DynamicMap().build(REGION, 1);
+		} catch (DynamicMap.DynamicMapBuildException e) {
+			log.error("Unable to build the Royal Titans arena", e);
+			p.sendMessage("The tunnel is blocked. Try again in a moment.");
+			return;
+		}
+		Arena a = new Arena();
+		a.map = map;
+		a.player = p;
+		addPlayer(a, p);
+		a.startTick = (int) io.ruin.Server.currentTick();
+		for (int i = 0; i < 2; i++) {
+			int side = i;
+			Position s = SPAWN[i];
+			NPC t = new NPC(i == 0 ? BRANDA : ELDRIC).spawn(map.convertX(s.getX()), map.convertY(s.getY()), 0, i == 0 ? Direction.EAST : Direction.WEST, 0);
+			t.ownerId = p.getUserId();
+			a.titans[i] = t;
+			RoyalTitans c = (RoyalTitans) t.getCombat();
+			c.arena = a;
+			c.side = i;
+			c.actionDelay = 6 + i * 3; // staggered, as the titans desync slightly
+			t.animate(SPAWN_ANIM[i]);
+			t.hitListener = new HitListener().preDamage(h -> c.preDamage(h)).postDamage(h -> {
+				if (h.attacker != null && h.attacker.player != null && h.damage > 0) {
+					a.contribution[side] += h.damage;
+					a.damage.merge(h.attacker.player.getUserId(), h.damage, Integer::sum);
+				}
+			});
+		}
+	}
+
+	private static void addPlayer(Arena a, Player p) {
+		a.players.add(p);
+		a.everEntered.add(p.getUserId());
+		ARENAS.put(p.getUserId(), a);
+		p.getMovement().teleport(a.map.convertX(ENTRY.getX()), a.map.convertY(ENTRY.getY()), 0);
+		a.map.assignListener(p).onExit((pl, logout) -> destroy(pl, logout));
+	}
+
+	/**
+	 * Join: name a player whose Titans fight you can join. Only while neither titan has lost more than a quarter of its
+	 * HP (450+ of 600), two players at most; nobody can rejoin after dying or leaving.
+	 */
+	private static void join(Player p) {
+		if (ARENAS.containsKey(p.getUserId()))
+			return;
+		p.stringInput("Whose fight do you want to join?", name -> {
+			Player leader = World.getPlayer(name);
+			Arena a = leader == null ? null : ARENAS.get(leader.getUserId());
+			if (a == null || a.map == null) {
+				p.sendMessage("That player isn't fighting the Royal Titans.");
+				return;
+			}
+			if (a.everEntered.contains(p.getUserId())) {
+				p.sendMessage("You can't rejoin a fight you've already left.");
+				return;
+			}
+			if (a.players.size() >= 2) {
+				p.sendMessage("That fight is already full.");
+				return;
+			}
+			for (int i = 0; i < 2; i++)
+				if (a.down[i] || a.phase2 || a.titans[i] == null || a.titans[i].getHp() < 450) {
+					p.sendMessage("That fight has progressed too far for you to join.");
+					return;
+				}
+			addPlayer(a, p);
+			for (Player other : a.players)
+				if (other != p)
+					other.sendMessage(p.getName() + " has joined your fight against the Royal Titans.");
+		});
+	}
+
+	private static void destroy(Player p, boolean logout) {
+		Arena a = ARENAS.remove(p.getUserId());
+		if (a == null)
+			return;
+		a.players.remove(p);
+		if (logout)
+			p.getMovement().teleport(OUTSIDE);
+		if (!a.players.isEmpty()) {
+			if (a.player == p)
+				a.player = a.players.get(0);
+			return;
+		}
+		clearAdds(a);
+		for (NPC t : a.titans)
+			if (t != null)
+				t.remove();
+		for (GameObject o : a.floorLocs)
+			if (!o.isRemoved())
+				o.remove();
+		if (a.map != null) {
+			a.map.destroy();
+			a.map = null;
+		}
+	}
+
+	private static void clearAdds(Arena a) {
+		for (NPC e : a.elementals)
+			e.remove();
+		a.elementals.clear();
+		for (Object[] w : a.walls) {
+			if (w[0] != null && !((GameObject) w[0]).isRemoved())
+				((GameObject) w[0]).remove();
+			((NPC) w[1]).remove();
+		}
+		a.walls.clear();
+	}
+
+	/* ------------------------------------------------------------------ titan combat */
+
+	private Arena arena;
+	private int side, actionDelay = 7, meleeTicks = 0, awayTicks = 0, damageTaken = 0;
+	private boolean away = false;
+
+	/** Players alive and inside this arena. */
+	private List<Player> fighters() {
+		List<Player> list = new ArrayList<>();
+		for (Player f : arena.players)
+			if (!f.getCombat().isDead() && ARENAS.get(f.getUserId()) == arena)
+				list.add(f);
+		return list;
+	}
+
+	private void hitAll(java.util.function.Predicate<Player> on, java.util.function.Function<Player, Hit> hit) {
+		for (Player f : fighters())
+			if (on.test(f))
+				f.hit(hit.apply(f));
+	}
+
+	private int mx(int x) {
+		return arena.map.convertX(x);
+	}
+
+	private int my(int y) {
+		return arena.map.convertY(y);
+	}
+
+	private boolean onStrip(Position p) {
+		return p.getX() >= mx(STRIP_MIN_X) && p.getX() <= mx(STRIP_MAX_X) && p.getY() >= my(STRIP_MIN_Y) && p.getY() <= my(STRIP_MAX_Y);
+	}
+
+	private NPC other() {
+		return arena.titans[1 - side];
+	}
+
+	private boolean alone() {
+		return arena.down[1 - side];
+	}
+
+	void preDamage(Hit hit) {
+		if (arena == null || arena.down[side]) {
+			hit.block();
+			return;
+		}
+		damageTaken += Math.max(0, hit.damage);
+	}
+
+	@Override
+	public void init() {
+		// hit listeners are set by the arena when the titans spawn
+	}
+
+	@Override
+	public void follow() {
+		// movement is driven by process()
+	}
+
+	@Override
+	public boolean attack() {
+		return false;
+	}
+
+	@Override
+	public void process() {
+		if (arena == null || arena.players.isEmpty() || arena.down[side] || isDead())
+			return;
+		if (side == 0 || arena.down[0])
+			arenaTick();
+		List<Player> alive = fighters();
+		if (alive.isEmpty())
+			return;
+		// each titan keeps the player it is lined up with; otherwise the nearest
+		Player p = alive.get(0);
+		for (Player f : alive)
+			if (Math.abs(f.getAbsY() - npc.getAbsY() - 1) < Math.abs(p.getAbsY() - npc.getAbsY() - 1))
+				p = f;
+		if (!arena.phase2 && (npc.getHp() <= npc.getMaxHp() * 35 / 100 || (other() != null && other().getHp() <= other().getMaxHp() * 35 / 100))) {
+			if (side == 0 || arena.down[0])
+				startPhase2();
+			return;
+		}
+		if (--actionDelay > 0) {
+			if (!arena.phase2)
+				walk(p);
+			return;
+		}
+		actionDelay = 7;
+		if (arena.phase2)
+			phase2Action(p);
+		else
+			phase1Action(p);
+	}
+
+	/* phase 1: line up and stomp, then ~20 seconds away (ranged / wall / summon) */
+	private void phase1Action(Player p) {
+		if (!away) {
+			if (inFront(p)) {
+				stomp(p);
+				if (++meleeTicks >= 3) {
+					meleeTicks = 0;
+					away = true;
+					awayTicks = 33;
+				}
+			} else {
+				actionDelay = 1;
+			}
+			return;
+		}
+		int roll = Random.get(2);
+		boolean canSummon = damageTaken >= 100 || (other() != null && other().getCombat() instanceof RoyalTitans o && o.damageTaken >= 100);
+		if (roll == 0 && canSummon && arena.elementals.size() < 6)
+			summon(p);
+		else if (roll == 1)
+			wall(p);
+		else
+			ranged(p);
+		if ((awayTicks -= 7) <= 0)
+			away = false;
+	}
+
+	/** Walks along its side: towards the player's row in melee, to the far end while away. */
+	private void walk(Player p) {
+		int minY = my(STRIP_MIN_Y), maxY = my(STRIP_MAX_Y) - 2;
+		int target = away ? (p.getAbsY() - 1 > (minY + maxY) / 2 ? minY : maxY) : p.getAbsY() - 1;
+		target = Math.max(minY, Math.min(maxY, target));
+		if (npc.getAbsY() != target)
+			npc.stepAbs(npc.getAbsX(), npc.getAbsY() + Integer.signum(target - npc.getAbsY()), io.ruin.model.entity.shared.StepType.WALK);
+		npc.face(side == 0 ? Direction.EAST : Direction.WEST);
+	}
+
+	/** The three columns (phase 1) or rows (phase 2) in front of it. */
+	private List<Position> frontTiles() {
+		List<Position> tiles = new ArrayList<>();
+		int x = npc.getAbsX(), y = npc.getAbsY(), z = npc.getHeight();
+		if (!arena.phase2) {
+			int startX = side == 0 ? x + 3 : x - 3;
+			for (int dx = 0; dx < 3; dx++)
+				for (int dy = 0; dy < 3; dy++)
+					tiles.add(new Position(side == 0 ? startX + dx : startX - dx, y + dy, z));
+		} else {
+			int startY = side == 0 ? y - 1 : y + 3;
+			for (int dy = 0; dy < 3; dy++)
+				for (int tx = mx(STRIP_MIN_X); tx <= mx(STRIP_MAX_X); tx++)
+					tiles.add(new Position(tx, side == 0 ? startY - dy : startY + dy, z));
+		}
+		return tiles;
+	}
+
+	private boolean inFront(Player p) {
+		return frontTiles().contains(p.getPosition());
+	}
+
+	private void stomp(Player p) {
+		npc.animate(MELEE_ANIM[side]);
+		List<Position> tiles = frontTiles();
+		for (Position t : tiles)
+			World.sendGraphics(STOMP_GFX, 0, 0, t.getX(), t.getY(), t.getZ());
+		npc.addEvent(e -> {
+			e.delay(1);
+			if (isDead() || arena == null)
+				return;
+			hitAll(f -> tiles.contains(f.getPosition()), f -> {
+				Hit hit = new Hit(npc, AttackStyle.CRUSH);
+				if (alone())
+					hit.randDamage(10).ignorePrayer();
+				else if (f.getPrayer().isActive(Prayer.PROTECT_FROM_MELEE))
+					hit.fixedDamage(0);
+				else
+					hit.randDamage(26).ignorePrayer();
+				return hit;
+			});
+		});
+	}
+
+	private void ranged(Player p) {
+		npc.animate(AOE1_ANIM[side]);
+		npc.face(p);
+		int delay = RANGED[side].send(npc, p);
+		Hit hit = new Hit(npc, AttackStyle.RANGED).clientDelay(delay);
+		if (alone())
+			hit.randDamage(26).ignorePrayer();
+		else if (p.getPrayer().isActive(Prayer.PROTECT_FROM_MISSILES))
+			hit.fixedDamage(0);
+		else
+			hit.randDamage(26).ignorePrayer(); // out of melee its ranged accuracy is multiplied by six
+		p.hit(hit);
+	}
+
+	private void summon(Player p) {
+		npc.animate(SUMMON_ANIM[side]);
+		npc.graphics(SUMMON_GFX[side]);
+		npc.addEvent(e -> {
+			e.delay(2);
+			if (isDead() || arena == null)
+				return;
+			for (int i = 0; i < 3; i++) {
+				int x = mx(Random.get(STRIP_MIN_X, STRIP_MAX_X)), y = my(Random.get(STRIP_MIN_Y + 2, STRIP_MAX_Y - 2));
+				NPC el = new NPC(ELEMENTAL[side]).spawn(x, y, 0, 3);
+				el.ownerId = p.getUserId();
+				arena.elementals.add(el);
+				el.targetPlayer(p, false);
+				// left alive, it explodes for 8-10 in a 3x3 (no telegraph)
+				el.addEvent(ee -> {
+					ee.delay(Random.get(25, 35));
+					if (el.isRemoved() || el.getCombat().isDead())
+						return;
+					if (arena != null)
+						hitAll(f -> Math.abs(f.getAbsX() - el.getAbsX()) <= 1 && Math.abs(f.getAbsY() - el.getAbsY()) <= 1,
+							f -> new Hit(el).randDamage(8, 10).ignorePrayer().ignoreDefence());
+					el.remove();
+					arena.elementals.remove(el);
+				});
+			}
+		});
+	}
+
+	/** A row of fire / icicles across the strip: telegraphed, formed 4 ticks later, gone after ~25. */
+	private void wall(Player p) {
+		npc.animate(SUMMON2_ANIM[side]);
+		int y = Math.max(my(STRIP_MIN_Y), Math.min(my(STRIP_MAX_Y), p.getAbsY() + Random.get(-2, 2)));
+		List<Object[]> row = new ArrayList<>();
+		for (int x = mx(STRIP_MIN_X); x <= mx(STRIP_MAX_X); x++) {
+			World.sendGraphics(WALL_SPAWN_GFX[side], 0, 0, x, y, 0);
+			NPC hitbox = new NPC(HITBOX[side]).spawn(x, y, 0, 0);
+			Object[] w = { null, hitbox, 25, x, y, side };
+			hitbox.hitListener = new HitListener().preDamage(h -> {
+				h.block();
+				if (h.attackStyle != null && h.attackStyle.isMagic())
+					douse(w);
+			});
+			row.add(w);
+			arena.walls.add(w);
+		}
+		npc.addEvent(e -> {
+			e.delay(4);
+			if (arena == null)
+				return;
+			for (Object[] w : row) {
+				if (!arena.walls.contains(w))
+					continue;
+				int x = (int) w[3], wy = (int) w[4];
+				boolean blocked = false;
+				for (Player f : fighters())
+					if (f.getAbsX() == x && f.getAbsY() == wy) {
+						f.hit(new Hit(npc).randDamage(12).ignorePrayer().ignoreDefence());
+						blocked = true;
+					}
+				if (blocked) {
+					((NPC) w[1]).remove();
+					arena.walls.remove(w);
+					continue;
+				}
+				w[0] = GameObject.spawn(WALL_LOC[side], x, wy, 0, 10, 0);
+			}
+		});
+	}
+
+	/** Douse / melt one tile and the two beside it. */
+	private void douse(Object[] hitWall) {
+		if (arena == null)
+			return;
+		int hx = (int) hitWall[3], hy = (int) hitWall[4];
+		for (Iterator<Object[]> it = arena.walls.iterator(); it.hasNext();) {
+			Object[] w = it.next();
+			if ((int) w[4] != hy || Math.abs((int) w[3] - hx) > 1)
+				continue;
+			if (w[0] != null)
+				((GameObject) w[0]).remove();
+			World.sendGraphics(WALL_DESPAWN_GFX[(int) w[5]], 0, 0, (int) w[3], hy, 0);
+			((NPC) w[1]).remove();
+			it.remove();
+		}
+	}
+
+	/* run once a tick by Branda's handler: walls fade, elementals tidy, the blast cooldown */
+	private void arenaTick() {
+		for (Player f : arena.players)
+			if (f.getCombat().isDead() && arena.deadCounted.add(f.getUserId())) {
+				f.royalTitansDeaths++;
+				globalDeaths++;
+			}
+		for (Iterator<Object[]> it = arena.walls.iterator(); it.hasNext();) {
+			Object[] w = it.next();
+			int left = (int) w[2] - 1;
+			w[2] = left;
+			if (left > 0)
+				continue;
+			if (w[0] != null)
+				((GameObject) w[0]).remove();
+			World.sendGraphics(WALL_DESPAWN_GFX[(int) w[5]], 0, 0, (int) w[3], (int) w[4], 0);
+			((NPC) w[1]).remove();
+			it.remove();
+		}
+		arena.elementals.removeIf(e -> e.isRemoved() || e.getCombat() == null || e.getCombat().isDead());
+		if (arena.blastCooldown > 0)
+			arena.blastCooldown--;
+	}
+
+	/* ------------------------------------------------------------------ phase 2 */
+
+	private void startPhase2() {
+		arena.phase2 = true;
+		for (Object[] w : new ArrayList<>(arena.walls))
+			douse(w);
+		for (int i = 0; i < 2; i++) {
+			NPC t = arena.titans[i];
+			if (t == null || arena.down[i])
+				continue;
+			RoyalTitans c = (RoyalTitans) t.getCombat();
+			int side = i;
+			t.animate(TELEPORT_ANIM[i]);
+			if (i == 0)
+				t.graphics(TELEPORT_GFX);
+			c.actionDelay = 8;
+			t.addEvent(e -> {
+				e.delay(2);
+				Position dest = new Position(mx(P2_POS[side].getX()), my(P2_POS[side].getY()), 0);
+				// anyone standing where a titan lands is knocked back
+				for (Player f : fighters())
+					if (f.getAbsX() >= dest.getX() && f.getAbsX() < dest.getX() + 3 && f.getAbsY() >= dest.getY() && f.getAbsY() < dest.getY() + 3) {
+						f.hit(new Hit(t).randDamage(15, 30).ignorePrayer().ignoreDefence());
+						f.getMovement().teleport(mx(2911), my(9567), 0);
+					}
+				t.getMovement().teleport(dest);
+				t.face(side == 0 ? Direction.SOUTH : Direction.NORTH);
+				t.animate(SPAWN_ANIM[side]);
+				arena.floorLocs.add(GameObject.spawn(SPAWN_FLOOR[side][0], dest.getX() - 1, dest.getY(), 0, 10, 0));
+				arena.floorLocs.add(GameObject.spawn(SPAWN_FLOOR[side][1], dest.getX() + 3, dest.getY(), 0, 10, 0));
+			});
+		}
+		for (Player f : arena.players)
+			f.sendMessage(Color.RED.wrap("The Royal Titans join together for one final push!"));
+	}
+
+	private void phase2Action(Player p) {
+		if (inFront(p)) {
+			stomp(p);
+			return;
+		}
+		if (side == 0 && arena.blastCooldown <= 0 && Random.get(2) == 0) {
+			elementalBlast(p);
+			return;
+		}
+		boolean canSummon = arena.elementals.size() < 6;
+		if (canSummon && Random.get(1) == 0)
+			summon(p);
+		else
+			ranged(p);
+	}
+
+	/** Both titans charge, then blast the strip three times; one safe tile per blast, marked first. */
+	private void elementalBlast(Player p) {
+		arena.blastCooldown = 40;
+		for (int i = 0; i < 2; i++) {
+			NPC t = arena.titans[i];
+			if (t != null && !arena.down[i]) {
+				t.animate(AOE1_ANIM[i]);
+				((RoyalTitans) t.getCombat()).actionDelay = 20;
+			}
+		}
+		npc.addEvent(e -> {
+			int playMinY = my(STRIP_MIN_Y) + 3, playMaxY = my(STRIP_MAX_Y) - 3;
+			for (int blast = 0; blast < 3; blast++) {
+				if (arena == null || (arena.down[0] && arena.down[1]))
+					return;
+				Position safe;
+				if (alone()) // the survivor's safe tile is in the row furthest from it
+					safe = new Position(mx(Random.get(STRIP_MIN_X, STRIP_MAX_X)), side == 0 && !arena.down[0] ? playMinY : playMaxY, 0);
+				else
+					safe = new Position(mx(Random.get(STRIP_MIN_X, STRIP_MAX_X)), Random.get(playMinY, playMaxY), 0);
+				GameObject marker = GameObject.spawn(SAFE_MARKER, safe.getX(), safe.getY(), 0, 22, 0);
+				e.delay(4);
+				for (int i = 0; i < 2; i++) {
+					NPC t = arena.titans[i];
+					if (t != null && !arena.down[i])
+						t.animate(AOE2_ANIM[i]);
+				}
+				for (int x = mx(STRIP_MIN_X); x <= mx(STRIP_MAX_X); x++)
+					for (int y = playMinY; y <= playMaxY; y++) {
+						if (x == safe.getX() && y == safe.getY())
+							continue;
+						int half = y > (playMinY + playMaxY) / 2 ? 0 : 1; // Branda's fire to the north, Eldric's ice to the south
+						if (arena.down[half])
+							half = 1 - half;
+						World.sendGraphics(BLAST_GFX[half], 0, 0, x, y, 0);
+					}
+				hitAll(f -> !(f.getAbsX() == safe.getX() && f.getAbsY() == safe.getY()), f -> new Hit(npc).randDamage(30).ignorePrayer().ignoreDefence());
+				marker.remove();
+				e.delay(1); // one safe tick between blasts
+			}
+			for (int i = 0; i < 2; i++) {
+				NPC t = arena.titans[i];
+				if (t != null && !arena.down[i])
+					((RoyalTitans) t.getCombat()).actionDelay = 4;
+			}
+		});
+	}
+
+	/* ------------------------------------------------------------------ death + loot */
+
+	@Override
+	public void startDeath(Hit killHit) {
+		if (arena == null) {
+			super.startDeath(killHit);
+			return;
+		}
+		setDead(true);
+		arena.down[side] = true;
+		npc.animate(DEATH_ANIM[side]);
+		Arena a = arena;
+		int s = side;
+		Position at = npc.getPosition().copy();
+		npc.addEvent(e -> {
+			e.delay(3);
+			a.floorLocs.add(GameObject.spawn(DEATH_FLOOR[s][0], at.getX() - 1, at.getY(), 0, 10, 0));
+			a.floorLocs.add(GameObject.spawn(DEATH_FLOOR[s][1], at.getX() + 3, at.getY(), 0, 10, 0));
+			npc.transform(s == 0 ? BRANDA_INACTIVE : ELDRIC_INACTIVE);
+			npc.animate(INACTIVE_ANIM[s]);
+		});
+		if (a.down[0] && a.down[1]) {
+			clearAdds(a);
+			int took = (int) io.ruin.Server.currentTick() - a.startTick;
+			globalKills++;
+			if (globalBest < 0 || took < globalBest)
+				globalBest = took;
+			for (Player p : new ArrayList<>(a.players)) {
+				p.royalTitansKills.increment(p);
+				if (p.royalTitansBestTicks <= 0 || took < p.royalTitansBestTicks) {
+					p.royalTitansBestTicks = took;
+					p.sendMessage("Fight duration: " + Color.RED.wrap(time(took)) + " (new personal best)");
+				} else {
+					p.sendMessage("Fight duration: " + Color.RED.wrap(time(took)) + ". Personal best: " + time(p.royalTitansBestTicks));
+				}
+				p.sendMessage("The Royal Titans are defeated. Choose one of them to loot, sacrifice or take pages from.");
+			}
+		} else {
+			for (Player f : a.players)
+				f.sendMessage(Color.RED.wrap((s == 0 ? "Branda" : "Eldric") + " falls! " + (s == 0 ? "Eldric" : "Branda") + "'s attacks now pierce your prayers."));
+		}
+	}
+
+	private static final int[][] BRANDA_TABLE = { // id, min, max, weight /55, noted
+		{ 1401, 4, 4, 2, 1 }, { 1393, 6, 6, 2, 1 }, { 1093, 2, 2, 2, 0 }, { 1333, 2, 2, 2, 0 }, { 1275, 2, 2, 2, 0 },
+		{ 554, 1500, 3000, 2, 0 }, { 562, 200, 400, 2, 0 }, { 560, 150, 300, 2, 0 }, { 561, 100, 150, 2, 0 }, { 563, 100, 150, 2, 0 },
+		{ 566, 100, 150, 2, 0 }, { 565, 100, 150, 2, 0 }, { 892, 100, 300, 2, 0 },
+		{ 453, 280, 320, 2, 1 }, { 444, 60, 100, 2, 1 }, { 569, 20, 40, 2, 1 },
+		{ 207, 6, 8, 2, 1 }, { 211, 6, 8, 2, 1 }, { 213, 6, 8, 2, 1 }, { 215, 6, 8, 2, 1 }, { 2485, 6, 8, 2, 1 }, { 217, 6, 8, 2, 1 },
+		{ 209, 6, 8, 2, 1 },
+		{ 5314, 4, 6, 1, 0 }, { 5289, 2, 2, 1, 0 }, { 5315, 2, 2, 1, 0 },
+		{ 995, 10000, 30000, 2, 0 }, { 2434, 2, 4, 2, 1 }, { 30640, 6, 24, 2, 0 } };
+
+	private static final int[][] ELDRIC_TABLE = { // id, min, max, weight /56, noted
+		{ 1403, 4, 4, 2, 1 }, { 1395, 6, 6, 2, 1 }, { 1079, 2, 2, 2, 0 }, { 1185, 2, 2, 2, 0 }, { 1359, 2, 2, 2, 0 }, { 1275, 2, 2, 1, 0 },
+		{ 555, 1500, 3000, 2, 0 }, { 562, 200, 400, 2, 0 }, { 560, 150, 300, 2, 0 }, { 561, 100, 150, 2, 0 }, { 563, 100, 150, 2, 0 },
+		{ 566, 100, 150, 2, 0 }, { 565, 100, 150, 2, 0 }, { 892, 100, 300, 2, 0 },
+		{ 453, 280, 320, 2, 1 }, { 444, 60, 100, 2, 1 }, { 571, 20, 40, 2, 1 },
+		{ 5298, 4, 4, 2, 0 }, { 5301, 4, 4, 2, 0 }, { 5303, 3, 3, 2, 0 }, { 5297, 4, 4, 2, 0 }, { 5299, 4, 4, 2, 0 }, { 5302, 4, 4, 2, 0 },
+		{ 5295, 4, 4, 2, 0 },
+		{ 5314, 4, 6, 1, 0 }, { 5289, 2, 2, 1, 0 }, { 5315, 2, 2, 1, 0 },
+		{ 995, 10000, 30000, 2, 0 }, { 2434, 2, 4, 2, 1 }, { 30640, 6, 24, 2, 0 } };
+
+	private static final int[] CROWN = { 30631, 30628 }, SCROLL = { 30627, 30626 };
+	private static final int GIANTSOUL = 30637, DESICCATED = 30640, HARD_CLUE = 2722, ELITE_CLUE = 12073;
+
+	/** mode 0 = Loot, 1 = Sacrifice, 2 = Take pages. One titan per kill. */
+	private static void claim(Player p, int side, int mode) {
+		Arena a = ARENAS.get(p.getUserId());
+		if (a == null || !a.down[0] || !a.down[1]) {
+			p.sendMessage("You can't do that yet.");
+			return;
+		}
+		if (!a.looted.add(p.getUserId())) {
+			p.sendMessage("You've already claimed your reward from the Royal Titans.");
+			return;
+		}
+		NPC titan = a.titans[side];
+		Position at = p.getPosition().copy();
+		List<Item> loot = new ArrayList<>();
+		// loot scales with your share of the damage (elementals excluded); a full share of the titans' 1200 HP split
+		// between the players present counts as 100%
+		int mine = a.damage.getOrDefault(p.getUserId(), 0);
+		double share = Math.min(1.0, mine / (1200.0 / Math.max(1, a.everEntered.size())));
+		boolean pet;
+		if (mode == 0) {
+			double scale = Math.max(0.01, share);
+			if (Random.get() < scale / 75.0)
+				loot.add(new Item(CROWN[side], 1));
+			else if (Random.get() < scale / 75.0)
+				loot.add(new Item(SCROLL[side], 1));
+			else if (Random.get() < scale / 16.0)
+				loot.add(new Item(GIANTSOUL, 1));
+			else {
+				for (int i = 0; i < 2; i++)
+					loot.add(roll(side == 0 ? BRANDA_TABLE : ELDRIC_TABLE, side == 0 ? 55 : 56, share));
+			}
+			pet = Random.get(1, 3000) == 1;
+		} else if (mode == 1) {
+			pet = Random.get(1, 1500) == 1;
+			if (!pet)
+				p.sendMessage("You don't feel lucky during your sacrifice.");
+		} else {
+			loot.add(new Item(DESICCATED, Random.get(10, 19)));
+			pet = Random.get(1, 3000) == 1;
+		}
+		if (Random.get(1, 25) == 1)
+			loot.add(new Item(HARD_CLUE, 1));
+		if (Random.get(1, 100) == 1)
+			loot.add(new Item(ELITE_CLUE, 1));
+		for (Item item : loot) {
+			new GroundItem(item).owner(p).position(at).spawn();
+			p.addToCollectionLog(item);
+			int id = item.getId();
+			if (id == CROWN[0] || id == CROWN[1] || id == SCROLL[0] || id == SCROLL[1] || id == GIANTSOUL)
+				Broadcast.WORLD.sendNewsDropMessage(p, Icon.RARE_DROP, "<col=000000>" + p.getName(),
+					" just received " + item.getDef().descriptiveName + " from the Royal Titans!");
+		}
+		if (pet)
+			Pet.BRAN.unlock(p, 0);
+		if (titan != null)
+			titan.animate(DEATH_ANIM[side]);
+	}
+
+	private static Item roll(int[][] table, int total, double share) {
+		int r = Random.get(0, total - 1);
+		for (int[] e : table) {
+			r -= e[3];
+			if (r < 0) {
+				int id = e[0];
+				if (e[4] == 1) {
+					ObjType def = ObjType.get(id);
+					if (def != null && def.notedId != -1)
+						id = def.notedId;
+				}
+				int qty = Random.get(e[1], e[2]);
+				if (share < 1.0)
+					qty = Math.max(1, (int) Math.round(qty * Math.max(0.01, share)));
+				return new Item(id, qty);
+			}
+		}
+		return new Item(995, 10000);
+	}
+}

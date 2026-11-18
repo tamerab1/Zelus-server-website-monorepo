@@ -352,6 +352,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int minedGranite;
 	public int minedGemRock;
 	public int minedCorrupt;
+	public int minedBloodgold;
 	public int minedBasalt;
 	public int minedUrtSalt;
 	public int minedTeSalt;
@@ -372,6 +373,7 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public int choppedCelastrus;
 	public int choppedMahogany;
 	public int choppedCorrupt;
+	public int choppedKarnwood;
 	public int openedBirdsNests;
 	public int acquiredBirdsNests;
 	public int cookedFood;
@@ -1567,11 +1569,46 @@ public abstract class PlayerAttributes extends PlayerAttributesRuntime {
 	public KillCounter bryophytaKills = new KillCounter();
 	public KillCounter hesporiKills = new KillCounter();
 	public KillCounter zalcanoKills = new KillCounter();
+	public KillCounter maggotKingKills = new KillCounter();
+	public KillCounter bloodMoonKills = new KillCounter();
+	public KillCounter blueMoonKills = new KillCounter();
+	public KillCounter eclipseMoonKills = new KillCounter();
+	public KillCounter hueycoatlKills = new KillCounter();
+	public int hueycoatlDeaths, hueycoatlBestTicks; // Hueycoatl scoreboard (interface 884)
+	public int sailingHookTier; // Sailing: salvaging hook built on the boat, 0 bronze .. 6 dragon
+	public int sailingBoatPort; // Sailing: Port ordinal the boat is moored at (0 = Port Sarim, where it starts)
+	public int sailingRaftFacility; // Sailing: the raft's one facility slot, 0 = cargo hold, 1 = salvaging hook
+	public java.util.List<Integer> sailingCargoHold = new ArrayList<>(); // Sailing: crates stowed in the cargo hold
+	public long sailingBoardDay; // Sailing: UTC epoch day the port task boards were last refreshed for
+	public int sailingBoardGen, sailingTasksSinceRefresh; // Sailing: board generation, tasks done since the last refresh
+	public java.util.Set<Integer> sailingBoardDone = new HashSet<>(); // Sailing: task ids completed on this generation's boards
+	public boolean oborUnlocked; // Obor: the first entry with a giant key unlocks his lair for good
+	public KillCounter royalTitansKills = new KillCounter();
+	public KillCounter brutusKills = new KillCounter();
+	public KillCounter demonicBrutusKills = new KillCounter();
+	// Battle Pass (io.ruin.model.content.battlepass, 2026-11-15): the season these belong to, its XP, Premium, the claimed
+	// tiers ("f12" / "p12"), challenge progress ("d<epochDay>:<key>" / "w<week>:<key>") and the challenges completed
+	public int bpSeason, bpXp, bpChallengesDone;
+	public boolean bpPremium;
+	// The Five Seals account upgrades (Token Shop, Ascension tab, 2026-11-16): they only work inside a run
+	public int fiveSealsSupplies;      // Starting Supplies tier 0-3
+	public boolean fiveSealsConduit;   // Altar Conduit: +20% seal charge in rooms 1-2
+	public boolean fiveSealsGreed;     // Sovereign Greed: a full clear pays x6.0
+	// Rewards tab consumables (2026-11-18), account-bound counters, never items: no trading, no economy
+	public int fiveSealsSupplyPacks;   // each: extra raid restoratives at the start of one run (taken back when it ends)
+	public int fiveSealsFavours;       // each: the next full clear's table loot is doubled
+	public HashMap<String, Integer> bpClaimed = new HashMap<>();
+	public HashMap<String, Integer> bpProgress = new HashMap<>();
+	public int royalTitansDeaths, royalTitansBestTicks; // Royal Titans scoreboard (interface 909)
+	public int brutusDeaths, brutusBestTicks, demonicBrutusDeaths, demonicBrutusBestTicks; // Brutus scoreboard (interface 950)
+	public boolean brutusDontAskAgain;
 	public KillCounter theatreOfBloodKills = new KillCounter();
 	public KillCounter moonsOfPerilKills = new KillCounter();
 	public KillCounter tombsOfAmascutKills = new KillCounter();
 	public KillCounter dominionOfEchoesKills = new KillCounter();
 	public KillCounter fracturedArchiveKills = new KillCounter();
+	/** The Five Seals full clears (the vault opened; collection log page "The Five Seals") */
+	public KillCounter fiveSealsClears = new KillCounter();
 	public KillCounter vorgathKills = new KillCounter();
 	public KillCounter baelgorKills = new KillCounter();
 	public KillCounter crawlingHandKills = new KillCounter();

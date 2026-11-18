@@ -401,7 +401,7 @@ public final class DivisionRivalsInterfaceManager {
 				: state.queueStatus() == DivisionRivalsDemoState.QueueStatus.DISABLED ? "In a Rivals match"
 				: "Ready - Find match to pick one of the 4 brackets");
 		// the package's static sub-header read "Zelus / Ranked 1v1 / Developer preview"
-		view.text(HEADER_SUBTITLE, "<col=a0a0a0>Zelus</col> <col=ff981f>Season 1</col> <col=a0a0a0>\u00b7 Ranked Matchmaking</col>");
+		view.text(HEADER_SUBTITLE, "<col=a0a0a0>Karn</col> <col=ff981f>Season 1</col> <col=a0a0a0>\u00b7 Ranked Matchmaking</col>");
 		view.text(STATUS, String.format(Locale.ROOT, "%,d SR  |  %,d Rivals Points  |  %dW %dL  |  Best streak %d",
 				player.rivalsRating, player.rivalsPoints, player.rivalsWins, player.rivalsLosses, player.rivalsBestStreak));
 		boolean t1Done = player.rivalsWeeklyClaimedT1, t2Done = player.rivalsWeeklyClaimed;

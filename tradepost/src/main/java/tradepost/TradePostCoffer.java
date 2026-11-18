@@ -145,7 +145,7 @@ public class TradePostCoffer {
 		Continuations.schedule(() -> {
 			var newEntry = TradePostCoffersDb.addItemCont(uid, item, amount.intValueExact()).await();
 			if (newEntry == null) {
-				log.error("[Zelus Market] collection box insert FAILED: " + uid + " " + item + " x " + amount);
+				log.error("[Karn Market] collection box insert FAILED: " + uid + " " + item + " x " + amount);
 				return;
 			}
 

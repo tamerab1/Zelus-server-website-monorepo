@@ -52,6 +52,21 @@ public class StatList {
 			}
 			return;
 		}
+		if (stats.length < StatType.VALUES.length) { // saves from before Sailing: grow the array, new skills start at 1
+			Stat[] grown = java.util.Arrays.copyOf(stats, StatType.VALUES.length);
+			for (int id = stats.length; id < grown.length; id++) {
+				grown[id] = new Stat(1, 0);
+				grown[id].updated = true;
+			}
+			stats = grown;
+			if (counters != null && counters.length < stats.length + 1) {
+				StatCounter[] c = java.util.Arrays.copyOf(counters, stats.length + 1);
+				for (int i = 0; i < c.length; i++)
+					if (c[i] == null)
+						c[i] = new StatCounter(i);
+				counters = c;
+			}
+		}
 		if (counters == null) {
 			counters = new StatCounter[stats.length + 1];
 			for (int i = 0; i < counters.length; i++)
@@ -140,6 +155,7 @@ public class StatList {
 		int statId = type.ordinal();
 		Stat stat = stats[statId];
 		double baseAmount = amount;
+		io.ruin.model.content.battlepass.BattlePass.onXp(player, type, baseAmount); // challenges count base XP
 
 		for (Item item : player.getEquipment().getItems()) {
 			if (item != null && item.getDef() != null) {
@@ -279,7 +295,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "Congratulations on achieving 200M experience in " + type.name()
 				+ " on " + Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode");
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward()
-				+ " Zelus points for achieving this!");
+				+ " Karn points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward());
 			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 200M experience in " + type.name() + " on "
@@ -289,7 +305,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "Congratulations on achieving 500M experience in " + type.name()
 				+ " on " + Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode");
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward2()
-				+ " Zelus points for achieving this!");
+				+ " Karn points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward2());
 			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 500M experience in " + type.name() + " on "
@@ -299,7 +315,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "Congratulations on achieving 1B experience in " + type.name()
 				+ " on " + Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode");
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxExpReward3()
-				+ " Zelus points for achieving this!");
+				+ " Karn points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxExpReward3());
 			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved 1B experience in " + type.name() + " on "
@@ -331,7 +347,7 @@ public class StatList {
 			player.sendMessage(Color.ORANGE_RED.tag() + "Congratulations on achieving level 99 in " + type.name() + " on "
 				+ Misc.format_string(player.getDifficulty().name().toLowerCase()) + " mode");
 			player.sendMessage(Color.ORANGE_RED.tag() + "You receive " + player.getDifficulty().GetMaxLevelRewardBonus()
-				+ " Zelus points for achieving this!");
+				+ " Karn points for achieving this!");
 			player.updateReasonPoints(player.getDifficulty().GetMaxLevelRewardBonus());
 			Broadcast.WORLD.sendNewsDropMessage(player, Icon.SKILL_STAR, "<col=000000>" + player.getName(),
 				" has just achieved level 99 in " + type.name() + " on "
@@ -343,7 +359,7 @@ public class StatList {
 				player.updateReasonPoints(player.getDifficulty().GetMaxLevelRewardBonus() * 5);
 				player.sendMessage(
 					"You have received " + NumberUtils.formatNumber(player.getDifficulty().GetMaxLevelRewardBonus() * 5L)
-						+ " Zelus points for achieving this!");
+						+ " Karn points for achieving this!");
 			}
 		}
 		if (statId <= 6)

@@ -17,7 +17,9 @@ public enum Tree {
 	MAGIC(1513, "magic logs", 75, 340, 250.0, 50, false, 7232, PlayerCounter.CHOPPED_MAGIC),
 	REDWOOD(19669, "redwood logs", 90, 460, 380.0, 80, false, 6200, PlayerCounter.CHOPPED_REDWOOD),
 	CELASTRUS(22935, "celastrus bark", 50, 340, 380.0, 50, false, 6200, PlayerCounter.CHOPPED_CELASTRUS),
-	CORRUPT_TREE(30105, "corrupt logs", 95, 355, 412.0, 50, false, 6200, PlayerCounter.CHOPPED_CORRUPT);
+	CORRUPT_TREE(30105, "corrupt logs", 95, 355, 412.0, 50, false, 6200, PlayerCounter.CHOPPED_CORRUPT),
+	// The Five Seals, Seal of Awakening (2026-11-16): open to every level, willow-like pace, magic-tree depletion
+	KARNWOOD(42775, "karnwood logs", 1, 140, 60.0, 8, false, 7232, PlayerCounter.CHOPPED_KARNWOOD);
 
 	public final int log, levelReq, respawnTime, petOdds;
 	public final double experience, difficulty;

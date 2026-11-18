@@ -184,13 +184,13 @@ public enum SpellBook {
 		new ArceuusTeleport(83, 90.0, new Bounds(3564, 3313, 3566, 3315, 0), Rune.LAW.toItem(2), Rune.SOUL.toItem(2), Rune.BLOOD.toItem(1)),
 		new ArceuusTeleport(90, 100.0, new Bounds(2800, 9210, 2801, 9211, 0), Rune.LAW.toItem(2), Rune.SOUL.toItem(2), Rune.BLOOD.toItem(2)),
 		new TodoSpell("19"),//battle front
-		new TodoSpell("20"),//inferior demonbane
-		new TodoSpell("21"),//superior demonbane
-		new TodoSpell("22"),//dark demonbane
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.inferiorDemonbane(),//inferior demonbane
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.superiorDemonbane(),//superior demonbane
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.darkDemonbane(),//dark demonbane
 		new TodoSpell("23"),//mark of darkness
-		new TodoSpell("24"),//ghostly grasp
-		new TodoSpell("25"),//skeletal grasp
-		new TodoSpell("26"),//undead grasp
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.ghostlyGrasp(),//ghostly grasp
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.skeletalGrasp(),//skeletal grasp
+		io.ruin.model.skills.magic.spells.arceuus.ArceuusCombatSpell.undeadGrasp(),//undead grasp
 		new TodoSpell("27"),//ward of arceuus
 		new TodoSpell("28"),//lesser corruption
 		new TodoSpell("29"),//greater corruption

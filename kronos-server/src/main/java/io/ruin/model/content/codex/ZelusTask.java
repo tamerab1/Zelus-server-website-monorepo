@@ -12,8 +12,8 @@ import java.util.HashMap;
  */
 public enum ZelusTask {
 
-	AWAKENING_IN_ZELUS(ZelusCodex.Tier.BEGINNER, "Awakening in Zelus", "Getting started",
-		"Choose your path, claim your starter kit (::zelus) and examine the Reliquary of Souls at home: "
+	AWAKENING_IN_ZELUS(ZelusCodex.Tier.BEGINNER, "Awakening in Karn", "Getting started",
+		"Choose your path, claim your starter kit (::karn) and examine the Reliquary of Souls at home: "
 			+ "your first steps into the realm.", 3, 1_000,
 		new Item(30470), new Item(380, 500)),
 	ABYSSAL_CONQUEROR(ZelusCodex.Tier.ZELUS, "Abyssal Conqueror", "Global boss",
@@ -21,7 +21,7 @@ public enum ZelusTask {
 	EARTHSHAKERS_DOWNFALL(ZelusCodex.Tier.ZELUS, "Earthshaker's Downfall", "Vote boss",
 		"Defeat Volcanus (::vb) 5 times.", 5, 10_000, new Item(290)),
 	MASTER_OF_THE_FORGE(ZelusCodex.Tier.ZELUS, "Master of the Forge", "Item Upgrader",
-		"Successfully upgrade any item at the Zelus Relic Forge (the Item Upgrader).", 1, 15_000, new Item(12934, 250)),
+		"Successfully upgrade any item at the Karn Relic Forge (the Item Upgrader).", 1, 15_000, new Item(12934, 250)),
 	PATH_OF_MASTERY(ZelusCodex.Tier.ZELUS, "Path of Mastery", "Soul Tree",
 		"Unlock any node in the Soul Tree (::soultree).", 1, 5_000, new Item(30470)),
 	THE_VAULTKEEPER(ZelusCodex.Tier.ZELUS, "The Vaultkeeper", "Trading Post",

@@ -52,7 +52,7 @@ public final class EggIconMotion {
 	}
 
 	private static void update(Player player, int tick) {
-		if (player.avatarExtended() == null)
+		if (!player.hasAvatar()) // avatar() throws until rsprot is set up (login) and after it's released (logout)
 			return;
 		Item egg = player.getEquipment().get(Equipment.SLOT_EGG);
 		int want = egg == null ? -1 : spotFor(egg.getId());

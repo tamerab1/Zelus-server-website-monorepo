@@ -69,9 +69,9 @@ public class CommandHandlerBeta {
 				}
 				yield true;
 			}
-			case "zelus_points" -> {
+			case "karn_points" -> {
 				player.reasonPoints += 1_000_000;
-				player.sendMessage("You now have " + NumberUtils.formatNumber(player.reasonPoints) + " zelus points.");
+				player.sendMessage("You now have " + NumberUtils.formatNumber(player.reasonPoints) + " karn points.");
 				yield true;
 			}
 

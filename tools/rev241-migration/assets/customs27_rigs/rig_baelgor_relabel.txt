@@ -1,0 +1,68 @@
+# Baelgor the Felreaver, re-rig 2026-11-16 (The Five Seals, user: "not broken specials").
+# Applied to the RIGGED model 62777 as exported in assets/customs27 (the customs27 source models are gone, so this spec
+# works from the labels rig_baelgor.txt gave it: 1 body, 2 head, 3 / 4 legs, 5 / 6 arms, 101 / 102 wings, 247-255 that
+# rig's faceless pivot vertices).
+# The change: the wings ride the BODY bone rigidly. On the decimated mesh the wing bones were the long lever (up to 32
+# degrees at the tips) and stretched every face straddling a wing / body boundary into the long spars of the tearing
+# reports, while the membranes stayed put. Everything else keeps rig_baelgor.txt's small, measured motion; the wing beat
+# is replaced by the body's hover / rear / lunge. The old pivot vertices go to the body too, so they can't share a label
+# with (and shift the centroid of) this rig's new pivots.
+model 62777
+ids 19001 19010
+part 1 all                                       # body, wings (101 / 102) and the old pivots
+part 3 labels 3                                  # leg (x-)
+part 4 labels 4                                  # leg (x+)
+part 5 labels 5                                  # arm (x-)
+part 6 labels 6                                  # arm (x+)
+part 2 labels 2                                  # head and horns
+part 1 labels 247,248,249,250,251,252,253,254,255
+bone root parent root pivot 0 0 0
+bone 1 parent root pivot 0 -110 0
+bone 2 parent 1 pivot 0 -185 -10
+bone 3 parent 1 pivot -20 -95 0
+bone 4 parent 1 pivot 20 -95 0
+bone 5 parent 1 pivot -44 -192 0
+bone 6 parent 1 pivot 44 -192 0
+
+anim 0 idle frames 24 len 6                     # hovering tall, a slow breath
+  1 ty sin 4 1 0
+  1 rx sin 1.5 1 0.25
+  2 rx sin 3 1 0.3
+  5 rx sin 3 1 0.5
+  6 rx sin 3 1 0
+end
+anim 1 walk frames 16 len 3                     # striding: legs step in turn, arms swing against them
+  3 rx sin 18 1 0
+  4 rx sin 18 1 0.5
+  5 rx sin 7 1 0.5
+  6 rx sin 7 1 0
+  1 ty sin 4 2 0.25
+  1 rx sin 3 2 0.1
+end
+anim 2 claw frames 12 len 3 hold 2              # claw swipe: he lunges in and rakes
+  6 rx keys 0:0 0.4:8 0.65:-16 1:0
+  1 rx keys 0:0 0.4:-14 0.65:12 1:0
+  1 tz keys 0:0 0.4:-10 0.65:16 1:0
+  2 rx keys 0:0 0.4:-8 0.65:10 1:0
+end
+anim 3 cast frames 12 len 3 hold 2              # fel-fire: he rears up as the spell leaves him
+  5 rx keys 0:0 0.4:6 0.7:-14 1:0
+  6 rx keys 0:0 0.4:6 0.7:-14 1:0
+  1 ty keys 0:0 0.4:-10 0.7:0 1:0
+  1 rx keys 0:0 0.4:8 0.7:-6 1:0
+  2 rx keys 0:0 0.4:10 0.7:-8 1:0
+end
+anim 4 gust frames 15 len 3 hold 3              # Hellfire Gust: he rises, then slams down with the whole body
+  1 ty keys 0:0 0.35:-16 0.6:-20 0.75:6 1:0
+  1 rx keys 0:0 0.35:-8 0.75:10 1:0
+  2 rx keys 0:0 0.35:12 0.75:-10 1:0
+  5 rx keys 0:0 0.35:-12 0.75:10 1:0
+  6 rx keys 0:0 0.35:-12 0.75:10 1:0
+end
+anim 5 death frames 20 len 4 hold 200           # he topples: sinks and tips forward
+  3 rx keys 0:0 0.7:-14 1:-16
+  4 rx keys 0:0 0.7:-14 1:-16
+  1 ty keys 0:0 0.25:-8 0.7:40 1:46
+  1 rx keys 0:0 0.7:-30 1:-34
+  2 rx keys 0:0 0.3:-12 1:26
+end

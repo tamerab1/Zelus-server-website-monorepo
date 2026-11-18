@@ -54,6 +54,11 @@ public final class StaticInit {
 		io.ruin.model.activities.bosses.JudgeOfYama.register();
 		io.ruin.model.activities.bosses.araxxor.Araxxor.register();
 		io.ruin.model.activities.bosses.bryophyta.Bryophyta.register();
+		io.ruin.model.activities.bosses.obor.Obor.register();
+		io.ruin.model.skills.sailing.Sailing.register();
+		io.ruin.model.skills.sailing.Salvaging.register();
+		io.ruin.model.skills.sailing.PortTasks.register();
+		io.ruin.model.activities.bosses.hueycoatl.HueyCamp.register();
 		io.ruin.model.activities.bosses.bryophyta.Growthlin.register();
 		io.ruin.model.activities.bosses.globalboss.GlobalBossHandler.register();
 		io.ruin.model.activities.bosses.hydra.AlchemicalHydra.register();
@@ -132,6 +137,13 @@ public final class StaticInit {
 		io.ruin.model.activities.pyramidplunder.PlunderObjectHandler.register();
 		io.ruin.model.activities.pyramidplunder.PyramidPlunder.register();
 		io.ruin.model.activities.raids.chambersrework.CustomXericRaid.register();
+		io.ruin.model.activities.bosses.DukeSucellus.register();
+		io.ruin.model.activities.bosses.Hespori.register();
+		io.ruin.model.activities.bosses.MaggotKing.register();
+		io.ruin.model.activities.bosses.MaggotKingItems.register();
+		io.ruin.model.activities.bosses.hueycoatl.Hueycoatl.register();
+		io.ruin.model.activities.bosses.royaltitans.RoyalTitans.register();
+		io.ruin.model.activities.bosses.brutus.Brutus.register();
 		io.ruin.model.activities.raids.toa.Supplies.register();
 		io.ruin.model.activities.raids.toa.ToAObjects.register();
 		io.ruin.model.activities.raids.toa.ToAPartyInterface.register();
@@ -199,6 +211,10 @@ public final class StaticInit {
 		io.ruin.model.content.soulweapons.SoulWeapons.register(); // Soulbound Living Weapons (::soulweapon, Soul XP), 2026-10-18
 		io.ruin.model.content.EggIconMotion.register(); // egg-slot icons' looping spot-anims (cache stage 20), 2026-11-07
 		io.ruin.model.activities.colosseum.Colosseum.register(); // the Colosseum of Trials (region 12891), 2026-11-07
+		io.ruin.model.content.welcome.WelcomeScreen.register(); // the welcome screen 1185, every login, 2026-11-15
+		io.ruin.model.content.battlepass.BattlePass.register(); // the Battle Pass 1186 (::battlepass), 2026-11-15
+		io.ruin.model.content.bestinslot.BestInSlot.register(); // Best in Slot 1187 (::bis), 2026-11-15
+		io.ruin.model.activities.dailytasks.DailyTasksHub.register(); // the Karn Daily Tasks window 1188, 2026-11-15
 		io.ruin.model.content.casino.BlackjackTable.register(); // Zelus Blackjack Table object 62442 -> BlackjackInterface, 2026-10-18
 		io.ruin.model.content.DiscordStatue.register(); // Discord Statue object 62443 -> the Discord invite, 2026-10-18
 		io.ruin.model.content.ZaryteStormpiercer.register(); // customs19 bow 31856 can't be dropped, 2026-10-19
@@ -304,6 +320,8 @@ public final class StaticInit {
 		io.ruin.model.entity.npc.actions.edgeville.FairyFixit.register();
 		io.ruin.model.entity.npc.actions.edgeville.HomePortal.register();
 		io.ruin.model.entity.npc.actions.edgeville.Juan.register();
+		io.ruin.model.entity.npc.actions.edgeville.HomeBooth.register();
+		io.ruin.model.activities.bosses.brutus.TheScar.register();
 		io.ruin.model.entity.npc.actions.edgeville.Mac.register();
 		io.ruin.model.entity.npc.actions.edgeville.MagicShop.register();
 		io.ruin.model.entity.npc.actions.edgeville.MakeoverMage.register();
@@ -538,6 +556,8 @@ public final class StaticInit {
 		io.ruin.model.item.actions.impl.chargable.SerpentineHelm.register();
 		io.ruin.model.item.actions.impl.chargable.ThammaronsSceptre.register();
 		io.ruin.model.item.actions.impl.chargable.TomeOfFire.register();
+		io.ruin.model.combat.RewardItems.register();
+		io.ruin.model.combat.MoonArmour.register();
 		io.ruin.model.item.actions.impl.chargable.TomeOfWater.register();
 		io.ruin.model.item.actions.impl.chargable.TonalzticsOfRalos.register();
 		io.ruin.model.item.actions.impl.chargable.ToxicStaff.register();
@@ -744,7 +764,6 @@ public final class StaticInit {
 		io.ruin.model.map.object.actions.impl.prifddinas.TeleportPlatform.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.TeleportPlatforms.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.TrahaearnMine.register();
-		io.ruin.model.map.object.actions.impl.prifddinas.Zalcano.ZalcanoEntrance.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.impl.SingingBowl.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.impl.SingingBowlCreation.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.iorwerthdistrict.IorwerthDungeon.register();
@@ -754,6 +773,7 @@ public final class StaticInit {
 		io.ruin.model.map.object.actions.impl.prifddinas.towerofvoices.TowerStairsUp.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.trahaearndistrict.TrahaearnMine.register();
 		io.ruin.model.map.object.actions.impl.prifddinas.trahaearndistrict.ZalcanoEntrance.register();
+		io.ruin.model.map.object.actions.impl.prifddinas.trahaearndistrict.ZalcanoCombat.register();
 		io.ruin.model.map.object.actions.impl.randomshortcuts.AlKharidbrokenwall.register();
 		io.ruin.model.map.object.actions.impl.randomshortcuts.AlKharidwindow.register();
 		io.ruin.model.map.object.actions.impl.randomshortcuts.BarbagilPipe.register();
@@ -934,5 +954,7 @@ public final class StaticInit {
 		HardClueScrollSecondaryDonatorMap.initMap();
 		CombatDummy.register();
 		EchoOrbMysteryBox.register();
+		// last: chains onto the rune rock / magic tree / prayer altar handlers registered above (2026-11-16)
+		io.ruin.model.activities.fiveseals.FiveSeals.register();
 	}
 }

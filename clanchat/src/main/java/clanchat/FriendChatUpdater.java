@@ -122,7 +122,7 @@ public class FriendChatUpdater {
 		for (var member : onlineMembers(ownerChat)) {
 			var rank = rank(member.getUsername(), ownerFriendList, ownerChat);
 			var memberUsername = StringUtils.capitalizeName(member.getUsername());
-			membersProto.add(new FriendChatEntry(memberUsername, World.id, rank.id, "Zelus"));
+			membersProto.add(new FriendChatEntry(memberUsername, World.id, rank.id, "Karn"));
 		}
 
 		var ownerUsername = StringUtils.capitalizeName(ownerChat.owner);

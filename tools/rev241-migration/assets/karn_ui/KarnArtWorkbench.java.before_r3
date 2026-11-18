@@ -1,0 +1,87 @@
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Round 2 art for the Karn Forge item workbench, interface 1153 (server: WorkbenchHub): "Blood Steel" -- cold gunmetal
+ * plates with hot crimson highlights, the one cool-toned window. 25200 window, 25201 perk slot (32 x 32), 25202 target
+ * socket (42 x 40), 25203 material slot (34 x 34), 25204/25205 Add minimum (134 x 22), 25206/25207 Upgrade (138 x 24).
+ */
+final class KarnArtWorkbench {
+
+	private KarnArtWorkbench() {
+	}
+
+	static final Color BLOOD = new Color(0xd8282e), BLOOD_HI = new Color(0xff6a6a), STEEL = new Color(0x1a1b20), STEEL_HI = new Color(0x2a2c33),
+			STEEL_LINE = new Color(0x3a3c45), STEEL_DK = new Color(0x0b0b0d);
+
+	static void steelPlate(Graphics2D g, int x, int y, int w, int h) {
+		g.setColor(STEEL_DK);
+		g.fillRect(x, y, w, h);
+		g.setPaint(new GradientPaint(0, y, new Color(0x24252b), 0, y + h, new Color(0x141418)));
+		g.fillRect(x + 1, y + 1, w - 2, h - 2);
+		g.setColor(STEEL_LINE);
+		g.drawRect(x + 1, y + 1, w - 3, h - 3);
+		g.setColor(new Color(255, 255, 255, 22));
+		g.fillRect(x + 2, y + 2, w - 4, 1);
+		// rivets in the corners
+		for (int[] r : new int[][] { { x + 5, y + 5 }, { x + w - 6, y + 5 }, { x + 5, y + h - 6 }, { x + w - 6, y + h - 6 } }) {
+			g.setColor(STEEL_DK);
+			g.fill(new Ellipse2D.Double(r[0] - 1.6, r[1] - 1.6, 3.6, 3.6));
+			g.setColor(new Color(0x6a6c78));
+			g.fill(new Ellipse2D.Double(r[0] - 1.2, r[1] - 1.4, 2.4, 2.4));
+		}
+	}
+
+	static void paint() throws Exception {
+		BufferedImage im = KarnArt.window(487, 306, 31, BLOOD, 1153);
+		Graphics2D g = KarnArt.g(im);
+		KarnArt.heading(g, "Karn Forge", 243.5, 23, 17f, new Color(0xf0f0f6), new Color(0xa0a4b4));
+		BufferedImage hammer = KarnArt.icon("hammer", 16, BLOOD_HI, new Color(0x9a1a20));
+		g.drawImage(hammer, 182, 8, null);
+		g.drawImage(hammer, 290, 8, null);
+		steelPlate(g, 10, 55, 160, 242);  // perks (root 24,64)
+		steelPlate(g, 174, 55, 150, 242); // the perk (root 188,64)
+		KarnArt.well(g, 178, 196, 142, 97, new Color(0x0c0c0f), STEEL_LINE); // the levels (root 192,205)
+		KarnArt.hairline(g, 180, 318, 90, BLOOD, 200);
+		steelPlate(g, 328, 55, 146, 242); // target + materials (root 342,64)
+		KarnArt.glow(g, 357, 92, 40, 30, BLOOD, 40);
+		g.dispose();
+		MakeKarnUi2.save(25200, im);
+		MakeKarnUi2.save(25201, slot(32, 32, false));
+		MakeKarnUi2.save(25202, slot(42, 40, true));
+		MakeKarnUi2.save(25203, slot(34, 34, false));
+		MakeKarnUi2.save(25204, steelButton(134, 22, false));
+		MakeKarnUi2.save(25205, steelButton(134, 22, true));
+		MakeKarnUi2.save(25206, KarnArt.button(138, 24, KarnArt.Style.CRIMSON, false));
+		MakeKarnUi2.save(25207, KarnArt.button(138, 24, KarnArt.Style.CRIMSON, true));
+	}
+
+	static BufferedImage slot(int w, int h, boolean socket) {
+		BufferedImage im = KarnArt.image(w, h);
+		Graphics2D g = KarnArt.g(im);
+		KarnArt.well(g, 0, 0, w, h, new Color(0x0e0e11), socket ? BLOOD : STEEL_LINE);
+		if (socket) {
+			g.setClip(new Rectangle2D.Double(2, 2, w - 4, h - 4));
+			KarnArt.glow(g, w / 2.0, h / 2.0, w * 0.6, h * 0.6, BLOOD, 60);
+		}
+		g.dispose();
+		return im;
+	}
+
+	static BufferedImage steelButton(int w, int h, boolean hover) {
+		BufferedImage im = KarnArt.image(w, h);
+		Graphics2D g = KarnArt.g(im);
+		double c = 4;
+		g.setColor(STEEL_DK);
+		g.fill(KarnArt.chamfer(0, 0, w, h, c + 0.5));
+		g.setPaint(new GradientPaint(0, 1, hover ? new Color(0x3c3e48) : new Color(0x2c2e36), 0, h - 1, hover ? new Color(0x1e1f25) : new Color(0x16171b)));
+		g.fill(KarnArt.chamfer(1, 1, w - 2, h - 2, c));
+		g.setColor(hover ? BLOOD_HI : new Color(0x5a5c68));
+		g.draw(KarnArt.chamfer(1.5, 1.5, w - 3, h - 3, c - 0.5));
+		g.setColor(new Color(255, 255, 255, hover ? 40 : 24));
+		g.fillRect(6, 2, w - 12, 1);
+		g.dispose();
+		return im;
+	}
+}

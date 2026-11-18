@@ -83,7 +83,7 @@ public class ActiveVolcano {
 					eb.setTitle("A Volcano Event Is Active!");
 					eb.addField("Location:", "Wilderness Volcano!", true);
 					eb.addField("Time Remaining", "30 Minutes!", true);
-					eb.setImage("https://zelusrsps.com/resources/images/Large_Boulder.png");
+					eb.setImage("https://karnps.com/resources/images/Large_Boulder.png");
 					eb.setColor(new java.awt.Color(0xB00D03));
 
 

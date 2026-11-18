@@ -10,7 +10,7 @@ import io.ruin.model.map.object.actions.ObjectAction;
 /**
  * The Reliquary of Souls, object 62445 (2026-10-18): the Soulbound weapons' altar at home (.dev/cache-restore-tool
  * BuildSoulAltar: an obsidian dais whose floating soul core, archetype emblems and wisps turn on one loc sequence,
- * BuildLocSpinAnims). Spawned at 3123,3490 (3x3, centred on 3124,3491) in the Soulbound Sanctuary: the old fenced yard
+ * BuildLocSpinAnims). Spawned at 3078,3483 (3x3, centred on 3079,3484; moved there 2026-11-11) in the Soulbound Sanctuary: the old fenced yard
  * there (map l48_54) was removed with RemoveMapLocs and floored with arcane flagstones, a soul brazier on each corner.
  * <ul>
  * <li>Commune: with a weapon bound, the player kneels in prayer, a soul burst rises and the Soul Tree opens; without

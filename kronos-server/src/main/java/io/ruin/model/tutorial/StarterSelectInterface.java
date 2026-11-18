@@ -46,7 +46,7 @@ public final class StarterSelectInterface {
 	private static final double ACCOUNT_ZOOM_SCALE = 1.05;
 
 	private static final String GOLD = "<col=ffc35a>", GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>",
-		GREEN = "<col=00ff00>", ORANGE = "<col=ff981f>", END = "</col>";
+		GREEN = "<col=6fd36a>", ORANGE = "<col=e3b45c>", END = "</col>"; // Karn round 2 palette (2026-11-12)
 	private static final String BULLET = GOLD + "»" + END + " ";
 
 	private static final AccountType[] ACCOUNTS = AccountType.values();
@@ -95,7 +95,7 @@ public final class StarterSelectInterface {
 		gmi.stage = 1;
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, "WELCOME TO ZELUS - SELECT YOUR PATH");
+		ps.sendString(INTERFACE, TITLE, "WELCOME TO KARN - SELECT YOUR PATH");
 		ps.sendString(INTERFACE, SUB_HEADER, ORANGE + "Step 1:" + END + " choose an account type  " + GREY + "·" + END
 			+ "  " + ORANGE + "Step 2:" + END + " choose a difficulty");
 		for (int i = 0; i < ACCOUNTS.length; i++) {
@@ -179,7 +179,7 @@ public final class StarterSelectInterface {
 			.containerId(KIT_SCROLL)
 			.scrollbarChildId(KIT_SCROLLBAR)
 			.childrenCount(count)
-			.withDarkGraphics()
+			.withKarnGraphics()
 			.build()
 			.send(player);
 	}

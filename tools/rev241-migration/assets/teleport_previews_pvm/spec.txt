@@ -1,0 +1,7 @@
+# PvM overhaul phase 1+2 teleports (2026-11-13). Moons = Blue Moon vis parts + djinn idle; Hueycoatl = head parts + huey_idle.
+ids 62778-62782
+ZALCANO model 38592 8429
+HESPORI model 36173 8222
+MAGGOT_KING model 61512 13926
+MOONS_OF_PERIL parts 52534,56306 10999
+HUEYCOATL parts 54462,54461 11668

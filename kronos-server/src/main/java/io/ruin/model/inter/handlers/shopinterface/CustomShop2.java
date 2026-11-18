@@ -1188,7 +1188,7 @@ public enum CustomShop2 {
 	}
 
 	public static void openZelusPointsShop(Player player) {
-		player.getPacketSender().sendString(891, 14, "Zelus Points Shop");
+		player.getPacketSender().sendString(891, 14, "Karn Points Shop");
 		player.setShopIdentifier(14);
 		CustomShopInterface2.open(player, CustomShop2.get(14).getItems());
 		CustomShopInterface2.handleEnteringShop(player, CustomShop2.ZELUS_POINTS_SHOP);

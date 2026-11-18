@@ -114,7 +114,7 @@ public class AchievementInterface extends ItemContainer {
 	}
 
 	private void TextUpdater(Achievements achievement, Player player, String skill) {
-		String reasonPointString = "<col=ffffff>-<col=ffff00> " + insertCommas(Integer.toString(achievement.getReasonPointReward())) + "<col=ffa31a> Zelus points.";
+		String reasonPointString = "<col=ffffff>-<col=ffff00> " + insertCommas(Integer.toString(achievement.getReasonPointReward())) + "<col=ffa31a> Karn points.";
 		String pkPointString = "<col=ffffff>-<col=ffff00> " + insertCommas(Integer.toString(achievement.getPKPointReward())) + "<col=ffa31a> PK points.";
 		String achievementPointString = "<col=ffffff>-<col=ffff00> " + insertCommas(Integer.toString(achievement.getAchievementPointReward())) + "<col=ffa31a> achievement points.";
 		String expRewardString = "<col=ffffff>-<col=ffff00> " + insertCommas(Integer.toString(achievement.getExperienceReward())) + " " + skill + "<col=ffa31a> exp.";

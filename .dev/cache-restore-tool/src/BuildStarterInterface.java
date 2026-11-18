@@ -18,17 +18,21 @@ public class BuildStarterInterface {
     static final int GROUP = 1150, SRC = 1002;
     static final int GOLD = 0xffc35a, TEXT = 0xd8d0c0;
     static final int HEADING_FONT = 496, TEXT_FONT = 494;
-    static final int TITLE_Y = 14, SUB_Y = 45;
+    static final int TITLE_Y = 12, SUB_Y = 33; // Karn: both above the art's divider (root y 51)
     /** Row / button fill, its hover wash (a subtle brightness shift), and the always-on border. */
-    static final int BOX = 0x433b31, BOX_HOVER = 0x4a4137, BORDER = 0x5a4d3a;
+    // Karn theme (2026-11-11): the window and its three panels are art (assets/karn_ui 24842), warm burgundy cards,
+    // crimson buttons with gold rims (difficulty 24844 60x30, Confirm 24846 196x24), the gem close button
+    static final int BOX = 0x4a2c30, BOX_HOVER = 0x5e363b, BORDER = 0x9a7840;
+    static final int ART = 24842, CLOSE = 24818, CLOSE_HOVER = 24819, DIFF = 24844, DIFF_HOVER = 24845, CONFIRM = 24846,
+            CONFIRM_HOVER = 24847, TITLE_GOLD = 0xffc35a, LABEL = 0xffd27a, MUTED = 0xc2b29a, PLATE = 0x2a181b;
     /**
      * Selected state (2026-10-20: no more 2px gold wireframe, see the Zelus Market tabs): account rows sink into a
      * darker recessed stone with an inner shadow edge; difficulty buttons are OSRS bezel buttons (1002:169) that press
      * into a dark recess with a soft trim -- the Market's bezelTab look.
      */
-    static final int ROW_RECESS = 0x2b251d, ROW_SHADOW = 0x15120f, BEZEL_RECESS = 0x0d0b09, BEZEL_TRIM = 0x2b231a;
+    static final int ROW_RECESS = 0x7a2228, ROW_SHADOW = 0xc9a24a, BEZEL_RECESS = 0x2a080a, BEZEL_TRIM = 0xc9a24a;
     /** Kit slots: a lighter recessed square with an inner shadow so dark items (iron armour) stay visible. */
-    static final int SLOT_FILL = 0x2a2520, SLOT_SHADOW = 0x1a1612, SLOT_BORDER = 0x5a4d3a;
+    static final int SLOT_FILL = 0x2e1c1f, SLOT_SHADOW = 0x1e1113, SLOT_BORDER = 0x9a7840;
     static final int SLOT_W = 36, SLOT_H = 32, SLOT_GAP = 4;
     /** Kit grid: 30 slots (the biggest kit is 26 items), 6 per row, 2 rows visible. */
     static final int KIT_SLOTS = 30, KIT_COLS = 6, KIT_VIEW_H = 2 * SLOT_H + SLOT_GAP;
@@ -43,7 +47,7 @@ public class BuildStarterInterface {
             store.load();
             Storage storage = store.getStorage();
             Index index = store.getIndex(IndexType.INTERFACES);
-            if (index.getArchive(GROUP) != null && !rebuild)
+            if (index.getArchive(GROUP) != null && apply && !rebuild)
                 throw new IllegalStateException("interface " + GROUP + " already exists (use rebuild)");
             Archive srcArchive = index.getArchive(SRC);
             ArchiveFiles src = srcArchive.getFiles(storage.loadArchive(srcArchive));
@@ -54,11 +58,26 @@ public class BuildStarterInterface {
             // 0-2: root, background, close button (verbatim copies); 3: the title
             for (int c = 0; c <= 2; c++) {
                 byte[] b = src.findFile(c).getContents();
-                comps.add(b);
-                want.add(loader.load((GROUP << 16) | c, b));
+                InterfaceDefinition d = loader.load((GROUP << 16) | c, b);
+                if (c == 0) {
+                    comps.add(b);
+                    want.add(d);
+                    continue;
+                }
+                if (c == 1) // the window: the Karn art in place of the stone frame
+                    d.spriteId = ART;
+                if (c == 2) { // close: the gem button, lit while hovered
+                    d.spriteId = CLOSE;
+                    d.onMouseOverListener = new Object[]{44, -2147483645, CLOSE_HOVER};
+                    d.onMouseLeaveListener = new Object[]{44, -2147483645, CLOSE};
+                    d.hasListener = true;
+                }
+                add(comps, want, d);
             }
             InterfaceDefinition title = loader.load((GROUP << 16) | 3, src.findFile(3).getContents());
             title.originalY = TITLE_Y;
+            title.originalHeight = 20;
+            title.textColor = TITLE_GOLD;
             add(comps, want, title);
             InterfaceDefinition layerT = loader.load(0, src.findFile(153).getContents());
             InterfaceDefinition[] rectT = {loader.load(0, src.findFile(159).getContents()),
@@ -76,26 +95,26 @@ public class BuildStarterInterface {
             add(comps, want, sub);
 
             // 5-8: account-type panel; 9: heading; 10: note; 11-52: 7 rows x (box, border, recess, inner shadow, icon, name)
-            add(comps, want, layer(layerT, 0, 24, 62, 196, 218));
-            frame(comps, want, rectT, 5, 196, 218);
+            add(comps, want, layer(layerT, 0, 24, 56, 196, 214));
+            frame(comps, want, rectT, 5, 196, 214);
             add(comps, want, text(textT, 5, 8, 4, 180, 14, TEXT_FONT, GOLD, "Account type"));
-            InterfaceDefinition note = text(textT, 5, 100, 4, 88, 14, TEXT_FONT, 0x9a9a9a, "");
+            InterfaceDefinition note = text(textT, 5, 100, 4, 88, 14, TEXT_FONT, MUTED, "");
             note.xTextAlignment = 2;
             add(comps, want, note);
             for (int r = 0; r < ACCOUNT_ROWS; r++) {
-                int y = 20 + r * 28;
-                selectable(comps, want, rect, 5, 6, y, 184, 26);
-                add(comps, want, model(modelT, 5, 8, y, 32, 26));
-                add(comps, want, text(textT, 5, 44, y, 144, 26, TEXT_FONT, TEXT, ""));
+                int y = 22 + r * 27; // the last row ends 5px inside the panel
+                selectable(comps, want, rect, 5, 6, y, 184, 25);
+                add(comps, want, model(modelT, 5, 8, y, 32, 25));
+                add(comps, want, text(textT, 5, 44, y, 144, 25, TEXT_FONT, TEXT, ""));
             }
 
             // 53-56: difficulty panel; 57-76: 4 buttons x (bezel button, placeholder, recess, trim, name + rate)
-            add(comps, want, layer(layerT, 0, 226, 62, 262, 38));
-            frame(comps, want, rectT, 53, 262, 38);
+            add(comps, want, layer(layerT, 0, 226, 56, 262, 40));
+            frame(comps, want, rectT, 53, 262, 40);
             for (int d = 0; d < DIFFICULTIES; d++) {
                 int x = 5 + d * 63;
-                bezelSelectable(comps, want, rect, buttonT, 53, x, 4, 60, 30);
-                InterfaceDefinition t = text(textT, 53, x, 4, 60, 30, TEXT_FONT, TEXT, "");
+                bezelSelectable(comps, want, rect, buttonT, 53, x, 5, 60, 30);
+                InterfaceDefinition t = text(textT, 53, x, 5, 60, 30, TEXT_FONT, LABEL, "");
                 t.xTextAlignment = 1;
                 add(comps, want, t);
             }
@@ -103,10 +122,10 @@ public class BuildStarterInterface {
             // 77-80: summary panel (full height of the right column); 81 heading, 82 rates strip, 83 rates text,
             // 84 bullets, 85 divider, 86 kit header, 87 kit scroll container, 88 its scrollbar,
             // 89-268: 30 kit slots x (slot layer, fill, shadow top, shadow left, border, item)
-            add(comps, want, layer(layerT, 0, 226, 104, 262, 201));
-            frame(comps, want, rectT, 77, 262, 201);
+            add(comps, want, layer(layerT, 0, 226, 100, 262, 202));
+            frame(comps, want, rectT, 77, 262, 202);
             add(comps, want, text(textT, 77, 8, 4, 246, 18, HEADING_FONT, GOLD, ""));
-            add(comps, want, solid(rect, 77, 6, 24, 250, 17, 0x0e0b08));
+            add(comps, want, solid(rect, 77, 6, 24, 250, 17, PLATE));
             InterfaceDefinition rates = text(textT, 77, 6, 24, 250, 17, TEXT_FONT, TEXT, "");
             rates.xTextAlignment = 1;
             add(comps, want, rates);
@@ -114,7 +133,7 @@ public class BuildStarterInterface {
             bullets.yTextAlignment = 0;
             bullets.lineHeight = 16;
             add(comps, want, bullets);
-            add(comps, want, solid(rect, 77, 6, 110, 250, 1, rect.textColor));
+            add(comps, want, solid(rect, 77, 6, 110, 250, 1, BORDER));
             add(comps, want, text(textT, 77, 8, 112, 246, 14, TEXT_FONT, TEXT, ""));
             // Kit grid: 6 inventory-style slots per row (36x32, 4px apart), 2 rows visible, scrolled by clientscript
             // 10532 (sized by the server to the kit). Each slot sits in its own layer so the server hides unused ones.
@@ -152,15 +171,20 @@ public class BuildStarterInterface {
 
             // 269-270: Confirm button + label, under the account list
             InterfaceDefinition confirm = copy(buttonT);
-            place(confirm, 0, 24, 284, 196, 21);
+            place(confirm, 0, 24, 277, 196, 24);
+            confirm.spriteId = CONFIRM;
+            confirm.spriteTiling = false;
+            confirm.borderType = 0;
+            confirm.shadowColor = 0;
             confirm.clickMask = 2;
             confirm.actions = new String[]{"Confirm"};
-            confirm.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-            confirm.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
+            confirm.onMouseOverListener = new Object[]{44, -2147483645, CONFIRM_HOVER};
+            confirm.onMouseLeaveListener = new Object[]{44, -2147483645, CONFIRM};
             add(comps, want, confirm);
             InterfaceDefinition label = copy(labelT);
-            place(label, 0, 25, 285, 194, 19);
+            place(label, 0, 25, 280, 194, 18);
             label.text = "Confirm & Begin Adventure";
+            label.textColor = LABEL;
             add(comps, want, label);
 
             if (comps.size() != COMPONENTS)
@@ -178,6 +202,16 @@ public class BuildStarterInterface {
                 System.out.printf("%3d type=%d x=%d y=%d w=%d h=%d parent=%d hidden=%b %s%n", c, got.type, got.originalX, got.originalY,
                         got.originalWidth, got.originalHeight, got.parentId == -1 ? -1 : got.parentId & 0xFFFF, got.isHidden,
                         got.actions == null ? "" : Arrays.toString(got.actions));
+            }
+            if (args[0].equals("export")) { // rev 231 component files for cache stage 30 (PatchKarnUi, 2026-11-11)
+                File out = new File(args[2]);
+                out.mkdirs();
+                for (File f : out.listFiles())
+                    f.delete();
+                for (int c = 0; c < comps.size(); c++)
+                    java.nio.file.Files.write(new File(out, c + ".dat").toPath(), comps.get(c));
+                System.out.println("EXPORTED " + comps.size() + " rev 231 components to " + out);
+                return;
             }
             if (!apply) {
                 System.out.println("VERIFY OK -- " + comps.size() + " components, nothing written.");
@@ -253,8 +287,12 @@ public class BuildStarterInterface {
         place(b, parent, x, y, w, h);
         b.clickMask = 2;
         b.actions = new String[]{"Select"};
-        b.onMouseOverListener = new Object[]{44, -2147483645, 24470};
-        b.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
+        b.spriteId = DIFF;
+        b.spriteTiling = false;
+        b.borderType = 0;
+        b.shadowColor = 0;
+        b.onMouseOverListener = new Object[]{44, -2147483645, DIFF_HOVER};
+        b.onMouseLeaveListener = new Object[]{44, -2147483645, DIFF};
         b.hasListener = true;
         add(comps, want, b);
         InterfaceDefinition none = copy(rect);
@@ -309,6 +347,7 @@ public class BuildStarterInterface {
             if (k == 2) // the frame's filled inner rect (1002:161, 312b23) is the visible panel colour: warm stone
                 r.textColor = 0x36302a;
             place(r, parent, k, k, w - 2 * k, h - 2 * k);
+            r.isHidden = true; // Karn: the panel is painted into the window art (24842)
             add(comps, want, r);
         }
     }

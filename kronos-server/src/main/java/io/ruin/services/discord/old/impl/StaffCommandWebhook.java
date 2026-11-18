@@ -1,3 +1,4 @@
+// Beta audit 2026-11-18: the hard-coded Discord webhook URLs (with tokens) were removed from this legacy class.
 package io.ruin.services.discord.old.impl;
 
 import io.ruin.api.utils.ServerWrapper;
@@ -17,7 +18,7 @@ import io.ruin.services.discord.old.util.Message;
 @Deprecated(forRemoval = true)
 public class StaffCommandWebhook {
 
-	private static final Webhook WEBHOOK = new Webhook("https://discord.com/api/webhooks/1385261003192926228/jnBuoXGcrPXA-BoWdmkHXanDLawheYSBv9rJCprcc5DlKl6ce9IypbsleRm39ttgmDRf");
+	private static final Webhook WEBHOOK = new Webhook("");
 
 	public static void sendCommandHook(Player player, String command, String... args) {
 		if (!World.isLive()) return;

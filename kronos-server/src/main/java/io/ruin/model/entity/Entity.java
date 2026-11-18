@@ -1018,9 +1018,15 @@ public abstract class Entity {
 		return position.getY() - ((getFirstChunkY() - 6) * 8);
 	}
 
+	/** The tile the client's map is centred on (a boat's sea tile for a player who is sailing). */
+	public Position renderAnchor() {
+		return position;
+	}
+
 	public boolean updateRegion() {
-		int diffX = firstChunkX - position.getChunkX();
-		int diffY = firstChunkY - position.getChunkY();
+		Position anchor = renderAnchor();
+		int diffX = firstChunkX - anchor.getChunkX();
+		int diffY = firstChunkY - anchor.getChunkY();
 		int size = Region.CLIENT_SIZE;
 		int updateSize = ((size >> 3) / 2) - 1;
 		if (Math.abs(diffX) >= updateSize || Math.abs(diffY) >= updateSize) {
@@ -1031,8 +1037,9 @@ public abstract class Entity {
 	}
 
 	public void updateFirstChunk() {
-		firstChunkX = position.getX() >> 3;
-		firstChunkY = position.getY() >> 3;
+		Position anchor = renderAnchor();
+		firstChunkX = anchor.getX() >> 3;
+		firstChunkY = anchor.getY() >> 3;
 	}
 
 	public int getLastChunkId() {

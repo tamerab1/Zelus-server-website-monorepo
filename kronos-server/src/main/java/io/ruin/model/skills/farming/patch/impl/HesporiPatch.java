@@ -1,51 +1,47 @@
 package io.ruin.model.skills.farming.patch.impl;
 
-import io.ruin.cache.ObjType;
-import io.ruin.model.item.Item;
 import io.ruin.model.skills.farming.crop.Crop;
 import io.ruin.model.skills.farming.crop.impl.HesporiCrop;
 import io.ruin.model.skills.farming.patch.Patch;
-import io.ruin.model.stat.StatType;
 
 public class HesporiPatch extends Patch {
 
 	@Override
 	public int getCropVarpbitValue() {
-		return getDiseaseStage() << 6 | (getPlantedCrop().getTotalStages()) + getPlantedCrop().getContainerIndex();
+		// the patch multiloc (34630, varbit 7908): 4 seed, 5 / 6 growing, 7 fully grown, 8 the defeated Hespori.
+		// (4 growth stages used to map straight onto 4..8, so a grown Hespori showed as the dead plant.)
+		if (getProduceCount() > 0)
+			return 8;
+		int stage = getStage(), total = getPlantedCrop().getTotalStages();
+		return getDiseaseStage() << 6 | (stage >= total ? 7 : 4 + Math.min(2, stage));
 	}
 
 	@Override
 	public void cropInteract() {
+		if (getProduceCount() > 0) { // the defeated Hespori: harvesting it gives the reward and clears the patch
+			if (!player.getInventory().contains(952, 1)) {
+				player.sendMessage("You'll need a spade to harvest the Hespori.");
+				return;
+			}
+			setProduceCount(0);
+			io.ruin.model.activities.bosses.Hespori.harvest(player);
+			reset(false);
+			return;
+		}
 		if (isDead()) {
 			clear();
 			return;
 		}
-		if (getProduceCount() == 0) {
-			reset(false);
+		if (getStage() < getPlantedCrop().getTotalStages()) {
+			player.sendMessage("The Hespori is still growing.");
 			return;
 		}
-		player.startEvent(event -> {
-			while (true) {
-				if (player.getInventory().getFreeSlots() == 0) {
-					player.sendMessage("Not enough space in your inventory.");
-					return;
-				}
-				if (getProduceCount() == 0) {
-					reset(false);
-					player.sendMessage("You've picked all the herbs from this patch.");
-					return;
-				}
-				player.animate(2282);
-				event.delay(2);
-				player.collectResource(new Item(getPlantedCrop().getProduceId(), 1));
-				player.getInventory().add(getPlantedCrop().getProduceId(), 1);
-				player.getStats().addXp(StatType.Farming, getPlantedCrop().getHarvestXP(), true);
-				player.sendFilteredMessage("You pick a " + ObjType.get(getPlantedCrop().getProduceId()).name + ".");
-				getPlantedCrop().getCounter().increment(player, 1);
-				removeProduce();
-				event.delay(1);
-			}
-		});
+		// OSRS: harvesting the grown Hespori with a spade wakes it; the patch clears when it dies (Hespori.java)
+		if (!player.getInventory().contains(952, 1)) {
+			player.sendMessage("You'll need a spade to harvest the Hespori.");
+			return;
+		}
+		io.ruin.model.activities.bosses.Hespori.start(player, this);
 	}
 
 	@Override

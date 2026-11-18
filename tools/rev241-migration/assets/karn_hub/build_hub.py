@@ -1,0 +1,543 @@
+"""Karn hub windows (user 2026-11-15): Welcome screen 1185, Battle Pass 1186, Best in Slot 1187, from the user's mock-ups
+(ref/*.png, 1536 x 1024, purple). The user wants Karn crimson + gold, "not too dark", readable text:
+
+  * each mock-up is recoloured (violet / purple -> crimson, gold kept), brightened, and scaled to the 512 x 334 window
+    (game = ref / 3, 4 px cropped off the top) -- so the logo, title plaque, banners, torches, figures and floor stay
+    exactly where the user drew them;
+  * every place that shows data is painted over with a clean light panel (parchment body, crimson header band, gold
+    frame) and all words there are game text (BuildKarnHub components), never the picture's tiny lettering;
+  * buttons / tabs / rows / overlays are separate sprites so the server can switch them.
+
+Drawn at 2x (1024 x 668) and scaled down. Coordinates below are GAME pixels (z() doubles them).
+Writes png/<sprite>.png (<= 254 colours, on/off alpha). Sprite ids: see SPRITES at the bottom (BuildKarnHub /
+the server classes use the same numbers).
+Usage: python build_hub.py"""
+import os, random
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageFont
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PNG = os.path.join(HERE, "png")
+os.makedirs(PNG, exist_ok=True)
+W, H = 1024, 668
+random.seed(11)
+
+# ---------------------------------------------------------------- palette (user spec 2026-11-14 + crimson / gold)
+# 2026-11-15 round 2 (user: "not clean with that white background"): the mock-ups' own look -- dark crimson-brown panels
+# in gold frames, cream / gold text (the names stay PARCH* so every panel / row follows)
+PARCH = (52, 30, 32)
+PARCH_ROW = (72, 42, 44)
+PARCH_ROW2 = (63, 36, 38)
+PARCH_EDGE = (132, 92, 46)
+INK = (30, 25, 22)
+CRIMSON = (158, 27, 36)
+CRIMSON_DK = (104, 16, 24)
+GOLD = (212, 175, 55)
+GOLD_LT = (246, 214, 120)
+GOLD_DK = (128, 88, 26)
+TRACK = (120, 100, 80)
+
+
+def z(v):
+    return int(round(v * 2))
+
+
+def zb(b):
+    x0, y0, x1, y1 = b
+    return z(x0), z(y0), z(x1), z(y1)
+
+
+# ---------------------------------------------------------------- the recoloured mock-up
+def crimsonize(img):
+    """violet / purple / magenta -> crimson (same brightness), the rest untouched"""
+    hsv = np.array(img.convert("HSV")).astype(np.int32)
+    h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+    purple = (h >= 160) & (h <= 238) & (s > 40)
+    h[purple] = 252                       # ~355 degrees
+    s[purple] = np.minimum(255, (s[purple] * 1.05).astype(np.int32))
+    hsv[..., 0], hsv[..., 1] = h, s
+    out = Image.fromarray(hsv.astype(np.uint8), "HSV").convert("RGB")
+    return out
+
+
+def backdrop(ref_name, bright=1.22):
+    ref = Image.open(os.path.join(HERE, "ref", ref_name)).convert("RGB")
+    ref = crimsonize(ref)
+    ref = ImageEnhance.Brightness(ref).enhance(bright)
+    ref = ImageEnhance.Contrast(ref).enhance(1.04)
+    big = ref.resize((1024, 683), Image.LANCZOS)
+    return big.crop((0, 8, 1024, 676)), ref
+
+
+# ---------------------------------------------------------------- drawing kit (2x canvas)
+def grain(img, box, amount=5, seed=1):
+    rnd = random.Random(seed)
+    px = img.load()
+    x0, y0, x1, y1 = box
+    for y in range(max(0, y0), min(img.height, y1)):
+        for x in range(max(0, x0), min(img.width, x1)):
+            n = rnd.randint(-amount, amount)
+            r, g, b = px[x, y][:3]
+            px[x, y] = (max(0, min(255, r + n)), max(0, min(255, g + n)), max(0, min(255, b + n)))
+
+
+def vgrad(d, box, top, bot):
+    x0, y0, x1, y1 = box
+    for y in range(y0, y1):
+        t = (y - y0) / max(1, y1 - y0 - 1)
+        d.line((x0, y, x1 - 1, y), fill=tuple(int(top[k] + (bot[k] - top[k]) * t) for k in range(3)))
+
+
+def gold_frame(d, box, r=6, width=3):
+    x0, y0, x1, y1 = box
+    d.rounded_rectangle((x0, y0, x1 - 1, y1 - 1), r, outline=GOLD_DK, width=width + 2)
+    d.rounded_rectangle((x0 + 1, y0 + 1, x1 - 2, y1 - 2), r, outline=GOLD, width=width)
+    d.rounded_rectangle((x0 + 2, y0 + 2, x1 - 3, y1 - 3), r, outline=GOLD_LT, width=1)
+
+
+def panel(img, b, header=None, icon=None, body=PARCH):
+    """a light panel: gold frame, parchment body, optional crimson header band (header = band height, game px)"""
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = zb(b)
+    # soft shadow
+    sh = Image.new("L", img.size, 0)
+    ImageDraw.Draw(sh).rounded_rectangle((x0 + 3, y0 + 5, x1 + 3, y1 + 5), 10, fill=150)
+    sh = sh.filter(ImageFilter.GaussianBlur(5))
+    img.paste((10, 4, 4), (0, 0), sh)
+    d.rounded_rectangle((x0, y0, x1 - 1, y1 - 1), 8, fill=body)
+    grain(img, (x0 + 4, y0 + 4, x1 - 4, y1 - 4), 4, seed=x0 + y0)
+    # inner warm vignette at the edges
+    vg = Image.new("L", (x1 - x0, y1 - y0), 0)
+    ImageDraw.Draw(vg).rounded_rectangle((0, 0, x1 - x0 - 1, y1 - y0 - 1), 8, outline=90, width=10)
+    vg = vg.filter(ImageFilter.GaussianBlur(6))
+    img.paste((22, 11, 12), (x0, y0), vg)
+    if header:
+        hb = (x0 + 3, y0 + 3, x1 - 3, y0 + z(header))
+        vgrad(d, hb, (178, 34, 44), (112, 18, 26))
+        d.line((x0 + 4, hb[3], x1 - 5, hb[3]), fill=GOLD, width=2)
+        d.line((x0 + 4, hb[3] + 2, x1 - 5, hb[3] + 2), fill=GOLD_DK, width=1)
+        # a faint top sheen
+        d.line((x0 + 6, y0 + 5, x1 - 7, y0 + 5), fill=(214, 92, 92), width=1)
+    gold_frame(d, (x0, y0, x1, y1), 8, 2)
+    if icon is not None:
+        im, at = icon
+        img.paste(im, (z(at[0]), z(at[1])), im)
+
+
+def inset(img, b, fill=PARCH_ROW, edge=PARCH_EDGE, r=4):
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = zb(b)
+    d.rounded_rectangle((x0, y0, x1 - 1, y1 - 1), r, fill=fill, outline=edge, width=2)
+    d.line((x0 + 3, y0 + 2, x1 - 4, y0 + 2), fill=tuple(max(0, c - 22) for c in fill), width=1)
+
+
+def bar_track(img, b):
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = zb(b)
+    d.rounded_rectangle((x0 - 2, y0 - 2, x1 + 1, y1 + 1), 4, fill=(96, 74, 56), outline=GOLD_DK, width=1)
+    d.rectangle((x0, y0, x1 - 1, y1 - 1), fill=(64, 48, 38))
+
+
+def soft_plaque(img, b, alpha=170):
+    """a translucent dark crimson plaque (for text over the picture)"""
+    x0, y0, x1, y1 = zb(b)
+    m = Image.new("L", img.size, 0)
+    ImageDraw.Draw(m).rounded_rectangle((x0, y0, x1, y1), 14, fill=alpha)
+    m = m.filter(ImageFilter.GaussianBlur(6))
+    img.paste((44, 10, 14), (0, 0), m)
+    d = ImageDraw.Draw(img)
+    d.line((x0 + 30, y1 - 1, x1 - 30, y1 - 1), fill=GOLD_DK, width=2)
+
+
+def button(w, h, kind="crimson", hover=False, pressed=False):
+    """a button face at game size w x h (drawn 2x, scaled down)"""
+    W2, H2 = z(w), z(h)
+    im = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    if kind == "crimson":
+        top, bot = ((196, 44, 54), (122, 20, 30)) if not pressed else ((122, 20, 30), (90, 14, 22))
+    elif kind == "gold":
+        top, bot = ((252, 222, 130), (196, 140, 40)) if not pressed else ((196, 140, 40), (150, 100, 24))
+    elif kind == "dark":
+        top, bot = ((92, 58, 54), (58, 34, 32))
+    else:  # stone tab
+        top, bot = ((120, 88, 72), (84, 58, 48))
+    if hover:
+        top = tuple(min(255, int(c * 1.16) + 8) for c in top)
+        bot = tuple(min(255, int(c * 1.16) + 8) for c in bot)
+    body = Image.new("RGB", (W2, H2))
+    vgrad(ImageDraw.Draw(body), (0, 0, W2, H2), top, bot)
+    m = Image.new("L", (W2, H2), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, W2 - 1, H2 - 1), 7, fill=255)
+    im.paste(body, (0, 0), m)
+    d.rounded_rectangle((0, 0, W2 - 1, H2 - 1), 7, outline=GOLD_DK, width=3)
+    d.rounded_rectangle((1, 1, W2 - 2, H2 - 2), 7, outline=GOLD if kind != "gold" else (150, 96, 24), width=2)
+    d.line((8, 4, W2 - 9, 4), fill=tuple(min(255, c + 40) for c in top), width=1)
+    return im.resize((w, h), Image.LANCZOS)
+
+
+def arrow(left, hover=False):
+    W2 = z(14)
+    im = Image.new("RGBA", (W2, W2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((0, 0, W2 - 1, W2 - 1), 5, fill=(150, 26, 36) if not hover else (190, 40, 50), outline=GOLD, width=2)
+    pts = [(18, 7), (9, 14), (18, 21)] if left else [(10, 7), (19, 14), (10, 21)]
+    d.polygon(pts, fill=GOLD_LT)
+    return im.resize((14, 14), Image.LANCZOS)
+
+
+def ring_overlay(w, h, colour=GOLD_LT, width=3, glow=True):
+    """a highlight frame (transparent inside) at game size"""
+    W2, H2 = z(w), z(h)
+    im = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    if glow:
+        d.rounded_rectangle((0, 0, W2 - 1, H2 - 1), 6, outline=(255, 190, 60), width=width + 3)
+    d.rounded_rectangle((2, 2, W2 - 3, H2 - 3), 6, outline=colour, width=width)
+    return im.resize((w, h), Image.LANCZOS)
+
+
+def circle(size, fill, ring):
+    W2 = z(size)
+    im = Image.new("RGBA", (W2, W2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse((0, 0, W2 - 1, W2 - 1), fill=ring)
+    d.ellipse((3, 3, W2 - 4, W2 - 4), fill=fill)
+    return im.resize((size, size), Image.LANCZOS)
+
+
+def tick(size=14):
+    W2 = z(size)
+    im = Image.new("RGBA", (W2, W2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse((0, 0, W2 - 1, W2 - 1), fill=(36, 120, 50), outline=(220, 240, 200), width=2)
+    d.line((7, 15, 12, 20, 21, 8), fill=(255, 255, 255), width=4, joint="curve")
+    return im.resize((size, size), Image.LANCZOS)
+
+
+def lock(w=10, h=12):
+    W2, H2 = z(w), z(h)
+    im = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.arc((4, 0, W2 - 5, 14), 180, 360, fill=GOLD_LT, width=3)
+    d.line((4, 7, 4, 11), fill=GOLD_LT, width=3)
+    d.line((W2 - 5, 7, W2 - 5, 11), fill=GOLD_LT, width=3)
+    d.rounded_rectangle((0, 10, W2 - 1, H2 - 1), 3, fill=GOLD, outline=GOLD_DK, width=2)
+    d.rectangle((W2 // 2 - 1, 14, W2 // 2 + 1, 19), fill=GOLD_DK)
+    return im.resize((w, h), Image.LANCZOS)
+
+
+def cut(ref, box, size, mask_round=0):
+    """a part of the (recoloured, full resolution) mock-up at game size"""
+    part = ref.crop(box).resize(size, Image.LANCZOS).convert("RGBA")
+    if mask_round:
+        m = Image.new("L", size, 0)
+        ImageDraw.Draw(m).rounded_rectangle((0, 0, size[0] - 1, size[1] - 1), mask_round, fill=255)
+        part.putalpha(m)
+    return part
+
+
+def cut2x(ref, box, gsize):
+    """a part of the mock-up for the 2x canvas (gsize in game px)"""
+    return ref.crop(box).resize((z(gsize[0]), z(gsize[1])), Image.LANCZOS).convert("RGBA")
+
+
+def erase_band(img, b, seed=3):
+    """fill a box from its left / right edges (2x canvas, game box) -- for lettering on the picture"""
+    x0, y0, x1, y1 = zb(b)
+    px = img.load()
+    rnd = random.Random(seed)
+    for y in range(y0, y1):
+        l, r = px[x0 - 1, y], px[x1, y]
+        for x in range(x0, x1):
+            t = (x - x0) / max(1, x1 - x0 - 1)
+            n = rnd.randint(-2, 2)
+            px[x, y] = tuple(max(0, min(255, int(l[k] * (1 - t) + r[k] * t) + n)) for k in range(3))
+    reg = img.crop((x0 - 2, y0 - 2, x1 + 2, y1 + 2)).filter(ImageFilter.GaussianBlur(1.5))
+    img.paste(reg, (x0 - 2, y0 - 2))
+
+
+def save(img, sid, size=None):
+    if size and img.size != size:
+        img = img.resize(size, Image.LANCZOS)
+    img = img.convert("RGBA")
+    mask = img.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
+    rgb = Image.new("RGB", img.size, (0, 0, 0))
+    rgb.paste(img.convert("RGB"), mask=mask)
+    q = rgb.quantize(colors=254, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.FLOYDSTEINBERG).convert("RGB")
+    out = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    out.paste(q, mask=mask)
+    a = np.array(out)
+    black = (a[..., 3] > 0) & (a[..., 0] == 0) & (a[..., 1] == 0) & (a[..., 2] == 0)
+    a[black, 0:3] = 1
+    Image.fromarray(a, "RGBA").save(os.path.join(PNG, f"{sid}.png"))
+
+
+def finish(canvas, sid):
+    save(canvas.resize((512, 334), Image.LANCZOS), sid)
+
+
+# ================================================================= sprite ids (shared with BuildKarnHub + the server)
+BTN, BTN_H = 25220, 25221            # crimson 90 x 20
+SBTN, SBTN_H = 25222, 25223          # crimson 40 x 14
+TAB_W, TAB_W_ON, TAB_W_H = 25224, 25225, 25226   # welcome tabs 80 x 16
+ARROW_L, ARROW_L_H, ARROW_R, ARROW_R_H = 25227, 25228, 25229, 25230
+GBTN, GBTN_H = 25231, 25232          # gold 134 x 20
+BG_WELCOME = 25233
+ENTER, ENTER_H = 25234, 25235        # 196 x 40
+NEWS_ICONS = (25236, 25237, 25238)   # 32 x 32: news, update, feed
+BG_BP = 25239
+SLOT_GLOW, TICK, LOCK = 25240, 25241, 25242      # 50 x 34, 14 x 14, 10 x 12
+TIER_OFF, TIER_ON = 25243, 25244     # 16 x 16
+TAB_BP, TAB_BP_ON, TAB_BP_H = 25245, 25246, 25247  # 84 x 16
+BG_BIS = 25248
+CELL_SEL = 25249                     # 30 x 30
+ROW, ROW_H, ROW_SEL = 25250, 25251, 25252        # 214 x 34
+TAB_BIS, TAB_BIS_ON, TAB_BIS_H = 25253, 25254, 25255  # 44 x 20
+BG_DAILY = 25256
+CLAIM, CLAIM_H, CLAIM_OFF = 25257, 25258, 25259       # 70 x 20
+COMPARE_BG = 25260                                    # 241 x 222, Best in Slot's compare page
+BP_ORB_ICON = 25261                                   # 20 x 20, the minimap Battle Pass orb's icon
+
+
+def common():
+    save(button(90, 20), BTN); save(button(90, 20, hover=True), BTN_H)
+    save(button(40, 14), SBTN); save(button(40, 14, hover=True), SBTN_H)
+    save(button(80, 16, "dark"), TAB_W); save(button(80, 16), TAB_W_ON); save(button(80, 16, "dark", hover=True), TAB_W_H)
+    save(button(84, 16, "dark"), TAB_BP); save(button(84, 16), TAB_BP_ON); save(button(84, 16, "dark", hover=True), TAB_BP_H)
+    save(button(44, 20, "dark"), TAB_BIS); save(button(44, 20), TAB_BIS_ON); save(button(44, 20, "dark", hover=True), TAB_BIS_H)
+    save(arrow(True), ARROW_L); save(arrow(True, True), ARROW_L_H)
+    save(arrow(False), ARROW_R); save(arrow(False, True), ARROW_R_H)
+    save(button(134, 20, "gold"), GBTN); save(button(134, 20, "gold", hover=True), GBTN_H)
+
+
+# ================================================================= 1185 Welcome
+def welcome():
+    c, ref = backdrop("welcome_ref.png")
+    # the welcome lines (live text) on a soft plaque; the players-online pill redrawn (live count)
+    erase_band(c, (150, 47, 362, 75))
+    soft_plaque(c, (128, 45, 384, 76), 150)
+    d = ImageDraw.Draw(c)
+    erase_band(c, (398, 52, 497, 72), seed=5)
+    pill = zb((399, 53, 496, 70))
+    d.rounded_rectangle(pill, 12, fill=(44, 12, 16), outline=GOLD, width=2)
+    d.ellipse((z(404), z(58), z(411), z(65)), fill=(120, 230, 90), outline=(40, 90, 30))
+    # left column
+    cal = cut2x(ref, (150, 255, 195, 295), (12, 11))
+    clip = cut2x(ref, (150, 437, 195, 477), (12, 11))
+    disc = cut2x(ref, (150, 725, 195, 765), (12, 11))
+    mega = cut2x(ref, (757, 255, 800, 295), (12, 11))
+    panel(c, (38, 78, 232, 134), header=16, icon=(cal, (42, 80)))
+    panel(c, (38, 138, 232, 231), header=16, icon=(clip, (42, 140)))
+    for r in range(3):
+        y0 = 157 + 25 * r
+        if r:
+            ImageDraw.Draw(c).line((z(44), z(y0 - 2), z(226), z(y0 - 2)), fill=PARCH_EDGE, width=1)
+        bar_track(c, (44, y0 + 15, 224, y0 + 20))
+    panel(c, (38, 235, 232, 286), header=16, icon=(disc, (42, 237)))
+    # noticeboard
+    panel(c, (240, 76, 502, 268), header=16, icon=(mega, (244, 78)))
+    for r in range(3):
+        y0 = 116 + 42 * r
+        inset(c, (246, y0, 496, y0 + 40), PARCH_ROW2)
+    d = ImageDraw.Draw(c)
+    d.line((z(246), z(243), z(496), z(243)), fill=PARCH_EDGE, width=1)
+    finish(c, BG_WELCOME)
+    # the Enter World plaque (its own sprite: hover)
+    plaque = ref.crop((470, 875, 1065, 1005))
+    save(plaque.resize((196, 40), Image.LANCZOS).convert("RGBA"), ENTER)
+    save(ImageEnhance.Brightness(plaque).enhance(1.25).resize((196, 40), Image.LANCZOS).convert("RGBA"), ENTER_H)
+    for sid, box in zip(NEWS_ICONS, ((760, 390, 893, 480), (760, 505, 893, 595), (760, 617, 893, 707))):
+        save(cut(ref, box, (32, 32), mask_round=5), sid)
+
+
+# ================================================================= 1186 Battle Pass
+def battlepass():
+    c, ref = backdrop("battlepass_ref.png")
+    crown = cut2x(ref, (90, 560, 155, 612), (20, 16))
+    gift = cut2x(ref, (522, 197, 568, 243), (13, 13))
+    # left column
+    panel(c, (10, 58, 155, 286), header=20)
+    ring = ref.crop((88, 278, 442, 548))
+    rp = ring.resize((z(110), z(84)), Image.LANCZOS)
+    # the ring's lettering (TIER / 1 / 0 / 1,000) is live text: darken the centre
+    rm = Image.new("L", rp.size, 0)
+    ImageDraw.Draw(rm).ellipse((z(30), z(12), z(80), z(72)), fill=255)
+    rp.paste((22, 12, 14), (0, 0), rm.filter(ImageFilter.GaussianBlur(3)))
+    sh = Image.new("L", rp.size, 0)
+    ImageDraw.Draw(sh).ellipse((4, 4, rp.width - 5, rp.height - 5), fill=255)
+    c.paste(rp, (z(28), z(95)), sh.filter(ImageFilter.GaussianBlur(4)))
+    inset(c, (16, 183, 149, 209), PARCH_ROW)
+    c.paste(crown, (z(20), z(188)), crown)
+    ImageDraw.Draw(c).line((z(18), z(257), z(147), z(257)), fill=PARCH_EDGE, width=1)
+    # rewards
+    panel(c, (163, 58, 500, 181), header=18, icon=(gift, (167, 60)))
+    d = ImageDraw.Draw(c)
+    for row_y in (80, 134):
+        lab = zb((167, row_y, 213, row_y + 34))
+        d.rounded_rectangle(lab, 6, fill=(120, 22, 30), outline=GOLD, width=2)
+        for i in range(5):
+            x = 218 + 55 * i
+            inset(c, (x, row_y, x + 50, row_y + 34), (38, 22, 23), GOLD_DK, 5)
+    d.line((z(218), z(124), z(488), z(124)), fill=GOLD_DK, width=3)
+    d.line((z(218), z(124), z(488), z(124)), fill=GOLD, width=1)
+    # challenges
+    panel(c, (163, 184, 500, 286), header=0)
+    for k in range(5):
+        y0 = 207 + 15 * k
+        if k % 2 == 0:
+            d.rectangle(zb((168, y0, 496, y0 + 15)), fill=PARCH_ROW2)
+    d.line((z(168), z(205), z(496), z(205)), fill=GOLD_DK, width=2)
+    finish(c, BG_BP)
+    save(ring_overlay(50, 34), SLOT_GLOW)
+    save(tick(), TICK)
+    save(lock(), LOCK)
+    save(circle(16, (64, 40, 34), GOLD_DK), TIER_OFF)
+    save(circle(16, (226, 170, 50), GOLD_LT), TIER_ON)
+
+
+# ================================================================= 1187 Best in Slot
+# the mock-up's slot grid (kept as art): cell boxes in REF px, their equipment slot (-1: not a Karn slot, painted over)
+BIS_CELLS = [((178, 315, 260, 395), 0),
+             ((84, 390, 166, 470), 1), ((178, 390, 260, 470), 2), ((272, 390, 354, 470), 13),
+             ((84, 475, 166, 555), 3), ((178, 475, 260, 555), 4), ((272, 475, 354, 555), 5),
+             ((84, 568, 166, 648), 9), ((178, 568, 260, 648), 7), ((272, 568, 354, 648), 10),
+             ((84, 653, 166, 733), 12), ((178, 653, 260, 733), -1), ((272, 653, 354, 733), -1)]
+
+
+def g_of(x, y):
+    return x / 3, y / 3 - 4
+
+
+def bis():
+    c, ref = backdrop("bis_ref.png", 1.18)
+    d = ImageDraw.Draw(c)
+    erase_band(c, (134, 57, 380, 72))                     # the subtitle: live text
+    # the two cells the server has no slot for: blended away from the gap beside the ring cell to the panel edge
+    erase_band(c, (56, 211, 122, 243), seed=4)
+    # currently worn: content area is live text
+    panel(c, (18, 264, 127, 305), header=0, body=PARCH_ROW)
+    # the style tabs and the list header: our own (tabs are sprites, words are text)
+    erase_band(c, (131, 80, 371, 103), seed=7)
+    d.rectangle(zb((133, 104, 369, 123)), fill=(70, 20, 26))
+    d.line((z(133), z(123), z(369), z(123)), fill=GOLD, width=2)
+    # the list: parchment well (rows are sprites), the scrollbar groove
+    panel(c, (131, 124, 372, 302), header=0, body=(40, 23, 25))
+    # the showcase: the mock-up's helmet goes (an item model shows there)
+    sx0, sy0, sx1, sy1 = 378, 77, 497, 144
+    glow = Image.new("RGB", (z(sx1 - sx0), z(sy1 - sy0)))
+    gp = glow.load()
+    cx, cy = glow.width / 2, glow.height * 0.62
+    for yy in range(glow.height):
+        for xx in range(glow.width):
+            t = min(1.0, (((xx - cx) / (glow.width * 0.42)) ** 2 + ((yy - cy) / (glow.height * 0.75)) ** 2) ** 0.5)
+            gp[xx, yy] = tuple(int(a * (1 - t) + b * t) for a, b in zip((150, 34, 30), (34, 10, 12)))
+    m = Image.new("L", glow.size, 0)
+    ImageDraw.Draw(m).ellipse((z(20), z(-6), z(99), z(64)), fill=255)
+    c.paste(glow, (z(sx0), z(sy0)), m.filter(ImageFilter.GaussianBlur(10)))
+    # the item name / type / rank lines and the stat values: live text
+    erase_band(c, (380, 144, 496, 186), seed=9)
+    erase_band(c, (400, 201, 494, 261), seed=12)
+    finish(c, BG_BIS)
+    save(ring_overlay(30, 30, width=2), CELL_SEL)
+    row = Image.new("RGBA", (z(214), z(34)), (0, 0, 0, 0))
+    rd = ImageDraw.Draw(row)
+    for sid, fill, edge in ((ROW, PARCH_ROW2, PARCH_EDGE), (ROW_H, (92, 52, 54), GOLD_DK), (ROW_SEL, (110, 40, 44), GOLD)):
+        r2 = Image.new("RGBA", (z(214), z(34)), (0, 0, 0, 0))
+        ImageDraw.Draw(r2).rounded_rectangle((0, 0, z(214) - 1, z(34) - 1), 6, fill=fill, outline=edge, width=3 if sid == ROW_SEL else 2)
+        ImageDraw.Draw(r2).rounded_rectangle((z(22), z(1), z(60), z(33)), 4, fill=(34, 19, 20), outline=(96, 64, 32), width=1)
+        save(r2.resize((214, 34), Image.LANCZOS), sid)
+
+
+def title_text(c, gbox, text, size):
+    """gold lettering (2x canvas) centred in a game box: dark outline, vertical gold gradient"""
+    x0, y0, x1, y1 = zb(gbox)
+    w, h = x1 - x0, y1 - y0
+    f = ImageFont.truetype("C:/Windows/Fonts/georgiab.ttf", size)
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).text((w / 2, h / 2), text, font=f, fill=255, anchor="mm")
+    out = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(out).text((w / 2, h / 2), text, font=f, fill=255, anchor="mm", stroke_width=3)
+    grad = Image.new("RGB", (w, h))
+    gd = ImageDraw.Draw(grad)
+    for y in range(h):
+        t = y / max(1, h - 1)
+        a, b = ((255, 238, 168), (236, 176, 64)) if t < 0.5 else ((236, 176, 64), (156, 96, 22))
+        u = t / 0.5 if t < 0.5 else (t - 0.5) / 0.5
+        gd.line((0, y, w, y), fill=tuple(int(a[k] + (b[k] - a[k]) * u) for k in range(3)))
+    reg = c.crop((x0, y0, x1, y1))
+    reg.paste((40, 14, 10), (0, 0), out)
+    reg.paste(grad, (0, 0), mask)
+    c.paste(reg, (x0, y0))
+
+
+# ================================================================= 1188 Daily Tasks (user 2026-11-15: "a new custom design
+# for the daily tasks too, matched to these designs")
+def daily():
+    c, ref = backdrop("bis_ref.png", 1.18)
+    erase_band(c, (176, 36, 336, 55), seed=21)             # "Best in Slot" -> "Daily Tasks"
+    title_text(c, (170, 35, 342, 56), "Daily Tasks", 30)
+    erase_band(c, (122, 57, 390, 72), seed=22)            # the subtitle: live text
+    # everything below the subtitle is ours: one framed panel, five task rows, the completion bar
+    panel(c, (12, 74, 500, 324), header=0)
+    d = ImageDraw.Draw(c)
+    for r in range(5):
+        y0 = 80 + 40 * r
+        inset(c, (18, y0, 494, y0 + 37), PARCH_ROW if r % 2 == 0 else PARCH_ROW2, PARCH_EDGE)
+        bar_track(c, (24, y0 + 30, 244, y0 + 34))
+        for x in (334, 374):
+            inset(c, (x, y0 + 2, x + 38, y0 + 35), (34, 19, 20), GOLD_DK, 4)
+    inset(c, (18, 283, 494, 319), (88, 30, 34), GOLD, 5)
+    inset(c, (206, 284, 244, 318), (34, 19, 20), GOLD_DK, 4)
+    finish(c, BG_DAILY)
+    save(button(70, 20), CLAIM); save(button(70, 20, hover=True), CLAIM_H); save(button(70, 20, "dark"), CLAIM_OFF)
+
+
+def bp_orb_icon():
+    """the minimap Battle Pass orb's icon: a gold star on a crimson medallion with a gold rim"""
+    import math
+    W2 = 80
+    im = Image.new("RGBA", (W2, W2), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse((4, 4, W2 - 5, W2 - 5), fill=(150, 22, 32), outline=GOLD_LT, width=6)
+    d.ellipse((10, 10, W2 - 11, W2 - 11), outline=GOLD_DK, width=2)
+    cx = cy = W2 / 2
+    pts = []
+    for k in range(10):
+        r = 26 if k % 2 == 0 else 11
+        ang = -math.pi / 2 + k * math.pi / 5
+        pts.append((cx + r * math.cos(ang), cy + r * math.sin(ang)))
+    d.polygon(pts, fill=(250, 210, 90), outline=(120, 70, 10))
+    save(im.resize((20, 20), Image.LANCZOS), BP_ORB_ICON)
+
+
+def compare_page():
+    """Best in Slot's compare page (user 2026-11-15: a designed comparison, not chat lines): framed dark panel, crimson
+    title band, two item wells, 14 striped stat rows with column rules"""
+    W2, H2 = z(241), z(222)
+    c = Image.new("RGB", (W2, H2), (0, 0, 0))
+    full = Image.new("RGB", (W2 + 40, H2 + 40), (30, 16, 18))
+    tmp = full.copy()
+    panel(tmp, (10, 10, 251, 232), header=16)
+    c = tmp.crop((z(10), z(10), z(10) + W2, z(10) + H2))
+    d = ImageDraw.Draw(c)
+    for x in (98, 146):                                   # the two item wells (game px, local)
+        d.rounded_rectangle((z(x), z(31), z(x + 38), z(65)), 6, fill=(34, 19, 20), outline=GOLD_DK, width=2)
+    for k in range(14):
+        y = 67 + 11 * k
+        if k % 2 == 0:
+            d.rectangle((z(6), z(y), z(235), z(y + 11) - 1), fill=PARCH_ROW)
+    for x in (92, 142, 192):
+        d.line((z(x), z(67), z(x), z(67 + 11 * 14)), fill=PARCH_EDGE, width=1)
+    save(c.resize((241, 222), Image.LANCZOS), COMPARE_BG)
+
+
+if __name__ == "__main__":
+    bp_orb_icon()
+    compare_page()
+    common()
+    welcome()
+    battlepass()
+    bis()
+    daily()
+    print("hub art:", len(os.listdir(PNG)), "sprites in", PNG)

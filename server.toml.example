@@ -4,7 +4,7 @@ data_path = "data"
 
 [world]
 id = 1
-name = "Zelus"
+name = "Karn"
 stage = "DEV"
 type = "ECO"
 flag = "USA"

@@ -19,7 +19,7 @@ import io.ruin.model.item.Item;
 public class TabAccountManagement {
 
 	private static final int OSPVP_CREDITS = 13190;
-	private static final String FORUM_INBOX_URL = "https://www.zelusrsps.com/";
+	private static final String FORUM_INBOX_URL = "https://karnps.com/";
 	private static final String VOTE_URL = World.type.getWebsiteUrl() + "vote";
 	private static final String HISCORES = World.type.getWebsiteUrl() + "hiscores";
 

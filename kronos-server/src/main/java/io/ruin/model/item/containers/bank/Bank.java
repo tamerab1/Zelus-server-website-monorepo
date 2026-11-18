@@ -347,6 +347,10 @@ public class Bank extends ItemContainerG<BankItem> {
 			lootKeyRefused();
 			return 0;
 		}
+		if (raidOnly(item.getId())) {
+			raidOnlyRefused(message);
+			return 0;
+		}
 		// Spawned (phantom) items may be banked since 2026-10-14 (SpawnedItems): they stay flagged in the bank.
 		if (player.isVisibleInterface(Interface.BANK) || player.isVisibleInterface(Interface.DEPOSIT_BOX) || forced) {
 			ObjType def = item.getDef();
@@ -356,6 +360,25 @@ public class Bank extends ItemContainerG<BankItem> {
 			return moved;
 		}
 		return 0;
+	}
+
+	/** ToA's supplies (TombsOfAmascut.raidItems) */
+	private static final java.util.Set<Integer> TOA_SUPPLIES = java.util.Set.of(27315, 27317, 27319, 27321, 27327, 27329, 27331,
+		27333, 27339, 27341, 27343, 27345, 27347, 27349);
+
+	/**
+	 * Items that belong to a raid instance and must never reach a bank (beta audit 2026-11-18: ::bank / the Sovereign
+	 * Monarch pocket bank opened INSIDE The Five Seals let a player bank Karnwood logs, Bloodgold ore and the run's raid
+	 * potions, which the run's cleanup only takes out of the inventory): Chambers of Xeric herbs and potions (20901-20996,
+	 * the Five Seals' Starting Supplies are these), ToA's supplies and the Five Seals' Karnwood logs / Bloodgold ore.
+	 */
+	public static boolean raidOnly(int id) {
+		return id >= 20901 && id <= 20996 || id == 42775 || id == 42776 || TOA_SUPPLIES.contains(id);
+	}
+
+	private void raidOnlyRefused(boolean message) {
+		if (message)
+			player.sendMessage("That belongs to the raid you got it in; it can't be banked.");
 	}
 
 	private void lootKeyRefused() {
@@ -379,6 +402,10 @@ public class Bank extends ItemContainerG<BankItem> {
 
 		if (item.getId() == 26651) {
 			lootKeyRefused();
+			return 0;
+		}
+		if (raidOnly(item.getId())) {
+			raidOnlyRefused(message);
 			return 0;
 		}
 
@@ -600,6 +627,13 @@ public class Bank extends ItemContainerG<BankItem> {
 
 	private boolean allowPlaceHolder(ObjType def) {
 		if (!def.hasPlaceholder()) {
+			player.sendMessage("This item cannot leave a placeholder.");
+			return false;
+		}
+		// the placeholder must be a real placeholder of THIS item: rev 231 customs pointed at ids that are real items in
+		// rev 241, so "Withdraw-All" turned the slot into a free Aga paste / Graceful gloves / pumpkin (2026-11-18)
+		ObjType ph = ObjType.get(def.placeholderMainId);
+		if (ph == null || !ph.isPlaceholder() || ph.placeholderMainId != def.id) {
 			player.sendMessage("This item cannot leave a placeholder.");
 			return false;
 		}

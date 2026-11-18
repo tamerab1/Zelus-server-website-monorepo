@@ -28,10 +28,10 @@ public final class WorkbenchHub {
 	private static final int SCROLL = 9, SCROLLBAR = 10;
 	/** Cards (2026-10-20 redesign): layer, fill (click), selected recess + shadow, divider, icon well, icon, name, line. */
 	private static final int FIRST_CARD = 11, CARD_STRIDE = 9, CARD_BOX = 1, CARD_SELECTED = 2, CARD_ICON = 6, CARD_NAME = 7,
-		CARD_LINE = 8, CARD_PITCH = 38, SCROLL_HEIGHT = 234;
+		CARD_LINE = 8, CARD_PITCH = 44, SCROLL_HEIGHT = 233; // round 6 (RestyleWorkbench, 2026-11-15: 40px cards, p12)
 	/** The description has its own scroll pane (100px tall, 12px lines, ~21 characters a line). */
 	private static final int PERK_NAME = 186, PERK_INFO = 187, DESC_SCROLL = 189, DESC_SCROLLBAR = 190, PERK_DESC = 191,
-		DESC_HEIGHT = 100, ODDS_HEADER = 194, FIRST_ODDS = 195;
+		DESC_HEIGHT = 41, ODDS_HEADER = 194, FIRST_ODDS = 195;
 	/** The target socket shows "Item" (TARGET_HINT) while empty. */
 	private static final int TARGET_HINT = 219, TARGET = 220, TARGET_NAME = 221, TARGET_UPGRADES = 222, TARGET_PERKS = 223;
 	/** Material slots: well, rim, item. */
@@ -43,8 +43,9 @@ public final class WorkbenchHub {
 	private static final int[] PERK_SPRITES = {5203, 4854, 4824, 5202, 5209, 5184, 5426, 5036, 4863, 5086, 4851, 5082, 4524,
 		5207, 5434, 5092, 5438, 5201, 5423};
 
-	private static final String GOLD = "<col=ffc35a>", GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>", GREEN = "<col=00ff00>",
-		ORANGE = "<col=ff981f>", RED = "<col=ff5050>", END = "</col>";
+	/* round 5 (2026-11-14): the Karn Workbench is the user's dark reference art (gold / ivory text) */
+	private static final String GOLD = "<col=f5c55a>", GREY = "<col=a89a88>", WHITE = "<col=e8dcc6>", GREEN = "<col=6fe07a>",
+		ORANGE = "<col=f0a040>", RED = "<col=e04848>", END = "</col>";
 
 	private WorkbenchHub() {
 	}
@@ -72,7 +73,7 @@ public final class WorkbenchHub {
 	static void openFrame(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "ZELUS FORGE · ITEM WORKBENCH" + END);
+		ps.sendString(INTERFACE, TITLE, ORANGE + "KARN FORGE · ITEM WORKBENCH" + END);
 		ItemBreakPerks[] perks = ItemBreakPerks.VALUES;
 		for (int c = 0; c < perks.length; c++) {
 			int card = FIRST_CARD + c * CARD_STRIDE;
@@ -83,7 +84,7 @@ public final class WorkbenchHub {
 		int contentHeight = perks.length * CARD_PITCH - 2;
 		int count = contentHeight <= SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - SCROLL_HEIGHT / 3D) / 15D);
 		ScrollbarClientScript.create().interfaceId(INTERFACE).containerId(SCROLL).scrollbarChildId(SCROLLBAR)
-			.childrenCount(count).withDarkGraphics().build().send(player);
+			.childrenCount(count).withOrnateGraphics().build().send(player);
 	}
 
 	static void refresh(Player player) {
@@ -94,10 +95,11 @@ public final class WorkbenchHub {
 		ItemBreakPerks perk = s.perk;
 		Item item = s.selectedItem;
 
-		ps.sendString(INTERFACE, SUB_HEADER, item == null
-			? WHITE + "1." + END + " Pick a perk  " + GREY + "·" + END + "  " + WHITE + "2." + END + " Click an item in your inventory"
-			: !s.minimumIngredientsAdded ? WHITE + "3." + END + " Press " + GOLD + "Add minimum" + END + " to load the required materials"
-			: WHITE + "4." + END + " Click extra minerals / enhancers for better odds, then " + GREEN + "Upgrade" + END);
+		// round 6: the steps line is live p12 text in the top band (~300px): short steps
+		ps.sendString(INTERFACE, SUB_HEADER, perk == null ? GOLD + "1." + END + " Pick a perk from the list"
+			: item == null ? GOLD + "2." + END + " Click an item in your inventory"
+			: !s.minimumIngredientsAdded ? GOLD + "3." + END + " Press " + GOLD + "Add min" + END + " to load materials"
+			: GOLD + "4." + END + " Add extras for better odds, then " + GREEN + "Upgrade" + END);
 
 		// catalogue: selected outline + tier / slot line (and the level the selected item already has)
 		ItemBreakPerks[] perks = ItemBreakPerks.VALUES;
@@ -118,11 +120,11 @@ public final class WorkbenchHub {
 			String description = ItemBreakPerks.getDescription(perk).replaceAll("\\s+", " ").trim();
 			// the whole description, in its scroll pane (the scrollbar is sized to the wrapped text)
 			ps.sendString(INTERFACE, PERK_DESC, description + "<br>" + GREY + "Lower rolls keep your level." + END);
-			int lines = description.length() / 21 + 3;
-			int contentHeight = lines * 12;
+			int lines = description.length() / 19 + 3; // round 6: p12 in the 129 px pane
+			int contentHeight = lines * 14;
 			int count = contentHeight <= DESC_HEIGHT ? 0 : (int) Math.ceil((contentHeight - DESC_HEIGHT / 3D) / 15D);
 			ScrollbarClientScript.create().interfaceId(INTERFACE).containerId(DESC_SCROLL).scrollbarChildId(DESC_SCROLLBAR)
-				.childrenCount(count).withDarkGraphics().build().send(player);
+				.childrenCount(count).withOrnateGraphics().build().send(player);
 			boolean boosted = s.minimumIngredientsAdded;
 			ps.sendString(INTERFACE, ODDS_HEADER, boosted ? "Roll odds  " + GREY + "(base > yours)" + END : "Roll odds (base)");
 			int[] base = odds(perk.level2Chance, perk.level3Chance, perk.level4Chance, perk.level5Chance);
@@ -143,17 +145,17 @@ public final class WorkbenchHub {
 
 		// right: target item
 		ps.setHidden(INTERFACE, TARGET, item == null);
-		ps.setHidden(INTERFACE, TARGET_HINT, item != null);
+		ps.setHidden(INTERFACE, TARGET_HINT, true); // round 6: the old "Item" label sat beside the socket; the text below says it
 		if (item != null) {
 			ps.sendItem(INTERFACE, TARGET, item.getId(), item.getAmount());
-			ps.sendString(INTERFACE, TARGET_NAME, shorten(item.getDef().name, 18));
+			ps.sendString(INTERFACE, TARGET_NAME, shorten(item.getDef().name, 26));
 			ps.sendString(INTERFACE, TARGET_UPGRADES, "Upgrades " + ItemUpgradeInterface.getTotalAttachments(item) + " / "
 				+ ItemUpgradeInterface.getMaxAttachments(item));
-			ps.sendString(INTERFACE, TARGET_PERKS, GREY + "Perks: " + END + ItemUpgradeInterface.getItemAttachmentsComma(item));
+			ps.sendString(INTERFACE, TARGET_PERKS, GREY + "Perks: " + END + shorten(String.valueOf(ItemUpgradeInterface.getItemAttachmentsComma(item)), 28));
 		} else {
 			ps.sendString(INTERFACE, TARGET_NAME, GREY + "No item" + END);
 			ps.sendString(INTERFACE, TARGET_UPGRADES, "");
-			ps.sendString(INTERFACE, TARGET_PERKS, GREY + "Click an item in your inventory to choose it." + END); // full width, 2 lines
+			ps.sendString(INTERFACE, TARGET_PERKS, GREY + "Click an item in your inventory" + END); // one p12 line
 		}
 
 		// materials: required (the perk's cost) and added (what will be consumed)
@@ -163,12 +165,13 @@ public final class WorkbenchHub {
 			: s.minimumIngredientsAdded ? GOLD + "Added" + END + GREY + " (click inventory for more)" + END : GOLD + "Added materials" + END);
 		sendSlots(player, FIRST_ADDED, s.perkAttachmentActive ? s.itemsInPerkAttachment : List.of());
 		ps.setHidden(INTERFACE, ADD_MINIMUM + PRESSED, s.perkAttachmentActive && !s.minimumIngredientsAdded);
-		ps.sendString(INTERFACE, ADD_MINIMUM + LABEL, !s.perkAttachmentActive ? GREY + "Add minimum" + END
-			: s.minimumIngredientsAdded ? GREEN + "Minimum added" + END : ORANGE + "Add minimum" + END);
+		// round 5: the painted button is small (Karn Workbench art): short labels
+		ps.sendString(INTERFACE, ADD_MINIMUM + LABEL, !s.perkAttachmentActive ? GREY + "Add min" + END
+			: s.minimumIngredientsAdded ? GREEN + "Added" + END : ORANGE + "Add min" + END);
 		// the primary action: raised with a bright label when it can run, pressed + grey otherwise
 		boolean ready = s.perkAttachmentActive && s.minimumIngredientsAdded;
 		ps.setHidden(INTERFACE, UPGRADE + PRESSED, ready);
-		ps.sendString(INTERFACE, UPGRADE + LABEL, ready ? "<col=7dff6a>Upgrade Item" + END : GREY + "Upgrade Item" + END);
+		ps.sendString(INTERFACE, UPGRADE + LABEL, ready ? "<col=f5e6c8>Upgrade Item" + END : "<col=a89a88>Upgrade Item" + END);
 	}
 
 	private static void sendSlots(Player player, int first, List<Item> items) {
@@ -198,9 +201,9 @@ public final class WorkbenchHub {
 
 	private static String levelColour(int level) {
 		return switch (level) {
-			case 5 -> "<col=ff8c00>";
-			case 4 -> "<col=c86fff>";
-			case 3 -> "<col=4fa3ff>";
+			case 5 -> "<col=f0a040>";
+			case 4 -> "<col=c890ff>";
+			case 3 -> "<col=7ab0ff>";
 			case 2 -> GREEN;
 			default -> WHITE;
 		};

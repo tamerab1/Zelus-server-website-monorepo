@@ -173,7 +173,7 @@ public class ReasonPointStore extends NewShop {
 						player.sendMessage("Not enough inventory space.");
 						return false;
 					} else if (player.getReasonPoints() < item.getCost()) {
-						player.sendMessage("You don't have enough Zelus points.");
+						player.sendMessage("You don't have enough Karn points.");
 						return false;
 					} else {
 						for (ShopUpgradeItems shopUpgrade : ShopUpgradeItems.VALUES) {
@@ -217,7 +217,7 @@ public class ReasonPointStore extends NewShop {
 						player.sendMessage("Not enough inventory space.");
 						return false;
 					} else if (player.getReasonPoints() < item.getCost()) {
-						player.sendMessage("You don't have enough Zelus points.");
+						player.sendMessage("You don't have enough Karn points.");
 						return false;
 					} else {
 						for (ShopUpgradeItems shopUpgrade : ShopUpgradeItems.VALUES) {
@@ -266,7 +266,7 @@ public class ReasonPointStore extends NewShop {
 				player.sendMessage("Not enough inventory space.");
 				return false;
 			} else if (player.getReasonPoints() < item.getCost()) {
-				player.sendMessage("You don't have enough Zelus points.");
+				player.sendMessage("You don't have enough Karn points.");
 				return false;
 			} else {
 				for (ShopUpgradeItems shopUpgrade : ShopUpgradeItems.VALUES) {
@@ -307,16 +307,16 @@ public class ReasonPointStore extends NewShop {
 
 	@Override
 	public String getShopName() {
-		return "Zelus Point Store";
+		return "Karn Point Store";
 	}
 
 	@Override
 	public String getPointIdentifier() {
-		return "Zelus points";
+		return "Karn points";
 	}
 
 	@Override
 	public void openMessage(Player player) {
-		player.sendMessage("You have " + NumberUtils.formatNumber(player.getReasonPoints()) + " Zelus points.");
+		player.sendMessage("You have " + NumberUtils.formatNumber(player.getReasonPoints()) + " Karn points.");
 	}
 }

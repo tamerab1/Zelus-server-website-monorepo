@@ -131,7 +131,7 @@ public class SecurityGuard {
 		player.dialogue(new NPCDialogue(1891, "Ah, " + player.getName() + ", thank you for confirming your activity, take this reward as a token of my appreciation."));
 		int reasonPoints = Random.get(2500, 5000);
 		player.updateReasonPoints(reasonPoints);
-		player.sendMessage("You have been awarded " + NumberUtils.formatNumber(reasonPoints) + " Zelus points.");
+		player.sendMessage("You have been awarded " + NumberUtils.formatNumber(reasonPoints) + " Karn points.");
 		player.getInventory().addOrDrop(new Item(995, Random.get(750_000, 1_500_000)));
 		guard.remove();
 	}

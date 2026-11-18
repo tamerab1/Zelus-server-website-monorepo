@@ -130,6 +130,12 @@ public class NPCActionHandler implements MessageConsumer<Player, OpNpcV2> {
 		player.face(npc);
 		player.getMovement().setCtrlRun(ctrlRun == 1);
 		if (option == def.attackOption) {
+			// encounters where "Attack" isn't a normal attack (e.g. Zalcano: throw imbued tephra)
+			NPCAction override = npc.get("ATTACK_OVERRIDE");
+			if (override != null) {
+				override.handle(player, npc);
+				return;
+			}
 			player.getCombat().setTarget(npc);
 			return;
 		}

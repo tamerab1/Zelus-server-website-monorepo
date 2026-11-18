@@ -75,7 +75,7 @@ public class ZelusBotPlayer extends Player {
         // Register with the world (assigns a player-slot index)
         int slot = World.addPlayer(fakeInfo, this, username);
         if (slot < 0) {
-            throw new IllegalStateException("[ZelusBotPlayer] No free player slot for bot " + username);
+            throw new IllegalStateException("[KarnBotPlayer] No free player slot for bot " + username);
         }
 
         // Load fresh default attributes (no DB file exists, so all defaults)

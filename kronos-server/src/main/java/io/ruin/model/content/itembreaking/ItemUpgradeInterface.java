@@ -397,6 +397,21 @@ public class ItemUpgradeInterface {
 		return mineralsInPerkAttachment;
 	}
 
+	/** the selected item is still this exact inventory item, and every ingredient is still held (inventory + mineral bag) */
+	private boolean stillHolds(Player player) {
+		if (selectedItem == null || selectedItem.getContainer() != player.getInventory())
+			return false;
+		boolean bag = player.getInventory().contains(26986);
+		for (Item ing : itemsInPerkAttachment) {
+			int held = player.getInventory().getAmount(ing.getId());
+			if (bag && player.mineralBagItems.get(ing.getId()) != null)
+				held += player.mineralBagItems.get(ing.getId());
+			if (held < ing.getAmount())
+				return false;
+		}
+		return true;
+	}
+
 	void confirmUpgrade(Player player) {
 		if (this.selectedItem == null) {
 			player.sendMessage("Please select the item first.");
@@ -459,6 +474,14 @@ public class ItemUpgradeInterface {
 		}
 		player.dialogue(new OptionsDialogue("Are you sure you want to upgrade this item?",
 				new Option(replacing == null ? "Yes, upgrade it." : "Yes, replace " + replacing.name + ".", () -> {
+					// beta audit 2026-11-18: this dialogue closes the workbench, so the inventory is free again until "Yes".
+					// Dropping / banking the minerals, enhancers or the item itself in between used to still upgrade it
+					// (the removals below just took what was left): check everything again now.
+					if (!stillHolds(player)) {
+						player.sendMessage("The item or the ingredients are no longer in your inventory.");
+						resetSession();
+						return;
+					}
 					// Delete the items
 					for (Item item : itemsInPerkAttachment) {
 						if (savedMaterial(player)) continue;

@@ -278,6 +278,11 @@ public enum Pet {
 	HELL_WILY_CAT(7585, 5590, 1632, false),
 	HELL_LAZY_CAT(7584, 1632, 5597, false),
 	SMOLCANO(23760, 8731, 8739, false),
+	MAGGOT_MARQUESS(33642, 15740, false),
+	HUBERTE(30152, 14045, false), // huey_pet (14033 is the POH one)
+	BRAN(42768, 12593, 12595, false), // rtbranda_pet (cache stage 43: vanilla 30622 copied to 42768, our old Snake tail keeps 30622); Metamorph -> Ric
+	RIC(42772, 12595, 12593, false), // rteldric_pet (cache stage 43: vanilla 30624 copied to 42772; ours is a slayer helm kit); Metamorph -> Bran
+	BEEF(33124, 15631, false), // cowboss_pet
 	YOUNGLLEF(23757, 8737, 8738, false),
 	CORRUPTED_YOUNGLLEF(23759, 8738, 8737, false),
 
@@ -589,6 +594,8 @@ public enum Pet {
 	XAMPHUR_T2(42542, 30592, false),
 	XAMPHUR_T3(42544, 30593, false),
 	DRAKTHOR_HATCHLING(60411, 21958, false), // Colosseum of Trials shop pet: +10% Trial Marks (EggEffects.trialMarks), cache stage 26
+	LIL_VORGATH(42782, 30267, false), // The Five Seals pet (cache stage 58), 1/1500 full clears (FiveSealsLoot)
+	GILDED_LIL_VORGATH(42806, 30268, false), // its gold recolour from the Five Seals shop, owners of Lil' Vorgath only (cache stage 63)
 	;
 
 	public final int itemId, npcId, metaId;

@@ -158,7 +158,7 @@ public class PlayerMovement extends Movement {
 
 		walkDirection = runDirection = -1;
 		if (player.isVisibleInterface(Interface.WORLD_MAP))
-			player.getPacketSender().sendClientScript(1749, "c", player.getPosition().getTileHash());
+			player.getPacketSender().sendClientScript(1749, "ccc", io.ruin.model.inter.worldmap.Worldmap.youAreHere(player), -1, -1); // 1749: you-are-here, clue, gravestone
 		if (finishTeleport(player.getPosition())) {
 			if (!player.forceMovementUpdate.updated)
 				player.teleportModeUpdate.set(MovementState.TELEPORT.getId());

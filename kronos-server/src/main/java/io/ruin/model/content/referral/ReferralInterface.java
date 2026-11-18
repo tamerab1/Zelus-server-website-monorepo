@@ -115,7 +115,7 @@ public final class ReferralInterface {
 	private static void draw(Player player) {
 		PacketSender ps = player.getPacketSender();
 		View v = view(player);
-		ps.sendString(INTERFACE, TITLE, "Zelus Referrals");
+		ps.sendString(INTERFACE, TITLE, "Karn Referrals");
 
 		long now = System.currentTimeMillis(), start = ReferralPromo.startMillis(), end = ReferralPromo.endMillis();
 		ps.sendString(INTERFACE, PROMO_TIMER, now >= end ? GREY + "Promotion ended" + END

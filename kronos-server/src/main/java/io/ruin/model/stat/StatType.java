@@ -99,6 +99,10 @@ public enum StatType {
 	Construction(22,
 		15.0, 10.0,
 		9789, 9790, 9791
+	),
+	Sailing(24, // OSRS stat 23 (Nov 2025); skill guide 24, stats tab component 24
+		15.0, 10.0,
+		31288, 31290, 31292
 	);
 
 	public final int clientId;
@@ -164,6 +168,8 @@ public enum StatType {
 				return Firemaking;
 			case "con":
 				return Construction;
+			case "sail":
+				return Sailing;
 		}
 		return null;
 	}

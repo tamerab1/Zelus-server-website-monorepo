@@ -205,6 +205,8 @@ public class UpgradeSystemInterface {
 			}
 			h.actions[416] = (SimpleAction) p -> {
 				var selectedItem = p.getUpgradeSystemInterface().currentSection;
+				if (selectedItem == null) // nothing picked yet (or a forged click): nothing to upgrade
+					return;
 				if (selectedItem.getSuccessRate(p) < 100) {
 					p.dialogue(new YesNoDialogue(
 						"Warning: There is a chance to fail!",

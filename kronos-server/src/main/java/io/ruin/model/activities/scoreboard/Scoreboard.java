@@ -385,7 +385,7 @@ public final class Scoreboard {
 		roll();
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "Zelus Scoreboard" + END);
+		ps.sendString(INTERFACE, TITLE, ORANGE + "Karn Scoreboard" + END);
 		ps.sendString(INTERFACE, PAYOUT, "Top 3 of each board earn " + DAILY_REWARD[0] + " / " + DAILY_REWARD[1] + " / "
 			+ DAILY_REWARD[2] + " SbP daily and " + WEEKLY_REWARD[0] + " / " + WEEKLY_REWARD[1] + " / " + WEEKLY_REWARD[2]
 			+ " SbP weekly.");

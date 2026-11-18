@@ -9,10 +9,13 @@ import io.ruin.model.inter.dialogue.PlayerDialogue;
 import io.ruin.model.inter.utils.Option;
 
 public class Ghommal {
+	/** npc 30004 "Achievement Master" (cache stage 39 PatchAchievementMaster), home 3087,3504 */
+	public static final int ACHIEVEMENT_MASTER = 30004;
+
 	private static void talk(Player player, NPC npc) {
 		player.dialogue(
 			new NPCDialogue(npc.getId(), "What do you want?"),
-			new OptionsDialogue(new Option("Open Zelus Achievements.", () -> io.ruin.model.content.codex.ZelusCodex.open(player)),
+			new OptionsDialogue(new Option("Open Karn Achievements.", () -> io.ruin.model.content.codex.ZelusCodex.open(player)),
 				new Option("I would like to claim the next combat achievement tier rewards.", () -> {
 				player.dialogue(new PlayerDialogue("I'm here to claim combat achievement rewards.").action(() -> CombatAchievementSystem.claimNextReward(player)));
 			}), new Option("I would like to open the combat achievements interface", () -> {
@@ -25,7 +28,7 @@ public class Ghommal {
 							" They range from simple missions to kill various creatures, to challenges that will push you to your limits."));
 					e.waitForDialogue(player);
 					player.dialogue(new NPCDialogue(npc.getId(),
-						"The purpose of these tasks is for you to grow and improve, experience all that Zelus has to offer, and become stronger in the process."));
+						"The purpose of these tasks is for you to grow and improve, experience all that Karn has to offer, and become stronger in the process."));
 					e.waitForDialogue(player);
 					player.dialogue(new NPCDialogue(npc.getId(),
 						"Combat Achievements are broken down into six tiers: Easy, Medium, Hard, Elite, Master and Grandmaster."));
@@ -41,6 +44,7 @@ public class Ghommal {
 	}
 
 	public static void register() {
-		NPCAction.register(30007, 1, Ghommal::talk); // Zezu (was Ghommal, npc 13613)
+		NPCAction.register(30007, 1, Ghommal::talk); // Zezu (was Ghommal, npc 13613; no longer spawned)
+		NPCAction.register(ACHIEVEMENT_MASTER, 1, Ghommal::talk); // the Achievement Master took over from Zezu at home (2026-11-14)
 	}
 }

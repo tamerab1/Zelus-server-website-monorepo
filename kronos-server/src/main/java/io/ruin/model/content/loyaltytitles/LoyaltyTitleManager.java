@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 public class LoyaltyTitleManager {
 
 	// matches the icon items used for these currencies elsewhere (e.g. BlackjackCurrency)
-	private static final int DONATOR_POINTS_ICON = 8851;
+	private static final int DONATOR_POINTS_ICON = 59600; // the Donator Ticket (8851 is the Warrior guild token)
 	private static final int PK_POINTS_ICON = 964; // Skull, same as BlackjackCurrency.PK_POINTS
 	private static final int PVM_POINTS_ICON = ItemID.CRYSTAL_KEY; // no dedicated PVM points icon exists yet, this is a stand-in
 

@@ -429,18 +429,38 @@ public class CustomXericRaid {
 	private boolean activated = false;
 	private NPC[] vanguards = new NPC[3];
 
+	/** Largest HP-percentage gap between the Vanguards still alive (a dead one can't be healed, so it doesn't count). */
 	private double getLargestDifference() {
-		return Math.max(Math.abs(getHealthRatio(0) - getHealthRatio(1)),
-			Math.max(Math.abs(getHealthRatio(0) - getHealthRatio(2)), Math.abs(getHealthRatio(1) - getHealthRatio(2))));
+		double max = 0;
+		for (int a = 0; a < vanguards.length; a++) {
+			for (int b = a + 1; b < vanguards.length; b++) {
+				if (isVanguardGone(a) || isVanguardGone(b))
+					continue;
+				max = Math.max(max, Math.abs(getHealthRatio(a) - getHealthRatio(b)));
+			}
+		}
+		return max;
+	}
+
+	private boolean isVanguardGone(int index) {
+		return vanguards[index] == null || vanguards[index].isRemoved() || vanguards[index].getCombat().isDead();
 	}
 
 	private double getHealthRatio(int index) {
 		return vanguards[index].getCombat().isDead() ? 0 : (double) vanguards[index].getHp() / vanguards[index].getMaxHp();
 	}
 
-	private static final double HEAL_THRESHOLD = 0.4;
+	/** OSRS: a 40% HP gap resets them in groups of 4 or fewer, 33.3% in groups of 5+. */
+	private double getHealThreshold() {
+		return currentParty != null && currentParty.getMembers().size() >= 5 ? 1.0 / 3.0 : 0.4;
+	}
+
+	private boolean allVanguardsGone() {
+		return Arrays.stream(vanguards).allMatch(n -> n == null || n.isRemoved() || n.getCombat().isDead());
+	}
 
 	boolean vanguardsHealed = false;
+	private int vanguardOverloads = 0;
 
 	void spawnVanguards() {
 		GameObject crystal = spawnObject(30017, new Position(floorOne.nwRegion.baseX + 48, floorOne.nwRegion.baseY + 2, 0),
@@ -451,11 +471,17 @@ public class CustomXericRaid {
 			NPC vanguard = vanguards[i] = spawnNPC(new NPC(7525),
 				new Position(floorOne.nwRegion.baseX + x, floorOne.nwRegion.baseY + y, 0));
 			lastWaypoints[i] = i;
-			instancedWaypoints[i] = new int[] { floorOne.nwRegion.baseX + waypoints[i][0], waypoints[i][1],
-				floorOne.nwRegion.baseY + waypoints[i][0], waypoints[i][1] };
+			instancedWaypoints[i] = new int[] { floorOne.nwRegion.baseX + waypoints[i][0],
+				floorOne.nwRegion.baseY + waypoints[i][1] };
 
 			vanguard.deathEndListener = (entity, killer, killHit) -> {
 				var allDead = Arrays.stream(vanguards).allMatch(n -> n.getCombat().isDead());
+				// OSRS: each Vanguard has a 1/3 Overload (+)(4) chance, with at least one per room.
+				// Rolled here (not in newDrops) because that table always hands out its rarest miss.
+				if (Random.get(2) == 0 || (allDead && vanguardOverloads == 0)) {
+					vanguardOverloads++;
+					new GroundItem(new Item(20996, 1)).position(entity.getPosition()).spawnPublic();
+				}
 				if (allDead) {
 					if (!vanguardsHealed) {
 						vanguard.getPosition().getRegion().players.forEach(p -> {
@@ -474,32 +500,46 @@ public class CustomXericRaid {
 							crystal.remove();
 					});
 				}
+				// RV-D1: the party line with the drops
+				String slayer = killer != null && killer.player != null ? killer.player.getName() : "the raid";
+				entity.getPosition().getRegion().players.forEach(p -> {
+					if (p != null)
+						p.sendMessage("As the Vanguard is slain by " + slayer + ", supplies are dropped for all.");
+				});
 				vanguard.remove();
 			};
 		}
 		World.startEvent(event -> {
 			while (!activated) {
+				// raid torn down before anyone reached the room: stop instead of polling forever
+				if (crystal.isRemoved() || vanguards[0].isRemoved())
+					return;
 				if (vanguards[0].localPlayers().stream()
-					.anyMatch(p -> p.getPosition().isWithinDistance(vanguards[0].getPosition(), 8))) {
+					.anyMatch(p -> p.getPosition().isWithinDistance(vanguards[0].getPosition(), 7))) {
+					// RV-W1 (RSProx): at W all three play vanguard_spawn still dormant; at W+5 each takes its style form
 					activated = true;
+					for (NPC vanguard : vanguards)
+						vanguard.animate(7428);
+					event.delay(5);
 					for (int i = 0; i < vanguards.length; i++) {
-						activated = true;
-						vanguards[i].animate(7428);
 						vanguards[i].transform(7527 + i);
 						vanguards[i].getCombat().getStat(StatType.Hitpoints).restore();
-					}
-					event.delay(2);
-					for (NPC vanguard : vanguards) {
-						vanguard.animate(vanguard.getCombat().getInfo().spawn_animation);
+						vanguards[i].animate(vanguards[i].getCombat().getInfo().spawn_animation);
 					}
 				} else {
 					event.delay(1);
 				}
 			}
-			event.delay(Random.get(50, 70));
-			while (!crystal.isRemoved()) {
-				// shuffle
-				boolean heal = getLargestDifference() > HEAL_THRESHOLD;
+			// OSRS: they retreat and shuffle on their own every 20-36 ticks, and immediately (healing to
+			// full) the moment the HP gap between any two of them crosses the threshold.
+			// RV-S4: 20 ticks from the wake, then 31-35 from each shuffle's START (a reset restarts it)
+			int ticksToShuffle = 20;
+			while (!crystal.isRemoved() && !allVanguardsGone()) {
+				boolean heal = getLargestDifference() > getHealThreshold();
+				if (!heal && --ticksToShuffle > 0) {
+					event.delay(1);
+					continue;
+				}
 				for (NPC vanguard : vanguards) {
 					if (vanguard.isRemoved() || vanguard.getCombat().isDead())
 						continue;
@@ -508,12 +548,17 @@ public class CustomXericRaid {
 					vanguard.lock(LockType.FULL_NULLIFY_DAMAGE);
 					vanguard.animate(vanguard.getCombat().getInfo().death_animation);
 					vanguard.transform(7526);
-					if (heal) {
-						vanguard.hit(new Hit(HitType.HEAL).fixedDamage(vanguard.getMaxHp()));
-						vanguardsHealed = true;
-					}
 				}
-				event.delay(2);
+				int shuffleStart = (int) io.ruin.Server.currentTick();
+				if (heal) {
+					// RV-S2: a reset walks from S; each heals to full on S+4 (vanguard_heal + the heal splat)
+					vanguardsHealed = true;
+					event.delay(4);
+					for (NPC vanguard : vanguards)
+						if (!vanguard.isRemoved() && !vanguard.getCombat().isDead())
+							vanguard.hit(new Hit(HitType.HEAL).fixedDamage(vanguard.getMaxHp() - vanguard.getHp()));
+				} else
+					event.delay(3); // RV-S3: on the timer they stand 3 ticks, then go
 				for (int i = 0; i < vanguards.length; i++) {
 					if (vanguards[i].isRemoved() || vanguards[i].getCombat().isDead())
 						continue;
@@ -521,9 +566,16 @@ public class CustomXericRaid {
 					int[] waypoint = instancedWaypoints[lastWaypoints[i]];
 					vanguards[i].getRouteFinder().routeAbsolute(waypoint[0], waypoint[1]);
 				}
-				while (Arrays.stream(vanguards).anyMatch(n -> !n.getMovement().isAtDestination()))
+				// wait for them to reach their new holes; capped so a blocked path can't stall the room
+				for (int wait = 0; wait < 15 && !crystal.isRemoved() && Arrays.stream(vanguards)
+					.anyMatch(n -> !n.isRemoved() && !n.getCombat().isDead() && !n.getMovement().isAtDestination()); wait++)
 					event.delay(1);
-				event.delay(1);
+				if (crystal.isRemoved())
+					return;
+				// re-emerge: a reset at S+12 (RV-S2), a timed shuffle 2 ticks after the last arrives (RV-S3)
+				int emergeAt = heal ? shuffleStart + 12 : (int) io.ruin.Server.currentTick() + 2;
+				while (io.ruin.Server.currentTick() < emergeAt)
+					event.delay(1);
 				for (NPC vanguard : vanguards) {
 					if (vanguard.isRemoved() || vanguard.getCombat().isDead())
 						continue;
@@ -531,7 +583,7 @@ public class CustomXericRaid {
 					vanguard.animate(vanguard.getCombat().getInfo().spawn_animation);
 					vanguard.unlock();
 				}
-				event.delay(Random.get(60, 80));
+				ticksToShuffle = Random.get(31, 35) - ((int) io.ruin.Server.currentTick() - shuffleStart);
 			}
 		});
 	}

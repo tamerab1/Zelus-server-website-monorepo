@@ -6,12 +6,12 @@ import io.ruin.model.skills.magic.spells.modern.ModernTeleport;
 
 /**
  * ::soultree (2026-10-18): teleports to the front of the Soul Sanctuary at home, one tile south of its floor, facing
- * north to the Reliquary of Souls (centre 3124,3491). Same rules as ::home: refused deep in the wilderness or in a PvP
+ * north to the Reliquary of Souls (centre 3079,3484). Same rules as ::home: refused deep in the wilderness or in a PvP
  * zone, cancelled by a teleport block, the Zelus cyan teleport effect. The Soul Tree window itself opens from the
  * Reliquary's Commune option or the weapon's Check window.
  */
 public final class SoulTreeCommand {
-	private static final int X = 3124, Y = 3488, Z = 0;
+	private static final int X = 3083, Y = 3484, Z = 0; // east of the Reliquary (moved 2026-11-11, centre 3079,3484)
 
 	private SoulTreeCommand() {
 	}

@@ -239,6 +239,18 @@ public class CombatUtils {
 		return (int) Math.floor(baseDamage);
 	}
 
+	/**
+	 * Eclipse atlatl (OSRS wiki): the max hit uses the visible Strength level and the melee strength bonus, but ranged
+	 * prayers (not melee ones) boost it, and the ranged style bonus applies (+3 on Accurate).
+	 */
+	public static int getMaxAtlatlDamage(Player player, AttackType attackType) {
+		int strengthLevel = (int) player.getCombat().getLevel(StatType.Strength);
+		int effective = (int) Math.floor(strengthLevel * (1D + player.getPrayer().rangedStrengthBoost))
+			+ (AttackType.ACCURATE.equals(attackType) ? 3 : 0) + 8;
+		int strengthBonus = (int) player.getCombat().getBonus(EquipmentStats.MELEE_STRENGTH);
+		return (int) Math.floor(0.5 + effective * ((strengthBonus + 64D) / 640D));
+	}
+
 	public static int getMaxRangedDamage(Entity entity, AttackType attackType) {
 		int effectiveRangedStrength = getEffectiveRangedStrength(entity, attackType);
 

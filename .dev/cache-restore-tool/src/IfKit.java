@@ -29,6 +29,34 @@ public class IfKit {
     final InterfaceDefinition layerT, textT, buttonT, labelT, rect, modelT;
     final InterfaceDefinition[] rectT;
 
+    /**
+     * Karn theme (2026-11-11, opt-in per window: the Soul Tree): panels as dark glass with a bronze edge and a crimson inner
+     * line, bezels / tabs as the Karn button sprites (assets/karn_ui) of their exact size: {w, h, sprite, hoverSprite}.
+     */
+    boolean karn;
+    int[][] karnButtons = {};
+    static final int KARN_PANEL = 0x3b2226, KARN_EDGE = 0xb08a4a, KARN_INNER = 0x6a1e22, KARN_LABEL = 0xffd27a,
+            KARN_PICKED = 0x8a2228, KARN_TRIM = 0xc9a24a;
+
+    int[] karnButton(int w, int h) {
+        for (int[] b : karnButtons)
+            if (b[0] == w && b[1] == h)
+                return new int[]{b[2], b[3]};
+        throw new IllegalStateException("no Karn button sprite for " + w + "x" + h);
+    }
+
+    /** The Karn button face on a bezel / tab graphic (no stone border or shadow, the hover sprite while hovered). */
+    void karnFace(InterfaceDefinition b, int w, int h) {
+        int[] s = karnButton(w, h);
+        b.spriteId = s[0];
+        b.spriteTiling = false;
+        b.borderType = 0;
+        b.shadowColor = 0;
+        b.onMouseOverListener = new Object[]{44, -2147483645, s[1]};
+        b.onMouseLeaveListener = new Object[]{44, -2147483645, s[0]};
+        b.hasListener = true;
+    }
+
     /** Loads the templates and adds comps 0-3 (root, background, close, title moved up to TITLE_Y). */
     /** allowExisting: verify, or rebuild in place; a plain apply refuses to overwrite an existing group. */
     IfKit(int group, Store store, boolean allowExisting) throws Exception {
@@ -79,12 +107,16 @@ public class IfKit {
     /** Stone panel: layer + fill + the 3 frame rects. Returns the layer id. */
     int panel(int parent, int x, int y, int w, int h) {
         int id = add(layer(parent, x, y, w, h));
-        add(solid(id, 0, 0, w, h, PANEL_FILL));
+        add(solid(id, 0, 0, w, h, karn ? KARN_PANEL : PANEL_FILL));
         for (int k = 0; k < 3; k++) {
             InterfaceDefinition r = copy(rectT[k]);
             if (k == 2)
                 r.textColor = PANEL_FILL;
             place(r, id, k, k, w - 2 * k, h - 2 * k);
+            if (karn) { // bronze edge, crimson inner line, dark glass inside
+                r.filled = k == 2;
+                r.textColor = k == 0 ? KARN_EDGE : k == 1 ? KARN_INNER : KARN_PANEL;
+            }
             add(r);
         }
         return id;
@@ -107,10 +139,14 @@ public class IfKit {
         b.onMouseOverListener = new Object[]{44, -2147483645, 24470};
         b.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
         b.hasListener = true;
+        if (karn)
+            karnFace(b, w, h);
         int id = add(b);
         InterfaceDefinition l = copy(labelT);
         place(l, parent, x + 1, y + 2, w - 2, h - 4);
         l.text = "";
+        if (karn)
+            l.textColor = KARN_LABEL;
         add(l);
         return id;
     }
@@ -127,13 +163,15 @@ public class IfKit {
         b.onMouseOverListener = new Object[]{44, -2147483645, 24470};
         b.onMouseLeaveListener = new Object[]{44, -2147483645, 4525};
         b.hasListener = true;
+        if (karn)
+            karnFace(b, w, h);
         int id = add(b);
-        InterfaceDefinition recess = solid(parent, x + 2, y + 2, w - 4, h - 4, 0x120f0c);
-        recess.opacity = 70; // pressed stone
+        InterfaceDefinition recess = solid(parent, x + 2, y + 2, w - 4, h - 4, karn ? KARN_PICKED : 0x120f0c);
+        recess.opacity = karn ? 40 : 70; // pressed stone / a deeper crimson on the Karn face
         recess.isHidden = true;
         add(recess);
-        add(outline(parent, x + 1, y + 1, w - 2, h - 2, 0x4a3a24, true));
-        add(centred(text(parent, x, y, w, h, bold ? HEADING_FONT : TEXT_FONT, TEXT, label)));
+        add(outline(parent, x + 1, y + 1, w - 2, h - 2, karn ? KARN_TRIM : 0x4a3a24, true));
+        add(centred(text(parent, x, y, w, h, bold ? HEADING_FONT : TEXT_FONT, karn ? KARN_LABEL : TEXT, label)));
         return id;
     }
 

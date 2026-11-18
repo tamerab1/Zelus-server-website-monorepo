@@ -29,7 +29,8 @@ public class MainFrame {
 				}
 			};
 			h.actions[28] = (SimpleAction) p -> p.getMovement().toggleRunning();
-			h.actions[46] = (SimpleAction) p -> p.openUrl("https://zelusrsps.com/store");
+			// the store orb is the Battle Pass button now (cache stage 42, user 2026-11-15)
+			h.actions[46] = (SimpleAction) io.ruin.model.content.battlepass.BattlePass::open;
 			h.actions[55] = new InterfaceAction() {
 				@Override
 				public void handleClick(Player player, int option, int slot, int itemId) {

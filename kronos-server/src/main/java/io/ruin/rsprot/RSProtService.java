@@ -133,6 +133,7 @@ public final class RSProtService {
 			SentrySpans.start("core.rsprot.tick.playersWriteUpdate()", () -> {
 				playersWriteUpdate(players);
 			});
+			io.ruin.model.skills.sailing.Boat.clearDeckAnims();
 
 			SentrySpans.start("core.rsprot.tick.playersFlush()", () -> {
 				playersFlush(players);
@@ -149,6 +150,7 @@ public final class RSProtService {
 	}
 
 	private static void update(Iterable<Player> players, Iterable<NPC> npcs) {
+		io.ruin.model.skills.sailing.Boat.processAll();
 		playersUpdateCoords(players);
 		npcsUpdate(npcs);
 
@@ -306,7 +308,10 @@ public final class RSProtService {
 			if (player.rsprotSession == null) {
 				// ...but the built packets still have to be released or their buffers leak.
 				try {
-					var root = player.rsprotInfos.getPackets().getRootWorldInfoPackets();
+					var botPackets = player.rsprotInfos.getPackets();
+					var root = botPackets.getRootWorldInfoPackets();
+					for (var world : botPackets.getActiveWorlds())
+						PacketResultKt.safeReleaseOrThrow(world.getNpcInfo());
 					var playerInfo = root.getPlayerInfo().getOrNull();
 					if (playerInfo != null) playerInfo.safeRelease();
 					var worldEntityInfo = root.getWorldEntityInfo().getOrNull();
@@ -320,16 +325,46 @@ public final class RSProtService {
 				// Order per the rsprot 241 guide: active world, npc origin, world entity info,
 				// player info, npc info (omitted when empty, like OSRS does). There are no world
 				// entities on this server, so getActiveWorlds() is always empty.
-				var root = player.rsprotInfos.getPackets().getRootWorldInfoPackets();
+				var packets = player.rsprotInfos.getPackets();
+				var root = packets.getRootWorldInfoPackets();
 				player.rsprotSession.queue(root.getActiveWorld());
 				player.rsprotSession.queue(root.getNpcUpdateOrigin());
 				player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getWorldEntityInfo()));
+				if (player.pendingCamTarget != null) {
+					player.rsprotSession.queue(player.pendingCamTarget);
+					player.pendingCamTarget = null;
+				}
 				player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getPlayerInfo()));
 				if (PacketResultKt.isEmpty(root.getNpcInfo())) {
 					PacketResultKt.safeReleaseOrThrow(root.getNpcInfo());
 				} else {
 					player.rsprotSession.queue(PacketResultKt.getOrThrow(root.getNpcInfo()));
 				}
+				// Sailing: each world entity (boat) in view gets its own active-world block: on first sight the deck
+				// instance is described (rebuild_worldentity + its deck locs), then its npc info.
+				boolean worldsEmitted = false;
+				for (var world : packets.getActiveWorlds()) {
+					var boat = io.ruin.model.skills.sailing.Boat.get(world.getWorldId());
+					if (boat == null) {
+						PacketResultKt.safeReleaseOrThrow(world.getNpcInfo());
+						continue;
+					}
+					player.rsprotSession.queue(world.getActiveWorld());
+					player.rsprotSession.queue(world.getNpcUpdateOrigin());
+					if (world.getAdded() || player.boatRebuildPending == boat.index) {
+						io.ruin.model.skills.sailing.BoatNetwork.describe(player, boat);
+						player.boatRebuildPending = -1;
+					}
+					io.ruin.model.skills.sailing.BoatNetwork.flushDeckAnims(player, boat);
+					if (PacketResultKt.isEmpty(world.getNpcInfo()))
+						PacketResultKt.safeReleaseOrThrow(world.getNpcInfo());
+					else
+						player.rsprotSession.queue(PacketResultKt.getOrThrow(world.getNpcInfo()));
+					worldsEmitted = true;
+				}
+				if (worldsEmitted)
+					player.rsprotSession.queue(net.rsprot.protocol.game.outgoing.worldentity.SetActiveWorldV2.Companion.getRoot(
+						Math.max(0, Math.min(3, root.getActiveLevel()))));
 
 				var msg = ServerTickEnd.INSTANCE;
 				player.rsprotSession.queue(msg);

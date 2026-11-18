@@ -99,11 +99,25 @@ public class BuildTeleportPreviews {
                     previews.add(new Preview(teleport, modelId, anim, animatedBounds(storage, m, anim), m.getVertexGroups() != null || m.animayaGroups != null, "model", zoom, centerY));
                     continue;
                 }
-                int npcId = Integer.parseInt(p[2]);
+                int npcId;
                 NpcDefinition def = null;
-                for (int i = 0; i < npcFd.length; i++) // last slot wins (duplicate ids, as the client loads them)
-                    if (npcFd[i].getId() == npcId)
-                        def = new NpcLoader().load(npcId, npcFiles.get(i));
+                if (p[1].equals("parts")) {
+                    // "<TELEPORT> parts <m1>,<m2>.. <anim>": merge these model ids as-is (no recolours). Rev 241 npc defs
+                    // misdecode with this tool's old cache library, so newer npcs name their parts here instead.
+                    String[] ids = p[2].split(",");
+                    npcId = -(teleport.hashCode() & 0x7fffffff); // a key for mergedByNpc only
+                    def = new NpcDefinition(0);
+                    def.models = new int[ids.length];
+                    for (int k = 0; k < ids.length; k++)
+                        def.models[k] = Integer.parseInt(ids[k]);
+                    def.standingAnimation = Integer.parseInt(p[3]);
+                    p = new String[] { p[0], "npc", "0" };
+                } else {
+                    npcId = Integer.parseInt(p[2]);
+                    for (int i = 0; i < npcFd.length; i++) // last slot wins (duplicate ids, as the client loads them)
+                        if (npcFd[i].getId() == npcId)
+                            def = new NpcLoader().load(npcId, npcFiles.get(i));
+                }
                 if (def == null || def.models == null || def.models.length == 0)
                     throw new IllegalStateException(teleport + ": npc " + npcId + " has no models");
                 int anim = p.length > 3 ? Integer.parseInt(p[3]) : def.standingAnimation;

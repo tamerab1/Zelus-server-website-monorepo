@@ -171,7 +171,7 @@ public final class CapeForge {
 		View v = view(player);
 		Recipe recipe = RECIPES[v.selected];
 		ObjType result = ObjType.get(recipe.result);
-		ps.sendString(INTERFACE, TITLE, "Zelus Cape Forge");
+		ps.sendString(INTERFACE, TITLE, "Karn Cape Forge");
 
 		ps.sendString(INTERFACE, PREVIEW_NAME, result.name);
 		ps.sendItem(INTERFACE, MODEL, recipe.result, 1);

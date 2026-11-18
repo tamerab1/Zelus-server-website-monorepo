@@ -97,7 +97,7 @@ public final class QuestDashboards {
 					row("Difficulty", p -> capitalise(p.getDifficulty().toString())),
 					row("Combat pet", QuestDashboards::combatPet),
 					row("Playtime", p -> TimeUtils.fromMsShort(p.playTime * Server.tickMs()))),
-			List.of(row("Zelus points", p -> NumberUtils.formatNumber(p.getReasonPoints())),
+			List.of(row("Karn points", p -> NumberUtils.formatNumber(p.getReasonPoints())),
 					row("Perk points", p -> NumberUtils.formatNumber(p.perkPoints)),
 					row("Vote points", p -> NumberUtils.formatNumber(p.getVotePoints())),
 					row("Donator points", p -> NumberUtils.formatNumber(p.getDonatorPoints())),
@@ -137,10 +137,11 @@ public final class QuestDashboards {
 			List.of());
 
 	private static final String[] SERVER_BUTTONS = {"Drop viewer", "Collection log", "Daily tasks", "Chest loot",
-			"Auras", "Pet perks", "Vote", "Discord", "Store", "Website"};
+			"Auras", "Pet perks", "Vote", "Discord", "Store", "Website", "Battle Pass", "Best in Slot"};
 	/** The small item icon on each dashboard button (same order as the buttons; 2026-10-15 bezel-button restyle). */
 	/** Item ids; a negative value is a sprite id instead (BuildBrandIcons: 24526 Discord "Clyde", 24527 donator badge). */
-	private static final int[] SERVER_ICONS = {526, 22711, 13069, 405, 13190, 13262, 2996, -24526, -24527, 11640};
+	// 2026-11-15: + Battle Pass (the Karn master cape) and Best in Slot (the Karn sword)
+	private static final int[] SERVER_ICONS = {526, 22711, 13069, 405, 13190, 13262, 2996, -24526, -24527, 11640, 42766, 42773};
 	private static final int[] PK_HUB_ICONS = {4151, 11832, 8007, 2552, 12608, 10556, 22324};
 	private static final int[] ACHIEVEMENT_ICONS = {13069};
 
@@ -214,14 +215,16 @@ public final class QuestDashboards {
 			int[] buttons = DashboardLayout.SERVER.buttons();
 			h.actions[buttons[0]] = (SimpleAction) p -> p.getDropViewer().open(p);
 			h.actions[buttons[1]] = (SimpleAction) p -> openCollectionLog.accept(p);
-			h.actions[buttons[2]] = (SimpleAction) p -> new DailyTasksInterface().open(p);
+			h.actions[buttons[2]] = (SimpleAction) io.ruin.model.activities.dailytasks.DailyTasksHub::open;
 			h.actions[buttons[3]] = (SimpleAction) p -> p.getLootsViewer().updateInterface(p, LootsTables.ADVANCED_MYSTERY_BOX);
 			h.actions[buttons[4]] = (SimpleAction) io.ruin.model.content.bonds.BondInterface::open;
 			h.actions[buttons[5]] = (SimpleAction) io.ruin.model.item.actions.impl.pet.perk.PetPerksInterface::open;
-			h.actions[buttons[6]] = (SimpleAction) p -> p.openUrl("Vote", "https://zelusrsps.com/vote");
+			h.actions[buttons[6]] = (SimpleAction) p -> p.openUrl("Vote", "https://karnps.com/vote");
 			h.actions[buttons[7]] = (SimpleAction) p -> p.openUrl("Discord", "https://discord.gg/sVrcatBdyG");
-			h.actions[buttons[8]] = (SimpleAction) p -> p.openUrl("Donation", "https://zelusrsps.com/store");
-			h.actions[buttons[9]] = (SimpleAction) p -> p.openUrl("Website", "https://zelusrsps.com");
+			h.actions[buttons[8]] = (SimpleAction) p -> p.openUrl("Donation", "https://karnps.com/store");
+			h.actions[buttons[9]] = (SimpleAction) p -> p.openUrl("Website", "https://karnps.com");
+			h.actions[buttons[10]] = (SimpleAction) io.ruin.model.content.battlepass.BattlePass::open;
+			h.actions[buttons[11]] = (SimpleAction) io.ruin.model.content.bestinslot.BestInSlot::open;
 		});
 		io.ruin.model.content.gearloadouts.BattlePresets.register();
 		InterfaceHandler.register(DashboardLayout.PK_HUB.id(), h -> {

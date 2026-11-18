@@ -150,7 +150,7 @@ public class CommandHandlerRegular {
 				heading.accept("Store & Account");
 				row.accept("Donator points", (long) player.getDonatorPoints());
 				row.accept("Vote points", (long) player.getVotePoints());
-				row.accept("Zelus points", (long) player.getReasonPoints());
+				row.accept("Karn points", (long) player.getReasonPoints());
 				row.accept("Achievement points", (long) player.getAchievementPoints());
 				heading.accept("Combat");
 				row.accept("PK points", (long) player.getPKPoints());
@@ -457,7 +457,7 @@ public class CommandHandlerRegular {
 					List<String> claimedVotes = s.getResponseObject(type);
 					if (claimedVotes.isEmpty()) {
 						player.sendMessage("<col=000080>You haven't voted yet! Type <col=800000>::vote<col=000080> to vote for "
-								+ "Zelus and earn rewards -- come back and use <col=800000>::claimvote<col=000080> once you have.");
+								+ "Karn and earn rewards -- come back and use <col=800000>::claimvote<col=000080> once you have.");
 						return;
 					}
 
@@ -684,7 +684,7 @@ public class CommandHandlerRegular {
 			case "spring",
 					"summer",
 					"fall",
-					"zelus": {
+					"karn": {
 				String code;
 				if (player.playTime / (24 * 3600) < 1)
 					code = "newplayer";
@@ -899,6 +899,26 @@ public class CommandHandlerRegular {
 				return true;
 			}
 
+			case "welcome": {
+				io.ruin.model.content.welcome.WelcomeScreen.open(player);
+				return true;
+			}
+			case "fiveseals":
+			case "seals": {
+				io.ruin.model.activities.fiveseals.FiveSeals.command(player, args);
+				return true;
+			}
+			case "battlepass":
+			case "bp": {
+				io.ruin.model.content.battlepass.BattlePass.open(player);
+				return true;
+			}
+			case "bis":
+			case "bestinslot": {
+				io.ruin.model.content.bestinslot.BestInSlot.open(player);
+				return true;
+			}
+
 			case "dailytasks":
 			case "dailytask":
 			case "dailies":
@@ -972,7 +992,7 @@ public class CommandHandlerRegular {
 			}
 
 			case "shops": {
-				teleport(player, 3083, 3484, 0);
+				teleport(player, 3089, 3507, 0); // user 2026-11-14: the shops hall
 				return true;
 			}
 
@@ -1999,7 +2019,7 @@ public class CommandHandlerRegular {
 
 			case "reasonwiki":
 			case "wiki": {
-				player.openUrl(World.type.getWorldName() + " Wiki", "https://zelusrsps.com/wiki");
+				player.openUrl(World.type.getWorldName() + " Wiki", "https://karnps.com/");
 				return true;
 			}
 			case "vote": {
@@ -2008,7 +2028,7 @@ public class CommandHandlerRegular {
 				// sub-route, so appending the username here (as before) silently
 				// fell through to the homepage instead. The page collects the
 				// player's username itself once they're on it.
-				player.openUrl(World.type.getWorldName() + " Vote", "https://zelusrsps.com/vote");
+				player.openUrl(World.type.getWorldName() + " Vote", "https://karnps.com/vote");
 				return true;
 			}
 
@@ -2019,13 +2039,13 @@ public class CommandHandlerRegular {
 
 			case "highscores":
 			case "hiscores": {
-				player.openUrl(World.type.getWorldName() + " Hiscores", "https://zelusrsps.com/hiscores");
+				player.openUrl(World.type.getWorldName() + " Hiscores", "https://karnps.com/highscores");
 				return true;
 			}
 
 			case "donate":
 			case "store": {
-				player.openUrl(World.type.getWorldName() + " Store", "https://zelusrsps.com/store");
+				player.openUrl(World.type.getWorldName() + " Store", "https://karnps.com/store");
 				return true;
 			}
 

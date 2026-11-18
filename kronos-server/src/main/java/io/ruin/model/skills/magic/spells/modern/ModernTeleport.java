@@ -92,7 +92,7 @@ public class ModernTeleport extends Spell {
 	 * tier 6 teleport and LAST_RECALL the Trailblazer league one.
 	 */
 	public enum TeleportStyle {
-		ZELUS("Zelus (cyan)"),
+		ZELUS("Karn (cyan)"),
 		STANDARD("Standard"),
 		GRANDMASTER("Grandmaster"),
 		LAST_RECALL("Last Recall");

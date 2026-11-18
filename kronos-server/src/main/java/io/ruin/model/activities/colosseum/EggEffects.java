@@ -27,7 +27,7 @@ public final class EggEffects {
 			SOULFLAME = 8, FROST = 9, VOID_EYE = 10, SUNBURST = 11;
 	/** the percentage at T1; each tier adds that much again (Sunburst has its own 1 to 4 scale, see {@link #percent(int, int)}) */
 	private static final int[] PER_TIER = { 1, 1, 2, 2, 3, 2, 3, 2, 4, 3, 1, 0 };
-	private static final String[] TEXT = { "%s damage on your Slayer task", "%s chance a monster's attack misses you", "%s Zelus points from kills",
+	private static final String[] TEXT = { "%s damage on your Slayer task", "%s chance a monster's attack misses you", "%s Karn points from kills",
 			"%s PvM points from kills", "%s chance your hit burns the target", "%s Trial Marks from the Colosseum", "Prayer drains %s slower",
 			"%s damage to undead", "%s chance a kill restores 5 Prayer", "%s chance your hit delays the target's next attack",
 			"%s accuracy in all styles", "%s damage to everything" };

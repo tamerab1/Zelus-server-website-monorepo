@@ -210,7 +210,7 @@ public class NewcomerTasksInterface {
 			};
 			h.actions[91] = (SimpleAction) p -> {
 				String username = p.getName().replace(" ", "-");
-				String url = "https://zelusrsps.com/vote/" + username;
+				String url = "https://karnps.com/vote";
 				p.openUrl(World.type.getWorldName() + " Vote", url);
 			};
 			h.actions[44] = (SimpleAction) JournalTab::openAchievementInterface;

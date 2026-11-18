@@ -72,7 +72,7 @@ public final class BattlePresets {
 		List<GearLoadoutPreset> kits = FreeGearLoadoutKits.getKits();
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "ZELUS BATTLE PRESETS" + END);
+		ps.sendString(INTERFACE, TITLE, ORANGE + "KARN BATTLE PRESETS" + END);
 		ps.sendString(INTERFACE, SUB_HEADER, WHITE + "Quick Presets" + END + " " + GOLD + "(" + Math.min(kits.size(), CARDS) + " / " + CARDS + ")" + END
 			+ "  <col=7f7f7f>|</col>  PvP Mode: " + (player.isPvpMode() ? GREEN + "Yes" + END : RED + "No" + END)
 			+ "  <col=7f7f7f>|</col>  " + GREY + "Free items vanish on death & can't be traded" + END);

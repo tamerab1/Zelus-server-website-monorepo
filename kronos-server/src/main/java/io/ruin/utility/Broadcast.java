@@ -97,7 +97,7 @@ public enum Broadcast {
 			{Icon.VOTE_STAR, "Vote", "10 more votes until the Vote Boss spawns!"},
 			{Icon.UPGRADE_GEM, "Upgrade", player.getName() + " has successfully forged a Bloodforged godsword!"},
 			{Icon.SKILL_STAR, "Skills", player.getName() + " has just achieved level 99 Slayer!"},
-			{Icon.NEWCOMER_SMILE, "Welcome", "Welcome " + player.getName() + " to Zelus!"},
+			{Icon.NEWCOMER_SMILE, "Welcome", "Welcome " + player.getName() + " to Karn!"},
 			{Icon.ACHIEVEMENT_TROPHY, "Inferno", player.getName() + " has completed the Inferno!"},
 			{Icon.ADMINISTRATOR, "Staff", "This is a staff broadcast."},
 			{Icon.ANNOUNCEMENT2, "Info", "Did you know you can check your collection log with ::clog?"},

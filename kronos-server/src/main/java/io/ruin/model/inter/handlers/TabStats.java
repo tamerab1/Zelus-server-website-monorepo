@@ -45,6 +45,7 @@ public class TabStats {
 			h.actions[21] = (OptionAction) (player, option) -> handleStat(player, StatType.Firemaking);
 			h.actions[22] = (OptionAction) (player, option) -> handleStat(player, StatType.Woodcutting);
 			h.actions[23] = (OptionAction) (player, option) -> handleStat(player, StatType.Farming);
+			h.actions[24] = (OptionAction) (player, option) -> handleStat(player, StatType.Sailing);
 		});
 
 		InterfaceHandler.register(Interface.SKILL_GUIDE, h -> {

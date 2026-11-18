@@ -25,7 +25,6 @@ final class SoulWeaponCamera {
 		put(Box.CHECK, 42624, 400, 176, 1184);
 		put(Box.CHECK, 42626, 622, 176, 1472);
 		put(Box.CHECK, 42628, 1537, 176, 1600);
-		put(Box.CHECK, 42630, 505, 176, 672);
 		put(Box.CHECK, 42632, 941, 176, 384);
 		put(Box.CHECK, 42634, 786, 176, 640);
 		put(Box.CHECK, 42636, 1169, 176, 736);
@@ -35,12 +34,10 @@ final class SoulWeaponCamera {
 		put(Box.CHECK, 42763, 820, 176, 640);
 		put(Box.CHECK, 42764, 1180, 144, 384);
 		put(Box.SELECT, 42624, 444, 176, 1184);
-		put(Box.SELECT, 42630, 559, 176, 1664);
 		put(Box.SELECT, 42636, 1286, 176, 800);
 		put(Box.TREE, 42624, 501, 176, 1184);
 		put(Box.TREE, 42626, 764, 176, 1376);
 		put(Box.TREE, 42628, 1881, 176, 1632);
-		put(Box.TREE, 42630, 633, 176, 1600);
 		put(Box.TREE, 42632, 1158, 176, 352);
 		put(Box.TREE, 42634, 969, 160, 768);
 		put(Box.TREE, 42636, 1436, 160, 800);
@@ -73,7 +70,8 @@ final class SoulWeaponCamera {
 			Map.entry(42624, new int[]{62792, 346, 176}),
 			Map.entry(42626, new int[]{62793, 488, 176}),
 			Map.entry(42628, new int[]{62794, 702, 176}),
-			Map.entry(42630, new int[]{62795, 377, 176}),
+			// 42630: no showcase -- its look is the Antler Bow since stage 36 (2026-11-14) and showcase 62795 is the old
+			// recurve mesh (user 2026-11-15: "the bow form still shows the old recurve"); it draws its item with its own framing
 			Map.entry(42632, new int[]{62796, 771, 176}),
 			Map.entry(42634, new int[]{62797, 743, 176}),
 			Map.entry(42636, new int[]{62798, 947, 176}),

@@ -37,6 +37,8 @@ public class RSProtHandlers {
 		builder.addListener(WindowStatus.class, new DisplayHandler());
 		builder.addListener(MapBuildComplete.class, new RegionUpdateHandler());
 		builder.addListener(MoveGameClick.class, new WalkHandler.Game());
+		builder.addListener(net.rsprot.protocol.game.incoming.misc.user.SetHeading.class,
+			(player, msg) -> io.ruin.model.skills.sailing.Sailing.heading(player, msg.getHeading()));
 		builder.addListener(MoveMinimapClick.class, new WalkHandler.Minimap());
 
 		builder.addListener(If3Button.class, new ActionButtonHandler.If3());

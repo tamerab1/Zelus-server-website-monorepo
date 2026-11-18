@@ -128,6 +128,17 @@ public class TabCombat {
 			}
 			return null;
 		}
+		if (staffId == 30070 || staffId == 28988) { // Dragon hunter wand: standard + Ancient; Blue Moon spear also Arceuus
+			if (SpellBook.MODERN.isActive(player))
+				return 11791;
+			if (SpellBook.ANCIENT.isActive(player))
+				return 4675;
+			if (staffId == 28988 && SpellBook.ARCEUUS.isActive(player))
+				return 28988;
+			return null;
+		}
+		if (staffId == 30634) // Twinflame staff: standard only
+			return SpellBook.MODERN.isActive(player) ? 11791 : null;
 		if (staffId == 22647) { //Zuriel's Staff
 			if (SpellBook.MODERN.isActive(player)) {
 				return 11791;

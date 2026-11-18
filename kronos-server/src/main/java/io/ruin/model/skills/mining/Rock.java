@@ -25,7 +25,9 @@ public enum Rock {
 	EFH_SALT(22595, "efh salt", 72, 15, 5.0, 200, 29664, 1),
 	URT_SALT(22597, "urt salt", 72, 15, 5.0, 200, 29664, 1),
 	LIMESTONE(3211, "limestone", 10, 15, 26.5, 20, 74160, 1),
-	ASHPILE(21622, "volcanic ash", 1, 20, 5, 80, 99999, 1);
+	ASHPILE(21622, "volcanic ash", 1, 20, 5, 80, 99999, 1),
+	// The Five Seals, Seal of Awakening (2026-11-16): open to every level, iron-like pace
+	BLOODGOLD(42776, "bloodgold", 1, 150, 55.0, 8, 29064, 1.0 / 5);
 
 	public final int ore, levelReq, difficulty, respawnTime, petOdds;
 	public final String rockName;

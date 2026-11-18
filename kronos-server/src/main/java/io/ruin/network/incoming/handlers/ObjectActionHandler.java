@@ -89,6 +89,8 @@ public class ObjectActionHandler implements MessageConsumer<Player, OpLocV2> {
 	public static void handleAction(Player player, int option, int objectId, int objectX, int objectY, int ctrlRun) {
 		if (objectId == -1)
 			return;
+		if (io.ruin.model.skills.sailing.Sailing.objectClick(player, option, objectId, objectX, objectY))
+			return;
 		GameObject gameObject = Tile.getObject(objectId, objectX, objectY, player.getPosition().getZ());
 		if (gameObject == null)
 			return;

@@ -36,7 +36,8 @@ public final class PerkHub {
 	/** Rows: layer, box, border, gold outline x2, icon, name, description, badge box, badge text. */
 	private static final int FIRST_ROW = 117, ROW_STRIDE = 10, ROW_BOX = 1, ROW_OUTLINE = 3, ROW_ICON = 5, ROW_NAME = 6,
 		ROW_DESC = 7, ROW_BADGE = 8, ROW_BADGE_TEXT = 9, ROWS = 52;
-	private static final int ROW_PITCH = 38, SCROLL_HEIGHT = 120;
+	/** round 5: one card per row, 46 px apart (RestylePerks), in a 187 px viewport */
+	private static final int ROW_PITCH = 46, SCROLL_HEIGHT = 187;
 	private static final int DETAIL_ICON = 644, DETAIL_NAME = 645, DETAIL_LEVEL = 646, DETAIL_NOW = 647, DETAIL_NEXT = 648;
 	private static final int BUTTON_C = 674;
 	/** Wide centred button (Buy / Unlock) used when it is the only action. */
@@ -66,8 +67,9 @@ public final class PerkHub {
 	/** Active slot unlocks: 3 base, the 4th at Perk Tree level 50, the 5th at 75 (PlayerPerkHandler.calculatePlayersTotalPerks). */
 	private static final int[] SLOT_UNLOCK_LEVEL = {0, 0, 0, 50, 75};
 
-	private static final String GOLD = "<col=ffc35a>", GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>", GREEN = "<col=00ff00>",
-		RED = "<col=ff5050>", ORANGE = "<col=ff981f>", YELLOW = "<col=ffff00>", END = "</col>";
+	/* round 5 (2026-11-14): the window is the user's dark reference art (gold / ivory text) */
+	private static final String GOLD = "<col=f5c55a>", GREY = "<col=a89a88>", WHITE = "<col=e8dcc6>", GREEN = "<col=6fe07a>",
+		RED = "<col=e04848>", ORANGE = "<col=f0a040>", YELLOW = "<col=f5d58e>", END = "</col>";
 
 	enum Tab {
 		ALL("All"), COMBAT("Combat"), SKILLING("Skilling"), UTILITY("Utility"), OWNED("Owned"), SETS("Sets");
@@ -155,6 +157,8 @@ public final class PerkHub {
 			};
 			h.actions[SEARCH] = (SimpleAction) p -> {
 				PlayerPerkInterface s = p.getPerkInterface();
+				if (s.hubSelected instanceof PerkSets)
+					return; // the set page is open: its Back button sits where the search box is
 				p.stringInput("Search perks and perk sets:", text -> {
 					String query = text == null ? "" : text.trim().toLowerCase();
 					s.hubSearch = query.isEmpty() ? null : query;
@@ -199,7 +203,7 @@ public final class PerkHub {
 		s.hubConfirm = null;
 		s.hubRows = null; // a fresh screen needs its scrollbar set up (refresh only sends it when the list changes)
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
-		player.getPacketSender().sendString(INTERFACE, TITLE, "ZELUS PERKS");
+		player.getPacketSender().sendString(INTERFACE, TITLE, "KARN PERKS");
 		player.getPacketSender().setHidden(INTERFACE, SAVE, true);
 		player.getPacketSender().setHidden(INTERFACE, SAVE + 1, true);
 		refresh(player);
@@ -216,9 +220,10 @@ public final class PerkHub {
 		int maxSlots = handler.calculatePlayersTotalPerks(player);
 		List<Perks> active = handler.getActivePerks(player);
 		int xpToNext = handler.calculateExperienceForLevel(player.perkTreeLevel) - player.perkTreeExperience;
-		ps.sendString(INTERFACE, SUB_HEADER, YELLOW + "Perk Points:" + END + " " + GREEN + NumberUtils.formatNumber(player.perkPoints) + END
-			+ "  <col=7f7f7f>|</col>  " + WHITE + "Perk Tree:" + END + " " + ORANGE + "Lv " + player.perkTreeLevel + END
-			+ " <col=a0a0a0>(" + NumberUtils.formatNumber(Math.max(0, xpToNext)) + " XP to next)</col>");
+		// round 4 (2026-11-14): two header badges, points (SUB_HEADER) and the tree (TITLE: the old heading text)
+		ps.sendString(INTERFACE, SUB_HEADER, WHITE + "Points: " + END + GREEN + NumberUtils.formatNumber(player.perkPoints) + END);
+		ps.sendString(INTERFACE, TITLE, WHITE + "Tree Lv " + player.perkTreeLevel + END + GREY + "  ·  "
+			+ NumberUtils.formatNumber(Math.max(0, xpToNext)) + " XP to next" + END);
 
 		for (int t = 0; t < TABS.length; t++) {
 			int box = FIRST_TAB + t * TAB_STRIDE;
@@ -247,11 +252,12 @@ public final class PerkHub {
 			boolean empty = names[r] == null || names[r].equalsIgnoreCase("Empty");
 			// the loadout being viewed is gold (the active highlight)
 			boolean viewing = s.hubSelected instanceof Loadout l && l.index() == r;
+			// round 4: loadouts are numbered squares (crimson = viewing, ink = saved, grey = empty); Load / Clear / Save
+			// are in the inspector, so the square's red delete box stays hidden
 			ps.sendString(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_LABEL,
-				(empty ? GREY + (r + 1) + ". Empty" : (viewing ? GOLD : WHITE) + (r + 1) + ". " + names[r]) + END);
-			// nothing to delete on an empty loadout: its red button stays hidden
-			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR, empty);
-			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR + 1, empty);
+				(viewing ? GOLD : empty ? GREY : WHITE) + (r + 1) + END);
+			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR, true);
+			ps.setHidden(INTERFACE, FIRST_LOADOUT + r * LOADOUT_STRIDE + LOADOUT_CLEAR + 1, true);
 		}
 
 		// list rows
@@ -260,8 +266,8 @@ public final class PerkHub {
 		// selecting a row lower down keeps it in view
 		boolean listChanged = s.hubRows == null || !s.hubRows.equals(rows);
 		s.hubRows = rows;
-		ps.sendString(INTERFACE, SEARCH_TEXT, s.hubSearch != null ? WHITE + s.hubSearch + END : GREY + "Search perks..." + END);
-		ps.sendString(INTERFACE, SEARCH_CLEAR + 1, s.hubSearch != null ? ORANGE + "Clear" + END : GREY + "Clear" + END);
+		ps.sendString(INTERFACE, SEARCH_TEXT, s.hubSearch != null ? WHITE + s.hubSearch + END : GREY + "Search..." + END);
+		ps.sendString(INTERFACE, SEARCH_CLEAR + 1, s.hubSearch != null ? GOLD + "X" + END : GREY + "X" + END);
 		for (int r = 0; r < ROWS; r++) {
 			int row = FIRST_ROW + r * ROW_STRIDE;
 			boolean used = r < rows.size();
@@ -276,10 +282,10 @@ public final class PerkHub {
 				sendSetRow(player, row, (PerkSets) entry);
 		}
 		if (listChanged) {
-			int contentHeight = rows.size() * ROW_PITCH - 2;
+			int contentHeight = rows.size() * ROW_PITCH - 5;
 			int count = contentHeight <= SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - SCROLL_HEIGHT / 3D) / 15D);
 			ScrollbarClientScript.create().interfaceId(INTERFACE).containerId(SCROLL).scrollbarChildId(SCROLLBAR)
-				.childrenCount(count).withDarkGraphics().build().send(player);
+				.childrenCount(count).withOrnateGraphics().build().send(player);
 		}
 
 		sendDetail(player);
@@ -324,9 +330,9 @@ public final class PerkHub {
 	private static void sendPerkRow(Player player, int row, Perks perk) {
 		PacketSender ps = player.getPacketSender();
 		boolean owned = owns(player, perk);
-		ps.sendString(INTERFACE, row + ROW_NAME, GOLD + name(perk) + END
-			+ (owned ? GREY + "  Lv " + level(player, perk) + "/" + maxLevel(perk) + END : ""));
-		ps.sendString(INTERFACE, row + ROW_DESC, Objects.requireNonNull(perk.getInterfacePerk()).getPerkDescription());
+		// round 4: the name, one clipped line of description (the inspector has it all), the tier + status badge
+		ps.sendString(INTERFACE, row + ROW_NAME, GOLD + name(perk) + END);
+		ps.sendString(INTERFACE, row + ROW_DESC, clip(Objects.requireNonNull(perk.getInterfacePerk()).getPerkDescription(), 26));
 		ps.sendString(INTERFACE, row + ROW_BADGE_TEXT, badge(player, perk));
 		ps.sendClientScript(perk.scriptId, "I", INTERFACE << 16 | (row + ROW_ICON));
 	}
@@ -335,23 +341,26 @@ public final class PerkHub {
 		PacketSender ps = player.getPacketSender();
 		boolean active = player.activePerkSetsList.contains(set);
 		ps.sendString(INTERFACE, row + ROW_NAME, GOLD + set.perkSet.getPerkSetName() + END);
-		ps.sendString(INTERFACE, row + ROW_DESC, set.perkSet.getPerkSetDescription());
+		ps.sendString(INTERFACE, row + ROW_DESC, clip(set.perkSet.getPerkSetDescription(), 26));
 		int owned = ownedCount(player, bestCombination(player, set));
-		ps.sendString(INTERFACE, row + ROW_BADGE_TEXT, active ? GOLD + "[ Active ]" + END
-			: owned == 5 ? GREEN + "[ Ready ]" + END : GREY + "[ " + owned + "/5 owned ]" + END);
+		ps.sendString(INTERFACE, row + ROW_BADGE_TEXT, WHITE + "Set" + END + "<br>" + (active ? GREEN + "Active" + END
+			: owned == 5 ? GOLD + "Ready" + END : GREY + owned + "/5 owned" + END));
 		ps.sendClientScript(set.scriptId, "I", INTERFACE << 16 | (row + ROW_ICON));
 	}
 
 	private static String badge(Player player, Perks perk) {
-		// a tag on the badge's inset pill (2026-10-20: no more "[ 9 Pts ]" brackets)
-		if (isActive(player, perk))
-			return GOLD + "Equipped" + END;
-		if (owns(player, perk))
-			return GREEN + "Owned" + END;
+		// round 4: two lines, the tier then the status (Equipped / Owned / the price)
+		int max = maxLevel(perk);
+		if (owns(player, perk)) {
+			int level = level(player, perk);
+			String tier = level >= max ? GOLD + "MAX" + END : WHITE + "Lv " + level + "/" + max + END;
+			return tier + "<br>" + (isActive(player, perk) ? GREEN + "Equipped" + END : GREY + "Owned" + END);
+		}
+		String tier = GREY + "Lv 0/" + max + END;
 		if (player.hasFreePerkUnlock)
-			return GREEN + "Free Lv 5" + END;
+			return tier + "<br>" + GREEN + "Free Lv 5" + END;
 		int price = price(perk);
-		return (player.perkPoints >= price ? GOLD : RED) + price + " Pts" + END;
+		return tier + "<br>" + (player.perkPoints >= price ? GOLD : RED) + price + " Pts" + END;
 	}
 
 	private static void sendDetail(Player player) {
@@ -368,6 +377,10 @@ public final class PerkHub {
 		ps.setHidden(INTERFACE, COMBO_VIEW, !comboView);
 		for (int panel : PANELS)
 			ps.setHidden(INTERFACE, panel, setView);
+		// the search box sits in the top bar, under the set / combo page's Back button: hide it there, or Back looks broken
+		// and a click on it also opens the search input (user 2026-11-15)
+		for (int c = SEARCH; c <= SEARCH_CLEAR + 1; c++)
+			ps.setHidden(INTERFACE, c, setView || (c >= 857 && c <= 858));
 		showButton(player, BUTTON_C, null);
 		showButton(player, BUTTON_WIDE, null);
 		showButton(player, BUTTON_LEFT, null);
@@ -378,7 +391,7 @@ public final class PerkHub {
 		ps.setHidden(INTERFACE, DETAIL_ICON, selected == null || loadoutView);
 		if (selected == null) {
 			ps.sendString(INTERFACE, DETAIL_NAME, "Select a perk");
-			ps.sendString(INTERFACE, DETAIL_LEVEL, GREY + "Click any perk in the list to see its details." + END);
+			ps.sendString(INTERFACE, DETAIL_LEVEL, GREY + "Pick a perk from the list." + END);
 			ps.sendString(INTERFACE, DETAIL_NOW, GREY + "Earn Perk Points by levelling your Perk Tree: talk to the Perk Master for perk tasks." + END);
 			ps.sendString(INTERFACE, DETAIL_NEXT, "");
 			showButton(player, BUTTON_A, null);
@@ -419,8 +432,8 @@ public final class PerkHub {
 			? "Level " + WHITE + level + " / " + max + END + (isActive(player, perk) ? GOLD + "  ·  Equipped" + END : GREEN + "  ·  Owned" + END)
 			: GREY + "Not owned  ·  " + END + (player.hasFreePerkUnlock ? GREEN + "Free level 5 unlock available" + END
 				: "Cost " + WHITE + price(perk) + " Perk Points" + END));
-		ps.sendString(INTERFACE, DETAIL_NOW, clip((owned ? "Now: " : "Lv 1: ") + oneLine(effectAt(perk, level)), 150));
-		ps.sendString(INTERFACE, DETAIL_NEXT, owned && level < max ? GREY + clip("Lv " + (level + 1) + ": " + oneLine(effectAt(perk, level + 1)), 52) + END
+		ps.sendString(INTERFACE, DETAIL_NOW, clip((owned ? "Now: " : "Lv 1: ") + oneLine(effectAt(perk, level)), 90));
+		ps.sendString(INTERFACE, DETAIL_NEXT, owned && level < max ? GREY + clip("Lv " + (level + 1) + ": " + oneLine(effectAt(perk, level + 1)), 30) + END
 			: owned ? GOLD + "Maximum level reached." + END : "");
 
 		String confirm = s.hubConfirm;
@@ -435,8 +448,8 @@ public final class PerkHub {
 		showButton(player, BUTTON_B, null);
 		showButton(player, BUTTON_LEFT, isActive(player, perk) ? "Unequip" : "Equip");
 		showButton(player, BUTTON_RIGHT, level >= max ? GREY + "Max level" + END
-			: "upgrade".equals(confirm) ? ORANGE + "Confirm: " + upgradeCost(player, perk) + " Pts?" + END
-			: "Upgrade · " + upgradeCost(player, perk) + " Pts");
+			: "upgrade".equals(confirm) ? ORANGE + "Confirm (" + upgradeCost(player, perk) + ")?" + END
+			: "Upgrade (" + upgradeCost(player, perk) + ")");
 	}
 
 	/** Loadout preview: the perks (with their saved levels) and the perk set they form, plus Load / Clear. */
@@ -650,7 +663,7 @@ public final class PerkHub {
 		int contentHeight = combos.length * COMBO_PITCH - 4;
 		int count = contentHeight <= COMBO_SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - COMBO_SCROLL_HEIGHT / 3D) / 15D);
 		ScrollbarClientScript.create().interfaceId(INTERFACE).containerId(COMBO_SCROLL).scrollbarChildId(COMBO_SCROLLBAR)
-			.childrenCount(count).withDarkGraphics().build().send(player);
+			.childrenCount(count).withOrnateGraphics().build().send(player);
 	}
 
 	/** The set's effect as an intro line and one bullet per level ("Lv 3: drop rates boosted by 15.25%."). */

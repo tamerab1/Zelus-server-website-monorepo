@@ -67,6 +67,35 @@ public class HomeHandler {
 		);
 	}
 
+	/** The home's shop room (inside its walls, 2026-11-11 layout): x 3113-3118, y 3494-3505, plane 0. */
+	private static boolean inShopRoom(Position p) {
+		return p.getZ() == 0 && p.getX() >= 3113 && p.getX() <= 3118 && p.getY() >= 3494 && p.getY() <= 3505;
+	}
+
+	/**
+	 * Lets a player use an npc of the home's shop room from any tile next to it (diagonals too) inside the room. Osman
+	 * and the Title Manager stand in nooks behind low walls and some shopkeepers along the walls have no free straight
+	 * neighbour, so the normal "reached" check failed; the route finder already walks to the closest tile it can.
+	 */
+	public static NPC shopRoomReach(NPC npc) {
+		Position at = npc.getPosition().copy();
+		java.util.function.Predicate<Position> area = inShopRoom(at) ? HomeHandler::inShopRoom
+				: inRopedHall(at) ? HomeHandler::inRopedHall : null;
+		if (area != null)
+			npc.skipReachCheck = p -> area.test(p) && !(p.getX() == at.getX() && p.getY() == at.getY())
+					&& Math.abs(p.getX() - at.getX()) <= 1 && Math.abs(p.getY() - at.getY()) <= 1;
+		return npc;
+	}
+
+	/**
+	 * The roped hall north of the home (2026-11-12 map, land3): a rope barrier (low wall 24404) runs along x 3087, y 3508,
+	 * x 3098 and y 3514, and the npcs on the east side (Consumables, the two combat dummies at x 3098) stand right behind
+	 * it, so the normal "reached" check failed across the rope. Same rule as the shop room: any tile next to the npc.
+	 */
+	private static boolean inRopedHall(Position p) {
+		return p.getZ() == 0 && p.getX() >= 3087 && p.getX() <= 3098 && p.getY() >= 3507 && p.getY() <= 3515;
+	}
+
 	public static void init() {
 		ObjectAction devouringForgeAction = (player, obj) -> {
 			if (!player.isPvpMode() && !player.isOwner()) {
@@ -91,7 +120,7 @@ public class HomeHandler {
 		});
 		//var tradingPost = GameObject.spawn(46240, 3094, 3495, 0, 10, 1);
 		//var tradingPost2 = GameObject.spawn(46240, 3098, 3499, 0, 10, 2);
-		var elvenChest = GameObject.spawn(36582, 3093, 3506, 0, 10, 0);
+		var elvenChest = GameObject.spawn(36582, 3095, 3506, 0, 10, 0); // moved from 3093,3506 (user 2026-11-12)
 		var slayerChest = GameObject.spawn(46243, 3109, 3486, 0, 10, 1);
 		//var singingBowl = GameObject.spawn(36552, 3091, 3510, 0, 10, 5);
 		//var pohPortal = GameObject.spawn(15478, 3085, 3511, 0, 10, 2);
@@ -117,7 +146,7 @@ public class HomeHandler {
 		// The old fountain (879), its fence ring and the knight statue (38443) are removed by StatueOfFortune.placeStatue(),
 		// which spawns the 3x3 Statue of Fortune on the knight statue's spot (south-west tile 3104,3506).
 		if(!SummerEvent.disabled) {
-			var summerNPC = new NPC(1805).spawn(new Position(3118, 3500, 0), Direction.WEST);
+			// the Summer Elemental (1805) at 3118,3500 was removed 2026-11-11: the Vote Shop stands there now
 			SummerEvent.newEventStart();
 		}
 		// Tournament registration board ("Scoreboard", 44930). RSPSi-placed
@@ -126,10 +155,10 @@ public class HomeHandler {
 		// (matching the Camel Statue's spawn convention above); check
 		// in-game and adjust if it renders wrong.
 		GameObject.spawn(44930, 3072, 3473, 0, 10, 0);
-		new NPC(1810).spawn(new Position(3115, 3504, 0), Direction.SOUTH);
+		shopRoomReach(new NPC(1810).spawn(new Position(3094, 3507, 0), Direction.NORTH)); // Osman, roped hall (user 2026-11-12)
 		// The two BJ Dealers (5840) that stood at 3121/3125,3464 were removed 2026-10-18: the Zelus Blackjack Table
 		// (casino.BlackjackTable, object 62442) now sits there and opens Blackjack itself.
-		new NPC(1867).spawn(new Position(3114, 3504, 0), Direction.SOUTH);
+		shopRoomReach(new NPC(1867).spawn(new Position(3092, 3507, 0), Direction.NORTH)); // Title Manager, roped hall (user 2026-11-12)
 		NPCAction.register(1867, 1, (player, npc) -> io.ruin.model.content.loyaltytitles.LoyaltyTitleInterface.open(player));
 	}
 
@@ -304,6 +333,8 @@ public class HomeHandler {
 
 	public static void register() {
 		ItemNPCAction.register(7456, (player, item, obj) -> {
+			if (io.ruin.model.combat.MoonArmour.repair(player, item, false))
+				return;
 			if (!ItemBreaking.isBroken(item.getId())) {
 				player.dialogue(new MessageDialogue("You can't repair that."));
 				return;

@@ -14,11 +14,7 @@ public enum CollectionLogData {
 					new Item(30580),
 					new Item(ItemID.ABYSSAL_WHIP, 2),
 			}),
-	ARAXXOR(CollectionLogUpdated.Categories.BOSSES, "Araxxor", new Item[] {
-		new Item(29836), new Item(29786), new Item(29790),
-		new Item(29792), new Item(29794), new Item(29799), new Item(29788),
-
-	},
+	ARAXXOR(CollectionLogUpdated.Categories.BOSSES, "Araxxor", new Item[] { /* OSRS page 'Araxxor' = cache enum 4218 */ (new Item(29836)/* Nid */), (new Item(29784)/* Araxyte venom sac */), (new Item(29782)/* Spider cave teleport */), (new Item(29799)/* Araxyte fang */), (new Item(29790)/* Noxious point */), (new Item(29792)/* Noxious blade */), (new Item(29794)/* Noxious pommel */), (new Item(29788)/* Araxyte head */), (new Item(29786)/* Jar of Venom */), (new Item(29781)/* Coagulated venom */) },
 		// completion rewards
 		new Item[] {
 			new Item(25430, 15),
@@ -46,13 +42,7 @@ public enum CollectionLogData {
 					new Item(7478, 8),
 					new Item(30460)
 			}),
-	ALCHEMICAL_HYDRA(CollectionLogUpdated.Categories.BOSSES, "Alchemical Hydra", new Item[] {
-			(new Item(22971)/* Hydra Fang */), (new Item(22804)/* Dragon knife */),
-			(new Item(23077)/* Alchemical hydra heads */), (new Item(22988)/* Hydra tail */),
-			(new Item(22746)/* Ikkle hydra */), (new Item(22983)/* Hydra leather */), (new Item(22969)/* Hydra Heart */),
-			(new Item(23064)/* Jar of chemicals */), (new Item(22973)/* Hydra eye */),
-			(new Item(20849)/* Dragon thrownaxe */),
-			(new Item(22966)/* Hydra claw */) },
+	ALCHEMICAL_HYDRA(CollectionLogUpdated.Categories.BOSSES, "Alchemical Hydra", new Item[] { /* OSRS page 'Alchemical Hydra' = cache enum 2173 */ (new Item(22746)/* Ikkle Hydra */), (new Item(22966)/* Hydra's claw */), (new Item(22988)/* Hydra tail */), (new Item(22983)/* Hydra leather */), (new Item(22971)/* Hydra's fang */), (new Item(22973)/* Hydra's eye */), (new Item(22969)/* Hydra's heart */), (new Item(22804)/* Dragon knife */), (new Item(20849)/* Dragon thrownaxe */), (new Item(23064)/* Jar of Chemicals */), (new Item(23077)/* Alchemical hydra heads */) },
 			// completion rewards
 			new Item[] {
 					new Item(30458, 25),
@@ -68,28 +58,7 @@ public enum CollectionLogData {
 			new Item(7478, 10),
 			new Item(30541, 1)
 		}),
-	BARROWS_CHESTS(CollectionLogUpdated.Categories.MINIGAMES, "Barrows Chests", new Item[] {
-			(new Item(4732)/* Karil's coif */), (new Item(4736)/* Karil's leathertop */),
-			(new Item(4738)/* Karil's leatherskirt */), (new Item(4734)/* Karil's crossbow */),
-			(new Item(4708)/* Ahrim's hood */), (new Item(4712)/* Ahrim's robetop */),
-			(new Item(4714)/* Ahrim's robeskirt */), (new Item(4710)/* Ahrim's staff */), (new Item(4716)/* Dharok's helm */),
-			(new Item(4720)/* Dharok's platebody */), (new Item(4722)/* Dharok's platelegs */),
-			(new Item(4718)/* Dharok's greataxe */), (new Item(4724)/* Guthan's helm */), (new Item(4728)/*
-																																																		 * Guthan's
-																																																		 * platebody
-																																																		 */),
-			(new Item(4730)/* Guthan's chainskirt */), (new Item(4726)/* Guthan's warspear */), (new Item(4745)/*
-																																																					 * Torag's
-																																																					 * helm
-																																																					 */),
-			(new Item(4749)/* Torag's platebody */), (new Item(4751)/* Torag's platelegs */), (new Item(4747)/*
-																																																				 * Torag's
-																																																				 * hammers
-																																																				 */),
-			(new Item(4753)/* Verac's helm */), (new Item(4757)/* Verac's brassard */), (new Item(4759)/*
-																																																	 * Verac's plateskirt
-																																																	 */),
-			(new Item(4755)/* Verac's flail */), (new Item(4740)/* Bolt rack */) },
+	BARROWS_CHESTS(CollectionLogUpdated.Categories.MINIGAMES, "Barrows Chests", new Item[] { /* OSRS page 'Barrows Chests' = cache enum 2110 */ (new Item(4732)/* Karil's coif */), (new Item(4708)/* Ahrim's hood */), (new Item(4716)/* Dharok's helm */), (new Item(4724)/* Guthan's helm */), (new Item(4745)/* Torag's helm */), (new Item(4753)/* Verac's helm */), (new Item(4736)/* Karil's leathertop */), (new Item(4712)/* Ahrim's robetop */), (new Item(4720)/* Dharok's platebody */), (new Item(4728)/* Guthan's platebody */), (new Item(4749)/* Torag's platebody */), (new Item(4757)/* Verac's brassard */), (new Item(4738)/* Karil's leatherskirt */), (new Item(4714)/* Ahrim's robeskirt */), (new Item(4722)/* Dharok's platelegs */), (new Item(4730)/* Guthan's chainskirt */), (new Item(4751)/* Torag's platelegs */), (new Item(4759)/* Verac's plateskirt */), (new Item(4734)/* Karil's crossbow */), (new Item(4710)/* Ahrim's staff */), (new Item(4718)/* Dharok's greataxe */), (new Item(4726)/* Guthan's warspear */), (new Item(4747)/* Torag's hammers */), (new Item(4755)/* Verac's flail */), (new Item(4740)/* Bolt rack */) },
 			// completion rewards
 			new Item[] {
 					new Item(7478, 10),
@@ -280,13 +249,7 @@ public enum CollectionLogData {
 					new Item(2528)
 			}),
 
-	HESPORI(CollectionLogUpdated.Categories.BOSSES, "Hespori", new Item[] { (new Item(22994)/*
-																																													 * Bottomless compost bucket
-																																													 */), (new Item(22883)/*
-																																																								 * Iasor
-																																																								 * seed
-																																																								 */),
-			(new Item(22885)/* Kronos seed */), (new Item(22881)/* Attas seed */) },
+	HESPORI(CollectionLogUpdated.Categories.BOSSES, "Hespori", new Item[] { /* OSRS page 'Hespori' = cache enum 2175, then Karn extras */ (new Item(22994)/* Bottomless compost bucket */), (new Item(22883)/* Iasor seed */), (new Item(22885)/* Kronos seed */), (new Item(22881)/* Attas seed */), (new Item(20661)/* Tangleroot */) },
 			// completion rewards
 			new Item[] {
 					new Item(ItemID.ULTRACOMPOST + 1, 750),
@@ -294,8 +257,7 @@ public enum CollectionLogData {
 					new Item(ItemID.HESPORI_SEED, 25),
 					new Item(30577, 1),
 			}),
-	THE_INFERNO(CollectionLogUpdated.Categories.MINIGAMES, "The Inferno", new Item[] { (new Item(22319)/* Pet */),
-			(new Item(21295)/* Infernal cape */) },
+	THE_INFERNO(CollectionLogUpdated.Categories.MINIGAMES, "The Inferno", new Item[] { /* OSRS page 'The Inferno' = cache enum 2132, then Karn extras */ (new Item(21291)/* Jal-Nib-Rek */), (new Item(21295)/* Infernal cape */), (new Item(22319)/* TzRek-Zuk */) },
 			// completion rewards
 			new Item[] {
 					new Item(ItemID.TOKKUL, 2500000),
@@ -366,10 +328,7 @@ public enum CollectionLogData {
 					new Item(30581, 1),
 					new Item(30577, 1),
 			}),
-	THE_NIGHTMARE(CollectionLogUpdated.Categories.BOSSES, "The Nightmare", new Item[] {
-			(new Item(24491)/* Little Nightmare */), (new Item(24417)/* Inq mace */), (new Item(24419)/* Inq great helm */),
-			(new Item(24420)/* Inq hauberk */), (new Item(24421)/* Inq plateskirt */), (new Item(24422)/* Nightmare staff */),
-			(new Item(24514)/* Volatile orb */), (new Item(24511)/* Harm orb */), (new Item(24517)/* Eld orb */) },
+	THE_NIGHTMARE(CollectionLogUpdated.Categories.BOSSES, "The Nightmare", new Item[] { /* OSRS page 'The Nightmare' = cache enum 2796 */ (new Item(24491)/* Little Nightmare */), (new Item(24417)/* Inquisitor's mace */), (new Item(24419)/* Inquisitor's great helm */), (new Item(24420)/* Inquisitor's hauberk */), (new Item(24421)/* Inquisitor's plateskirt */), (new Item(24422)/* Nightmare staff */), (new Item(24514)/* Volatile orb */), (new Item(24511)/* Harmonised orb */), (new Item(24517)/* Eldritch orb */), (new Item(24495)/* Jar of Dreams */), (new Item(25837)/* Slepey tablet */), (new Item(25838)/* Parasitic egg */) },
 			// completion rewards
 			new Item[] {
 					new Item(30526, 1),
@@ -377,10 +336,7 @@ public enum CollectionLogData {
 					new Item(7968, 5),
 					new Item(30581, 2),
 			}),
-	LEVIATHAN(CollectionLogUpdated.Categories.BOSSES, "Leviathan", new Item[] {
-			(new Item(28276)/* Inq mace */), (new Item(30585)/* Inq great helm */),
-			(new Item(28325)/* Inq hauberk */), (new Item(30521)/* Inq plateskirt */), (new Item(30522)/* Nightmare staff */),
-			(new Item(30523)/* Volatile orb */), (new Item(28252)/* Eld orb */) },
+	LEVIATHAN(CollectionLogUpdated.Categories.BOSSES, "Leviathan", new Item[] { /* OSRS page 'The Leviathan' = cache enum 5151, then Karn extras */ (new Item(28252)/* Lil'viathan */), (new Item(28325)/* Leviathan's lure */), (new Item(26241)/* Virtus mask */), (new Item(26243)/* Virtus robe top */), (new Item(26245)/* Virtus robe bottom */), (new Item(28283)/* Venator vestige */), (new Item(28274)/* Smoke quartz */), (new Item(28332)/* Scarred tablet */), (new Item(28276)/* Chromium ingot */), (new Item(28334)/* Awakener's orb */), (new Item(30585)/* Collection log */), (new Item(30521)/* Echo ahrim's robetop 100 */), (new Item(30522)/* ? */), (new Item(30523)/* Echo ahrim's robeskirt 100 */) },
 			// completion rewards
 			new Item[] {
 					new Item(4810, 1),
@@ -388,10 +344,7 @@ public enum CollectionLogData {
 					new Item(7968, 5),
 					new Item(30581, 2),
 			}),
-	DUKE_SUCELLUS(CollectionLogUpdated.Categories.BOSSES, "Duke Sucellus", new Item[] {
-			(new Item(28276)/* Inq mace */), (new Item(30583)/* Inq great helm */),
-			(new Item(28321)/* Inq hauberk */), (new Item(30521)/* Inq plateskirt */), (new Item(30522)/* Nightmare staff */),
-			(new Item(30523)/* Volatile orb */), (new Item(28250)/* Eld orb */) },
+	DUKE_SUCELLUS(CollectionLogUpdated.Categories.BOSSES, "Duke Sucellus", new Item[] { /* OSRS page 'Duke Sucellus' = cache enum 5148, then Karn extras */ (new Item(28250)/* Baron */), (new Item(28321)/* Eye of the Duke */), (new Item(26241)/* Virtus mask */), (new Item(26243)/* Virtus robe top */), (new Item(26245)/* Virtus robe bottom */), (new Item(28281)/* Magus vestige */), (new Item(28270)/* Ice quartz */), (new Item(28333)/* Frozen tablet */), (new Item(28276)/* Chromium ingot */), (new Item(28334)/* Awakener's orb */), (new Item(30521)/* Echo ahrim's robetop 100 */), (new Item(30522)/* ? */), (new Item(30523)/* Echo ahrim's robeskirt 100 */), (new Item(30583)/* Collection log */) },
 			// completion rewards
 			new Item[] {
 					new Item(4810, 1),
@@ -399,10 +352,7 @@ public enum CollectionLogData {
 					new Item(7968, 5),
 					new Item(30581, 2),
 			}),
-	VARDORVIS(CollectionLogUpdated.Categories.BOSSES, "Vardorvis", new Item[] {
-			(new Item(28276)/* Inq mace */), (new Item(30584)/* Inq great helm */),
-			(new Item(28319)/* Inq hauberk */), (new Item(30521)/* Inq plateskirt */), (new Item(30522)/* Nightmare staff */),
-			(new Item(30523)/* Volatile orb */), (new Item(28248)/* Eld orb */) },
+	VARDORVIS(CollectionLogUpdated.Categories.BOSSES, "Vardorvis", new Item[] { /* OSRS page 'Vardorvis' = cache enum 5149, then Karn extras */ (new Item(28248)/* Butch */), (new Item(28319)/* Executioner's axe head */), (new Item(26241)/* Virtus mask */), (new Item(26243)/* Virtus robe top */), (new Item(26245)/* Virtus robe bottom */), (new Item(28285)/* Ultor vestige */), (new Item(28268)/* Blood quartz */), (new Item(28330)/* Strangled tablet */), (new Item(28276)/* Chromium ingot */), (new Item(28334)/* Awakener's orb */), (new Item(30584)/* ? */), (new Item(30521)/* Echo ahrim's robetop 100 */), (new Item(30522)/* ? */), (new Item(30523)/* Echo ahrim's robeskirt 100 */) },
 			// completion rewards
 			new Item[] {
 					new Item(4810, 1),
@@ -410,10 +360,7 @@ public enum CollectionLogData {
 					new Item(7968, 5),
 					new Item(30581, 2),
 			}),
-	SOL_HEREDIT(CollectionLogUpdated.Categories.BOSSES, "Sol Heredit", new Item[] {
-			(new Item(28947)/* Inq mace */), (new Item(28933)/* Inq great helm */),
-			(new Item(28936)/* Inq hauberk */), (new Item(28939)/* Inq plateskirt */), (new Item(28805)/* Nightmare staff */),
-			(new Item(28960)/* Volatile orb */) },
+	SOL_HEREDIT(CollectionLogUpdated.Categories.BOSSES, "Sol Heredit", new Item[] { /* OSRS page 'Fortis Colosseum' = cache enum 5414, then Karn extras */ (new Item(28960)/* Smol Heredit */), (new Item(28947)/* Dizana's quiver (uncharged) */), (new Item(28936)/* Sunfire fanatic cuirass */), (new Item(28939)/* Sunfire fanatic chausses */), (new Item(28933)/* Sunfire fanatic helm */), (new Item(28942)/* Echo crystal */), (new Item(28919)/* Tonalztics of Ralos (uncharged) */), (new Item(28924)/* Sunfire splinters */), (new Item(6571)/* Uncut onyx */), (new Item(28805)/* Bottle of mist */) },
 			// completion rewards
 			new Item[] {
 					new Item(4810, 1),
@@ -421,10 +368,7 @@ public enum CollectionLogData {
 					new Item(21535, 50),
 					new Item(30581, 2),
 			}),
-	WHISPERER(CollectionLogUpdated.Categories.BOSSES, "The Whisperer", new Item[] {
-			(new Item(28276)/* Inq mace */), (new Item(30586)/* Inq great helm */),
-			(new Item(28323)/* Inq hauberk */), (new Item(30521)/* Inq plateskirt */), (new Item(30522)/* Nightmare staff */),
-			(new Item(30523)/* Volatile orb */), (new Item(28246)/* Eld orb */) },
+	WHISPERER(CollectionLogUpdated.Categories.BOSSES, "The Whisperer", new Item[] { /* OSRS page 'The Whisperer' = cache enum 5150, then Karn extras */ (new Item(28246)/* Wisp */), (new Item(28323)/* Siren's staff */), (new Item(26241)/* Virtus mask */), (new Item(26243)/* Virtus robe top */), (new Item(26245)/* Virtus robe bottom */), (new Item(28279)/* Bellator vestige */), (new Item(28272)/* Shadow quartz */), (new Item(28331)/* Sirenic tablet */), (new Item(28276)/* Chromium ingot */), (new Item(28334)/* Awakener's orb */), (new Item(30586)/* ? */), (new Item(30521)/* Echo ahrim's robetop 100 */), (new Item(30522)/* ? */), (new Item(30523)/* Echo ahrim's robeskirt 100 */) },
 			// completion rewards
 			new Item[] {
 					new Item(4810, 1),
@@ -432,11 +376,7 @@ public enum CollectionLogData {
 					new Item(7968, 5),
 					new Item(30581, 2),
 			}),
-	NEX(CollectionLogUpdated.Categories.BOSSES, "Nex", new Item[] {
-			new Item(26348), new Item(26376), new Item(26378), new Item(26380),
-			new Item(26372), new Item(26235), new Item(26370),
-
-	},
+	NEX(CollectionLogUpdated.Categories.BOSSES, "Nex", new Item[] { /* OSRS page 'Nex' = cache enum 4097 */ (new Item(26348)/* Nexling */), (new Item(26370)/* Ancient hilt */), (new Item(26372)/* Nihil horn */), (new Item(26235)/* Zaryte vambraces */), (new Item(26376)/* Torva full helm (damaged) */), (new Item(26378)/* Torva platebody (damaged) */), (new Item(26380)/* Torva platelegs (damaged) */), (new Item(26231)/* Nihil shard */) },
 			// completion rewards,
 			new Item[] {
 					new Item(30524, 1),
@@ -460,9 +400,7 @@ public enum CollectionLogData {
 					new Item(30456, 2),
 					new Item(7478, 12),
 			}),
-	PHANTOM_MUSPAH(CollectionLogUpdated.Categories.BOSSES, "Phantom Muspah", new Item[] {
-			(new Item(27616)/* Hill giant club */),
-			new Item(27627), new Item(27614), new Item(27590) },
+	PHANTOM_MUSPAH(CollectionLogUpdated.Categories.BOSSES, "Phantom Muspah", new Item[] { /* OSRS page 'Phantom Muspah' = cache enum 4929 */ (new Item(27590)/* Muphin */), (new Item(27614)/* Venator shard */), (new Item(27627)/* Ancient icon */), (new Item(27643)/* Charged ice */), (new Item(27622)/* Frozen cache */), (new Item(27616)/* Ancient essence */) },
 			// completion rewards
 			new Item[] {
 					new Item(2528, 2),
@@ -551,12 +489,7 @@ public enum CollectionLogData {
 					new Item(30578, 1),
 					new Item(30579, 1),
 			}),
-	VORKATH(CollectionLogUpdated.Categories.BOSSES, "Vorkath", new Item[] { (new Item(21992)/* Vorki */),
-			(new Item(2425)/* Vork head */),
-			(new Item(11286)/* Draconic visage */), (new Item(22006)/* Skele visage */), (new Item(22106)/* Jar of decay */),
-			(new Item(22111)/* Dragonbone necklace */),
-			(new Item(42658)/* Vorkath mask */), (new Item(42660)/* Vorkath platebody */),
-			(new Item(42662)/* Vorkath platelegs */) },
+	VORKATH(CollectionLogUpdated.Categories.BOSSES, "Vorkath", new Item[] { /* OSRS page 'Vorkath' = cache enum 2136, then Karn extras */ (new Item(21992)/* Vorki */), (new Item(21907)/* Vorkath's head */), (new Item(11286)/* Draconic visage */), (new Item(22006)/* Skeletal visage */), (new Item(22106)/* Jar of Decay */), (new Item(22111)/* Dragonbone necklace */), (new Item(42658)/* ? */), (new Item(42660)/* ? */), (new Item(42662)/* ? */) },
 			// completion rewards
 			new Item[] {
 					new Item(7478, 12),
@@ -608,17 +541,75 @@ public enum CollectionLogData {
 	// new Item(30460, 1),
 	// }
 	// ),
-	// ZALCANO(CollectionLogUpdated.Categories.BOSSES, "Zalcano", new Item[]{(new
-	// Item(23760)/*Smolcano*/), (new Item(23953)/*Crystal tool seed*/),
-	// (new Item(23908)/*Zalcano shard*/), (new Item(6571)/*Uncut onyx*/)},
-	// //completion rewards
-	// new Item[]{
-	// new Item(30581, 2),
-	// new Item(7478, 6),
-	// new Item(30577, 2),
-	// new Item(7968, 3),
-	// }
-	// ),
+	// item order = the cache's collection log enum 5202
+	MAGGOT_KING(CollectionLogUpdated.Categories.BOSSES, "Maggot King", new Item[] { (new Item(33642)/* Maggot marquess */),
+			(new Item(33631)/* Crimson kisten */), (new Item(33634)/* Elder venator fang */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 2),
+					new Item(7478, 6),
+					new Item(30577, 2),
+					new Item(7968, 3),
+			}),
+	// item order = the cache's collection log enum 5413
+	MOONS_OF_PERIL(CollectionLogUpdated.Categories.BOSSES, "Moons of Peril", new Item[] {
+			(new Item(29004)/* Eclipse moon chestplate */), (new Item(29007)/* Eclipse moon tassets */),
+			(new Item(29010)/* Eclipse moon helm */), (new Item(29000)/* Eclipse atlatl */),
+			(new Item(29013)/* Blue moon chestplate */), (new Item(29016)/* Blue moon tassets */),
+			(new Item(29019)/* Blue moon helm */), (new Item(28988)/* Blue moon spear */),
+			(new Item(29022)/* Blood moon chestplate */), (new Item(29025)/* Blood moon tassets */),
+			(new Item(29028)/* Blood moon helm */), (new Item(28997)/* Dual macuahuitl */),
+			(new Item(28991)/* Atlatl dart */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 2),
+					new Item(7478, 8),
+					new Item(30577, 2),
+					new Item(7968, 3),
+			}),
+	// item order = the cache's collection log enum 3337; Bran / the scrolls / the ice crown on their stage-43 ids (our old
+	// custom items keep 30622 / 30626-30628)
+	ROYAL_TITANS(CollectionLogUpdated.Categories.BOSSES, "Royal Titans", new Item[] { (new Item(42768)/* Bran */),
+			(new Item(42769)/* Deadeye prayer scroll */), (new Item(42770)/* Mystic vigour prayer scroll */),
+			(new Item(30637)/* Giantsoul amulet */), (new Item(42771)/* Ice element staff crown */),
+			(new Item(30631)/* Fire element staff crown */), (new Item(30640)/* Desiccated page */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 2),
+					new Item(7478, 6),
+					new Item(30577, 2),
+					new Item(7968, 3),
+			}),
+	// item order = the cache's collection log enum 5912 (Brutus slippers aren't on the log)
+	BRUTUS(CollectionLogUpdated.Categories.BOSSES, "Brutus", new Item[] { (new Item(33124)/* Beef */),
+			(new Item(33101)/* Mooleta */), (new Item(33091)/* Bottomless milk bucket */), (new Item(33093)/* Cow slippers */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 1),
+					new Item(7478, 3),
+					new Item(30577, 1),
+					new Item(7968, 2),
+			}),
+	// item order = the cache's collection log enum 5526
+	HUEYCOATL(CollectionLogUpdated.Categories.BOSSES, "The Hueycoatl", new Item[] { (new Item(30152)/* Huberte */),
+			(new Item(30070)/* Dragon hunter wand */), (new Item(30066)/* Tome of earth (empty) */),
+			(new Item(30068)/* Soiled page */), (new Item(30085)/* Hueycoatl hide */), (new Item(30088)/* Huasca seed */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 2),
+					new Item(7478, 6),
+					new Item(30577, 2),
+					new Item(7968, 3),
+			}),
+	ZALCANO(CollectionLogUpdated.Categories.BOSSES, "Zalcano", new Item[] { (new Item(23760)/* Smolcano */),
+			(new Item(23953)/* Crystal tool seed */), (new Item(23908)/* Zalcano shard */), (new Item(6571)/* Uncut onyx */) },
+			// completion rewards
+			new Item[] {
+					new Item(30581, 2),
+					new Item(7478, 6),
+					new Item(30577, 2),
+					new Item(7968, 3),
+			}),
 	ZULRAH(CollectionLogUpdated.Categories.BOSSES, "Zulrah",
 			new Item[] { (new Item(12921)/* Pet snake */), (new Item(13200)/* Tanz mutagen */),
 					(new Item(13201)/* Magma mutagen */), (new Item(12936)/* Jar of swamp */), (new Item(12932)/* Magic fang */),
@@ -631,47 +622,21 @@ public enum CollectionLogData {
 					new Item(30461, 1),
 					new Item(30460, 1),
 			}),
-	CHAMBERS_OF_XERIC(CollectionLogUpdated.Categories.RAIDS, "Chambers of Xeric", new Item[] { (new Item(20851)/*
-																																																							 * Olmlet
-																																																							 */),
-			(new Item(20997)/* Twisted bow */), (new Item(21003)/* Elder maul */),
-			(new Item(21043)/* Kodai insignia */), (new Item(13652)/* D claws */), (new Item(21018)/* Ancest hat */),
-			(new Item(21021)/* Ancest robe top */), (new Item(21024)/* Ancest robe bottom */), (new Item(21015)/*
-																																																					 * Dinh's
-																																																					 * bulwark
-																																																					 */),
-			(new Item(21034)/* Dex */), (new Item(21079)/* Arc pray */), (new Item(21012)/* D hunter cbow */),
-			(new Item(21000)/* Twisted buckler */), (new Item(21047)/* Torn prayer */), (new Item(21027)/* Dark relic */) },
+	CHAMBERS_OF_XERIC(CollectionLogUpdated.Categories.RAIDS, "Chambers of Xeric", new Item[] { /* OSRS page 'Chambers of Xeric' = cache enum 2139 */ (new Item(20851)/* Olmlet */), (new Item(22386)/* Metamorphic dust */), (new Item(20997)/* Twisted bow */), (new Item(21003)/* Elder maul */), (new Item(21043)/* Kodai insignia */), (new Item(13652)/* Dragon claws */), (new Item(21018)/* Ancestral hat */), (new Item(21021)/* Ancestral robe top */), (new Item(21024)/* Ancestral robe bottom */), (new Item(21015)/* Dinh's bulwark */), (new Item(21034)/* Dexterous prayer scroll */), (new Item(21079)/* Arcane prayer scroll */), (new Item(21012)/* Dragon hunter crossbow */), (new Item(21000)/* Twisted buckler */), (new Item(21047)/* Torn prayer scroll */), (new Item(21027)/* Dark relic */), (new Item(6573)/* Onyx */), (new Item(24670)/* Twisted ancestral colour kit */), (new Item(22388)/* Xeric's guard */), (new Item(22390)/* Xeric's warrior */), (new Item(22392)/* Xeric's sentinel */), (new Item(22394)/* Xeric's general */), (new Item(22396)/* Xeric's champion */) },
 			// completion rewards
 			new Item[] {
 					new Item(30530, 1),
 					new Item(30461, 1),
 					new Item(30570, 12),
 			}),
-	THEATRE_OF_BLOOD(CollectionLogUpdated.Categories.RAIDS, "Theatre of Blood", new Item[] { (new Item(22473)/*
-																																																						 * Lil' zik
-																																																						 */),
-			(new Item(22486)/* Scythe of vitur(u) */), (new Item(22324)/* Ghrazi rapier */),
-			(new Item(ItemID.SANGUINESTI_STAFF_UNCHARGED)/* Sang staff(u) */),
-			(new Item(22326)/* Just faceguard */), (new Item(22327)/* Just chestguard */), (new Item(22328)/*
-																																																			 * Just legguards
-																																																			 */),
-			(new Item(22477)/* Avernic def hilt */) },
+	THEATRE_OF_BLOOD(CollectionLogUpdated.Categories.RAIDS, "Theatre of Blood", new Item[] { /* OSRS page 'Theatre of Blood' = cache enum 2140 */ (new Item(22473)/* Lil' Zik */), (new Item(22486)/* Scythe of Vitur (uncharged) */), (new Item(22324)/* Ghrazi rapier */), (new Item(22481)/* Sanguinesti staff (uncharged) */), (new Item(22326)/* Justiciar faceguard */), (new Item(22327)/* Justiciar chestguard */), (new Item(22328)/* Justiciar legguards */), (new Item(22477)/* Avernic defender hilt */), (new Item(22446)/* Vial of blood */), (new Item(22494)/* Sinhaza shroud tier 1 */), (new Item(22496)/* Sinhaza shroud tier 2 */), (new Item(22498)/* Sinhaza shroud tier 3 */), (new Item(22500)/* Sinhaza shroud tier 4 */), (new Item(22502)/* Sinhaza shroud tier 5 */), (new Item(25746)/* Sanguine dust */), (new Item(25742)/* Holy ornament kit */), (new Item(25744)/* Sanguine ornament kit */) },
 			// completion rewards
 			new Item[] {
 					new Item(30529, 1),
 					new Item(30572, 1),
 					new Item(30570, 9),
 			}),
-	TOMBS_OF_AMASCUT(CollectionLogUpdated.Categories.RAIDS, "Tombs of Amascut", new Item[] {
-			(new Item(Pet.TUMEKENS_GUARDIAN.itemId)/* Lil' zik */),
-			(new Item(27277)/* Scythe of vitur(u) */), (new Item(27226)/* Ghrazi rapier */), (new Item(27229)/*
-																																																				 * Sang staff(u)
-																																																				 */),
-			(new Item(27232)/* Just faceguard */), (new Item(25985)/* Just chestguard */), (new Item(26219)/*
-																																																			 * Just legguards
-																																																			 */),
-			(new Item(25975)/* Avernic def hilt */) },
+	TOMBS_OF_AMASCUT(CollectionLogUpdated.Categories.RAIDS, "Tombs of Amascut", new Item[] { /* OSRS page 'Tombs of Amascut' = cache enum 4805 */ (new Item(27352)/* Tumeken's guardian */), (new Item(27277)/* Tumeken's shadow (uncharged) */), (new Item(25985)/* Elidinis' ward */), (new Item(27226)/* Masori mask */), (new Item(27229)/* Masori body */), (new Item(27232)/* Masori chaps */), (new Item(25975)/* Lightbearer */), (new Item(26219)/* Osmumten's fang */), (new Item(27279)/* Thread of Elidinis */), (new Item(27283)/* Breach of the Scarab */), (new Item(27285)/* Eye of the Corruptor */), (new Item(27289)/* Jewel of the Sun */), (new Item(30893)/* Jewel of Amascut */), (new Item(27255)/* Menaphite ornament kit */), (new Item(27248)/* Cursed phalanx */), (new Item(27372)/* Masori crafting kit */), (new Item(27293)/* Cache of runes */), (new Item(27257)/* Icthlarin's shroud (tier 1) */), (new Item(27259)/* Icthlarin's shroud (tier 2) */), (new Item(27261)/* Icthlarin's shroud (tier 3) */), (new Item(27263)/* Icthlarin's shroud (tier 4) */), (new Item(27265)/* Icthlarin's shroud (tier 5) */), (new Item(27377)/* Remnant of Akkha */), (new Item(27378)/* Remnant of Ba-Ba */), (new Item(27379)/* Remnant of Kephri */), (new Item(27380)/* Remnant of Zebak */), (new Item(27381)/* Ancient remnant */) },
 			// completion rewards
 			new Item[] {
 					new Item(30449, 1),
@@ -717,25 +682,7 @@ public enum CollectionLogData {
 		}
 	),
 
-	ALL_PETS(CollectionLogUpdated.Categories.OTHER, "All Pets", new Item[] { (new Item(13262)/* Abyssal orphan */),
-			(new Item(22746)/* Ikkle hydra */), (new Item(13178)/* Callisto cub */), (new Item(13247)/* Hellpuppy */),
-			(new Item(11995)/* Pet chaos ele */), (new Item(12651)/* Pet zilyana */), (new Item(12816)/* Pet dark core */),
-			(new Item(12644)/* Pet dag prime */), (new Item(12643)/* Pet dag supreme */), (new Item(12645)/* Pet dag rex */),
-			(new Item(13225)/* Pet jad */), (new Item(12650)/* Pet graardor */), (new Item(12646)/* Baby mole */),
-			(new Item(22319)/* Jal-nib-rek */), (new Item(12647)/* Kalphite princess */),
-			(new Item(12653)/* Princess black dragon */), (new Item(12655)/* Pet kraken */), (new Item(12649)/* Pet kree */),
-			(new Item(12652)/* Pet kril */), (new Item(13181)/* Scorp offspring */), (new Item(21273)/* Skotos */),
-			(new Item(12648)/* Pet smoke devil */), (new Item(13177)/* Ven pet */), (new Item(13179)/* Vet pet */),
-			(new Item(21992)/* Vorki */), (new Item(20693)/* Phoenix */), (new Item(12921)/* Pet snakeling */),
-			(new Item(20851)/* Olmlet */), (new Item(22473)/* Lil' zik */), (new Item(Pet.TUMEKENS_GUARDIAN.itemId)),
-			(new Item(19730)/* Bloodhound */),
-			(new Item(13320)/* Heron */), (new Item(13321)/* Rock golem */), (new Item(13071)/* Chompy */),
-		(new Item(13322)/* Beaver */), (new Item(13323)/* Baby chin */), (new Item(20659)/* Baby squirrel */),
-			(new Item(20661)/* Tangleroot */), (new Item(20663)/* Rocky */), (new Item(20665)/* Rift guardian */),
-			(new Item(23757)/* Youngllef */), (new Item(26348)/* Nexling */), (new Item(30600)/* Awwgentavis */),
-			(new Item(23495)/* Sraracha */), (new Item(30417)/* Baby Galvek */), (new Item(30617)/* Ophi the brute */),
-			(new Item(24491)/* Little Nightmare */), (new Item(28252)), (new Item(28250)), (new Item(28248)),
-			(new Item(28246)), (new Item(27590)), new Item(29836), new Item(28801), (new Item(21748)) /* Noon */, (new Item(28960)),(new Item(43806)) },
+	ALL_PETS(CollectionLogUpdated.Categories.OTHER, "All Pets", new Item[] { /* OSRS page 'All Pets' = cache enum 2158, then Karn extras */ (new Item(13262)/* Abyssal orphan */), (new Item(22746)/* Ikkle Hydra */), (new Item(13178)/* Callisto cub */), (new Item(13247)/* Hellpuppy */), (new Item(11995)/* Pet chaos elemental */), (new Item(12651)/* Pet Zilyana */), (new Item(12816)/* Pet dark core */), (new Item(12644)/* Pet Dagannoth Prime */), (new Item(12643)/* Pet Dagannoth Supreme */), (new Item(12645)/* Pet Dagannoth Rex */), (new Item(13225)/* TzRek-Jad */), (new Item(12650)/* Pet General Graardor */), (new Item(12646)/* Baby Mole */), (new Item(21748)/* Noon */), (new Item(21291)/* Jal-Nib-Rek */), (new Item(12647)/* Kalphite Princess */), (new Item(12653)/* Prince Black Dragon */), (new Item(12655)/* Pet Kraken */), (new Item(12649)/* Pet Kree'arra */), (new Item(12652)/* Pet K'ril Tsutsaroth */), (new Item(13181)/* Scorpia's offspring */), (new Item(21273)/* Skotos */), (new Item(12648)/* Pet Smoke Devil */), (new Item(13177)/* Venenatis spiderling */), (new Item(13179)/* Vet'ion jr. */), (new Item(21992)/* Vorki */), (new Item(20693)/* Phoenix */), (new Item(12921)/* Pet Snakeling */), (new Item(20851)/* Olmlet */), (new Item(22473)/* Lil' Zik */), (new Item(19730)/* Bloodhound */), (new Item(12703)/* Pet Penance Queen */), (new Item(13320)/* Heron */), (new Item(13321)/* Rock golem */), (new Item(13322)/* Beaver */), (new Item(13324)/* Baby chinchompa */), (new Item(20659)/* Giant Squirrel */), (new Item(20661)/* Tangleroot */), (new Item(20663)/* Rocky */), (new Item(20665)/* Rift guardian */), (new Item(21509)/* Herbi */), (new Item(13071)/* Chompy chick */), (new Item(23495)/* Sraracha */), (new Item(23760)/* Smolcano */), (new Item(23757)/* Youngllef */), (new Item(24491)/* Little Nightmare */), (new Item(25348)/* Lil' Creator */), (new Item(25602)/* Tiny tempor */), (new Item(26348)/* Nexling */), (new Item(26901)/* Abyssal protector */), (new Item(27352)/* Tumeken's guardian */), (new Item(27590)/* Muphin */), (new Item(28246)/* Wisp */), (new Item(28250)/* Baron */), (new Item(28248)/* Butch */), (new Item(28252)/* Lil'viathan */), (new Item(28801)/* Scurry */), (new Item(28960)/* Smol Heredit */), (new Item(28962)/* Quetzin */), (new Item(29836)/* Nid */), (new Item(30152)/* Huberte */), (new Item(30154)/* Moxi */), (new Item(30622)/* Bran */), (new Item(30888)/* Yami */), (new Item(31130)/* Dom */), (new Item(31283)/* Soup */), (new Item(31285)/* Gull */), (new Item(33124)/* Beef */), (new Item(33642)/* Maggot marquess */), (new Item(34040)/* Mr McGroot */), (new Item(34042)/* Aggy */), (new Item(34646)/* Orion */), (new Item(22319)/* TzRek-Zuk */), (new Item(30600)/* ? */), (new Item(30417)/* ? */), (new Item(30617)/* ? */), (new Item(43806)/* ? */) },
 			// completion rewards
 			new Item[] {
 					new Item(30449, 3),
@@ -774,13 +721,7 @@ public enum CollectionLogData {
 					new Item(7968, 3),
 					new Item(30460, 1),
 			}),
-	GLOUGHS_EXPERIMENTS(CollectionLogUpdated.Categories.OTHER, "Glough's Experiments", new Item[] { (new Item(19529)/*
-																																																									 * Zenyte
-																																																									 * shard
-																																																									 */),
-			(new Item(19586)/* Light frame */), (new Item(19589)/* Heavy frame */), (new Item(19592)/* Ballista limbs */),
-			(new Item(19610)/* Monkey tail */), (new Item(19601)/* Ballista spring */),
-			(new Item(30547)/* Ballista spring */), (new Item(30546)/* Ballista spring */) },
+	GLOUGHS_EXPERIMENTS(CollectionLogUpdated.Categories.OTHER, "Glough's Experiments", new Item[] { /* OSRS page 'Glough's Experiments' = cache enum 2161, then Karn extras */ (new Item(19529)/* Zenyte shard */), (new Item(19586)/* Light frame */), (new Item(19589)/* Heavy frame */), (new Item(19592)/* Ballista limbs */), (new Item(19610)/* Monkey tail */), (new Item(19601)/* Ballista spring */), (new Item(30547)/* Echo ahrim's robeskirt 0 */), (new Item(30546)/* ? */) },
 			// completion rewards
 			new Item[] {
 					new Item(7478, 7),
@@ -1178,13 +1119,7 @@ public enum CollectionLogData {
 	// RS-Realm-Server-Package -- verified against source directly, not guessed), matching the exact
 	// ids already wired in Zelus's own newDrops/16305.json. No completion-reward items are defined
 	// anywhere in source for her, so this is deliberately empty rather than invented.
-	MAD_ANGEL(CollectionLogUpdated.Categories.BOSSES, "Mad Angel", new Item[] {
-			new Item(44832) /* Sunstone crystal */,
-			new Item(44833) /* Ardeaglais teleport */,
-			new Item(44827) /* Hallowfell */,
-			new Item(44830) /* Jar of light */,
-			new Item(44842) /* Aggy */,
-	},
+	MAD_ANGEL(CollectionLogUpdated.Categories.BOSSES, "Mad Angel", new Item[] { /* OSRS page 'The Mad Angel' = cache enum 5837, then Karn extras */ (new Item(34042)/* Aggy */), (new Item(34027)/* Hallowfell */), (new Item(34033)/* Ardeaglais teleport */), (new Item(21726)/* Granite dust */), (new Item(34030)/* Jar of Light */), (new Item(44832)/* ? */), (new Item(44833)/* ? */), (new Item(44827)/* ? */), (new Item(44830)/* ? */), (new Item(44842)/* ? */) },
 			// completion rewards
 			new Item[] {
 				new Item(7478, 15),
@@ -1277,6 +1212,26 @@ public enum CollectionLogData {
 	},
 			// completion rewards (none defined yet)
 			new Item[] {}),
+
+	// The Five Seals (2026-11-17): the vault's purples (FiveSealsLoot.UNIQUES) and the pet; count = full clears.
+	THE_FIVE_SEALS(CollectionLogUpdated.Categories.MINIGAMES, "The Five Seals", new Item[] {
+			new Item(42782) /* Lil' Vorgath (pet) */,
+			new Item(42696) /* Duskwarden helm */,
+			new Item(42698) /* Duskwarden platebody */,
+			new Item(42700) /* Duskwarden platelegs */,
+			new Item(42702) /* Duskwarden blade */,
+			new Item(42704) /* Duskwarden kiteshield */,
+			new Item(42706) /* Hellfang helm */,
+			new Item(42708) /* Hellfang platebody */,
+			new Item(42710) /* Hellfang platelegs */,
+			new Item(42712) /* Hellfang crossbow */,
+			new Item(40063) /* Decimation */,
+	},
+			// completion rewards
+			new Item[] {
+				new Item(34669, 5000),
+				new Item(30570, 3),
+			}),
 
 	// Solarmane the sun-lion (2026-11-04): the cub pet (1/500, Solarmane.java) + the Solarmane set (newDrops/30611.json).
 	SOLARMANE(CollectionLogUpdated.Categories.BOSSES, "Solarmane", new Item[] {

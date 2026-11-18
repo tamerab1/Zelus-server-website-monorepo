@@ -32,7 +32,7 @@ public class PlayerCreationWebhook {
 			var message = new Message();
 			var embedMessage = new Embed();
 				embedMessage.setTitle("Newcomer Event");
-				embedMessage.setDescription("`%s` has just joined Zelus".formatted(player.getName()));
+				embedMessage.setDescription("`%s` has just joined Karn".formatted(player.getName()));
 				embedMessage.setColor(8917522);
 				embedMessage.setFields(
 					new Field("HWID", player.hwid, true),

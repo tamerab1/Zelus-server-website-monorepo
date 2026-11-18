@@ -87,7 +87,7 @@ public class SummerEventHandler {
 				player.perkPoints += perkPointReward;
 				player.reasonPoints += reasonPointReward;
 				player.sendFilteredMessage("You receive <col=000000><shad=29F1FE>" + reasonPointReward
-					+ " Zelus points<col=000000></shad> for killing a " + npc.getDef().name + ".");
+					+ " Karn points<col=000000></shad> for killing a " + npc.getDef().name + ".");
 				player.sendFilteredMessage("You receive <col=000000><shad=29F1FE>" + summerPointReward
 					+ " Summer points<col=000000></shad> for killing a " + npc.getDef().name + ".");
 				player.sendFilteredMessage("You receive <col=000000><shad=29F1FE>" + perkPointReward

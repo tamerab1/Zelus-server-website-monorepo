@@ -70,6 +70,8 @@ public enum RangedWeapon {
 	BOW_OF_FAERDHINEN_YELLOW(new RangedData(1933, Projectile.arrow(1932))),
 
 	BOW_OF_FAERDHINEN_RED(new RangedData(1923, Projectile.arrow(1922))),
+	// the Karn bow (40076, 2026-11-15): crimson crystal arrows, no ammunition needed
+	KARN_BOW(new RangedData(1923, Projectile.arrow(1922))),
 
 	BOW_OF_FAERDHINEN_CYAN(new RangedData(1935, Projectile.arrow(1934))),
 
@@ -219,6 +221,7 @@ public enum RangedWeapon {
 				 BOW_OF_FAERDHINEN_GREEN,
 				 BOW_OF_FAERDHINEN_BLACK,
 				 BOW_OF_FAERDHINEN_PURPLE,
+				 KARN_BOW,
 				 ZARYTE_STORMPIERCER -> true;
 			default -> false;
 		};

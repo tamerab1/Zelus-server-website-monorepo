@@ -1,0 +1,27 @@
+Brutus.json npc 15629 Demonic Brutus (lvl 1224)
+     attack_animation=-1 but cache has [(13783, 'COW_BOSS_ATTACK')]
+     defend_animation=-1 but cache has [(13787, 'COW_BOSS_DEFEND')]
+     death_animation=-1 but cache has [(13784, 'COW_BOSS_DEATH')]
+Corrupted_Hunllef.json npc 9035 Corrupted Hunllef (lvl 894)
+     attack_animation=-1 but cache has [(8418, 'HUNLLEF_ATTACK_SPECIAL'), (8419, 'HUNLLEF_ATTACK_RANGED'), (8420, 'HUNLLEF_ATTACK_MELEE')]
+Crystalline_Hunllef.json npc 9021 Crystalline Hunllef (lvl 674)
+     attack_animation=-1 but cache has [(8418, 'HUNLLEF_ATTACK_SPECIAL'), (8419, 'HUNLLEF_ATTACK_RANGED'), (8420, 'HUNLLEF_ATTACK_MELEE')]
+Hespori.json npc 8583 Hespori (lvl 284)
+     attack_animation=-1 but cache has [(8223, 'HESPORI_ATTACK_SPECIAL'), (8224, 'HESPORI_ATTACK_RANGED')]
+Hueycoatl.json npc 14009 The Hueycoatl (lvl 642)
+     attack_animation=-1 but cache has [(11669, 'HUEY_ATTACK_MELEE'), (11670, 'HUEY_ATTACK_RANGE'), (11671, 'HUEY_ATTACK_MAGIC')]
+MoonsOfPeril.json npc 13017 ? (lvl 329)
+     death_animation=11012(NPC_DJINN_03_TELEPORT_IDLE_DISAPPEAR) not in family NPC_DJINN_01
+Parasite.json npc 9468 Parasite (lvl 129)
+     attack_animation=-1 but cache has [(8554, 'NIGHTMARE_PARASITE_ATTACK_RANGED'), (8555, 'NIGHTMARE_PARASITE_ATTACK_MAGIC'), (9807, 'NIGHTMARE_PARASITE_ATTACK_RANGED_MERGE')]
+     death_animation=-1 but cache has [(8559, 'NIGHTMARE_PARASITE_DEATH')]
+RoyalTitans.json npc 12596 Branda the Fire Queen (lvl 350)
+     attack_animation=-1 but cache has [(11974, 'FIRE_GIANT_BRANDA_QUEEN_ATTACK_MELEE01'), (11976, 'FIRE_GIANT_BRANDA_QUEEN_ATTACK_SUMMON01'), (11978, 'FIRE_GIANT_BRANDA_QUEEN_ATTACK_SUMMON02')]
+     death_animation=-1 but cache has [(11992, 'FIRE_GIANT_BRANDA_QUEEN_DEATH01')]
+Spawn_of_Sarachnis.json npc 8714 Spawn of Sarachnis (lvl 107)
+     attack_animation=-1 but cache has [(4410, 'HOSDUN_SPIDER_BOSS_ATTACK_RANGED'), (8147, 'HOSDUN_SPIDER_BOSS_ATTACK_MELEE')]
+     death_animation=-1 but cache has [(8318, 'HOSDUN_SPIDER_BOSS_DEATH')]
+Tainted_knight.json npc 12002 Vet'ion (lvl 454)
+     attack_animation=-1 but cache has [(9969, 'NPC_VETION_ATTACK_MAGIC_01'), (9970, 'NPC_VETION_ATTACK_MAGIC_02'), (9971, 'NPC_VETION_ATTACK_MELEE_01')]
+     defend_animation=-1 but cache has [(9973, 'NPC_VETION_DEFEND_PARRY_01'), (9974, 'NPC_VETION_DEFEND_PARRY_02'), (9975, 'NPC_VETION_DEFEND_SHIELD_01')]
+     death_animation=-1 but cache has [(9980, 'NPC_VETION_DEATH_01'), (9981, 'NPC_VETION_DEATH_02')]

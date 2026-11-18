@@ -210,6 +210,8 @@ public class CollectionLogUpdated {
 				// Draco lives under Minigames (David mining minigame) but still has a real kill counter.
 				if (log == CollectionLogData.DRACO || log == CollectionLogData.CHAMBER_OF_ASCENSION)
 					killCount = KillCounter.getKills(log.name, player);
+				if (log == CollectionLogData.THE_FIVE_SEALS)
+					killCount = player.fiveSealsClears.getKills();
 				player.getPacketSender().setHidden(1134, 324, true);
 				break;
 

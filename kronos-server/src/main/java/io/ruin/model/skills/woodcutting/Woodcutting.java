@@ -161,7 +161,7 @@ public class Woodcutting {
 					event.delay(1);
 				}
 				if (attempts % 2 == 0 && successfullyCutTree(effectiveLevel, treeData, hatchet)) {
-					if (hatchet == Hatchet.INFERNAL && (Random.rollDie(3, 1) || player.infernalAxeSpecial > 0)) {
+					if (hatchet == Hatchet.INFERNAL && Burning.get(treeData.log) != null && (Random.rollDie(3, 1) || player.infernalAxeSpecial > 0)) { // unburnable logs (Karnwood) are kept
 						Burning burning = Burning.get(treeData.log);
 						if (burning != null) {
 							player.sendFilteredMessage("The infernal axe incinerates some logs.");
@@ -222,7 +222,7 @@ public class Woodcutting {
 							if (Random.rollPercent(c.getDoubleLogsChance())) {
 								PerkTaskHandler.handleGatherResource(player, treeData.log, 1);
 								if (Random.rollPercent(getDonatorNoteChance(player)))
-									player.getInventory().add(treeData.log + 1, 1);
+									player.getInventory().add(io.ruin.cache.ObjType.notedId(treeData.log), 1);
 								else player.getInventory().add(treeData.log, 1);
 								player.getStats().addXp(StatType.Woodcutting, treeData.experience / 2.0, true);
 							}
@@ -262,7 +262,7 @@ public class Woodcutting {
 							PerkTaskHandler.handleGatherResource(player, treeData.log, 1);
 							player.sendFilteredMessage("Your axe's buff allows you to chop some additional logs!");
 							if (Random.rollPercent(getDonatorNoteChance(player)))
-								player.getInventory().add(treeData.log + 1, 1);
+								player.getInventory().add(io.ruin.cache.ObjType.notedId(treeData.log), 1);
 							else player.getInventory().add(treeData.log, 1);
 							player.getStats().addXp(StatType.Woodcutting, treeData.experience / 2.0, true);
 						}
@@ -406,6 +406,7 @@ public class Woodcutting {
 
 		ObjectAction.register(9034, "chop down", (player, obj) -> chop(Tree.MAHOGANY, player, obj, 9035));
 		ObjectAction.register(50008, "chop down", (player, obj) -> chop(Tree.CORRUPT_TREE, player, obj, 50009));
+		ObjectAction.register(63307, "chop down", (player, obj) -> chop(Tree.KARNWOOD, player, obj, 63308)); // The Five Seals
 	}
 
 }

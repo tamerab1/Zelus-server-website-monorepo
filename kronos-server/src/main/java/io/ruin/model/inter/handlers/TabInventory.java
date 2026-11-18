@@ -87,6 +87,8 @@ public class TabInventory {
 			return;
 
 		if (ifbutton == 10) {
+			if (io.ruin.model.content.battlepass.BattlePass.examineBox(player, item))
+				return; // the Battle Pass box's examine shows its rewards (the spinner window)
 			item.examine(player);
 			ItemStatsViewer.open(player, item.getId());
 			return;

@@ -274,29 +274,29 @@ public class GameModeInterface {
 					" and system PvP presets, so you can jump straight into the Wilderness." +
 					"<br>Trade-off: no PVM Points shop access, since you're not earning them through PVM Mode's economy.";
 			case IRONMAN:
-				return "Ironman Mode in Zelus is a self-sufficient game" +
+				return "Ironman Mode in Karn is a self-sufficient game" +
 					" mode where players cannot trade with others" +
 					" or have any in-game assistance." +
 					"<br>The ultimate goal is to complete all game content without outside help.";
 			case ULTIMATE_IRONMAN:
-				return "Ultimate Ironman Mode in Zelus is a self-sufficient game" +
+				return "Ultimate Ironman Mode in Karn is a self-sufficient game" +
 					" mode where players cannot trade with others, bank" +
 					" or have any in-game assistance." +
 					"<br>The lack of banking makes this mode quite the challenge.";
 			case HARDCORE_IRONMAN:
-				return "Hardcore Ironman Mode in Zelus is a self-sufficient game" +
+				return "Hardcore Ironman Mode in Karn is a self-sufficient game" +
 					" mode where players cannot trade with others" +
 					" or have any in-game assistance." +
 					"<br>What makes this mode different is you have only one life. If you die, your account will be reverted to a regular IM.";
 			case GROUP_IRONMAN:
-				return "Group Ironman Mode in Zelus" +
+				return "Group Ironman Mode in Karn" +
 					" is a cooperative game mode for up to five players." +
 					" Players can trade with each other, gather resources together," +
 					" and progress through the game as a team.<br>The goal is to complete all" +
 					" content available in the game without outside help, while enjoying the" +
 					" social aspects of playing with others.";
 			case HARDCORE_GROUP_IRONMAN:
-				return "Hardcore Group Ironman Mode in Zelus is similar to Group Ironman Mode," +
+				return "Hardcore Group Ironman Mode in Karn is similar to Group Ironman Mode," +
 					" but with an added challenge." +
 					" Your group only has 5 lives, if you lose them all you become a regular iron man group." +
 					" This mode requires careful planning and coordination among group members." +
@@ -408,7 +408,7 @@ public class GameModeInterface {
 		player.setSecondaryGroups(ListUtils.toList(SecondaryGroup.NONE.id));
 		// the Zelus Codex's first task: the path is chosen (2026-10-20)
 		io.ruin.model.content.codex.ZelusTask.AWAKENING_IN_ZELUS.step(player, io.ruin.model.content.codex.ZelusTask.STEP_PATH);
-		player.sendMessage("<col=ff981f><shad=000000>Welcome to Zelus!</shad></col> Open Zelus Achievements to track your "
+		player.sendMessage("<col=ff981f><shad=000000>Welcome to Karn!</shad></col> Open Karn Achievements to track your "
 			+ "milestones and unlock unique rewards.");
 		StarterGuide.continueTutorial(player);
 
@@ -703,22 +703,22 @@ public class GameModeInterface {
 	private String getDifficultyDescription(DifficultyType currentDifficultyType) {
 		switch (currentDifficultyType) {
 			case EASY:
-				return "This is Zelus's easiest difficulty rate," +
+				return "This is Karn's easiest difficulty rate," +
 					" at a staggering 100x experience rate you" +
 					" will be able to access end game content faster" +
 					" than other modes, but your drop rates will be penalised.";
 			case INTERMEDIATE:
 				return "On intermediate mode your experience rates will be 25x, on this" +
 					" mode you will have slightly better drop rates than easy mode and" +
-					" you will also receive more Zelus points.";
+					" you will also receive more Karn points.";
 			case HARD:
 				return "On hard mode your experience rates will be 10x, on this" +
 					" mode you will have better drop rates than intermediate mode," +
-					" you will also receive more Zelus points and you will get access to the training amulet.";
+					" you will also receive more Karn points and you will get access to the training amulet.";
 			case EXTREME:
 				return "On extreme mode your experience rates will be 3x, on this" +
 					" mode you will have significantly better drop rates than hard mode," +
-					" you will also receive more Zelus points and you will get access to the training amulet," +
+					" you will also receive more Karn points and you will get access to the training amulet," +
 					" training sword, training staff and training bow.";
 		}
 		return null;

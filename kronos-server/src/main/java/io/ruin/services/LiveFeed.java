@@ -25,6 +25,8 @@ public final class LiveFeed {
 
 	/** type: pvp_kill | killstreak | rare_drop | level_up | tournament_win | bounty_claim (the website's EVENT_STYLE). */
 	public static void push(String type, String username, String message) {
+		if (message != null) // the welcome screen's Feed tab (2026-11-15) keeps the recent ones in memory
+			io.ruin.model.content.welcome.WelcomeScreen.feed(type, clean(message));
 		if (!World.apiEnabled || message == null)
 			return;
 		String text = clean(message);

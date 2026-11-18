@@ -166,6 +166,10 @@ public class Equipment extends ItemContainer {
 		if (!io.ruin.model.activities.tournament.TournamentHandler.mayEquip(player, selectedDef))
 			return;
 		int equipSlot = selectedDef.equipSlot;
+		if (equipSlot == SLOT_WEAPON && player.get(io.ruin.model.activities.moonsofperil.bosses.BlueMoon.FROZEN_KEY) != null) {
+			player.sendMessage("Your hands are too frozen to hold a weapon!");
+			return;
+		}
 		if (equipSlot == -1 || selectedDef.equipOption == -1) {
 			player.sendMessage("You can't wear this item.");
 			return;

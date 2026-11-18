@@ -50,7 +50,7 @@ public final class CommandCodex {
 			e("deals", "Limited-time donator deals"),
 			e("refer [name]", "Name the player who referred you (also ::ref)"),
 			e("referrals", "Your referral rewards"),
-			e("discord", "Join the Zelus Discord"),
+			e("discord", "Join the Karn Discord"),
 			e("rules", "The server rules (on our Discord)"),
 			e("players", "See who is online"),
 			e("staff", "See which staff are online"),
@@ -72,6 +72,9 @@ public final class CommandCodex {
 			e("pointshops", "Open the point shops"),
 			e("points", "Your point balances"),
 			e("dailies", "Today's daily tasks"),
+			e("welcome", "The welcome screen"),
+			e("battlepass", "The Battle Pass: tiers, rewards, challenges"),
+			e("bis", "Best in Slot: the best gear per slot and style"),
 			e("newcomer", "Your newcomer tasks"),
 			e("perktask", "Your perk task progress"),
 			e("tfalog", "Your Raid 4 stats (also ::alliancelog)"),
@@ -111,7 +114,7 @@ public final class CommandCodex {
 	public static void register() {
 		for (Category c : CATEGORIES)
 			if (c.entries.size() > ROWS)
-				throw new IllegalStateException("Zelus Commands: " + c.tab + " has more than " + ROWS + " rows");
+				throw new IllegalStateException("Karn Commands: " + c.tab + " has more than " + ROWS + " rows");
 		InterfaceHandler.register(INTERFACE, h -> {
 			h.actions[CLOSE] = (SimpleAction) Player::closeInterfaces;
 			for (int t = 0; t < CATEGORIES.size(); t++) {
@@ -126,7 +129,7 @@ public final class CommandCodex {
 	public static void open(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, "Zelus Commands");
+		ps.sendString(INTERFACE, TITLE, "Karn Commands");
 		ps.sendString(INTERFACE, SUBTITLE, "General directory and utility commands reference.");
 		ps.sendString(INTERFACE, COUNT, TOTAL + " commands");
 		for (int t = 0; t < CATEGORIES.size(); t++)

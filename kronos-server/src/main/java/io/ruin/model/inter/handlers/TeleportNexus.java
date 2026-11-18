@@ -39,14 +39,14 @@ public final class TeleportNexus {
 	/** Cards: layer, box, border, gold outline x2, name, tag/note, Teleport button, its label, star (gold), star (grey). */
 	private static final int FIRST_ROW = 61, ROW_STRIDE = 11, ROW_BOX = 1, ROW_OUTLINE = 3, ROW_NAME = 5, ROW_LINE = 6,
 		ROW_TELEPORT = 7, ROW_STAR_ON = 9, ROW_STAR_OFF = 10, ROWS = 80;
-	private static final int ROW_PITCH = 40, SCROLL_HEIGHT = 210;
+	private static final int ROW_PITCH = 38, SCROLL_HEIGHT = 155; // Karn layout (2026-11-11)
 	/** Preview pane. */
 	private static final int PREVIEW_EMPTY = 946, PREVIEW_NAME = 947, PREVIEW_TAG = 948, FIRST_MODEL = 949, MODELS = 6,
-		PREVIEW_DESC = 955, FIRST_DROP = 956, DROP_STRIDE = 3, DROP_ITEM = 2, DROPS = 4, PREVIEW_REQ = 968,
+		PREVIEW_DESC = 955, FIRST_DROP = 956, DROP_STRIDE = 3, DROP_ITEM = 2, DROP_OLD_BORDER = 1, DROPS = 4, PREVIEW_REQ = 968,
 		PREVIEW_TELEPORT = 969, PREVIEW_STAR_ON = 971, PREVIEW_STAR_OFF = 972;
 	private static final int MAX_FAVOURITES = 5;
 
-	private static final String GOLD = "<col=ffc35a>", GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>", GREEN = "<col=00ff00>",
+	private static final String GOLD = "<col=ffc35a>", GREY = "<col=9a9a9a>", WHITE = "<col=ffffff>", GREEN = "<col=6fd36a>",
 		RED = "<col=ff0000>", ORANGE = "<col=ff981f>", CYAN = "<col=4fd1ff>", END = "</col>";
 
 	enum Category {
@@ -74,11 +74,12 @@ public final class TeleportNexus {
 
 	/* The destinations of each category, in the order the old interface's pages listed them. */
 	private static final List<Entry> MONSTERS_LIST = list(null, ROCK_CRABS, SAND_CRABS, AMMONITE_CRABS, YAKS, CHICKENS, CHAOS_DRUID,
-		EXPERIMENTS, CATALYSTS, SHAMANS, VYREWATCH_SENTINELS, BASILISK_KNIGHTS, ARMOURED_ZOMBIES, ELITE_VOID_ISLAND);
+		EXPERIMENTS, CATALYSTS, SHAMANS, VYREWATCH_SENTINELS, BASILISK_KNIGHTS, ARMOURED_ZOMBIES, ELITE_VOID_ISLAND, THE_SCAR, THE_SCAR_GROWTH);
 	private static final List<Entry> BOSSES_LIST = list(null, RELIQUARY, SOLARMANE, SYLVAROTH, CINDERMAW, MAD_ANGEL, GWD, VORKATH, ZULRAH, GALVEK, CORP, KQ, DKS, KRAKEN, HYDRA, CERBERUS,
 		SMOKE_DEVIL, SIRE, VENENATIS, CALLISTO, VETION, KBD, GIANT_MOLE, SKOTIZO, DEMONIC_GORILLA, ARGENTAVIS, NEX, NIGHTMARE,
 		SARACHNIS, OPHIDIA, PHANTOM_MUSPAH, LEVIATHAN, DUKE_SUCELLUS, VARDORVIS, WHISPERER, MALAKAR, SOL_HEREDIT,
-		GROTESQUE_GUARDIANS, ARAXXOR, SCURRIUS, BALANCE_ELEMENTAL, JUDGE_OF_YAMA, DOOM_OF_MOKHAIOTL, TORMENTED_DEMON);
+		GROTESQUE_GUARDIANS, ARAXXOR, SCURRIUS, BALANCE_ELEMENTAL, JUDGE_OF_YAMA, DOOM_OF_MOKHAIOTL, TORMENTED_DEMON,
+		ZALCANO, HESPORI, MAGGOT_KING, MOONS_OF_PERIL, HUEYCOATL, ROYAL_TITANS, BRUTUS);
 	private static final List<Entry> MINIGAMES_LIST = list(null, FRACTURED_ARCHIVE, COLOSSEUM_OF_TRIALS, DRACO, CHAMBER_OF_ASCENSION, CHAMBERS_OF_XERIC,
 		WARRIORS_GUILD, BARROWS, FIGHT_CAVES, INFERNO, PEST_CONTROL, DOMINION_OF_ECHOES, WINTERTODT, DUEL_ARENA, THE_GAUNTLET,
 		THEATRE_OF_BLOOD, TOMBS_OF_AMASCUT);
@@ -98,6 +99,7 @@ public final class TeleportNexus {
 			VARROCK_WEST_MINE));
 		SKILLING_LIST.addAll(list("Woodcutting", WOODCUTTING_GUILD, HARDWOOD_GROVE, SEERS));
 		SKILLING_LIST.addAll(list("Fishing", CATHTERBY, FISHING_GUILD, OTTOS_GROTTO, PISCATORIS, ANGLERFISH_SPOT, KARAMBWAN_SPOT));
+		SKILLING_LIST.addAll(list("Sailing", SAILING_PORT_SARIM));
 		SKILLING_LIST.addAll(list("Runecrafting", ABYSS, ZMI, ARCEUUS_ESSENCE_MINE, BLOOD_ALTAR, SOUL_ALTAR, WRATH_ALTAR));
 		SKILLING_LIST.addAll(list("Agility", GNOME_STRONGHOLD_COURSE, DRAYNOR_ROOFTOP_COURSE, AL_KHARID_ROOFTOP_COURSE,
 			VARROCK_ROOFTOP_COURSE, CANIFIS_ROOFTOP_COURSE, FALADOR_ROOFTOP_COURSE, SEERS_ROOFTOP_COURSE,
@@ -219,10 +221,8 @@ public final class TeleportNexus {
 	public static void open(Player player) {
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + "ZELUS TELEPORTS" + END);
-		for (int c = 0; c < BUTTONS.length; c++)
-			if (BUTTONS[c].iconItem > 0)
-				ps.sendItem(INTERFACE, FIRST_CATEGORY + c * CATEGORY_STRIDE + CATEGORY_ICON, BUTTONS[c].iconItem, 1);
+		ps.sendString(INTERFACE, TITLE, ORANGE + "KARN TELEPORTS" + END);
+		// Karn round 2 (2026-11-12): the category icons are baked into the tab sprites, the item icon components are hidden
 		refresh(player);
 	}
 
@@ -276,14 +276,14 @@ public final class TeleportNexus {
 			ps.setHidden(INTERFACE, row + ROW_STAR_OFF, favourite);
 			if (!listChanged)
 				continue;
-			ps.sendString(INTERFACE, row + ROW_NAME, GOLD + shorten(teleport.name, 22) + END);
+			ps.sendString(INTERFACE, row + ROW_NAME, GOLD + shorten(teleport.name, 20) + END);
 			ps.sendString(INTERFACE, row + ROW_LINE, tag(teleport) + (entry.section() == null ? "" : " " + GREY + entry.section() + END));
 		}
 		if (listChanged) {
 			int contentHeight = rows.size() * ROW_PITCH - 2;
 			int count = contentHeight <= SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - SCROLL_HEIGHT / 3D) / 15D);
 			ScrollbarClientScript.create().interfaceId(INTERFACE).containerId(SCROLL).scrollbarChildId(SCROLLBAR)
-				.childrenCount(count).withDarkGraphics().build().send(player);
+				.childrenCount(count).withKarnGraphics().build().send(player);
 		}
 
 		sendPreview(player);
@@ -303,7 +303,8 @@ public final class TeleportNexus {
 			ps.setHidden(INTERFACE, c, !shown);
 		for (int k = 0; k < DROPS; k++)
 			for (int part = 0; part < DROP_STRIDE; part++)
-				ps.setHidden(INTERFACE, FIRST_DROP + k * DROP_STRIDE + part, !shown);
+				if (part != DROP_OLD_BORDER) // the Karn slot frame replaced it (cache stage 30); showing it drew a second, offset frame
+					ps.setHidden(INTERFACE, FIRST_DROP + k * DROP_STRIDE + part, !shown);
 		boolean favourite = shown && player.teleportFavourites.contains(teleport);
 		ps.setHidden(INTERFACE, PREVIEW_STAR_ON, !shown || !favourite);
 		ps.setHidden(INTERFACE, PREVIEW_STAR_OFF, !shown || favourite);
@@ -313,7 +314,7 @@ public final class TeleportNexus {
 		ps.sendString(INTERFACE, PREVIEW_NAME, teleport.name);
 		String difficulty = teleport.difficulty == null || teleport.difficulty.isEmpty() ? "" : GREY + "  ·  " + teleport.difficulty + END;
 		ps.sendString(INTERFACE, PREVIEW_TAG, tag(teleport) + difficulty);
-		ps.sendString(INTERFACE, PREVIEW_DESC, shorten(clean(teleport.description), 150)); // 4 lines max above the drops
+		ps.sendString(INTERFACE, PREVIEW_DESC, shorten(clean(teleport.description), 62)); // 2 lines under the round 3 model stage
 		String requirement = requirement(teleport);
 		ps.sendString(INTERFACE, PREVIEW_REQ, requirement == null ? GREEN + "No requirements" + END : ORANGE + requirementLine(requirement) + END);
 		sendModel(player, teleport);
@@ -369,15 +370,15 @@ public final class TeleportNexus {
 	private static final int[] PRESET_ZOOM = {2000, 1000, 3000, 500, 1500, 3500};
 	private static final double MODEL_ZOOM_SCALE = 112D / 80D;
 
-	/** The preview box (1152 model components: 144 x 80 at 3,34 in the right panel) and how much of it a model fills. */
-	private static final int MODEL_X = 3, MODEL_Y = 34, FIT_HEIGHT = 64, FIT_WIDTH = 128;
+	/** The preview box (1152 model components: 198 x 44 at 8,38 in the preview card, Karn layout) and how much of it a model fills. */
+	private static final int MODEL_X = 8, MODEL_Y = 30, FIT_HEIGHT = 60, FIT_WIDTH = 180; // round 3: the 198 x 74 stage, with a margin
 	/** Zoom limits: closer than 1200 the camera ends up inside small models (the Sand crab "parchment"). */
 	private static final int MIN_ZOOM = 1200, MAX_ZOOM = 9000;
 	/**
 	 * Interface model projection: on-screen size ~= model units * PROJECTION / zoom (rotation 0). Confirmed by the
 	 * 2026-10-15 15:36 screenshots: a 217-unit guard at zoom 1644 drew 61px tall.
 	 */
-	private static final double PROJECTION = 500D;
+	private static final double PROJECTION = 450D; // measured on the round 3 stage (the Whisperer, 2026-11-14)
 
 	/**
 	 * A preview from teleport_previews.json (BuildTeleportPreviews): the model (merged NPC parts with recolours baked in,
@@ -387,7 +388,9 @@ public final class TeleportNexus {
 	 */
 	private static void sendFittedModel(PacketSender ps, TeleportPreviews.Preview preview) {
 		int component = FIRST_MODEL;
-		boolean percentiles = preview.pMaxY > preview.pMinY;
+		// full bounds: the 2nd-98th percentile box badly under-measures models whose vertices bunch up (the Whisperer's
+		// tentacles: 166 of its 448 units), and those then overflowed the stage
+		boolean percentiles = false;
 		int minX = percentiles ? preview.pMinX : preview.minX(), maxX = percentiles ? preview.pMaxX : preview.maxX();
 		int minY = percentiles ? preview.pMinY : preview.minY(), maxY = percentiles ? preview.pMaxY : preview.maxY();
 		int height = Math.max(1, maxY - minY), width = Math.max(1, maxX - minX);

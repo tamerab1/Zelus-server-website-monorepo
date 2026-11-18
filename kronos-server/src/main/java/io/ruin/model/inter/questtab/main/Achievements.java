@@ -51,7 +51,7 @@ public enum Achievements {
 	JUST_A_LITTLE_BOOST(new Item[]{(new Item(995, 100000))}, "Just a little boost", 500, 1,
 		0, 0, 849, "Use the home teleport. (This will replenish your health, prayer & stats)", 1, 101, "", StatType.Magic, AchievementTypes.EASY, 49, 75),
 	NEXWORKING(new Item[]{(new Item(995, 200000))}, "Nexworking", 500, 1,
-		0, 0, 849, "Teleport using the portal nexus at home.", 1, 102, "", StatType.Magic, AchievementTypes.EASY, 50, 76),
+		0, 0, 849, "Teleport using Karn Teleports at home.", 1, 102, "", StatType.Magic, AchievementTypes.EASY, 50, 76),
 	OH_CUL(new Item[]{(new Item(995, 200000))}, "Oh cul", 500, 1, 0,
 		0, 849, "Switch spellbooks with the Occult Altar at home.", 1, 103, "", StatType.Magic, AchievementTypes.EASY, 51, 77),
 	OPEN_YOUR_MINE(new Item[]{(new Item(995, 250000)), (new Item(1275))}, "Open your mine", 1000,

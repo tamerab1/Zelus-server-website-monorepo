@@ -185,7 +185,7 @@ public final class MysteryBoxSpinner {
 				player.pendingSpinItemId = 0;
 				player.pendingSpinAmount = 0;
 				player.getInventory().addOrDrop(id, amount);
-				player.sendMessage("<col=e39b00><shad=000000>[Zelus Spinner]</shad></col> Your interrupted spin paid out: <col=e39b00><shad=000000>"
+				player.sendMessage("<col=e39b00><shad=000000>[Karn Spinner]</shad></col> Your interrupted spin paid out: <col=e39b00><shad=000000>"
 					+ amount + " x " + ObjType.get(id).name + "</shad></col>.");
 			}
 		});
@@ -219,7 +219,7 @@ public final class MysteryBoxSpinner {
 		s.boxId = boxId;
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE);
 		PacketSender ps = player.getPacketSender();
-		ps.sendString(INTERFACE, TITLE, ORANGE + box.name() + " · Zelus Vault" + END);
+		ps.sendString(INTERFACE, TITLE, ORANGE + box.name() + " · Karn Vault" + END);
 		ps.sendString(INTERFACE, SUB_HEADER, "Press " + GOLD + "Spin!" + END + " to open a box. The reward is rolled the moment you spin.");
 		// a resting strip of possible rewards
 		List<Item> strip = new ArrayList<>();
@@ -398,7 +398,7 @@ public final class MysteryBoxSpinner {
 		player.pendingSpinAmount = 0;
 		player.getInventory().addOrDrop(reward);
 		String name = reward.getDef().name;
-		player.sendMessage(Icon.YELLOW_KEY.tag() + " <col=e39b00><shad=000000>[Zelus Spinner]</shad></col> You have received <col=e39b00><shad=000000>"
+		player.sendMessage(Icon.YELLOW_KEY.tag() + " <col=e39b00><shad=000000>[Karn Spinner]</shad></col> You have received <col=e39b00><shad=000000>"
 			+ (reward.getAmount() > 1 ? reward.getAmount() + " x " : "") + name + "</shad></col> from the " + box.name() + "!");
 		if (box.collectionLog())
 			player.addToCollectionLog(reward);
@@ -472,7 +472,7 @@ public final class MysteryBoxSpinner {
 	}
 
 	private static void setColour(Player player, int component, int colour) {
-		player.getPacketSender().sendClientScript(45, "", INTERFACE << 16 | component, colour);
+		player.getPacketSender().sendClientScript(45, "Ii", INTERFACE << 16 | component, colour);
 	}
 
 	private static void examineCell(Player player, int cell) {

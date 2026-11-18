@@ -43,7 +43,7 @@ public class DailyLoginInterface {
 
 	// icon used to display donator-point rewards in the reward slots (matches the same
 	// stand-in icon used elsewhere for this currency, e.g. LoyaltyTitleManager.DONATOR_POINTS_ICON)
-	private static final int DONATOR_POINTS_ICON = 8851;
+	private static final int DONATOR_POINTS_ICON = 59600; // the Donator Ticket (8851 is the Warrior guild token: day 6 read "100 tokens")
 
 	// 1-indexed login day -> donator points awarded instead of an inventory item; checked in
 	// claimReward() before the normal item-granting path
@@ -127,7 +127,7 @@ public class DailyLoginInterface {
 				startingTextComponent++;
 				loops = 0;
 			}
-			player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=cc3333>Unclaimed");
+			player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=e0605a>Unclaimed");
 
 			player.getPacketSender().sendClientScript(
 					149, "IviiiIsssss",
@@ -173,11 +173,11 @@ public class DailyLoginInterface {
 			player.getPacketSender().setHidden(INTERFACE_ID, startingLockComponent, true);
 
 			if (i == (player.loginStreak - 1) && player.claimedLoginToday)
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=6fd36a>Claimed");
 			else if (i < (player.loginStreak - 1))
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=26ff1f>Claimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=6fd36a>Claimed");
 			else
-				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=cc3333>Unclaimed");
+				player.getPacketSender().sendString(INTERFACE_ID, startingClaimedComponent, "<col=e0605a>Unclaimed");
 
 			startingLockComponent += 14;
 			startingClaimedComponent += 14;

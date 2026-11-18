@@ -20,7 +20,7 @@ public enum BlackjackCurrency {
 				player.getInventory().addOrDrop(iconItemId, amount);
 		}
 	},
-	DONATOR_POINTS("Donator Points", "DP", 8851) {
+	DONATOR_POINTS("Donator Points", "DP", 59600) {
 		@Override
 		public int balance(Player player) {
 			return player.getDonatorPoints();

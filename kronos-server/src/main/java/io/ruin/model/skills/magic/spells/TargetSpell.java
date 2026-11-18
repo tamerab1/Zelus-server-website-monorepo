@@ -68,7 +68,7 @@ import static io.ruin.model.entity.player.PlayerCombat.getMagicHitDelay;
 
 public class TargetSpell extends Spell {
 
-	public static final TargetSpell[] AUTOCASTS = new TargetSpell[53];
+	public static final TargetSpell[] AUTOCASTS = new TargetSpell[59];
 
 	protected int lvlReq;
 
@@ -675,6 +675,8 @@ public class TargetSpell extends Spell {
 		if (target.selfHooks.handle(new Entity.Hook.AttackWithSpellBeforeHit(source, target, this, hit))) {
 		}
 
+		if (source.player != null)
+			io.ruin.model.combat.RewardItems.onSpellCast(source.player, this, target, hit, earthSpell, delayTicks);
 		beforeHit(hit, target);
 		int damage = target.hit(hit);
 		if (baseXp > 0 && source.isPlayer()) {

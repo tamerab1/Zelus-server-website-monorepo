@@ -14,7 +14,7 @@ import java.util.List;
  * selected title's details in one window. It replaced the old pair (5105 list in the main window + 5106 details in the
  * chatbox). Unlocking, buying and equipping are unchanged and stay in {@link LoyaltyTitleManager}.
  * <ul>
- *     <li>title row: owned count, "ZELUS TITLES", close; 9 category tabs (gold frame on the active one);</li>
+ *     <li>title row: owned count, "KARN TITLES", close; 9 category tabs (gold frame on the active one);</li>
  *     <li>12 cards (2 x 6): a status square (owned / donor / locked), the title in its colour, its requirement;</li>
  *     <li>Prev / page / Next, Clear, Apply (or Buy & Apply for a purchasable title);</li>
  *     <li>details: header + equipped, a live preview with the player's name, the full requirement; category, status, cost.</li>
@@ -28,7 +28,9 @@ public class LoyaltyTitleInterface {
 	/** Tabs: box (hover), border, gold frame x2, icon, label. */
 	private static final int FIRST_TAB = 5, TAB_STRIDE = 6, TAB_FRAME = 2, TAB_LABEL = 5;
 	/** The title list scrolls (12 cards of 48px in 2 columns). */
-	private static final int SCROLL = 59, SCROLLBAR = 60, SCROLL_HEIGHT = 146, CARD_PITCH = 52, LIST_TOP = 8;
+	private static final int SCROLL = 59, SCROLLBAR = 60, SCROLL_HEIGHT = 138, CARD_PITCH = 52, LIST_TOP = 8;
+	/** Karn round 2 (2026-11-12): each card's left status stripe (owned / for sale / locked), coloured by clientscript 45. */
+	private static final int FIRST_STRIPE = 215, STRIPE_STRIDE = 2, STRIPE_OWNED = 0x3ca433, STRIPE_FOR_SALE = 0xd9a94f, STRIPE_LOCKED = 0x7e1a20;
 	/** Cards: layer, box (hover), border, selected frame x3, price icon (item), "$" glyph, price text, title, requirement. */
 	private static final int FIRST_CARD = 61, CARD_STRIDE = 11, CARD_BOX = 1, CARD_FRAME = 3, CARD_FRAMES = 3,
 		CARD_PRICE_ICON = 6, CARD_PRICE_GLYPH = 7, CARD_PRICE_TEXT = 8, CARD_TITLE = 9, CARD_REQUIREMENT = 10, ROWS_PER_PAGE = 12;
@@ -46,7 +48,7 @@ public class LoyaltyTitleInterface {
 	/** Status square fills: owned (green), donor / purchasable (gold), locked (dark red). */
 	private static final int OWNED_FILL = 0x1f4a1c, DONOR_FILL = 0x5a4510, LOCKED_FILL = 0x4a1c1c;
 
-	private static final String GOLD = "<col=ffc35a>", ORANGE = "<col=ff981f>", GREY = "<col=a0a0a0>", WHITE = "<col=ffffff>",
+	private static final String GOLD = "<col=ffc35a>", ORANGE = "<col=d9a94f>", GREY = "<col=a0a0a0>", WHITE = "<col=ffffff>",
 		GREEN = "<col=3ca433>", RED = "<col=c42b00>", END = "</col>";
 
 	private static boolean registered;
@@ -102,7 +104,7 @@ public class LoyaltyTitleInterface {
 		player.loyaltyTitlePage = 0;
 		player.loyaltyTitleSelectedId = null;
 		player.openInterface(ToplevelComponent.MAINMODAL, INTERFACE_ID);
-		player.getPacketSender().sendString(INTERFACE_ID, TITLE, ORANGE + "ZELUS TITLES" + END);
+		player.getPacketSender().sendString(INTERFACE_ID, TITLE, ORANGE + "KARN TITLES" + END);
 		render(player, true);
 	}
 
@@ -162,6 +164,7 @@ public class LoyaltyTitleInterface {
 			for (int f = 0; f < CARD_FRAMES; f++)
 				ps.setHidden(INTERFACE_ID, card + CARD_FRAME + f, !selected);
 			boolean forSale = !unlocked && title.isPurchasable();
+			setColour(player, FIRST_STRIPE + i * STRIPE_STRIDE, unlocked ? STRIPE_OWNED : forSale ? STRIPE_FOR_SALE : STRIPE_LOCKED);
 			// price icon: a red "$" only for donator points, a coins stack only for gold; nothing for other titles
 			boolean dollar = forSale && title.currency == LoyaltyTitle.Currency.DONATOR_POINTS;
 			boolean coins = forSale && title.currency == LoyaltyTitle.Currency.COINS;
@@ -183,9 +186,10 @@ public class LoyaltyTitleInterface {
 		int count = contentHeight <= SCROLL_HEIGHT ? 0 : (int) Math.ceil((contentHeight - SCROLL_HEIGHT / 3D) / 15D);
 		if (listChanged)
 			io.ruin.model.ScrollbarClientScript.create().interfaceId(INTERFACE_ID).containerId(SCROLL).scrollbarChildId(SCROLLBAR)
-				.childrenCount(count).withDarkGraphics().build().send(player);
-		ps.sendString(INTERFACE_ID, PREV + 1, player.loyaltyTitlePage > 0 ? "Prev" : GREY + "Prev" + END);
-		ps.sendString(INTERFACE_ID, NEXT + 1, player.loyaltyTitlePage + 1 < pageCount ? "Next" : GREY + "Next" + END);
+				.childrenCount(count).withKarnGraphics().build().send(player);
+		// Karn round 2: the page arrows hide when there is no page that way (their text components are hidden)
+		ps.setHidden(INTERFACE_ID, PREV, player.loyaltyTitlePage <= 0);
+		ps.setHidden(INTERFACE_ID, NEXT, player.loyaltyTitlePage + 1 >= pageCount);
 		ps.sendString(INTERFACE_ID, PAGE, titles.isEmpty() ? "0 / 0" : (player.loyaltyTitlePage + 1) + " / " + pageCount);
 		ps.sendString(INTERFACE_ID, CLEAR + 1, LoyaltyTitleManager.getEquipped(player) != null ? "Clear" : GREY + "Clear" + END);
 		renderDetails(player);
@@ -216,7 +220,7 @@ public class LoyaltyTitleInterface {
 			: unlocked ? GREEN + "Owned" + END : title.isPurchasable() ? GOLD + "Purchasable" + END : RED + "Locked" + END));
 		ps.sendString(INTERFACE_ID, DETAILS_COST, title.isPurchasable() && !unlocked
 			? GREY + "Cost: " + END + GOLD + formatAmount(title.cost) + " " + title.currency.label + END : "");
-		String apply = isEquipped ? GREY + "Applied" + END : unlocked ? GREEN + "Apply" + END
+		String apply = isEquipped ? GREY + "Applied" + END : unlocked ? "Apply"
 			: title.isPurchasable() ? GOLD + "Buy & Apply" + END : GREY + "Apply" + END;
 		ps.sendString(INTERFACE_ID, APPLY + 1, apply);
 	}
@@ -230,7 +234,7 @@ public class LoyaltyTitleInterface {
 	}
 
 	private static void setColour(Player player, int component, int colour) {
-		player.getPacketSender().sendClientScript(45, "", INTERFACE_ID << 16 | component, colour);
+		player.getPacketSender().sendClientScript(45, "Ii", INTERFACE_ID << 16 | component, colour);
 	}
 
 	private static void onRowSelect(Player player, int rowIndex) {

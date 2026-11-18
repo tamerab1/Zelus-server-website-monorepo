@@ -141,7 +141,7 @@ public class FortuneInterface {
 		PacketSender ps = p.getPacketSender();
 		View v = view(p);
 		Blessing sel = v.selected;
-		ps.sendString(INTERFACE, TITLE, "Statue of Fortune");
+		ps.sendString(INTERFACE, TITLE, "Karn Statue");
 
 		// header
 		int active = StatueOfFortune.activeCount();

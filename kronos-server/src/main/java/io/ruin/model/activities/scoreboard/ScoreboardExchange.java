@@ -158,7 +158,7 @@ public final class ScoreboardExchange {
 			};
 		});
 		NPCAction.register(QUARTERMASTER, "talk-to", (player, npc) -> player.dialogue(
-			new NPCDialogue(npc, "Every day and every week the Zelus Scoreboard crowns its best. Finish in the top three of "
+			new NPCDialogue(npc, "Every day and every week the Karn Scoreboard crowns its best. Finish in the top three of "
 				+ "any board and you earn Score Points."),
 			new NPCDialogue(npc, "Daily boards pay " + Scoreboard.DAILY_REWARD[0] + " / " + Scoreboard.DAILY_REWARD[1] + " / "
 				+ Scoreboard.DAILY_REWARD[2] + " SbP, weekly boards " + Scoreboard.WEEKLY_REWARD[0] + " / "
@@ -288,7 +288,7 @@ public final class ScoreboardExchange {
 	/** ::sbp, and the balance plaque. */
 	public static void sendBalance(Player player) {
 		player.sendMessage(TAG + "You have " + CHAT_GREEN + NumberUtils.formatNumber(player.scorePoints) + " Score Points" + END
-			+ ". Earn them on the Zelus Scoreboard (::scoreboard).");
+			+ ". Earn them on the Karn Scoreboard (::scoreboard).");
 	}
 
 	private static void sendBalance(Player player, PacketSender ps) {

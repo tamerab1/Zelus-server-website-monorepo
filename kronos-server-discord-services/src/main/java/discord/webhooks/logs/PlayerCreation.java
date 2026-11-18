@@ -22,7 +22,7 @@ public interface PlayerCreation {
 		var message = new Message();
 		var embedMessage = new Embed();
 			embedMessage.setTitle("Newcomer Event");
-			embedMessage.setDescription("`%s` has just joined Zelus"
+			embedMessage.setDescription("`%s` has just joined Karn"
 				.formatted(object.getString("player")));
 			embedMessage.setColor(new Color(255, 0, 255));
 			embedMessage.setFields(

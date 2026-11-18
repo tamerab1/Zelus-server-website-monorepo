@@ -12,7 +12,7 @@ public enum NewcomerTasks {
 	DEFEAT_GLOBAL_BOSS("Defeat Global Boss", "Defeat a global boss.", 1, new Item(995, 2500000)),
 	DEFEAT_VOTE_BOSS("Defeat The Vote Boss", "Defeat the vote boss.", 1, new Item(30596, 2)),
 	COMPLETE_DAILY_TASK("Complete A Daily Task", "Complete a daily task.", 1, new Item(30570, 3)),
-	SPEND_REASON_POINTS("Spend Zelus Points", "Spend 2500 Zelus points at the rewards shop.", 2500, new Item(30577)),
+	SPEND_REASON_POINTS("Spend Karn Points", "Spend 2500 Karn points at the rewards shop.", 2500, new Item(30577)),
 	SKIP_SLAYER_TASK("Skip A Slayer Task", "Skip a slayer task using slayer points.", 1, new Item(ItemID.BRIMSTONE_KEY, 5)),
 	;
 

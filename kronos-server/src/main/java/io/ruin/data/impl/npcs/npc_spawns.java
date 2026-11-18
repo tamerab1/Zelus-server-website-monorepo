@@ -50,6 +50,7 @@ public class npc_spawns extends DataFile {
 
 				NPC n = new NPC(spawn.id).spawn(spawn.x, spawn.y, spawn.z, Direction.get(spawn.direction), spawn.walkRange);
 				n.defaultSpawn = true;
+				io.ruin.model.content.HomeHandler.shopRoomReach(n);
 				spawn.name = n.getDef().name;
 				if (spawn.shopOptions != null && n.getDef().options != null) {
 					spawn.shopOptions.forEach((rightClickOption, shopUUID) -> {
